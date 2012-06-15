@@ -365,14 +365,15 @@ def create_mesh( local_mesh ):
 
 	version = bpy.app.version
 
-	if version[1] > 62:
+	if version[1] == 63:
 		mesh.vertices.add(len(local_mesh.vertices))
 		mesh.tessfaces.add(len(local_mesh.faces))
 
 		mesh.vertices.foreach_set("co", unpack_list(local_mesh.vertices))
 		mesh.tessfaces.foreach_set("vertices_raw", unpack_face_list(local_mesh.faces))
 		mesh.tessfaces.foreach_set("use_smooth", [(True)]*len(local_mesh.faces) )
-
+	else:
+		print( "Erreur script pour blender 2.63" )
 
 	mesh.update()
 
