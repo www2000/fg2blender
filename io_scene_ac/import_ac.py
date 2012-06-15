@@ -222,11 +222,7 @@ def create_uv( local_mesh, mesh ):
 	version = bpy.app.version
 
 	if local_mesh.uv!=[]:
-		if version[1] <= 62:
-			debug_info( local_mesh.uv[0] )
-			#Loading UV tex coords
-			uvtex = mesh.uv_textures.new()#create uvset
-		elif version[1] > 62:
+		if version[1] > 62:
 			mesh.uv_textures.new()
 			uvtex = mesh.uv_layers.active
 		#Loading UV tex coords
@@ -241,39 +237,7 @@ def create_uv( local_mesh, mesh ):
 		else:
 			img = None
 
-		if version[1] <= 62:
-			idx = 0
-			debug_info( "Nb uv_textures : %d " % len(mesh.uv_textures[-1].data) )
-			debug_info( "Nb faces       : %d " % len(local_mesh.faces) )
-			debug_info( "Nb points      : %d " % len(local_mesh.vertices) )
-			for i in range(len(local_mesh.faces)):
-				nb = len(local_mesh.faces[i])
-				debug_info( "Face no        : %d " % i )
-				debug_info( "Nb points      : %d " % nb )
-				debug_info( "Nb uv : %d  nb local_mesh.uv : %d" % (len(uvtex.data), len(local_mesh.uv) ) )
-				# triangle or  quad
-				if nb >= 3:
-					j = local_mesh.faces[i][0]
-					k = local_mesh.faces[i][1]
-					l = local_mesh.faces[i][2]
-					debug_info( "Indices  j : %d  k : %d  l : %d" % (j,k,l) )
-
-					uvtex.data[i].uv1 = local_mesh.uv[j]
-					uvtex.data[i].uv2 = local_mesh.uv[k]
-					uvtex.data[i].uv3 = local_mesh.uv[l]
-				#quad
-				if nb == 4:
-					m = local_mesh.faces[i][3]
-					uvtex.data[i].uv4 = local_mesh.uv[m]
-
-				j += len(local_mesh.faces[i])
-
-				found = False
-			
-				if img!=None:
-					uvtex.data[i].image = img
-
-		elif version[1] > 62:
+		if version[1] > 62:
 			idx = 0
 			debug_info( "Nb uv_textures : %d " % len(mesh.uv_textures[-1].data) )
 			debug_info( "Nb faces       : %d " % len(local_mesh.faces) )
@@ -400,15 +364,8 @@ def create_mesh( local_mesh ):
 
 
 	version = bpy.app.version
-	if version[1] <= 62:
-		mesh.vertices.add(len(local_mesh.vertices))
-		mesh.faces.add(len(local_mesh.faces))
 
-		mesh.vertices.foreach_set("co", unpack_list(local_mesh.vertices))
-		mesh.faces.foreach_set("vertices_raw", unpack_face_list(local_mesh.faces))
-		mesh.faces.foreach_set("use_smooth", [(True)]*len(local_mesh.faces) )
-
-	elif version[1] > 62:
+	if version[1] > 62:
 		mesh.vertices.add(len(local_mesh.vertices))
 		mesh.tessfaces.add(len(local_mesh.faces))
 
