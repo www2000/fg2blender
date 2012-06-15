@@ -226,6 +226,8 @@ def create_uv( local_mesh, mesh ):
 			debug_info( local_mesh.uv[0] )
 			#Loading UV tex coords
 			uvtex = mesh.uv_textures.new()#create uvset
+		else:
+			print( "Erreur script pour blender <= 2.62" )
 		#Loading UV tex coords
 		#uvtex = mesh.uv_textures.new()#create uvset
 		j=0
