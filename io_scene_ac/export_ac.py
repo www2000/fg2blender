@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 #
-# <pep8 compliant>
 #
 # Script copyright (C) René Nègre
 # Contributors: René Nègre

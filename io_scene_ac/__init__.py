@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 #
-# <pep8 compliant>
 #
 # Script copyright (C) René Nègre
 # Contributors: René Nègre
@@ -74,13 +73,13 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 		from . import import_ac
 		if self.edge_split:
 			self.smooth_all=False
-		import_ac.read_ac( self.filepath, smooth_all=self.smooth_all, edge_split=self.edge_split, split_angle=self.split_angle, context=context )
-		'''
-		if self.edge_split:
-			import_ac.edge_split( context, self.split_angle )
-		if self.smooth_all and self.edge_split==False:
-			import_ac.smooth_all( context )
-		'''
+		import_ac.read_ac(	self.filepath, 
+							smooth_all=self.smooth_all, 
+							edge_split=self.edge_split, 
+							split_angle=self.split_angle, 
+							context=context 
+						)
+
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -107,7 +106,12 @@ class ExportAC(bpy.types.Operator, ExportHelper):
 
 	def execute(self, context):
 		from . import export_ac
-		export_ac.write_ac_file(context, self.filepath, select_only=self.select_only, tex_path=self.tex_path,apply_modifiers=self.apply_modifiers  )
+		export_ac.write_ac_file(	context, 
+									self.filepath, 
+									select_only=self.select_only, 
+									tex_path=self.tex_path,
+									apply_modifiers=self.apply_modifiers
+								)
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
