@@ -68,10 +68,10 @@ class MATERIAL:
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS MESH
 #----------------------------------------------------------------------------------------------------------------------------------
-#  vertices = [  (0.0,0.0,0.0) , (1.0,1.0,1.0), ... ]									coord (x,y,z)
-#  edges    = [  (0,1) , (1,2) , (5,4) ... ]											don't use   (point indice)
-#  faces    = [  (1,2,3) , (2,3,4,5), ... ]												point indice  
-#  uv		= [	 ((0,0) , (0,0) , (0,0))  , ((0,0),(0,0),(0,0),(0,0)) ,  .... ]			coord uv  !?! len(faces) = len(uv)
+#  vertices = [  (0.0,0.0,0.0) , (1.0,1.0,1.0) , ... ]									coord (x,y,z)
+#  edges    = [  (0,1) , (1,2) , (5,4) ,  ... ]											don't use   (point indice)
+#  faces    = [  (1,2,3) , (2,3,4,5) , ... ]											point indice  
+#  uv		= [	 ((0,0),(0,0),(0,0))  , ((0,0),(0,0),(0,0),(0,0)) ,  .... ]				coord uv  !?! len(faces) = len(uv)
 #----------------------------------------------------------------------------------------------------------------------------------
 class MESH:
 	def __init__(self):
@@ -270,7 +270,8 @@ def create_uv( local_mesh, mesh ):
 		debug_info( "Nb faces       : %d " % len(local_mesh.faces) )
 		debug_info( "Nb points      : %d " % len(local_mesh.vertices) )
 		
-		#optimisation foreach_set
+		#optimisation foreach_set don't work
+		#uvtex.data.add(len(local_mesh.uv))
 		#uvtex.data.foreach_set( "uv", unpack_face_list(local_mesh.uv) )
 		for i in range(len(local_mesh.faces)):
 			nb = len(local_mesh.faces[i])

@@ -1,22 +1,37 @@
-'''
-====================================================================================================================
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+#
+# <pep8 compliant>
+#
+# Script copyright (C) René Nègre
+# Contributors: René Nègre
+#
 
-
-
-				EXPORT
-
-
-====================================================================================================================
-'''
+#----------------------------------------------------------------------------------------------------------------------------------
+#
+#
+#							EXPORT
+#
+#
+#----------------------------------------------------------------------------------------------------------------------------------
 import os
 import bpy
 import mathutils
-
-
-
-
-
-
 
 TEX_PATH		= False
 APPLY_MODIFIERS = True
@@ -27,6 +42,8 @@ list_material = []
 
 parent = mathutils.Vector()
 
+
+#----------------------------------------------------------------------------------------------------------------------------------
 
 path_name = ""
 def extract_path(name_path):
@@ -42,11 +59,7 @@ def extract_path(name_path):
 	"""
 	path_name = os.path.dirname(os.path.normpath(name_path))
 	#print( "extract_path() : %s " % path_name )
-
-
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def without_path(name_path):
 	name = ""
@@ -56,31 +69,33 @@ def without_path(name_path):
 		else:
 			break
 	return name
-
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_some_data(filepath, s):
 	f = open(filepath, 'a+')
 	f.write("%s" % s)
 	f.close()
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def writeln_some_data(filepath, s):
 	f = open(filepath, 'a+')
 	f.write("%s\n" % s)
 	f.close()
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_file(fi, s):
 	fi.write("%s" % s)
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def writeln_file(fi, s):
 	fi.write("%s\n" % s)
+#----------------------------------------------------------------------------------------------------------------------------------
 
 
 def new_file(filepath):
 	f = open(filepath, 'w')
 	f.close()
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def significatif( st ):
 	new_str = ""
@@ -111,8 +126,7 @@ def significatif( st ):
 		
 	#print( "nombre %s %s   resultat %s" % (entier,mantisse,new_str) )
 	return new_str
-		
-		
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_edges( f, mesh ):
 	nbEdges = len(mesh.edges)
@@ -142,12 +156,7 @@ def write_edges( f, mesh ):
 		
 		for ed in edge.vertices:
 			writeln_file( f, "%d 0 0" % ed )
-		#writeln_file( f, "%d 0 0" % (edge.vertices[0]) )
-		#writeln_file( f, "%d 0 0" % (edge.vertices[1]) )
-		
-	#writeln_file( f, "kids 0" )
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_faces( filename, mesh ):
 	f = open(filename, 'a+')
@@ -216,21 +225,19 @@ def write_faces( filename, mesh ):
 	
 	#writeln_file( f, "kids 0" )
 	f.close()
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def print_matrix( matrix ):
 	l = matrix[3]
 	#for l in matrix:
 	print( "matrix %f %f %f %f" % (l[0],l[1],l[2],l[3]) )
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def extrait_translation_matrix( matrix ):
 	t = matrix[3]
 	ret = mathutils.Vector( (t[0],t[1],t[2]) )
 	return ret
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_vertice( filename, obj, mesh ):
 	f = open(filename, 'a+')
@@ -329,10 +336,7 @@ def write_vertice( filename, obj, mesh ):
 		writeln_file( f, str_x +' '+ str_y +' '+ str_z )		
 		
 	f.close()
-
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def extrait_crease( obj, mesh ):
 	pi = 3.141592653589793238462643383279502884197
@@ -347,8 +351,7 @@ def extrait_crease( obj, mesh ):
 		return -1.0
 	
 	return 30.0
-		
-	
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_header_mesh( filename, obj, mesh ):
 	f = open(filename, 'a+')
@@ -394,8 +397,7 @@ def write_header_mesh( filename, obj, mesh ):
 
  
 	f.close()
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_material( filename, sel_obj ):
 	global list_material
@@ -443,9 +445,7 @@ def write_material( filename, sel_obj ):
 	
 				writeln_file( f, "" )
 	f.close()
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def test_son( list_objects, obj,name_parent ):
 	if obj.parent!=None:
@@ -458,7 +458,7 @@ def test_son( list_objects, obj,name_parent ):
 		return True
 
 	return False
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def count_son( list_objects, name_parent ):
 	nb = 0
@@ -473,12 +473,7 @@ def count_son( list_objects, name_parent ):
 			elif name_parent == 'world':
 				nb += 1
 	return nb
-
-
-
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def recurs_son( filename, context, list_objects, obj ):
 	print( "Ecriture de %s" % obj.name )
@@ -497,9 +492,6 @@ def recurs_son( filename, context, list_objects, obj ):
 		str_y = significatif("%0.6f" % vec3_locat.z)
 		str_z = significatif("%0.6f" % -vec3_locat.y)
 		writeln_some_data( filename, "loc %s %s %s" % (str_x, str_y, str_z) )
-		
-		
-
 
 	nb = count_son(list_objects, obj.name)
 	writeln_some_data( filename, "kids %d" % nb )
@@ -509,8 +501,7 @@ def recurs_son( filename, context, list_objects, obj ):
 		for obj_ in list_objects:
 			if test_son( list_objects, obj_, obj.name ):
 				recurs_son( filename, context, list_objects, obj_ )
-	#print ( " fin enfant de %s" % obj.name )
-	
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_ac_file( context, filename, select_only, tex_path, apply_modifiers ):
 	global	SELECT_ONLY, TEX_PATH, APPLY_MODIFIERS
