@@ -69,7 +69,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 
 
 	def execute(self, context):
-		from .import_xml import import_xml
+		from .xml_import import import_xml
 
 		if self.edge_split:
 			self.smooth_all=False

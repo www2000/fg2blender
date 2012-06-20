@@ -319,7 +319,7 @@ def parcour_child( node, file_name ):
 
 						print( "%sFichier AC3D <path>: %s" % (tabs(),file_ac) )
 
-						from .import_ac import read_ac
+						from .ac_import import read_ac
 						read_ac(	filename 	= file_ac,
 									smooth_all	= True,
 									edge_split	= True,

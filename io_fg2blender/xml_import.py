@@ -62,7 +62,7 @@ def import_xml(filename, smooth_all, edge_split, split_angle, context):
 	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 	global CONTEXT
 	
-	from .read_xml import read_file_xml
+	from .xml_read import read_file_xml
 	
 	read_file_xml( filename )
 
