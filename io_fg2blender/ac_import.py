@@ -1,10 +1,34 @@
-#====================================================================================================================#
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 #
 #
-#				IMPORT    .ac     FILE
+# Script copyright (C) René Nègre
+# Contributors: René Nègre
+#
+
+#----------------------------------------------------------------------------------------------------------------------------------
 #
 #
-#====================================================================================================================
+#							IMPORT
+#
+#
+#----------------------------------------------------------------------------------------------------------------------------------
+
 
 import os
 import bpy
@@ -12,8 +36,6 @@ import mathutils
 import time
 from math import radians
 from bpy_extras.io_utils import unpack_list, unpack_face_list
-
-
 
 
 path_name = ""
@@ -26,6 +48,12 @@ CONTEXT = None
 DEBUG = False
 
 #----------------------------------------------------------------------------------------------------------------------------------
+#							CLASS MATERIAL
+#----------------------------------------------------------------------------------------------------------------------------------
+#	AC3D material
+# material_list = [ MATERIAL() , MATERIAL() ,  ... ]
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class MATERIAL:
 	def __init__(self):
 		self.rgb			= mathutils.Vector( (0.0, 0.0, 0.0) )
@@ -37,7 +65,13 @@ class MATERIAL:
 		self.name_ac		= ""
 		self.name_bl		= ""
 #----------------------------------------------------------------------------------------------------------------------------------
-
+#							CLASS MESH
+#----------------------------------------------------------------------------------------------------------------------------------
+#  vertices = [  (0.0,0.0,0.0) , (1.0,1.0,1.0) , ... ]									coord (x,y,z)
+#  edges    = [  (0,1) , (1,2) , (5,4) ,  ... ]											don't use   (point indice)
+#  faces    = [  (1,2,3) , (2,3,4,5) , ... ]											point indice  
+#  uv		= [	 ((0,0),(0,0),(0,0))  , ((0,0),(0,0),(0,0),(0,0)) ,  .... ]				coord uv  !?! len(faces) = len(uv)
+#----------------------------------------------------------------------------------------------------------------------------------
 class MESH:
 	def __init__(self):
 		self.vertices		= []
@@ -217,18 +251,9 @@ def create_uv( local_mesh, mesh ):
 	global path_name, material_list
 	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 
-	version = bpy.app.version
-
 	if local_mesh.uv!=[]:
-		if version[1] <= 62:
-			debug_info( local_mesh.uv[0] )
-			#Loading UV tex coords
-			uvtex = mesh.uv_textures.new()#create uvset
-		elif version[1] > 62:
-			mesh.uv_textures.new()
-			uvtex = mesh.uv_layers.active
-		#Loading UV tex coords
-		#uvtex = mesh.uv_textures.new()#create uvset
+		mesh.uv_textures.new()
+		uvtex = mesh.uv_layers.active
 		j=0
 		if local_mesh.img_name_bl != "":
 			try:
@@ -239,70 +264,41 @@ def create_uv( local_mesh, mesh ):
 		else:
 			img = None
 
-		if version[1] <= 62:
-			idx = 0
-			debug_info( "Nb uv_textures : %d " % len(mesh.uv_textures[-1].data) )
-			debug_info( "Nb faces       : %d " % len(local_mesh.faces) )
-			debug_info( "Nb points      : %d " % len(local_mesh.vertices) )
-			for i in range(len(local_mesh.faces)):
-				nb = len(local_mesh.faces[i])
-				debug_info( "Face no        : %d " % i )
-				debug_info( "Nb points      : %d " % nb )
-				debug_info( "Nb uv : %d  nb local_mesh.uv : %d" % (len(uvtex.data), len(local_mesh.uv) ) )
-				# triangle or  quad
-				if nb >= 3:
-					j = local_mesh.faces[i][0]
-					k = local_mesh.faces[i][1]
-					l = local_mesh.faces[i][2]
-					debug_info( "Indices  j : %d  k : %d  l : %d" % (j,k,l) )
-
-					uvtex.data[i].uv1 = local_mesh.uv[j]
-					uvtex.data[i].uv2 = local_mesh.uv[k]
-					uvtex.data[i].uv3 = local_mesh.uv[l]
-				#quad
-				if nb == 4:
-					m = local_mesh.faces[i][3]
-					uvtex.data[i].uv4 = local_mesh.uv[m]
-
-				j += len(local_mesh.faces[i])
-
-				found = False
-			
-				if img!=None:
-					uvtex.data[i].image = img
-
-		elif version[1] > 62:
-			idx = 0
-			debug_info( "Nb uv_textures : %d " % len(mesh.uv_textures[-1].data) )
-			debug_info( "Nb faces       : %d " % len(local_mesh.faces) )
-			debug_info( "Nb points      : %d " % len(local_mesh.vertices) )
-			for i in range(len(local_mesh.faces)):
-				nb = len(local_mesh.faces[i])
-				debug_info( "Face no        : %d " % i )
-				debug_info( "Nb points      : %d " % nb )
-				debug_info( "Nb uv : %d  nb local_mesh.uv : %d      idx : %d" % (len(uvtex.data), len(local_mesh.uv), idx ) )
-				# triangle or  quad or edge
-				if nb >= 2:
-					j = local_mesh.faces[i][0]
-					debug_info( "indice j  : %d" % (j) )
-					k = local_mesh.faces[i][1]
-					#uvtex.data[idx+0].uv = local_mesh.uv[idx+0]
-					#uvtex.data[idx+1].uv = local_mesh.uv[idx+1]
-					uvtex.data[idx+0].uv = local_mesh.uv[j]
-					uvtex.data[idx+1].uv = local_mesh.uv[k]
-				# triangle or  quad
-				if nb >= 3:
-					l = local_mesh.faces[i][2]
-					#uvtex.data[idx+2].uv = local_mesh.uv[idx+2]
-					uvtex.data[idx+2].uv = local_mesh.uv[l]
-				#quad
-				if nb == 4:
-					m = local_mesh.faces[i][3]
-					#uvtex.data[idx+3].uv = local_mesh.uv[idx+3]
-					uvtex.data[idx+3].uv = local_mesh.uv[m]
-			
-				mesh.uv_textures[-1].data[i].image = img
-				idx = idx + nb
+		idx = 0
+		debug_info( "Nb uv_textures : %d " % len(mesh.uv_textures[-1].data) )
+		debug_info( "Nb faces       : %d " % len(local_mesh.faces) )
+		debug_info( "Nb points      : %d " % len(local_mesh.vertices) )
+		
+		#optimisation foreach_set don't work
+		#uvtex.data.add(len(local_mesh.uv))
+		#uvtex.data.foreach_set( "uv", unpack_face_list(local_mesh.uv) )
+		for i in range(len(local_mesh.faces)):
+			nb = len(local_mesh.faces[i])
+			debug_info( "Face no        : %d " % i )
+			debug_info( "Nb points      : %d " % nb )
+			debug_info( "Nb uv : %d  nb local_mesh.uv : %d      idx : %d" % (len(uvtex.data), len(local_mesh.uv), idx ) )
+			# triangle or  quad or edge
+			if nb >= 2:
+				j = local_mesh.faces[i][0]
+				debug_info( "indice j  : %d" % (j) )
+				k = local_mesh.faces[i][1]
+				#uvtex.data[idx+0].uv = local_mesh.uv[j]
+				#uvtex.data[idx+1].uv = local_mesh.uv[k]
+				uvtex.data[idx+0].uv = local_mesh.uv[i][0]
+				uvtex.data[idx+1].uv = local_mesh.uv[i][1]
+			# triangle or  quad
+			if nb >= 3:
+				l = local_mesh.faces[i][2]
+				#uvtex.data[idx+2].uv = local_mesh.uv[l]
+				uvtex.data[idx+2].uv = local_mesh.uv[i][2]
+			#quad
+			if nb == 4:
+				m = local_mesh.faces[i][3]
+				#uvtex.data[idx+3].uv = local_mesh.uv[m]
+				uvtex.data[idx+3].uv = local_mesh.uv[i][3]
+		
+			mesh.uv_textures[-1].data[i].image = img
+			idx = idx + nb
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def assign_material( local_mesh, obj_new ):
@@ -389,31 +385,18 @@ def create_mesh( local_mesh ):
 	context = CONTEXT
 	
 	mesh = bpy.data.meshes.new(obj_name+".mesh")
-	#mesh.from_pydata(local_mesh.vertices, local_mesh.edges, local_mesh.faces)
-	#mesh.from_pydata(local_mesh.vertices, [], local_mesh.faces)
 
 	if local_mesh.crease != -1.0:
 		mesh.use_auto_smooth = True
 		mesh.auto_smooth_angle = radians(local_mesh.crease)
 
 
-	version = bpy.app.version
-	if version[1] <= 62:
-		mesh.vertices.add(len(local_mesh.vertices))
-		mesh.faces.add(len(local_mesh.faces))
+	mesh.vertices.add(len(local_mesh.vertices))
+	mesh.tessfaces.add(len(local_mesh.faces))
 
-		mesh.vertices.foreach_set("co", unpack_list(local_mesh.vertices))
-		mesh.faces.foreach_set("vertices_raw", unpack_face_list(local_mesh.faces))
-		mesh.faces.foreach_set("use_smooth", [(True)]*len(local_mesh.faces) )
-
-	elif version[1] > 62:
-		mesh.vertices.add(len(local_mesh.vertices))
-		mesh.tessfaces.add(len(local_mesh.faces))
-
-		mesh.vertices.foreach_set("co", unpack_list(local_mesh.vertices))
-		mesh.tessfaces.foreach_set("vertices_raw", unpack_face_list(local_mesh.faces))
-		mesh.tessfaces.foreach_set("use_smooth", [(True)]*len(local_mesh.faces) )
-
+	mesh.vertices.foreach_set("co", unpack_list(local_mesh.vertices))
+	mesh.tessfaces.foreach_set("vertices_raw", unpack_face_list(local_mesh.faces))
+	mesh.tessfaces.foreach_set("use_smooth", [(True)]*len(local_mesh.faces) )
 
 	mesh.update()
 
@@ -524,12 +507,14 @@ def read_face( fi, local_mesh):
 		line = fi.readline()
 
 	nb = int(line.split()[1])
+	debug_info( "read_face()  nb = %d " % nb )
 
 	f = []
 	uv = []
 	
-	if len(local_mesh.vertices) != len(local_mesh.uv):
-		local_mesh.uv = [ (0.0,0.0) ] * len(local_mesh.vertices)
+	#if nb > len(local_mesh.uv):
+	#	local_mesh.uv = [] * nb
+	#debug_info( "Longeur uv %d " % len(local_mesh.uv) )
 	
 	
 	for i in range(nb):
@@ -552,35 +537,23 @@ def read_face( fi, local_mesh):
 		new_edge = [ (f[0],f[1]) , (f[1],f[2]) , (f[2],f[3]) , (f[3],f[0])  ]
 		local_mesh.add_faces( new_face )
 		local_mesh.add_edges( new_edge )
-		local_mesh.uv[ f[0] ] = uv[0]
-		local_mesh.uv[ f[1] ] = uv[1]
-		local_mesh.uv[ f[2] ] = uv[2]
-		local_mesh.uv[ f[3] ] = uv[3]
-		#local_mesh.uv.append( uv[0] )
-		#local_mesh.uv.append( uv[1] )
-		#local_mesh.uv.append( uv[2] )
-		#local_mesh.uv.append( uv[3] )
+		local_mesh.uv.append( (uv[0],uv[1],uv[2],uv[3]) )
 	# for triangles
 	if nb == 3:
 		new_face = [ (f[0], f[1], f[2]) ]
 		new_edge = [ (f[0],f[1]) , (f[1],f[2]) , (f[2],f[0]) ]
 		local_mesh.add_faces( new_face )
 		local_mesh.add_edges( new_edge )
-		local_mesh.uv[ f[0] ] = uv[0]
-		local_mesh.uv[ f[1] ] = uv[1]
-		local_mesh.uv[ f[2] ] = uv[2]
-		#local_mesh.uv.append( uv[0] )
-		#local_mesh.uv.append( uv[1] )
-		#local_mesh.uv.append( uv[2] )
-	#for edge only
+		local_mesh.uv.append( (uv[0],uv[1],uv[2]) )
+	#for edge only    ignore
+	'''
 	if nb == 2:
+		new_face = [ (f[0], f[1]) ]
 		new_edge = [ (f[0], f[1]) ]
+		local_mesh.add_faces( new_face )
 		local_mesh.add_edges( new_edge )
-		local_mesh.uv[ f[0] ] = uv[0]
-		local_mesh.uv[ f[1] ] = uv[1]
-		#local_mesh.uv.append( uv[0] )
-		#local_mesh.uv.append( uv[1] )
-
+		local_mesh.uv.append( (uv[0],uv[1]) )
+	'''
 	#for other more than 4 vetex per faces.  Split in triangles
 	if nb > 4:
 		#print( "refs = %d" % nb )
@@ -591,12 +564,8 @@ def read_face( fi, local_mesh):
 			local_mesh.add_edges( new_edge )
 		
 		for i in range(nb-2):
-			local_mesh.uv[ f[0] ] = uv[0]
-			local_mesh.uv[ f[i+1] ] = uv[i+1]
-			local_mesh.uv[ f[i+2] ] = uv[i+2]
-			#local_mesh.uv.append( uv[0] )
-			#local_mesh.uv.append( uv[i+1] )
-			#local_mesh.uv.append( uv[i+2] )
+			local_mesh.uv.append( (uv[0],uv[i+1],uv[i+2]) )
+	debug_info( "Longeur uv %d " % len(local_mesh.uv) )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def read_texture( fi, line, local_mesh):
@@ -625,7 +594,7 @@ def read_kids( f, line, local_mesh ):
 	if local_mesh.group:
 		create_empty(local_mesh)
 	elif local_mesh.mesh_name != 'WORLD':
-		print( 'Creation du mesh : %s' % local_mesh.mesh_name )
+		print( 'Import du mesh : %s' % local_mesh.mesh_name )
 		create_mesh( local_mesh )
 	
 	if len(local_mesh.parent) != 0:
@@ -734,6 +703,12 @@ def read_ac(filename, smooth_all, edge_split, split_angle, context):
 	global path_name, material_list
 	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 	global CONTEXT
+
+	version = bpy.app.version
+	if version[1] < 63:
+		print( "Erreur : Scrpit pour blender >= 2.63" )
+		return
+		
 	
 	time_deb = time.time()
 	CONTEXT		= context
