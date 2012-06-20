@@ -24,7 +24,7 @@
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
-#							IMPORT
+#							Pasre .ac file in object ac_manager.MESH
 #
 #
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -36,98 +36,19 @@ import mathutils
 import time
 from math import radians
 from bpy_extras.io_utils import unpack_list, unpack_face_list
+from .ac_manager import MESH
+from .ac_manager import MATERIAL
+from .ac_manager import material_list
+from .ac_manager import path_name
 
-
-path_name = ""
-material_list = []
+#path_name = ""
+#material_list = []
 SMOOTH_ALL = False
 EDGE_SPLIT = False
 SPLIT_ANGLE = 30.0
 CONTEXT = None
 
 DEBUG = False
-
-#----------------------------------------------------------------------------------------------------------------------------------
-#							CLASS MATERIAL
-#----------------------------------------------------------------------------------------------------------------------------------
-#	AC3D material
-# material_list = [ MATERIAL() , MATERIAL() ,  ... ]
-#----------------------------------------------------------------------------------------------------------------------------------
-
-class MATERIAL:
-	def __init__(self):
-		self.rgb			= mathutils.Vector( (0.0, 0.0, 0.0) )
-		self.amb			= mathutils.Vector( (0.0, 0.0, 0.0) )
-		self.emis			= mathutils.Vector( (0.0, 0.0, 0.0) )
-		self.spec			= mathutils.Vector( (0.0, 0.0, 0.0) )
-		self.shi			= 0
-		self.trans			= 0
-		self.name_ac		= ""
-		self.name_bl		= ""
-#----------------------------------------------------------------------------------------------------------------------------------
-#							CLASS MESH
-#----------------------------------------------------------------------------------------------------------------------------------
-#  vertices = [  (0.0,0.0,0.0) , (1.0,1.0,1.0) , ... ]									coord (x,y,z)
-#  edges    = [  (0,1) , (1,2) , (5,4) ,  ... ]											don't use   (point indice)
-#  faces    = [  (1,2,3) , (2,3,4,5) , ... ]											point indice  
-#  uv		= [	 ((0,0),(0,0),(0,0))  , ((0,0),(0,0),(0,0),(0,0)) ,  .... ]				coord uv  !?! len(faces) = len(uv)
-#----------------------------------------------------------------------------------------------------------------------------------
-class MESH:
-	def __init__(self):
-		self.vertices		= []
-		self.edges			= []
-		self.faces			= []
-		self.uv				= []
-		self.tex_name		= ""
-		self.tex_name_bl	= ""
-		self.img_name_bl	= ""
-		self.tex_name_clean	= ""
-		self.mesh_name		= ""
-		self.mesh_name_bl	= ""
-		self.location		= mathutils.Vector( (0.0, 0.0, 0.0) )
-		self.loc_group		= []
-		self.group			= False
-		self.parent			= []
-		self.parent_name	= []
-		self.mat_no			= -1
-		self.crease			= -1.0
-		
-	def reset(self):
-		del self.vertices
-		del self.edges
-		del self.faces
-		del self.uv
-
-		self.vertices		= []
-		self.edges			= []
-		self.faces			= []
-		self.uv				= []
-		self.tex_name_bl	= ""
-		self.img_name_bl	= ""
-		self.tex_name		= ""
-		self.tex_name_clean	= ""
-		self.mesh_name		= ""
-		self.mesh_name_bl	= ""
-		self.location		= mathutils.Vector( (0.0, 0.0, 0.0) )
-		self.group			= False
-		self.mat_no			= -1
-		self.crease			= -1.0
-
-		
-	def add_vertices(self, vert):
-		self.vertices +=  [vert]
-		
-	def add_edges(self, ed):
-		self.edges +=  ed
-		
-	def add_faces(self, fa):
-		self.faces +=  fa
-		
-	def set_name( self, new_name ):
-		self.mesh_name = new_name
-
-	def set_tex_name( self, new_name ):
-		self.tex_name = new_name
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def extract_path(name_path):
@@ -184,291 +105,6 @@ def debug_info( aff):
 	if DEBUG:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
-
-def edge_split( context, split_angle ):
-	bpy.ops.object.select_all(action='DESELECT')
-	list_objects = context.scene.objects
-	
-	print( "--------------" )
-	print( "Edge split all" )
-	print( "--------------" )
-	for obj in list_objects:
-		if obj.type == 'MESH':
-			obj_name = obj.name
-			print( "Edge-split %s" % obj.name )
-			try:
-				bpy.ops.object.select_name(name=obj_name)
-				bpy.ops.object.shade_smooth()
-				try:
-					bpy.ops.object.modifier_add( type='EDGE_SPLIT')	
-				except:
-					print( "Erreur modifier_add Edge-split" )
-					
-				try:
-					for mod in obj.modifiers:
-						if mod.type=='EDGE_SPLIT':
-							mod.split_angle = radians(split_angle)
-				except:
-					print( "Erreur Edge-split angle" )
-				
-			except:
-				print( "Erreur Edge-split" )
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def smooth_all( context ):
-	bpy.ops.object.select_all(action='DESELECT')
-	list_objects = context.scene.objects
-
-	print( "----------" )
-	print( "Smooth_all" )
-	print( "----------" )
-	
-	for obj in list_objects:
-		if obj.type == 'MESH':
-			obj_name = obj.name	
-			print( "Smooth %s" % obj.name )
-			bpy.ops.object.select_name(name=obj_name)
-			bpy.ops.object.shade_smooth()
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def create_empty( local_mesh):
-	
-	obj_name = local_mesh.mesh_name
-	debug_info( "create empty objet %s" % obj_name )
-	obj_new = bpy.data.objects.new(obj_name, None)
-	local_mesh.mesh_name_bl = obj_new.name
-	v = local_mesh.location
-	obj_new.location = (v.x, v.y, v.z )
-
-	if local_mesh.parent_name[-1]!='WORLD':
-		obj_new.parent = bpy.data.objects[local_mesh.parent_name[-1]]
-
-	sc = bpy.context.scene
-	o = sc.objects.link(obj_new)
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def create_uv( local_mesh, mesh ):
-	global path_name, material_list
-	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
-
-	if local_mesh.uv!=[]:
-		mesh.uv_textures.new()
-		uvtex = mesh.uv_layers.active
-		j=0
-		if local_mesh.img_name_bl != "":
-			try:
-				img = bpy.data.images[local_mesh.img_name_bl]
-			except:
-				img = None
-				print( '     Erreur recherche img "%s"'%local_mesh.img_name_bl )
-		else:
-			img = None
-
-		idx = 0
-		debug_info( "Nb uv_textures : %d " % len(mesh.uv_textures[-1].data) )
-		debug_info( "Nb faces       : %d " % len(local_mesh.faces) )
-		debug_info( "Nb points      : %d " % len(local_mesh.vertices) )
-		
-		#optimisation foreach_set don't work
-		#uvtex.data.add(len(local_mesh.uv))
-		#uvtex.data.foreach_set( "uv", unpack_face_list(local_mesh.uv) )
-		for i in range(len(local_mesh.faces)):
-			nb = len(local_mesh.faces[i])
-			debug_info( "Face no        : %d " % i )
-			debug_info( "Nb points      : %d " % nb )
-			debug_info( "Nb uv : %d  nb local_mesh.uv : %d      idx : %d" % (len(uvtex.data), len(local_mesh.uv), idx ) )
-			# triangle or  quad or edge
-			if nb >= 2:
-				j = local_mesh.faces[i][0]
-				debug_info( "indice j  : %d" % (j) )
-				k = local_mesh.faces[i][1]
-				#uvtex.data[idx+0].uv = local_mesh.uv[j]
-				#uvtex.data[idx+1].uv = local_mesh.uv[k]
-				uvtex.data[idx+0].uv = local_mesh.uv[i][0]
-				uvtex.data[idx+1].uv = local_mesh.uv[i][1]
-			# triangle or  quad
-			if nb >= 3:
-				l = local_mesh.faces[i][2]
-				#uvtex.data[idx+2].uv = local_mesh.uv[l]
-				uvtex.data[idx+2].uv = local_mesh.uv[i][2]
-			#quad
-			if nb == 4:
-				m = local_mesh.faces[i][3]
-				#uvtex.data[idx+3].uv = local_mesh.uv[m]
-				uvtex.data[idx+3].uv = local_mesh.uv[i][3]
-		
-			mesh.uv_textures[-1].data[i].image = img
-			idx = idx + nb
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def assign_material( local_mesh, obj_new ):
-	global path_name, material_list
-	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
-
-	if local_mesh.uv!=[]:
-		texture = None
-		for texture in bpy.data.textures:
-			if texture.name == local_mesh.tex_name_bl:
-				break
-		
-		mesh = obj_new.data	
-
-		no = local_mesh.mat_no
-		if ( len(material_list) != 0 ):
-			ml = material_list[no]
-			bl_mat = ml[0]
-		
-			if ml[2]!="":
-				bOK = True
-				for ml in material_list:
-					if ml[2] == local_mesh.tex_name_bl and ml[1] == no:
-						bl_mat = ml[0]
-						mesh.materials.append(bl_mat)
-						if bl_mat.use_transparency:
-							obj_new.show_transparent = True
-						#print( "    assign material %s avec la texture %s" % (bl_mat.name, local_mesh.tex_name_bl) )
-						bOK = False
-						break
-			
-				if bOK:
-					debug_info( "   Pas la meme texture %s %s" % (ml[2],local_mesh.tex_name_bl) )
-						
-					for ml in material_list:
-						if ml[1] == no:
-							ac_mat = ml[3]
-							# First use of material ??
-							if len(bl_mat.texture_slots) != 0:
-								bl_mat = bpy.data.materials.new(ac_mat.name_ac)
-
-							debug_info( '    Create material %s with texture "%s"' % (bl_mat.name,local_mesh.tex_name_bl) )
-							ac_mat.name_bl			= bl_mat.name
-	
-							bl_mat.diffuse_color	= ac_mat.rgb
-							bl_mat.ambient			= ac_mat.amb.x
-							bl_mat.emit				= ac_mat.emis.x
-							bl_mat.emit				= 0.2
-							bl_mat.specular_color	= ac_mat.spec
-							bl_mat.specular_hardness= ac_mat.shi
-							bl_mat.alpha			= 1.0-ac_mat.trans
-							bl_mat.use_transparency = False
-							if bl_mat.alpha != 1.0:
-								bl_mat.use_transparency = True
-								obj_new.show_transparent = True
-
-							if local_mesh.tex_name != "":
-								texture_slot = bl_mat.texture_slots.add()
-								texture_slot.texture = texture
-								texture_slot.texture_coords='UV'
-
-							material_list.append( (bl_mat, no, local_mesh.tex_name_bl, ac_mat))
-							mesh.materials.append(bl_mat)
-							break
-						
-				
-			else:
-				if local_mesh.tex_name_bl !="":
-					texture_slot = bl_mat.texture_slots.add()
-					texture_slot.texture = texture
-					texture_slot.texture_coords='UV'
-					material_list[no] = ( ml[0],ml[1],local_mesh.tex_name_bl, ml[3] )
-					debug_info( "    material %s with new texture = %s" % (ml[0].name,local_mesh.tex_name_bl) )
-				else:
-					debug_info( '    material %s without texture' % (ml[0].name) )
-				mesh.materials.append(bl_mat)
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def create_mesh( local_mesh ):
-	global path_name, material_list
-	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE, CONTEXT
-
-	obj_name = local_mesh.mesh_name
-	context = CONTEXT
-	
-	mesh = bpy.data.meshes.new(obj_name+".mesh")
-
-	if local_mesh.crease != -1.0:
-		mesh.use_auto_smooth = True
-		mesh.auto_smooth_angle = radians(local_mesh.crease)
-
-
-	mesh.vertices.add(len(local_mesh.vertices))
-	mesh.tessfaces.add(len(local_mesh.faces))
-
-	mesh.vertices.foreach_set("co", unpack_list(local_mesh.vertices))
-	mesh.tessfaces.foreach_set("vertices_raw", unpack_face_list(local_mesh.faces))
-	mesh.tessfaces.foreach_set("use_smooth", [(True)]*len(local_mesh.faces) )
-
-	mesh.update()
-
-	sc = bpy.context.scene
-	obj_new = bpy.data.objects.new(obj_name,mesh)
-	#v = local_mesh.location
-	#obj_new.location = (v.x, v.y, v.z )
-	obj_new.location = local_mesh.location
-	local_mesh.mesh_name_bl = obj_new.name
-	
-	o = sc.objects.link(obj_new)
-	
-	if local_mesh.parent_name[-1]!='WORLD':
-		str_print = "create_mesh() %s   parent = %s" % (local_mesh.mesh_name_bl,local_mesh.parent_name[-1])
-		obj_new.parent = bpy.data.objects[local_mesh.parent_name[-1]]
-	else:
-		str_print = "create_mesh() %s" % (local_mesh.mesh_name_bl)
-
-	str_print += ' mat no = %d  texture="%s" image="%s"' % (local_mesh.mat_no, local_mesh.tex_name_bl, local_mesh.img_name_bl)
-	debug_info(str_print)
-
-	create_uv( local_mesh, mesh )
-	assign_material( local_mesh, obj_new )
-
-	#mesh.update(calc_edges=True)
-	mesh.validate()
-	mesh.update(calc_edges=True)
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def create_texture( local_mesh ):
-	global path_name
-	
-	img_name = cleaner_name(local_mesh.tex_name)
-	img_name_clean = tronc_name( os.path.basename(img_name) )
-
-	#print( "create_texture()  img_name : %s" % img_name )
-	#print( "create_texture()  img_name_clean : %s" % img_name_clean )
-	
-	# null ???
-	if img_name == "":
-		return
-		
-	name_path = os.path.join( path_name, img_name )
-	name_path = os.path.normpath(name_path)
-	
-	filenamepath = img_name
-	
-	debug_info( "create_texture()  name_path : %s" % bpy.path.basename(name_path) )
-	
-	for tex in bpy.data.textures:
-		if tex.type=='IMAGE':
-			img = tex.image
-			if img.filepath == name_path:
-				local_mesh.img_name_bl = img.name
-				local_mesh.tex_name_bl = tex.name
-				return img.name
-	
-	try:
-		img = bpy.data.images.load( name_path )
-	except:
-		print( '*** erreur **** %s introuvale' % (name_path) )
-		img = bpy.data.images.new(name='void', width=1024, height=1024, alpha=True, float_buffer=True)
-		return ""
-	
-	local_mesh.img_name_bl = img.name
-	tex = bpy.data.textures.new( img_name_clean, 'IMAGE')
-	tex.image = img
-	local_mesh.set_tex_name( img_name_clean )
-	local_mesh.tex_name_bl = tex.name
-	local_mesh.img_name_bl = img.name
-	debug_info( '    Creation de la texture "%s" img="%s"'%(local_mesh.tex_name_bl,local_mesh.img_name_bl) )
-	return tex.name
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
@@ -571,7 +207,7 @@ def read_face( fi, local_mesh):
 def read_texture( fi, line, local_mesh):
 	mot = line.split()
 	local_mesh.tex_name = mot[1].split('"')[1]
-	local_mesh.tex_name_bl = create_texture(local_mesh)
+	local_mesh.tex_name_bl = local_mesh.create_texture()
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def read_surface( f, line, local_mesh ):
@@ -592,10 +228,10 @@ def read_location( f, line, local_mesh ):
 def read_kids( f, line, local_mesh ):
 
 	if local_mesh.group:
-		create_empty(local_mesh)
+		local_mesh.create_empty()
 	elif local_mesh.mesh_name != 'WORLD':
 		print( 'Import du mesh : %s' % local_mesh.mesh_name )
-		create_mesh( local_mesh )
+		local_mesh.create_mesh()
 	
 	if len(local_mesh.parent) != 0:
 		local_mesh.parent[-1] -= 1
@@ -640,7 +276,7 @@ def read_object( f, line, local_mesh ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def read_material( f, line, local_mesh ):
-	global path_name, material_list
+	#global path_name, material_list
 
 	m = line.split()
 	ac_mat = MATERIAL()		
@@ -700,7 +336,7 @@ def display_texture():
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def read_ac(filename, smooth_all, edge_split, split_angle, context):
-	global path_name, material_list
+	#global path_name, material_list
 	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 	global CONTEXT
 
@@ -725,6 +361,7 @@ def read_ac(filename, smooth_all, edge_split, split_angle, context):
 	line = f.readline()
 	# init local_mesh for all fonctions (zero in read_object only)
 	local_mesh = MESH()
+	local_mesh.filename = filename
 	#--------------------------
 	# main  loop
 	# 
