@@ -78,7 +78,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 	smooth_all	= BoolProperty(name="Smooth all", description="Tools smooth", default=True)
 	edge_split	= BoolProperty(name="Edge split", description="Object modifiers", default=True)
 	split_angle	= FloatProperty(name="Split angle", description="Value of edge-spit", min=0.0, max=180.0, default=65.0 )
-	include		= BoolProperty(name="Include file", description="Read file include", default=False)
+	include		= BoolProperty(name="Include file", description="Read file include", default=True)
 
 	def draw(self, context):
 		scn = context.scene

@@ -35,11 +35,15 @@ import bpy
 import mathutils
 import time
 
+from . import *
+
 
 from .ac_manager import MESH
 from .ac_manager import MATERIAL
 from .ac_manager import material_list
 from .ac_manager import path_name
+from .ac_manager import AC_FILE
+#from .ac_manager import ac_file
 
 #path_name = ""
 #material_list = []
@@ -335,11 +339,12 @@ def display_texture():
 #						==============
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def read_ac(filename, smooth_all, edge_split, split_angle, context):
+
+def read_ac(filename, smooth_all, edge_split, split_angle, context, extra):
 	#global path_name, material_list
 	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 	global CONTEXT
-
+	
 	version = bpy.app.version
 	if version[1] < 63:
 		print( "Erreur : Scrpit pour blender >= 2.63" )
@@ -351,6 +356,12 @@ def read_ac(filename, smooth_all, edge_split, split_angle, context):
 	SMOOTH_ALL	= smooth_all
 	EDGE_SPLIT	= edge_split
 	SPLIT_ANGLE	= split_angle
+
+	ac_file = AC_FILE()
+	ac_file.name = filename
+	ac_manager.set_ac_file( ac_file )
+	
+	ac_manager.xml_extra_position = extra
 	
 	# init global variable
 	path_name = ""

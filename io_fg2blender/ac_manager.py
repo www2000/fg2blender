@@ -40,6 +40,11 @@ from bpy_extras.io_utils import unpack_list, unpack_face_list
 
 path_name = ""
 material_list = []
+
+current_ac_file = None
+xml_extra_position = None
+
+
 SMOOTH_ALL = False
 EDGE_SPLIT = False
 SPLIT_ANGLE = 30.0
@@ -57,6 +62,18 @@ class AC_OPTION:
 		self.smooth_all		= True
 		self.edge_split		= True
 		self.split_angle	= 60.0
+
+#----------------------------------------------------------------------------------------------------------------------------------
+#							CLASS AC_OPTION
+#----------------------------------------------------------------------------------------------------------------------------------
+#	name		= "fuse.ac"						String  file name
+#	meshs		= [ "fuse",  "cockpit" , ...]	list of String       Mesh name
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class AC_FILE:
+	def __init__(self):
+		self.name			= ""
+		self.meshs			= []
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS MATERIAL
@@ -292,11 +309,14 @@ class MESH:
 	def create_mesh( self ):
 		global path_name, material_list
 		global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE, CONTEXT
-
+		global current_ac_file
+		
+		
 		obj_name = self.mesh_name
 		context = CONTEXT
 	
 		mesh = bpy.data.meshes.new(obj_name+".mesh")
+		current_ac_file.meshs.append( self.mesh_name )
 
 		if self.crease != -1.0:
 			mesh.use_auto_smooth = True
@@ -317,6 +337,9 @@ class MESH:
 		#v = self.location
 		#obj_new.location = (v.x, v.y, v.z )
 		obj_new.location = self.location
+		if xml_extra_position:
+			obj_new.delta_location = xml_extra_position.offset
+			
 		self.mesh_name_bl = obj_new.name
 	
 		o = sc.objects.link(obj_new)
@@ -488,4 +511,13 @@ def smooth_all( context ):
 			print( "Smooth %s" % obj.name )
 			bpy.ops.object.select_name(name=obj_name)
 			bpy.ops.object.shade_smooth()
+#----------------------------------------------------------------------------------------------------------------------------------
 
+def get_ac_file():
+	global current_ac_file
+	return current_ac_file
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def set_ac_file( new_ac_file ):
+	global current_ac_file
+	current_ac_file = new_ac_file
