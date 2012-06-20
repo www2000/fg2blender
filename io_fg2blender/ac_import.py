@@ -34,8 +34,8 @@ import os
 import bpy
 import mathutils
 import time
-from math import radians
-from bpy_extras.io_utils import unpack_list, unpack_face_list
+
+
 from .ac_manager import MESH
 from .ac_manager import MATERIAL
 from .ac_manager import material_list
@@ -230,7 +230,7 @@ def read_kids( f, line, local_mesh ):
 	if local_mesh.group:
 		local_mesh.create_empty()
 	elif local_mesh.mesh_name != 'WORLD':
-		print( 'Import du mesh : %s' % local_mesh.mesh_name )
+		debug_info( 'Import du mesh : %s' % local_mesh.mesh_name )
 		local_mesh.create_mesh()
 	
 	if len(local_mesh.parent) != 0:
@@ -379,9 +379,9 @@ def read_ac(filename, smooth_all, edge_split, split_angle, context):
 	# close file and byebye
 	f.close()
 	
-	print( "Parent restant %d" % len(local_mesh.parent) )
+	#print( "Parent restant %d" % len(local_mesh.parent) )
 	display_texture()
 	time_end = time.time()
-	print( "Import %s in %0.2f sec" % (without_path(filename),(time_end-time_deb) ) )
+	print( "Import %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
 
 

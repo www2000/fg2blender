@@ -38,10 +38,21 @@ bl_info = {
 
 
 import bpy
+import os
+import time
 
-#from io_utils import ExportHelper, ImportHelper
-from bpy_extras.io_utils import ExportHelper, ImportHelper
-from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty
+from bpy_extras.io_utils import ExportHelper
+from bpy_extras.io_utils import ImportHelper
+
+
+from bpy.props import FloatProperty
+from bpy.props import StringProperty
+from bpy.props import BoolProperty
+from bpy.props import EnumProperty
+from bpy.props import CollectionProperty
+
+from .ac_manager import AC_OPTION
+from .xml_manager import XML_OPTION
 
 
 
@@ -55,31 +66,58 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 
 	# ExportHelper mixin class uses this
 	filename_ext = ".xml"
-
 	filter_glob = StringProperty(default="*.xml", options={'HIDDEN'})
 
-	# List of operator properties, the attributes will be assigned
-	# to the class instance from the operator settings before calling.
-	#use_setting = BoolProperty(name="Example Boolean", description="Example Tooltip", default=True)
-	#filepath = bpy.props.StringProperty(name="File Path", maxlen=1024, default="")
+
+	files = CollectionProperty(	name="File Path",
+								description="File path used for importing " "xml file",
+								type=bpy.types.OperatorFileListElement)
+	directory = StringProperty()
+
 
 	smooth_all	= BoolProperty(name="Smooth all", description="Tools smooth", default=True)
 	edge_split	= BoolProperty(name="Edge split", description="Object modifiers", default=True)
 	split_angle	= FloatProperty(name="Split angle", description="Value of edge-spit", min=0.0, max=180.0, default=65.0 )
+	include		= BoolProperty(name="Include file", description="Read file include", default=False)
+
+	def draw(self, context):
+		scn = context.scene
+		layout = self.layout
+		row = layout.row()
+		row.label( text = "Option ac" )
+
+		box_option_ac = layout.box()
+		row = box_option_ac.column()
+		row.prop( self, "smooth_all" )
+		row.prop( self, "edge_split" )
+		row.prop( self, "split_angle" )
+
+		row = layout.row()
+		row.label( text = "Option xml" )
+		box_option_xml = layout.box()
+		row = box_option_xml.column()
+		#row.label( text = "Option xml" )
+		row.prop( self, "include" )
 
 
 	def execute(self, context):
-		from .xml_import import import_xml
 
-		if self.edge_split:
-			self.smooth_all=False
-		import_xml(	self.filepath, 
-								smooth_all=self.smooth_all,
-								edge_split=self.edge_split,
-								split_angle=self.split_angle,
-								context=context )
+		paths = [os.path.join(self.directory, name.name)	for name in self.files]
+			
+		from .xml_import import import_xml
+		for filename in paths:
+			print( filename )
+			ac_option = AC_OPTION()
+			ac_option.smooth_all	= self.smooth_all
+			ac_optionedge_split		= self.edge_split
+			ac_optionsplit_angle	= self.split_angle
+		
+			xml_option = XML_OPTION()
+			xml_option.include		= self.include
+		
+			import_xml(	filename, ac_option, xml_option )
+		
 		return {'FINISHED'}
-		#return write_some_data(context, self.filepath, self.select_only)
 
 
 
