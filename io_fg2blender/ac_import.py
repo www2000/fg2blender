@@ -50,7 +50,7 @@ EDGE_SPLIT = False
 SPLIT_ANGLE = 30.0
 CONTEXT = None
 
-DEBUG = False
+DEBUG = True
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def without_path(name_path):

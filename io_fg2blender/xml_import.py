@@ -505,7 +505,9 @@ def lit_fichier( filename ):
 	
 	if option_include:
 		for file_include in file_includes:
-			file_include = absolute_path( file_include )
+			#print(  file_include )
+			#print( path_model )
+			file_include = absolute_path( conversion(file_include) )
 			lit_fichier( conversion(file_include) )
 #---------------------------------------------------------------------------------------------------------------------
 
