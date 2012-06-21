@@ -38,7 +38,6 @@ from math import radians
 from bpy_extras.io_utils import unpack_list, unpack_face_list
 
 
-path_name = ""
 material_list = []
 
 current_ac_file = None
@@ -50,7 +49,7 @@ EDGE_SPLIT = False
 SPLIT_ANGLE = 30.0
 CONTEXT = None
 
-DEBUG = False
+DEBUG = True
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS AC_OPTION
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -74,7 +73,20 @@ class AC_FILE:
 	def __init__(self):
 		self.name			= ""
 		self.meshs			= []
+	#----------------------------------------------------------------------------------------------------------------------------------
 
+	def create_group_ac( self ):
+		return
+		for obj in bpy.data.objects:
+			obj.select = False
+		group_name = os.path.basename( self.name )
+		bpy.data.groups.new( group_name )
+		for mesh_name in self.meshs:
+			obj = bpy.data.objects[mesh_name]
+			obj.select = True
+			bpy.context.scene.objects.active = obj
+			bpy.ops.object.group_link( group = group_name)
+			obj.select = False
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS MATERIAL
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -177,7 +189,7 @@ class MESH:
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_uv( self, mesh ):
-		global path_name, material_list
+		global material_list
 		global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 
 		if self.uv!=[]:
@@ -203,13 +215,13 @@ class MESH:
 			#uvtex.data.foreach_set( "uv", unpack_face_list(self.uv) )
 			for i in range(len(self.faces)):
 				nb = len(self.faces[i])
-				debug_info( "Face no        : %d " % i )
-				debug_info( "Nb points      : %d " % nb )
-				debug_info( "Nb uv : %d  nb self.uv : %d      idx : %d" % (len(uvtex.data), len(self.uv), idx ) )
+				#debug_info( "Face no        : %d " % i )
+				#debug_info( "Nb points      : %d " % nb )
+				#debug_info( "Nb uv : %d  nb self.uv : %d      idx : %d" % (len(uvtex.data), len(self.uv), idx ) )
 				# triangle or  quad or edge
 				if nb >= 2:
 					j = self.faces[i][0]
-					debug_info( "indice j  : %d" % (j) )
+					#debug_info( "indice j  : %d" % (j) )
 					k = self.faces[i][1]
 					#uvtex.data[idx+0].uv = self.uv[j]
 					#uvtex.data[idx+1].uv = self.uv[k]
@@ -231,7 +243,7 @@ class MESH:
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def assign_material( self, obj_new ):
-		global path_name, material_list
+		global material_list
 		global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 
 		if self.uv!=[]:
@@ -307,16 +319,18 @@ class MESH:
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_mesh( self ):
-		global path_name, material_list
+		global material_list
 		global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE, CONTEXT
 		global current_ac_file
 		
+		if not self.parent_name:
+			return
 		
+		debug_info( "ac_manager::MESH.create_mesh() %s" % self.mesh_name )
 		obj_name = self.mesh_name
 		context = CONTEXT
 	
 		mesh = bpy.data.meshes.new(obj_name+".mesh")
-		current_ac_file.meshs.append( self.mesh_name )
 
 		if self.crease != -1.0:
 			mesh.use_auto_smooth = True
@@ -334,8 +348,9 @@ class MESH:
 
 		sc = bpy.context.scene
 		obj_new = bpy.data.objects.new(obj_name,mesh)
-		#v = self.location
-		#obj_new.location = (v.x, v.y, v.z )
+		#current_ac_file.meshs.append( self.mesh_name )
+		current_ac_file.meshs.append( obj_new.name )
+
 		obj_new.location = self.location
 		if xml_extra_position:
 			obj_new.delta_location = xml_extra_position.offset
@@ -362,10 +377,10 @@ class MESH:
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_texture( self ):
-		global path_name
 	
-		img_name = cleaner_name(self.tex_name)
-		img_name_clean = tronc_name( os.path.basename(img_name) )
+		img_name = os.path.basename(self.tex_name)
+		#21 name 21 char max
+		img_name_clean = tronc_name( img_name )
 
 		#print( "create_texture()  img_name : %s" % img_name )
 		#print( "create_texture()  img_name_clean : %s" % img_name_clean )
@@ -374,7 +389,6 @@ class MESH:
 		if img_name == "":
 			return
 		
-		#name_path = os.path.join( path_name, img_name )
 		name_path = os.path.dirname(self.filename)
 		name_path = os.path.normpath(name_path + os.sep + self.tex_name)
 	
@@ -410,50 +424,6 @@ class MESH:
 #
 #					FIN  object MESH
 #
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def extract_path(name_path):
-	global path_name
-	"""
-	name = ""
-	rep = name_path.split('/')
-	
-	for i in range(len(rep)-1):
-		name += rep[i] + '/'
-
-	path_name = name
-	"""
-	path_name = os.path.dirname(os.path.normpath(name_path))
-	#print( "extract_path() : %s " % path_name )
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def without_path(name_path):
-	"""
-	name = ""
-	for c in reversed(name_path):
-		if c != '/':
-			name = c + name
-		else:
-			break
-	"""	
-	n = name_path.split('/')
-	if ( len(n) == 1 ):
-		n = name_path.split('\\')
-		
-	nn = ""
-	
-	for s in n:
-		nn = os.path.join( nn, s )
-
-
-	name = os.path.normpath(nn)
-
-	return name
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def cleaner_name(name_path):
-	name = without_path( name_path )
-	return name
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def tronc_name(name_path):

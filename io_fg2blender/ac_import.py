@@ -41,11 +41,9 @@ from . import *
 from .ac_manager import MESH
 from .ac_manager import MATERIAL
 from .ac_manager import material_list
-from .ac_manager import path_name
 from .ac_manager import AC_FILE
 #from .ac_manager import ac_file
 
-#path_name = ""
 #material_list = []
 SMOOTH_ALL = False
 EDGE_SPLIT = False
@@ -53,21 +51,6 @@ SPLIT_ANGLE = 30.0
 CONTEXT = None
 
 DEBUG = False
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def extract_path(name_path):
-	global path_name
-	"""
-	name = ""
-	rep = name_path.split('/')
-	
-	for i in range(len(rep)-1):
-		name += rep[i] + '/'
-
-	path_name = name
-	"""
-	path_name = os.path.dirname(os.path.normpath(name_path))
-	#print( "extract_path() : %s " % path_name )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def without_path(name_path):
@@ -147,7 +130,7 @@ def read_face( fi, local_mesh):
 		line = fi.readline()
 
 	nb = int(line.split()[1])
-	debug_info( "read_face()  nb = %d " % nb )
+	#debug_info( "read_face()  nb = %d " % nb )
 
 	f = []
 	uv = []
@@ -205,7 +188,7 @@ def read_face( fi, local_mesh):
 		
 		for i in range(nb-2):
 			local_mesh.uv.append( (uv[0],uv[i+1],uv[i+2]) )
-	debug_info( "Longeur uv %d " % len(local_mesh.uv) )
+	#debug_info( "Longeur uv %d " % len(local_mesh.uv) )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def read_texture( fi, line, local_mesh):
@@ -255,6 +238,8 @@ def read_kids( f, line, local_mesh ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def read_name( f, line, local_mesh ):
+	#si world  deja defini ( dans  OBJECT world )
+		
 	mot = line.split()
 
 	mesh_name = mot[1].split('"')[1]
@@ -280,7 +265,6 @@ def read_object( f, line, local_mesh ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def read_material( f, line, local_mesh ):
-	#global path_name, material_list
 
 	m = line.split()
 	ac_mat = MATERIAL()		
@@ -341,7 +325,6 @@ def display_texture():
 
 
 def read_ac(filename, smooth_all, edge_split, split_angle, context, extra):
-	#global path_name, material_list
 	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 	global CONTEXT
 	
@@ -364,15 +347,17 @@ def read_ac(filename, smooth_all, edge_split, split_angle, context, extra):
 	ac_manager.xml_extra_position = extra
 	
 	# init global variable
-	path_name = ""
 	material_list = []
 	# extract pathname and open file
-	extract_path( filename )
-	f = open(filename,'r')
-	line = f.readline()
+	#extract_path( filename )
 	# init local_mesh for all fonctions (zero in read_object only)
 	local_mesh = MESH()
 	local_mesh.filename = filename
+
+	print( "\tac_import:read_ac() %s" % filename.partition( 'Aircraft'+os.sep )[2] )
+
+	f = open(filename,'r')
+	line = f.readline()
 	#--------------------------
 	# main  loop
 	# 
@@ -390,8 +375,10 @@ def read_ac(filename, smooth_all, edge_split, split_angle, context, extra):
 	# close file and byebye
 	f.close()
 	
+	ac_file.create_group_ac()
+	
 	#print( "Parent restant %d" % len(local_mesh.parent) )
-	display_texture()
+	#display_texture()
 	time_end = time.time()
 	print( "Import %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
 

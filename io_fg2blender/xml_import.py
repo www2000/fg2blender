@@ -46,6 +46,7 @@ option_translation = False
 option_animation = False
 option_ac_file = False
 
+DEBUG_INFO = False
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def conversion(name_path):
@@ -109,13 +110,13 @@ def readVector_center( node ):
 	v = Vector( (0.0,0.0,0.0) )
 	childs = node.getElementsByTagName('x-m')
 	if childs:
-		v.x = float( sup_space( ret_text_value(childs[0])) )
+		v.x = ret_float_value(childs[0])
 	childs = node.getElementsByTagName('y-m')
 	if childs:
-		v.y = float( sup_space(ret_text_value(childs[0])) )
+		v.y = ret_float_value(childs[0])
 	childs = node.getElementsByTagName('z-m')
 	if childs:
-		v.z = float( sup_space(ret_text_value(childs[0])) )
+		v.z = ret_float_value(childs[0])
 	return v
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -182,6 +183,16 @@ def ret_text_value( node ):
 		if child.nodeType == 3:
 			if child.nodeValue[0] != '\n':
 				s = child.nodeValue
+	return s
+#---------------------------------------------------------------------------------------------------------------------
+
+def ret_float_value( node ):
+	s = 0.0
+	if node.hasChildNodes():
+		child = node.childNodes[0]
+		if child.nodeType == 3:
+			if child.nodeValue[0] != '\n':
+				s = float( sup_space( child.nodeValue ) )
 	return s
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -319,7 +330,7 @@ def print_offset_path( node ):
 				if translations:
 					value = read_center(child)
 					print( "%sOffset : %s" % (tabs(),value) )
-					xml_manager.xml_current.offset = readVector(child)
+					#xml_manager.xml_current.offset = read_center(child)
 				roll = child.getElementsByTagName('roll-deg')
 				if roll:
 					print( "%sroll-deg : %s" % (tabs(),ret_text_value(roll[0])) )
@@ -343,7 +354,7 @@ def read_offset_path( node, xml_file ):
 				translations = child.getElementsByTagName('x-m')
 				if translations:
 					value = read_center(child)
-					print( "%sOffset : %s" % (tabs(),value) )
+					#print( "%sOffset : %s" % (tabs(),value) )
 					xml_file.offset = xml_manager.xml_current.offset +  readVector_center(child)
 	else:
 		print( "%sPas d'offset" % tabs() )
@@ -411,7 +422,7 @@ def parcour_child( node, file_name ):
 						if file_ac.find(os.getcwd()) == -1:
 							file_ac = os.getcwd() + os.sep + file_ac
 
-						print( conversion(file_ac) )
+						#print( conversion(file_ac) )
 
 						if os.path.isfile(file_ac):
 							read_ac(	filename 	= conversion(file_ac),
@@ -426,6 +437,7 @@ def parcour_child( node, file_name ):
 							#for mesh in ac_file.meshs:
 							#	print( mesh )
 							#from .xml_manager import xml_current
+							#
 							xml_manager.xml_current.add_ac_file( ac_file )
 							#for mesh in xml_manager.xml_current.ac_files[-1].meshs:
 							#	print( mesh )
@@ -477,7 +489,7 @@ def lit_fichier( filename ):
 	
 	file_includes = []
 	niv = 0
-	print( "--- Lecture du fichier : %s " % filename )
+	print( "xml_import:lit_fichier()  %s " % filename )
 	if os.path.isfile(filename):
 		fsock = open(filename)
 		xmldoc = xml.dom.minidom.parse(fsock) 
@@ -567,7 +579,14 @@ def import_xml(filename, ac_option, xml_option):
 	option_translation = False
 	option_animation = False
 	option_ac_file = True
-		
+
+	if DEBUG_INFO:		
+		option_print_include = True
+		option_rotation = True
+		option_translation = True
+		option_animation = True
+		option_ac_file = True
+
 	read_file_xml( conversion(filename) )
 
 	time_end = time.time()
