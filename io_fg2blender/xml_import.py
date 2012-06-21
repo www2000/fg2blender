@@ -27,6 +27,7 @@ import os
 import time
 import bpy
 import xml.dom.minidom
+import codecs
 
 from . import *
 
@@ -492,7 +493,19 @@ def lit_fichier( filename ):
 	print( "xml_import:lit_fichier()  %s " % filename )
 	if os.path.isfile(filename):
 		fsock = open(filename)
-		xmldoc = xml.dom.minidom.parse(fsock) 
+		try:
+			xmldoc = xml.dom.minidom.parse(fsock)
+		except:
+			fsock.close()                 
+			#fsock = open(filename, 'r+').read().decode('iso-8859-1')
+			fsock = codecs.open(filename, 'r+', 'iso-8859-1' )
+			print( " **********************************************************************************" )
+			print( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
+			print( " **********************************************************************************" )
+			print( " ***************  Changement de Codec ; Ah les messieurs iso-8859-1 ***************" )
+			print( " **********************************************************************************" )
+			xmldoc = xml.dom.minidom.parse(fsock)
+
 		fsock.close()                 
 		node = xmldoc.documentElement
 

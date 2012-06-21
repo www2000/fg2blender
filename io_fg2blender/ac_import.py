@@ -50,7 +50,7 @@ EDGE_SPLIT = False
 SPLIT_ANGLE = 30.0
 CONTEXT = None
 
-DEBUG = True
+DEBUG = False
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def without_path(name_path):
@@ -283,16 +283,19 @@ def read_material( f, line, local_mesh ):
 	bl_mat.diffuse_color	= ac_mat.rgb
 	bl_mat.ambient			= ac_mat.amb.x
 	bl_mat.emit				= ac_mat.emis.x
-	bl_mat.emit				= 0.2
+	bl_mat.emit				= 0.1
 	bl_mat.specular_color	= ac_mat.spec
 	bl_mat.specular_hardness= ac_mat.shi
-	bl_mat.alpha			= 1.0-ac_mat.trans
-	bl_mat.use_transparency = False
-	if bl_mat.alpha != 1.0:
+	bl_mat.use_transparency = True
+	bl_mat.alpha			= 0.0
+	if ac_mat.trans != 0.0:
+		bl_mat.alpha			= 1.0-ac_mat.trans
 		bl_mat.use_transparency = True
+
 	
-	no = len(material_list)
-	material_list.append( (bl_mat, no, "", ac_mat))
+	no = len(ac_manager.material_list)
+	ac_manager.material_list.append( (bl_mat, no, "", ac_mat, False) )
+	#print( "Creation du material No %d    ac %s  blender %s" % ( no, ac_mat.name_ac,ac_mat.name_bl ) )
 #----------------------------------------------------------------------------------------------------------------------------------
 	
 TOKEN = {	'numvert ' 		: read_vertice,
@@ -327,6 +330,7 @@ def display_texture():
 def read_ac(filename, smooth_all, edge_split, split_angle, context, extra):
 	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 	global CONTEXT
+	#global material_list
 	
 	version = bpy.app.version
 	if version[1] < 63:
@@ -347,7 +351,7 @@ def read_ac(filename, smooth_all, edge_split, split_angle, context, extra):
 	ac_manager.xml_extra_position = extra
 	
 	# init global variable
-	material_list = []
+	ac_manager.material_list = []
 	# extract pathname and open file
 	#extract_path( filename )
 	# init local_mesh for all fonctions (zero in read_object only)
