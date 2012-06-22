@@ -52,6 +52,8 @@ SPLIT_ANGLE = 30.0
 CONTEXT = None
 
 DEBUG = False
+
+
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def without_path(name_path):
@@ -153,7 +155,10 @@ def read_face( fi, local_mesh):
 		#if nb != 2:
 		#	if nb<5:
 		#		local_mesh.uv.append( [ float(idx[1]), float(idx[2]) ]  )
-		uv.append( [ float(idx[1]), float(idx[2]) ]  )
+		if local_mesh.bDDS:
+			uv.append( [ float(idx[1]), -(float(idx[2])-0.5) +0.5]  )
+		else:
+			uv.append( [ float(idx[1]), float(idx[2]) ]  )
 
 	# for quads	
 	if nb == 4:
@@ -195,6 +200,10 @@ def read_face( fi, local_mesh):
 def read_texture( fi, line, local_mesh):
 	mot = line.split()
 	local_mesh.tex_name = mot[1].split('"')[1]
+	if local_mesh.tex_name.find( ".dds" ) != -1:
+		local_mesh.bDDS = True
+	else:
+		local_mesh.bDDS = False
 	local_mesh.tex_name_bl = local_mesh.create_texture()
 #----------------------------------------------------------------------------------------------------------------------------------
 

@@ -135,6 +135,7 @@ class MESH:
 		self.mat_no			= -1
 		self.crease			= -1.0
 		self.filename		= ""
+		self.bDDS			= False
 		
 	def reset(self):
 		del self.vertices
@@ -156,6 +157,7 @@ class MESH:
 		self.group			= False
 		self.mat_no			= -1
 		self.crease			= -1.0
+		self.bDDS			= False
 		#self.filename		= ""
 
 		
