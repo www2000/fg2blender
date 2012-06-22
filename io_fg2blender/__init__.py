@@ -121,6 +121,68 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 
 
 
+class ImportAC(bpy.types.Operator, ImportHelper):
+	'''This appears in the tooltip of the operator and in the generated docs'''
+	bl_idname = "import.ac_file"  # this is important since its how bpy.ops.export.some_data is constructed
+	bl_label = "Import .ac"
+	bl_options = {'PRESET'}	
+
+	# ExportHelper mixin class uses this
+	filename_ext = ".ac"
+	filter_glob = StringProperty(default="*.ac", options={'HIDDEN'})
+
+
+	files = CollectionProperty(	name="File Path",
+								description="File path used for importing " "xml file",
+								type=bpy.types.OperatorFileListElement)
+	directory = StringProperty()
+
+
+	smooth_all	= BoolProperty(name="Smooth all", description="Tools smooth", default=True)
+	edge_split	= BoolProperty(name="Edge split", description="Object modifiers", default=True)
+	split_angle	= FloatProperty(name="Split angle", description="Value of edge-spit", min=0.0, max=180.0, default=65.0 )
+	include		= BoolProperty(name="Include file", description="Read file include", default=True)
+
+	def draw(self, context):
+		scn = context.scene
+		layout = self.layout
+		row = layout.row()
+		row.label( text = "Option ac" )
+
+		box_option_ac = layout.box()
+		row = box_option_ac.column()
+		row.prop( self, "smooth_all" )
+		row.prop( self, "edge_split" )
+		row.prop( self, "split_angle" )
+		'''
+		row = layout.row()
+		row.label( text = "Option xml" )
+		box_option_xml = layout.box()
+		row = box_option_xml.column()
+		#row.label( text = "Option xml" )
+		row.prop( self, "include" )
+		'''
+
+	def execute(self, context):
+
+		paths = [os.path.join(self.directory, name.name)	for name in self.files]
+			
+		from .ac_import import read_ac
+		for filename in paths:
+			#print( filename )
+			ac_option = AC_OPTION()
+			ac_option.smooth_all	= self.smooth_all
+			ac_option.edge_split	= self.edge_split
+			ac_option.split_angle	= self.split_angle
+			ac_option.context		= context
+		
+		
+			read_ac( filename, ac_option )
+		
+		return {'FINISHED'}
+
+
+
 
 '''
 class ExportFG(bpy.types.Operator, ExportHelper):
@@ -179,6 +241,7 @@ class ExportFG(bpy.types.Operator, ExportHelper):
 # Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):
     self.layout.operator(ImportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
+    self.layout.operator(ImportAC.bl_idname, text="Flightgear (.ac)")		# text=Title in the menu
 
 #def menu_func_export(self, context):
 #    self.layout.operator(ExportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
@@ -186,6 +249,7 @@ def menu_func_import(self, context):
 
 def register():
     bpy.utils.register_class(ImportFG)
+    bpy.utils.register_class(ImportAC)
     #bpy.utils.register_class(ExportFG)
 
     bpy.types.INFO_MT_file_import.append(menu_func_import)
@@ -193,6 +257,7 @@ def register():
 
 
 def unregister():
+    bpy.utils.unregister_class(ImportFG)
     bpy.utils.unregister_class(ImportAC)
     #bpy.utils.unregister_class(ExportAC)
 

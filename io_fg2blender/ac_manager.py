@@ -37,11 +37,14 @@ import time
 from math import radians
 from bpy_extras.io_utils import unpack_list, unpack_face_list
 
+from mathutils import Vector
+from mathutils import Euler
 
 material_list = []
 
 current_ac_file = None
 xml_extra_position = None
+xml_extra_rotation = None
 
 
 SMOOTH_ALL = False
@@ -215,9 +218,9 @@ class MESH:
 			#uvtex.data.foreach_set( "uv", unpack_face_list(self.uv) )
 			for i in range(len(self.faces)):
 				nb = len(self.faces[i])
-				#debug_info( "Face no        : %d " % i )
-				#debug_info( "Nb points      : %d " % nb )
-				#debug_info( "Nb uv : %d  nb self.uv : %d      idx : %d" % (len(uvtex.data), len(self.uv), idx ) )
+				debug_info( "Face no        : %d " % i )
+				debug_info( "Nb points      : %d " % nb )
+				debug_info( "Nb uv : %d  nb self.uv : %d      idx : %d" % (len(uvtex.data), len(self.uv), idx ) )
 				# triangle or  quad or edge
 				if nb >= 2:
 					j = self.faces[i][0]
@@ -254,16 +257,28 @@ class MESH:
 			mesh = obj_new.data	
 
 			no = self.mat_no
-			#print( obj_new.name )
-			#print( self.tex_name_bl )
-			#print( "%d %s %s" % (no, material_list[no][0].name, material_list[no][2]) )
-			
+			#debug_info( obj_new.name )
+			#debug_info( self.tex_name_bl )
+			#debug_info( "%d %s %s" % (no, material_list[no][0].name, material_list[no][2]) )
+			if texture:
+				debug_info( 'Texture trouve : "%s"' % (texture.name) )
+
+			debug_info( 'recherche material no %d text "%s"'% ( no, self.tex_name_bl) )
+			idx =0
+			for material_bl, material_no, material_tex, material_ac_mat, material_use in material_list:
+				debug_info( '\t%d-%s %d "%s" %s' % ( idx, material_bl.name, material_no, material_tex, str(material_use)) )
+				idx += 1
+
+
+
 			if find_material_not_use( self.mat_no, self.tex_name_bl ) != -1:
 				ml = material_list[no]
 				bl_mat = ml[0]
 				ac_mat = ml[3]
 				mesh.materials.append(bl_mat)
 				if self.tex_name_bl !="":
+					bl_mat.use_transparency = True
+					bl_mat.alpha			= 0.0
 					texture_slot = bl_mat.texture_slots.add()
 					texture_slot.texture = texture
 					texture_slot.texture_coords='UV'
@@ -275,17 +290,16 @@ class MESH:
 					
 				material_list[no] = ( ml[0],ml[1],self.tex_name_bl, ml[3], True )
 				#material_list[self.mat_no][4] = True
-				debug_info( "Assignation de material" )
-				debug_info( "%d %s %s" % (no, ml[0].name, ml[2]) )
+				debug_info( "Assign not use de material   %d %s %s" % (no, ml[0].name, ml[2]) )
 
 			elif find_material_use( self.mat_no, self.tex_name_bl ) != -1:
+				no = no_material_use( self.mat_no, self.tex_name_bl )
 				ml = material_list[no]
 				bl_mat = ml[0]
 				ac_mat = ml[3]
 				mesh.materials.append(bl_mat)
 					
-				debug_info( "Assignation de material" )
-				debug_info( "%d %s %s" % (no, ml[0].name, ml[2]) )
+				debug_info( "Assignation de material    %d %s %s" % (no, ml[0].name, ml[2]) )
 
 				if ac_mat.trans != 0.0:
 					obj_new.show_transparent = True
@@ -295,7 +309,7 @@ class MESH:
 				ac_mat = ml[3]
 				bl_mat = bpy.data.materials.new(ac_mat.name_ac)
 
-				#print( '    Create material %s with texture "%s"' % (bl_mat.name,self.tex_name_bl) )
+				#debug_info( '    Create material %s with texture "%s"' % (bl_mat.name,self.tex_name_bl) )
 				ac_mat.name_bl			= bl_mat.name
 
 				bl_mat.diffuse_color	= ac_mat.rgb
@@ -304,96 +318,29 @@ class MESH:
 				bl_mat.emit				= 0.2
 				bl_mat.specular_color	= ac_mat.spec
 				bl_mat.specular_hardness= ac_mat.shi
-				bl_mat.alpha			= 1.0-ac_mat.trans
-				bl_mat.use_transparency = True
-				bl_mat.alpha			= 0.0
+				#bl_mat.use_transparency = True
+				#bl_mat.alpha			= 0.0
 				if ac_mat.trans != 0.0:
 					bl_mat.use_transparency = True
 					bl_mat.alpha			= 1.0-ac_mat.trans
 					obj_new.show_transparent = True
 
 				if self.tex_name != "":
+					bl_mat.use_transparency = True
+					bl_mat.alpha			= 0.0
 					texture_slot = bl_mat.texture_slots.add()
 					texture_slot.texture = texture
 					texture_slot.texture_coords='UV'
 					if ac_mat.trans == 0.0:
 						texture_slot.use_map_alpha = True
-				material_list.append( ( ml[0],ml[1],self.tex_name_bl, ml[3], True )  )
+				nb = len( material_list )
+				material_list.append( ( bl_mat ,ml[1],self.tex_name_bl, ml[3], True )  )
 				mesh.materials.append(bl_mat)
+				
+				debug_info( "Creation de material   %d-%s %d %s" % (nb, ml[0].name, ml[1], ml[2]) )
 			else:
 				print( "*****Cas non résolut******" );
 
-			'''
-			if ( len(material_list) != 0 ):
-				ml = material_list[no]
-				bl_mat = ml[0]
-		
-				if ml[2]!="":
-					bOK = True
-					for ml in material_list:
-						if ml[2] == self.tex_name_bl and ml[1] == no:
-							bl_mat = ml[0]
-							mesh.materials.append(bl_mat)
-							#if bl_mat.use_transparency:
-							#	obj_new.show_transparent = True
-							obj_new.show_transparent = False
-							#print( "    assign material %s avec la texture %s" % (bl_mat.name, self.tex_name_bl) )
-							bOK = False
-							break
-			
-					if bOK:
-						debug_info( "   Pas la meme texture %s %s" % (ml[2],self.tex_name_bl) )
-						
-						for ml in material_list:
-							if ml[1] == no:
-								ac_mat = ml[3]
-								# First use of material ??
-								if len(bl_mat.texture_slots) != 0:
-									bl_mat = bpy.data.materials.new(ac_mat.name_ac)
-
-								debug_info( '    Create material %s with texture "%s"' % (bl_mat.name,self.tex_name_bl) )
-								ac_mat.name_bl			= bl_mat.name
-	
-								bl_mat.diffuse_color	= ac_mat.rgb
-								bl_mat.ambient			= ac_mat.amb.x
-								bl_mat.emit				= ac_mat.emis.x
-								bl_mat.emit				= 0.2
-								bl_mat.specular_color	= ac_mat.spec
-								bl_mat.specular_hardness= ac_mat.shi
-								bl_mat.alpha			= 1.0-ac_mat.trans
-								bl_mat.use_transparency = True
-								bl_mat.alpha			= 0.0
-								if ac_mat.trans != 0.0:
-									bl_mat.use_transparency = True
-									bl_mat.alpha			= 1.0-ac_mat.trans
-									obj_new.show_transparent = True
-
-								if self.tex_name != "":
-									texture_slot = bl_mat.texture_slots.add()
-									texture_slot.texture = texture
-									texture_slot.texture_coords='UV'
-									if ac_mat.trans == 0.0:
-										texture_slot.use_map_alpha = True
-
-								material_list.append( (bl_mat, no, self.tex_name_bl, ac_mat))
-								mesh.materials.append(bl_mat)
-								break
-						
-				
-				else:
-					if self.tex_name_bl !="":
-						texture_slot = bl_mat.texture_slots.add()
-						texture_slot.texture = texture
-						texture_slot.texture_coords='UV'
-						#ac_mat = ml[3]
-						texture_slot.use_map_alpha = True
-						material_list[no] = ( ml[0],ml[1],self.tex_name_bl, ml[3] )
-						debug_info( "    material %s with new texture = %s" % (ml[0].name,self.tex_name_bl) )
-					else:
-						debug_info( '    material %s without texture' % (ml[0].name) )
-					mesh.materials.append(bl_mat)
-			print( 'Mesh %s    material %s texture %s' % (obj_new.name, ml[0].name, ml[2]) )
-			'''
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_mesh( self ):
@@ -431,7 +378,9 @@ class MESH:
 
 		obj_new.location = self.location
 		if xml_extra_position:
-			obj_new.delta_location = xml_extra_position.offset
+			obj_new.delta_location = xml_extra_position
+		if xml_extra_rotation:
+			obj_new.delta_rotation_euler = Euler( (xml_extra_rotation.x, xml_extra_rotation.y, xml_extra_rotation.z) )
 			
 		self.mesh_name_bl = obj_new.name
 	
@@ -461,7 +410,7 @@ class MESH:
 		img_name_clean = tronc_name( img_name )
 
 		#print( "create_texture()  img_name : %s" % img_name )
-		#print( "create_texture()  img_name_clean : %s" % img_name_clean )
+		#print( "create_texture()  tex_name : %s" % self.tex_name )
 	
 		# null ???
 		if img_name == "":
@@ -506,13 +455,7 @@ class MESH:
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def find_material_use_diff( mat_no, tex_name ):
-	for mat in material_list:
-		material_bl		= mat[0]
-		material_no		= mat[1]
-		material_tex	= mat[2]
-		material_ac_mat = mat[3]
-		material_use	= mat[4]
-		
+	for material_bl, material_no, material_tex, material_ac_mat, material_use in material_list:
 		if material_use:
 			if material_no==mat_no and material_tex!=tex_name:
 				return material_no
@@ -520,27 +463,25 @@ def find_material_use_diff( mat_no, tex_name ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def find_material_use( mat_no, tex_name ):
-	for mat in material_list:
-		material_bl		= mat[0]
-		material_no		= mat[1]
-		material_tex	= mat[2]
-		material_ac_mat = mat[3]
-		material_use	= mat[4]
-		
+	for material_bl, material_no, material_tex, material_ac_mat, material_use in material_list:
 		if material_use:
 			if material_no==mat_no and material_tex==tex_name:
 				return material_no
 	return -1
 #----------------------------------------------------------------------------------------------------------------------------------
 
+def no_material_use( mat_no, tex_name ):
+	i = 0
+	for material_bl, material_no, material_tex, material_ac_mat, material_use in material_list:
+		if material_use:
+			if material_no==mat_no and material_tex==tex_name:
+				return i
+		i += 1
+	return i
+#----------------------------------------------------------------------------------------------------------------------------------
+
 def find_material_not_use( mat_no, tex_name ):
-	for mat in material_list:
-		material_bl		= mat[0]
-		material_no		= mat[1]
-		material_tex	= mat[2]
-		material_ac_mat = mat[3]
-		material_use	= mat[4]
-		
+	for material_bl, material_no, material_tex, material_ac_mat, material_use in material_list:
 		#print( 'recherche material no %d text "%s"   dans %s %d "%s" %s' % ( mat_no, tex_name, material_bl.name, material_no, material_tex, str(material_use)) )
 		if material_use == False:
 			if material_no==mat_no:
@@ -613,3 +554,37 @@ def get_ac_file():
 def set_ac_file( new_ac_file ):
 	global current_ac_file
 	current_ac_file = new_ac_file
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def clone_ac( ac_file, xml_extra_position ):
+	time_deb = time.time()
+	print( "\tac_manager:clone_ac() %s" % ac_file.name.partition( 'Aircraft'+os.sep )[2] )
+
+	for obj_name in ac_file.meshs:
+		obj = bpy.data.objects[obj_name]
+		mesh = obj.data
+
+		sc = bpy.context.scene
+		obj_new = bpy.data.objects.new(obj_name,mesh)
+
+		obj_new.location = Vector( (0.0,0.0,0.0) )			#self.location
+		if xml_extra_position:
+			offset = Vector( (0.0,0.0,0.0) ) + xml_extra_position.offset
+			euler  = Vector( (0.0,0.0,0.0) ) + xml_extra_position.eulerXYZ
+			obj_new.delta_location = offset
+			obj_new.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
+			#print( "\tExtra offset  %0.2f, %0.2f, %0.2f" % ( offset.x, offset.y, offset.z ) )
+			#print( "\tExtra rotate  %0.2f, %0.2f, %0.2f" % ( euler.x, euler.y, euler.z ) )
+	
+		o = sc.objects.link(obj_new)
+
+		mesh.validate()
+		mesh.update(calc_edges=True)
+
+	time_end = time.time()
+	print( "\tClone %s in %0.2f sec" % (os.path.basename(ac_file.name),(time_end-time_deb) ) )
+	return
+
+
+
+

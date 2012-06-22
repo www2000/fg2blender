@@ -57,12 +57,14 @@ class XML_OPTION:
 
 class XML_FILE:
 	def __init__(self):
-		self.name			= ""
-		self.ac_names		= []
-		self.ac_files		= []
-		self.offset			= Vector( (0.0, 0.0, 0.0) )
-		self.eulerXYZ		= Euler( (0.0, 0.0, 0.0) )
-		self.file_offset	= ""
+		self.name				= ""
+		self.ac_names			= []
+		self.ac_files			= []
+		self.offset				= Vector( (0.0, 0.0, 0.0) )
+		self.eulerXYZ			= Vector( (0.0, 0.0, 0.0) )
+		self.parent_offset		= Vector( (0.0, 0.0, 0.0) )
+		self.parent_eulerXYZ	= Vector( (0.0, 0.0, 0.0) )
+		self.file_offset		= ""
 
 		
 	def add_ac_file( self, ac_file = None ):
@@ -74,16 +76,17 @@ class XML_FILE:
 
 
 #----------------------------------------------------------------------------------------------------------------------------------
-
-def add_xml_file( xml_file=None ):
+# xml_files  = tule ( xml_file, no_include )
+def add_xml_file( xml_file, no ):
 	if xml_file:
-		xml_files.append( xml_file )
+		xml_files.append( (xml_file,no) )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def set_current_xml( xml_file=None ):
 	global xml_current
 	
-	xml_current = xml_file
+	if xml_file:
+		xml_current = xml_file
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def get_current_xml():
@@ -95,7 +98,7 @@ def get_current_xml():
 def is_defined( filename ):
 	global xml_files
 	
-	for xml_file in xml_files:
+	for xml_file,no in xml_files:
 		if xml_file.name == filename:
 			return True
 	return False
@@ -105,12 +108,33 @@ def isnot_defined( filename ):
 	return not is_defined( filename )
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def get_xml_file( filename ):
+def get_xml_file( filename, no_include ):
 	global xml_files
 	
-	for xml_file in xml_files:
-		if xml_file.name == filename:
+	for xml_file, no in xml_files:
+		if xml_file.name == filename and no_include == no:
 			return xml_file
 	return None
 #----------------------------------------------------------------------------------------------------------------------------------
-	
+
+def is_load_ac( filename ):
+	global xml_files
+
+	for xml_file, no in xml_files:
+		for ac_name in xml_file.ac_names:
+			if ac_name == filename:
+				return True
+	return False
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def get_ac_file( filename ):
+	global xml_files
+
+	for xml_file, no in xml_files:
+		for ac_file in xml_file.ac_files:
+			if ac_file.name == filename:
+				return ac_file
+	return None
+
+
+

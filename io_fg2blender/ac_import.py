@@ -37,6 +37,7 @@ import time
 
 from . import *
 
+from mathutils import Vector
 
 from .ac_manager import MESH
 from .ac_manager import MATERIAL
@@ -286,8 +287,8 @@ def read_material( f, line, local_mesh ):
 	bl_mat.emit				= 0.1
 	bl_mat.specular_color	= ac_mat.spec
 	bl_mat.specular_hardness= ac_mat.shi
-	bl_mat.use_transparency = True
-	bl_mat.alpha			= 0.0
+	bl_mat.use_transparency = False
+	bl_mat.alpha			= 1.0
 	if ac_mat.trans != 0.0:
 		bl_mat.alpha			= 1.0-ac_mat.trans
 		bl_mat.use_transparency = True
@@ -327,7 +328,7 @@ def display_texture():
 #----------------------------------------------------------------------------------------------------------------------------------
 
 
-def read_ac(filename, smooth_all, edge_split, split_angle, context, extra):
+def read_ac(filename, ac_option, extra=None):
 	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 	global CONTEXT
 	#global material_list
@@ -339,26 +340,32 @@ def read_ac(filename, smooth_all, edge_split, split_angle, context, extra):
 		
 	
 	time_deb = time.time()
-	CONTEXT		= context
-	SMOOTH_ALL	= smooth_all
-	EDGE_SPLIT	= edge_split
-	SPLIT_ANGLE	= split_angle
+	CONTEXT		= ac_option.context
+	SMOOTH_ALL	= ac_option.smooth_all
+	EDGE_SPLIT	= ac_option.edge_split
+	SPLIT_ANGLE	= ac_option.split_angle
 
 	ac_file = AC_FILE()
 	ac_file.name = filename
 	ac_manager.set_ac_file( ac_file )
 	
-	ac_manager.xml_extra_position = extra
+	print( "\tac_import:read_ac() %s" % filename.partition( 'Aircraft'+os.sep )[2] )
 	
+	if not extra:
+		ac_manager.xml_extra_position = Vector( (0.0,0.0,0.0) )
+		ac_manager.xml_extra_rotation = Vector( (0.0,0.0,0.0) )
+	else:
+		ac_manager.xml_extra_position = Vector( (0.0,0.0,0.0) ) + extra.offset
+		ac_manager.xml_extra_rotation = Vector( (0.0,0.0,0.0) ) + extra.eulerXYZ
+	
+		#print( "\tExtra offset  %0.2f, %0.2f, %0.2f" % ( extra.offset.x, extra.offset.y, extra.offset.z ) )
+		#print( "\tExtra rotate  %0.2f, %0.2f, %0.2f" % ( extra.eulerXYZ.x, extra.eulerXYZ.y, extra.eulerXYZ.z ) )
 	# init global variable
 	ac_manager.material_list = []
-	# extract pathname and open file
-	#extract_path( filename )
-	# init local_mesh for all fonctions (zero in read_object only)
+
 	local_mesh = MESH()
 	local_mesh.filename = filename
 
-	print( "\tac_import:read_ac() %s" % filename.partition( 'Aircraft'+os.sep )[2] )
 
 	f = open(filename,'r')
 	line = f.readline()
@@ -384,6 +391,6 @@ def read_ac(filename, smooth_all, edge_split, split_angle, context, extra):
 	#print( "Parent restant %d" % len(local_mesh.parent) )
 	#display_texture()
 	time_end = time.time()
-	print( "Import %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
+	print( "\tImport %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
 
 

@@ -31,6 +31,7 @@ import codecs
 
 from . import *
 
+from math import radians
 from mathutils import Vector
 
 from .ac_manager import AC_OPTION
@@ -119,6 +120,30 @@ def readVector_center( node ):
 	if childs:
 		v.z = ret_float_value(childs[0])
 	return v
+#---------------------------------------------------------------------------------------------------------------------
+
+def readVector_pitch_deg( node ):
+	f = 0.0
+	childs = node.getElementsByTagName('pitch-deg')
+	if childs:
+		f = radians( ret_float_value(childs[0]) )
+	return f
+#---------------------------------------------------------------------------------------------------------------------
+
+def readVector_roll_deg( node ):
+	f = 0.0
+	childs = node.getElementsByTagName('roll-deg')
+	if childs:
+		f = radians( ret_float_value(childs[0]) )
+	return f
+#---------------------------------------------------------------------------------------------------------------------
+
+def readVector_heading_deg( node ):
+	f = 0.0
+	childs = node.getElementsByTagName('heading-deg')
+	if childs:
+		f = radians( ret_float_value(childs[0]) )
+	return f
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_axis_vecteur( node ):
@@ -345,8 +370,69 @@ def print_offset_path( node ):
 		print( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
+def read_rotation_path( node, xml_file ):
+	xml_parent = xml_manager.get_current_xml()
+	xml_file.parent_eulerXYZ	= Vector( (0.0,0.0,0.0) ) + xml_parent.eulerXYZ# + xml_manager.xml_current.parent_eulerXYZ
+	xml_file.eulerXYZ			= Vector( (0.0,0.0,0.0) ) + xml_parent.eulerXYZ# + xml_manager.xml_current.parent_eulerXYZ
+	
+	#print( "\t\tExtra   %s" % (os.path.basename(xml_file.name) ) )
+	#print( "\t\tParent  %s" % (os.path.basename(xml_parent.name) ) )
+	#v = xml_file.eulerXYZ
+	#print( "\t\tExtra    euler        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	#v = xml_file.parent_eulerXYZ
+	#print( "\t\tExtra    parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	#v = xml_parent.eulerXYZ
+	#print( "\t\tCurrent  euler         %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	#v = xml_parent.parent_eulerXYZ
+	#print( "\t\tCurrent  parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	
+	
+	childs = node.getElementsByTagName('offsets')
+	
+	if childs:
+		#childs = node.getElementsByTagName('center')
+		for child in childs:
+			if child.hasChildNodes():
+				roll = child.getElementsByTagName('roll-deg')
+				if roll:
+					print( "%sroll-deg : %s" % (tabs(),ret_text_value(roll[0])) )
+					xml_file.eulerXYZ.x = xml_file.parent_eulerXYZ.x + readVector_roll_deg(child)
+					#readVector_center(child)
+				pitch = child.getElementsByTagName('pitch-deg')
+				if pitch:
+					print( "%spitch-deg : %s" % (tabs(),ret_text_value(pitch[0])) )
+					xml_file.eulerXYZ.y = xml_file.parent_eulerXYZ.y + readVector_pitch_deg(child)
+				heading = child.getElementsByTagName('heading-deg')
+				if heading:
+					print( "%sheading-deg : %s" % (tabs(),ret_text_value(heading[0])) )
+					xml_file.eulerXYZ.z = xml_file.parent_eulerXYZ.z + readVector_heading_deg(child)
+	else:
+		print( "%sPas de rotation" % tabs() )
+
+	#v = xml_file.eulerXYZ
+	#print( "\t\tExtra    euler        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	#v = xml_file.parent_eulerXYZ
+	#print( "\t\tExtra    parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	
+#---------------------------------------------------------------------------------------------------------------------
+
 def read_offset_path( node, xml_file ):
-	#print_element_to_xml(node)
+	xml_parent = xml_manager.get_current_xml()
+	xml_file.parent_offset	= Vector( (0.0,0.0,0.0) ) + xml_parent.offset# + xml_manager.xml_current.parent_offset
+	xml_file.offset			= Vector( (0.0,0.0,0.0) ) + xml_parent.offset# + xml_manager.xml_current.parent_offset
+	
+	#print( "\t\tExtra   %s" % (os.path.basename(xml_file.name) ) )
+	#print( "\t\tParent  %s" % (os.path.basename(xml_parent.name) ) )
+	#v = xml_file.offset
+	#print( "\t\tExtra    offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	#v = xml_file.parent_offset
+	#print( "\t\tExtra    parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	#v = xml_parent.offset
+	#print( "\t\tCurrent  offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	#v = xml_parent.parent_offset
+	#print( "\t\tCurrent  parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	
+
 	childs = node.getElementsByTagName('offsets')
 	if childs:
 		#childs = node.getElementsByTagName('center')
@@ -355,10 +441,15 @@ def read_offset_path( node, xml_file ):
 				translations = child.getElementsByTagName('x-m')
 				if translations:
 					value = read_center(child)
-					#print( "%sOffset : %s" % (tabs(),value) )
-					xml_file.offset = xml_manager.xml_current.offset +  readVector_center(child)
+					print( "%sOffset : %s" % (tabs(),value) )
+					xml_file.offset = xml_file.parent_offset + readVector_center(child)
 	else:
 		print( "%sPas d'offset" % tabs() )
+
+	#v = xml_file.offset
+	#print( "\t\tExtra    offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	#v = xml_file.parent_offset
+	#print( "\t\tExtra    parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
 #---------------------------------------------------------------------------------------------------------------------
 
 def absolute_path( filename ):
@@ -369,11 +460,15 @@ def absolute_path( filename ):
 	return filename
 #---------------------------------------------------------------------------------------------------------------------
 
+no_include = 0;
+
 def parcour_child( node, file_name ):
 	global niv
 	global option_include
 	global option_print_include
 	global option_ac_file
+	global no_include
+	
 
 	ret_list = []
 	value = ""
@@ -388,7 +483,8 @@ def parcour_child( node, file_name ):
 				extra += " attr:"+node.attributes.item(i).name + "=" + node.attributes.item(i).value +"  "
 				if node.attributes.item(i).name == 'include':
 					filename =  str(node.attributes.item(i).value)
-					ret_list +=  [ filename ]
+					ret_list +=  [ (filename, no_include)  ]
+					no_include += 1
 					if option_print_include:
 						print( "%s%s include=%s" %(tabs(),node.nodeName,filename) )
 
@@ -396,61 +492,67 @@ def parcour_child( node, file_name ):
 		if node.nodeName == 'path':
 			if node.hasChildNodes():
 				if ret_text(node.childNodes[0]).find('.xml')!=-1:
-					ret_list +=  [ ret_text(node.childNodes[0]) ]
+					ret_list +=  [ (ret_text(node.childNodes[0]), no_include) ]
+					no_include +=1
 					niv -= 1
-					if option_print_include:
-						print( "%sinclude : %s" % ( tabs(),ret_text(node.childNodes[0]) ) )
+					#if option_print_include:
+					print( "%sinclude : %s" % ( tabs(),ret_text(node.childNodes[0]) ) )
 					niv += 1
 					if node.parentNode:
 						if node.parentNode.nodeName == 'model':
 							xml_file = XML_FILE()
 							xml_file.name = absolute_path( ret_text(node.childNodes[0]) )
-							xml_manager.add_xml_file( xml_file )
+							no_include -= 1
+							xml_manager.add_xml_file( xml_file, no_include )
+							no_include += 1 
 							if option_print_include:
 								print_offset_path( node.parentNode )
 							read_offset_path( node.parentNode, xml_file )
+							read_rotation_path( node.parentNode, xml_file )
 
 				elif ret_text(node.childNodes[0]).find('.ac')!=-1:
 					if option_ac_file:
 						dir_name  = os.path.normpath( os.path.dirname(  file_name ) )
 						file_ac = dir_name + os.sep + ret_text(node.childNodes[0])
 
-						#print( "%sFichier AC3D file_ac: %s" % (tabs(),file_ac) )
-						#print( "%sFichier AC3D dirname: %s" % (tabs(),dir_name) )
-						#print( "%sFichier AC3D <curr_path>: %s" % (tabs(),	os.getcwd()) )
-
-						from .ac_import import read_ac
 						if file_ac.find(os.getcwd()) == -1:
 							file_ac = os.getcwd() + os.sep + file_ac
-
-						#print( conversion(file_ac) )
-
-						if os.path.isfile(file_ac):
-							read_ac(	filename 	= conversion(file_ac),
-										smooth_all	= True,
-										edge_split	= True,
-										split_angle	= 65,
-										context		= bpy.context,
-										extra		= xml_manager.xml_current )
-
-							ac_file = ac_manager.get_ac_file()
-							#print ( ac_file.name )
-							#for mesh in ac_file.meshs:
-							#	print( mesh )
-							#from .xml_manager import xml_current
-							#
-							xml_manager.xml_current.add_ac_file( ac_file )
-							#for mesh in xml_manager.xml_current.ac_files[-1].meshs:
-							#	print( mesh )
+						
+						if xml_manager.is_load_ac( file_ac ):
+							ac_manager.clone_ac(	xml_manager.get_ac_file(file_ac),
+													xml_manager.xml_current )
 						else:
-							print( "xml_import:parcour_child() Fichier introuvable : %s" % file_ac  )
+							if os.path.isfile(file_ac):
+								from .ac_import import read_ac
+								ac_option = AC_OPTION()
+								ac_option.smooth_all	= True
+								ac_option.edge_split	= True
+								ac_option.split_angle	= 60.0
+								ac_option.context		= bpy.context
+								
+								read_ac(	filename 	= conversion(file_ac),
+											ac_option	= ac_option,
+											extra		= xml_manager.xml_current )
+
+								ac_file = ac_manager.get_ac_file()
+								#print ( ac_file.name )
+								#for mesh in ac_file.meshs:
+								#	print( mesh )
+								#from .xml_manager import xml_current
+								#
+								xml_manager.xml_current.add_ac_file( ac_file )
+								#for mesh in xml_manager.xml_current.ac_files[-1].meshs:
+								#	print( mesh )
+							else:
+								print( "xml_import:parcour_child() Fichier introuvable : %s" % file_ac  )
 						#print_element_to_xml( node )
 						if node.parentNode:
 							#print( node.parentNode.nodeName )
 							if node.parentNode.nodeName == 'model':
 								xml_file = XML_FILE()
 								xml_file.name = absolute_path( ret_text(node.childNodes[0]) )
-								xml_manager.add_xml_file( xml_file )
+								xml_manager.add_xml_file( xml_file, no_include )
+								no_include += 1
 								if option_print_include:
 									print_offset_path( node.parentNode )
 								read_offset_path( node.parentNode, xml_file )
@@ -474,18 +576,28 @@ def parcour_child( node, file_name ):
 	return ret_list
 #---------------------------------------------------------------------------------------------------------------------
 
-def lit_fichier( filename ):
+def lit_fichier( filename, no_inc ):
 	global niv 
 	global path_model
 	global option_include
+	global no_include
 	
-	if xml_manager.isnot_defined( filename ):
+	#xml_file = XML_FILE()
+	if no_inc == -1:
 		xml_file = XML_FILE()
+		no_include = 0
 	else:
-		xml_file = xml_manager.get_xml_file( filename )
+		xml_file = xml_manager.get_xml_file( filename, no_inc )
+		if not xml_file:
+			xml_file = XML_FILE()
+
+	#if xml_manager.isnot_defined( filename ):
+	#	xml_file = XML_FILE()
+	#else:
+	#	xml_file = xml_manager.get_xml_file( filename )
 
 	xml_file.name = filename
-	xml_manager.add_xml_file( xml_file )
+	xml_manager.add_xml_file( xml_file, no_include )
 	xml_manager.set_current_xml( xml_file )
 	
 	file_includes = []
@@ -517,11 +629,12 @@ def lit_fichier( filename ):
 		print( "xml_import:lit_fichier() Fichier introuvable : %s" % filename  )
 	
 	if option_include:
-		for file_include in file_includes:
+		#print( "files_includes %s" % str(file_includes)  )
+		for file_include, no in file_includes:
 			#print(  file_include )
 			#print( path_model )
 			file_include = absolute_path( conversion(file_include) )
-			lit_fichier( conversion(file_include) )
+			lit_fichier( conversion(file_include), no )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_file_xml( name ):
@@ -563,7 +676,7 @@ def read_file_xml( name ):
 			#print( "Lit fichier : %s" %( file_name) )			
 			os.chdir( dir_name.partition('Aircraft')[0] )
 			#print( "Lecture du fichier : %s " % file_name )
-			lit_fichier( conversion(file_name) )			
+			lit_fichier( conversion(file_name), -1 )			
 	
 		else:
 			print( "Erreur : fichier 	 n'appartient pas a un avion " )
