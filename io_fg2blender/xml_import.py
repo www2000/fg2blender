@@ -18,9 +18,14 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: René Nègre
+# Contributors: 
 #
 
+#----------------------------------------------------------------------------------------------------------------------------------
+#
+#									XML_IMPORT.PY
+#
+#----------------------------------------------------------------------------------------------------------------------------------
 #!/usr/bin/env python3.2
 import sys
 import os
@@ -307,13 +312,14 @@ def print_animation( node ):
 	global option_translation
 	global option_animation
 	global niv
-	#child = node.find( 'type' )
+
 	childs = node.getElementsByTagName('type')
 	if childs:
 		for child in childs:
 			if child.hasChildNodes():
 				value = ret_text_value(child)
 				if value == 'rotate':
+					#bpy.ops.view3d.create_rotate()
 					if option_rotation:
 						print( "%sAnimation rotate : %s" % (tabs(),value) )
 						#print( node.toxml() )
@@ -462,7 +468,7 @@ def absolute_path( filename ):
 
 no_include = 0;
 
-def parcour_child( node, file_name ):
+def parse_node( node, file_name ):
 	global niv
 	global option_include
 	global option_print_include
@@ -535,19 +541,10 @@ def parcour_child( node, file_name ):
 											extra		= xml_manager.xml_current )
 
 								ac_file = ac_manager.get_ac_file()
-								#print ( ac_file.name )
-								#for mesh in ac_file.meshs:
-								#	print( mesh )
-								#from .xml_manager import xml_current
-								#
 								xml_manager.xml_current.add_ac_file( ac_file )
-								#for mesh in xml_manager.xml_current.ac_files[-1].meshs:
-								#	print( mesh )
 							else:
-								print( "xml_import:parcour_child() Fichier introuvable : %s" % file_ac  )
-						#print_element_to_xml( node )
+								print( "xml_import:parse_node() Fichier introuvable : %s" % file_ac  )
 						if node.parentNode:
-							#print( node.parentNode.nodeName )
 							if node.parentNode.nodeName == 'model':
 								xml_file = XML_FILE()
 								xml_file.name = absolute_path( ret_text(node.childNodes[0]) )
@@ -557,8 +554,7 @@ def parcour_child( node, file_name ):
 									print_offset_path( node.parentNode )
 								read_offset_path( node.parentNode, xml_file )
 
-								#print_offset_path( node.parentNode )
-								#read_offset_path( node.parentNode )
+
 		elif node.nodeName == 'animation':
 			print_animation( node )
 	#Attribut nodeType =2
@@ -571,12 +567,12 @@ def parcour_child( node, file_name ):
 		
 	niv += 1
 	for n in node.childNodes:
-		ret_list += parcour_child( n, file_name )
+		ret_list += parse_node( n, file_name )
 	niv -= 1
 	return ret_list
 #---------------------------------------------------------------------------------------------------------------------
 
-def lit_fichier( filename, no_inc ):
+def parse_file( filename, no_inc ):
 	global niv 
 	global path_model
 	global option_include
@@ -591,25 +587,19 @@ def lit_fichier( filename, no_inc ):
 		if not xml_file:
 			xml_file = XML_FILE()
 
-	#if xml_manager.isnot_defined( filename ):
-	#	xml_file = XML_FILE()
-	#else:
-	#	xml_file = xml_manager.get_xml_file( filename )
-
 	xml_file.name = filename
 	xml_manager.add_xml_file( xml_file, no_include )
 	xml_manager.set_current_xml( xml_file )
 	
 	file_includes = []
 	niv = 0
-	print( "xml_import:lit_fichier()  %s " % filename )
+	print( "xml_import:parse_file()  %s " % filename )
 	if os.path.isfile(filename):
 		fsock = open(filename)
 		try:
 			xmldoc = xml.dom.minidom.parse(fsock)
 		except:
 			fsock.close()                 
-			#fsock = open(filename, 'r+').read().decode('iso-8859-1')
 			fsock = codecs.open(filename, 'r+', 'iso-8859-1' )
 			print( " **********************************************************************************" )
 			print( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
@@ -621,12 +611,9 @@ def lit_fichier( filename, no_inc ):
 		fsock.close()                 
 		node = xmldoc.documentElement
 
-		#if node.getElementsByTagName('animation'):
-		#	print( filename )
-
-		file_includes = parcour_child( node, filename )
+		file_includes = parse_node( node, filename )
 	else:
-		print( "xml_import:lit_fichier() Fichier introuvable : %s" % filename  )
+		print( "xml_import:parse_file() Fichier introuvable : %s" % filename  )
 	
 	if option_include:
 		#print( "files_includes %s" % str(file_includes)  )
@@ -634,7 +621,7 @@ def lit_fichier( filename, no_inc ):
 			#print(  file_include )
 			#print( path_model )
 			file_include = absolute_path( conversion(file_include) )
-			lit_fichier( conversion(file_include), no )
+			parse_file( conversion(file_include), no )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_file_xml( name ):
@@ -676,7 +663,7 @@ def read_file_xml( name ):
 			#print( "Lit fichier : %s" %( file_name) )			
 			os.chdir( dir_name.partition('Aircraft')[0] )
 			#print( "Lecture du fichier : %s " % file_name )
-			lit_fichier( conversion(file_name), -1 )			
+			parse_file( conversion(file_name), -1 )			
 	
 		else:
 			print( "Erreur : fichier 	 n'appartient pas a un avion " )
@@ -703,7 +690,7 @@ def import_xml(filename, ac_option, xml_option):
 
 	option_include = xml_option.include
 	option_print_include = False
-	option_rotation = False
+	option_rotation = True
 	option_translation = False
 	option_animation = False
 	option_ac_file = True

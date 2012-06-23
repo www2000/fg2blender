@@ -18,14 +18,17 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: René Nègre
+# Contributors: 
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #
+#									AC_IMPORT.PY
 #
-#							Pasre .ac file in object ac_manager.MESH
-#
+#							Pasre .ac file and make some object. 
+#									- The objet local_mesh = ac_manager.MESH 
+#									- material_list
+#									- ac_manager.MATERIAL
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -329,11 +332,9 @@ def display_texture():
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
-#						==============
+#						Parse
+#						main function
 #
-#						Main function
-#
-#						==============
 #----------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -367,8 +368,8 @@ def read_ac(filename, ac_option, extra=None):
 		ac_manager.xml_extra_position = Vector( (0.0,0.0,0.0) ) + extra.offset
 		ac_manager.xml_extra_rotation = Vector( (0.0,0.0,0.0) ) + extra.eulerXYZ
 	
-		#print( "\tExtra offset  %0.2f, %0.2f, %0.2f" % ( extra.offset.x, extra.offset.y, extra.offset.z ) )
-		#print( "\tExtra rotate  %0.2f, %0.2f, %0.2f" % ( extra.eulerXYZ.x, extra.eulerXYZ.y, extra.eulerXYZ.z ) )
+		debug_info( "\tExtra offset  %0.2f, %0.2f, %0.2f" % ( extra.offset.x, extra.offset.y, extra.offset.z ) )
+		debug_info( "\tExtra rotate  %0.2f, %0.2f, %0.2f" % ( extra.eulerXYZ.x, extra.eulerXYZ.y, extra.eulerXYZ.z ) )
 	# init global variable
 	ac_manager.material_list = []
 

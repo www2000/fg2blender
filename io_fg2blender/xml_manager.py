@@ -18,9 +18,14 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: René Nègre
+# Contributors: 
 #
 
+#----------------------------------------------------------------------------------------------------------------------------------
+#
+#									XML_MANAGER.PY
+#
+#----------------------------------------------------------------------------------------------------------------------------------
 
 from mathutils import Vector
 from mathutils import Euler
@@ -47,12 +52,14 @@ class XML_OPTION:
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_FILE
 #----------------------------------------------------------------------------------------------------------------------------------
-#	name		= "plane.xml"								string	xml file name
-#	ac_name		= [ fuse.ac" , "wings.ac" , ...]			List of string
-#	ac_file		= [ AC_FILE(), AC_FILE() , ... ]			List of ac_file object
-#	offset		= ( 0.0 , 0.0 , 0.0 )						mathutils.Vector		
-#	eulerXYZ	= ( 0.0 , 0.0 , 0.0 )						mathutils.Euler (for pich-deb,roll-deg, etc)
-#	file_offset = "include.xml"								strings    where xml define offset (parent file name)
+#	name				= "plane.xml"						string	xml file name
+#	ac_name				= [ fuse.ac" , "wings.ac" , ...]	List of string   ac name file
+#	ac_file				= [ AC_FILE(), AC_FILE() , ... ]	List of ac_file object
+#	offset				= ( 0.0 , 0.0 , 0.0 )				mathutils.Vector		
+#	eulerXYZ			= ( 0.0 , 0.0 , 0.0 )				mathutils.Vector  for "euler" transform (for pich-deb,roll-deg, etc)
+#	parent_offset		= ( 0.0 , 0.0 , 0.0 )				parent location
+#	parent_eulerXYZ		= ( 0.0 , 0.0 , 0.0 )				parent rotation
+#	file_offset 		= "include.xml"						strings    where xml define offset (parent file name)   (not use)
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class XML_FILE:

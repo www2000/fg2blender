@@ -18,14 +18,12 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: René Nègre
+# Contributors: 
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #
-#
-#							IMPORT
-#
+#									AC_MANAGER.PY
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -34,7 +32,10 @@ import os
 import bpy
 import mathutils
 import time
+
 from math import radians
+from math import degrees
+
 from bpy_extras.io_utils import unpack_list, unpack_face_list
 
 from mathutils import Vector
@@ -56,7 +57,7 @@ DEBUG = False
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS AC_OPTION
 #----------------------------------------------------------------------------------------------------------------------------------
-#	Option for ac mesh
+#	Parser option
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class AC_OPTION:
@@ -66,10 +67,13 @@ class AC_OPTION:
 		self.split_angle	= 60.0
 
 #----------------------------------------------------------------------------------------------------------------------------------
-#							CLASS AC_OPTION
+#							CLASS AC_FILE
 #----------------------------------------------------------------------------------------------------------------------------------
 #	name		= "fuse.ac"						String  file name
 #	meshs		= [ "fuse",  "cockpit" , ...]	list of String       Mesh name
+#
+#	Use by xml parser for create 'clone'
+#			see  clone_ac()
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class AC_FILE:
@@ -90,11 +94,30 @@ class AC_FILE:
 			bpy.context.scene.objects.active = obj
 			bpy.ops.object.group_link( group = group_name)
 			obj.select = False
+			bpy.context.scene.objects.active = None
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS MATERIAL
 #----------------------------------------------------------------------------------------------------------------------------------
 #	AC3D material
-# material_list = [ MATERIAL() , MATERIAL() ,  ... ]
+#	info material inside the ac file
+#----------------------------------------------------------------------------------------------------------------------------------
+# Note...
+#---------
+#	material_list = [ (,,,,) , (,,,,) , ..... ]       list of tuple
+#
+#	tuple	[0]	material_bl			: blender material
+#			[1]	material_no			: number inside ac file
+#			[2]	material_tex		: texture name   (blender name)
+#			[3]	material_ac_mat		: MATERIAL object
+#			[4]	material_use		: boolean    False if not assign to a mesh
+#
+# Use by script to assign material to a mesh
+# in ac format a material can have multiple textures
+# example :
+# object poly "cube"    -> material 0 -> texture "picture0.png"
+# object poly "sphere"  -> material 0 -> texture "an_other.png"
+# This is impossible in blender
+#
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class MATERIAL:
@@ -114,6 +137,14 @@ class MATERIAL:
 #  edges    = [  (0,1) , (1,2) , (5,4) ,  ... ]											don't use   (point indice)
 #  faces    = [  (1,2,3) , (2,3,4,5) , ... ]											point indice  
 #  uv		= [	 ((0,0),(0,0),(0,0))  , ((0,0),(0,0),(0,0),(0,0)) ,  .... ]				coord uv  !?! len(faces) = len(uv)
+#
+# Member fonctions:
+# -----------------
+# create_empty()				:	create a empty object for ac group
+# create_uv()					:	create uv mapping  call by create_mesh()
+# assign_material()				:	assign material to a object. call by create_mesh()
+# create_mesh()					:	create a blender object. call by parser when find 'kids' keyword
+# create_texture()				:	create a blender texture. call by parser when find 'texture' keyword
 #----------------------------------------------------------------------------------------------------------------------------------
 class MESH:
 	def __init__(self):
@@ -295,7 +326,7 @@ class MESH:
 				debug_info( "Assign not use de material   %d %s %s" % (no, ml[0].name, ml[2]) )
 
 			elif find_material_use( self.mat_no, self.tex_name_bl ) != -1:
-				no = no_material_use( self.mat_no, self.tex_name_bl )
+				no = get_number_material_use( self.mat_no, self.tex_name_bl )
 				ml = material_list[no]
 				bl_mat = ml[0]
 				ac_mat = ml[3]
@@ -306,7 +337,7 @@ class MESH:
 				if ac_mat.trans != 0.0:
 					obj_new.show_transparent = True
 
-			elif find_material_use_diff( self.mat_no, self.tex_name_bl ) != -1:
+			elif find_material_use_with_diff( self.mat_no, self.tex_name_bl ) != -1:
 				ml = material_list[no]
 				ac_mat = ml[3]
 				bl_mat = bpy.data.materials.new(ac_mat.name_ac)
@@ -333,8 +364,9 @@ class MESH:
 					texture_slot = bl_mat.texture_slots.add()
 					texture_slot.texture = texture
 					texture_slot.texture_coords='UV'
-					if ac_mat.trans == 0.0:
-						texture_slot.use_map_alpha = True
+					#if ac_mat.trans == 0.0:
+					texture_slot.use_map_alpha = True
+					
 				nb = len( material_list )
 				material_list.append( ( bl_mat ,ml[1],self.tex_name_bl, ml[3], True )  )
 				mesh.materials.append(bl_mat)
@@ -375,7 +407,6 @@ class MESH:
 
 		sc = bpy.context.scene
 		obj_new = bpy.data.objects.new(obj_name,mesh)
-		#current_ac_file.meshs.append( self.mesh_name )
 		current_ac_file.meshs.append( obj_new.name )
 
 		obj_new.location = self.location
@@ -452,11 +483,11 @@ class MESH:
 		return tex.name
 #----------------------------------------------------------------------------------------------------------------------------------
 #
-#					FIN  object MESH
+#					END  MESH CLASS
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def find_material_use_diff( mat_no, tex_name ):
+def find_material_use_with_diff( mat_no, tex_name ):
 	for material_bl, material_no, material_tex, material_ac_mat, material_use in material_list:
 		if material_use:
 			if material_no==mat_no and material_tex!=tex_name:
@@ -472,7 +503,7 @@ def find_material_use( mat_no, tex_name ):
 	return -1
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def no_material_use( mat_no, tex_name ):
+def get_number_material_use( mat_no, tex_name ):
 	i = 0
 	for material_bl, material_no, material_tex, material_ac_mat, material_use in material_list:
 		if material_use:
@@ -485,7 +516,7 @@ def no_material_use( mat_no, tex_name ):
 def find_material_not_use( mat_no, tex_name ):
 	for material_bl, material_no, material_tex, material_ac_mat, material_use in material_list:
 		#print( 'recherche material no %d text "%s"   dans %s %d "%s" %s' % ( mat_no, tex_name, material_bl.name, material_no, material_tex, str(material_use)) )
-		if material_use == False:
+		if not material_use:
 			if material_no==mat_no:
 				return material_no
 	return -1
@@ -562,6 +593,10 @@ def clone_ac( ac_file, xml_extra_position ):
 	time_deb = time.time()
 	print( "\tac_manager:clone_ac() %s" % ac_file.name.partition( 'Aircraft'+os.sep )[2] )
 
+	new_ac_file = AC_FILE()
+	new_ac_file.name = ac_file.name
+	set_ac_file( new_ac_file )
+
 	for obj_name in ac_file.meshs:
 		obj = bpy.data.objects[obj_name]
 		mesh = obj.data
@@ -575,14 +610,17 @@ def clone_ac( ac_file, xml_extra_position ):
 			euler  = Vector( (0.0,0.0,0.0) ) + xml_extra_position.eulerXYZ
 			obj_new.delta_location = offset
 			obj_new.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
-			#print( "\tExtra offset  %0.2f, %0.2f, %0.2f" % ( offset.x, offset.y, offset.z ) )
-			#print( "\tExtra rotate  %0.2f, %0.2f, %0.2f" % ( euler.x, euler.y, euler.z ) )
+			
+			debug_info( "\tExtra offset  %0.2f, %0.2f, %0.2f" % ( offset.x, offset.y, offset.z ) )
+			debug_info( "\tExtra rotate  %0.2f, %0.2f, %0.2f" % ( euler.x, euler.y, euler.z ) )
 	
 		o = sc.objects.link(obj_new)
 
 		mesh.validate()
 		mesh.update(calc_edges=True)
+		current_ac_file.meshs.append( obj_new.name )
 
+	new_ac_file.create_group_ac()
 	time_end = time.time()
 	print( "\tClone %s in %0.2f sec" % (os.path.basename(ac_file.name),(time_end-time_deb) ) )
 	return
