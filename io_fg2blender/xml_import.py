@@ -162,6 +162,24 @@ def readVector_heading_deg( node ):
 	if childs:
 		f = radians( ret_float_value(childs[0]) )
 	return f
+
+#---------------------------------------------------------------------------------------------------------------------
+
+def read_color_vecteur( node ):
+	r = g = b = a = 'no'
+	childs = node.getElementsByTagName('r')
+	if childs:
+		r = ret_text_value(childs[0])
+	childs = node.getElementsByTagName('g')
+	if childs:
+		g = ret_text_value(childs[0])
+	childs = node.getElementsByTagName('b')
+	if childs:
+		b = ret_text_value(childs[0])
+	childs = node.getElementsByTagName('a')
+	if childs:
+		a = ret_text_value(childs[0])
+	return "%s,%s,%s,%s" % (r,g,b,a)
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_axis_vecteur( node ):
@@ -370,6 +388,58 @@ def print_translate( node ):
 	niv -= 1
 #---------------------------------------------------------------------------------------------------------------------
 
+def print_light( node ):
+	global niv
+	niv += 1
+	childs = node.getElementsByTagName('light-type')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sLight type : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('object-name')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sObject : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('position')
+	for child in childs:
+		if child.hasChildNodes():
+			#print_element_to_xml(child)
+			value = readVector_axis_vecteur(child)
+			print( "%sPosition : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('direction')
+	for child in childs:
+		if child.hasChildNodes():
+			#print_element_to_xml(child)
+			value = readVector_axis_vecteur(child)
+			print( "%sDirection : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('ambient')
+	for child in childs:
+		if child.hasChildNodes():
+			#print_element_to_xml(child)
+			value = read_color_vecteur(child)
+			print( "%sAmbiente : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('diffuse')
+	for child in childs:
+		if child.hasChildNodes():
+			#print_element_to_xml(child)
+			value = read_color_vecteur(child)
+			print( "%sDiffuse : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('specular')
+	for child in childs:
+		if child.hasChildNodes():
+			#print_element_to_xml(child)
+			value = read_color_vecteur(child)
+			print( "%sSpecular : %s" % (tabs(),value) )
+	niv -= 1
+#---------------------------------------------------------------------------------------------------------------------
+
 def print_animation( node ):
 	global option_rotation
 	global option_translation
@@ -392,6 +462,11 @@ def print_animation( node ):
 						print( "%sAnimation translate : %s" % (tabs(),value) )
 						#print( node.toxml() )
 						print_translate( node )
+				elif value == 'light':
+					#if option_light:
+						print( "%sAnimation light : %s" % (tabs(),value) )
+						#print( node.toxml() )
+						print_light( node )
 				else:
 					if option_animation:
 						print( "%sAnimation type : %s" % (tabs(),value) )
@@ -622,7 +697,7 @@ def parse_node( node, file_name ):
 			anim = ANIM()
 			anim.extract_anim( node )
 			xml_manager.get_current_xml().anims.append( anim )
-			#print_animation( node )
+			print_animation( node )
 	#Attribut nodeType =2
 	elif node.nodeType == 2:
 		print( "%sATTR:%s = %s" % (tabs(),node.nodeName, node.nodeValue) )
