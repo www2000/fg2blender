@@ -78,12 +78,12 @@ class AC_OPTION:
 
 class AC_FILE:
 	def __init__(self):
-		self.name			= ""
-		self.meshs			= []
-	#----------------------------------------------------------------------------------------------------------------------------------
+		self.name				= ""
+		self.meshs				= []
+		self.dic_name_meshs		= {}	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_group_ac( self ):
-		return
+		#return
 		for obj in bpy.data.objects:
 			obj.select = False
 		group_name = os.path.basename( self.name )
@@ -219,6 +219,9 @@ class MESH:
 
 		if self.parent_name[-1]!='WORLD':
 			obj_new.parent = bpy.data.objects[self.parent_name[-1]]
+
+		current_ac_file.meshs.append( obj_new.name )
+		current_ac_file.dic_name_meshs[obj_name] = obj_new.name
 
 		sc = bpy.context.scene
 		o = sc.objects.link(obj_new)
@@ -408,6 +411,7 @@ class MESH:
 		sc = bpy.context.scene
 		obj_new = bpy.data.objects.new(obj_name,mesh)
 		current_ac_file.meshs.append( obj_new.name )
+		current_ac_file.dic_name_meshs[obj_name] = obj_new.name
 
 		obj_new.location = self.location
 		if xml_extra_position:
@@ -619,8 +623,9 @@ def clone_ac( ac_file, xml_extra_position ):
 		mesh.validate()
 		mesh.update(calc_edges=True)
 		current_ac_file.meshs.append( obj_new.name )
+		current_ac_file.dic_name_meshs[obj_name] = obj_new.name
 
-	new_ac_file.create_group_ac()
+	#new_ac_file.create_group_ac()
 	time_end = time.time()
 	print( "\tClone %s in %0.2f sec" % (os.path.basename(ac_file.name),(time_end-time_deb) ) )
 	return

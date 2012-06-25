@@ -61,6 +61,8 @@ from bpy.props import CollectionProperty
 
 from .ac_manager import AC_OPTION
 from .xml_manager import XML_OPTION
+
+from . import *
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #							ImportFG CLASS
@@ -243,7 +245,7 @@ class ExportFG(bpy.types.Operator, ExportHelper):
 class FG_OT_create_translate(bpy.types.Operator):
 	'''Add armature type translate '''
 	bl_idname = "view3d.create_translate"
-	bl_label = "MW Clean Material Slots"
+	bl_label = "Create Translate"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -296,7 +298,7 @@ class FG_OT_create_translate(bpy.types.Operator):
 class FG_OT_create_rotate(bpy.types.Operator):
 	'''Add armature type rotate '''
 	bl_idname = "view3d.create_rotate"
-	bl_label = "MW Clean Material Slots"
+	bl_label = "Create Rotate"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -323,7 +325,7 @@ class FG_OT_create_rotate(bpy.types.Operator):
 			#bpy.ops.object.select_pattern(pattern=obj.name)
 			context.scene.objects.active = obj
 
-			bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+			#bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
 
 			print("\tActivation Pose Mode")
 			bpy.ops.object.posemode_toggle()
@@ -345,10 +347,40 @@ class FG_OT_create_rotate(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_create_anim(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.create_anim"
+	bl_label = "Create Annimation"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		xml_manager.create_anims()
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_assign_anim(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.assign_anim"
+	bl_label = "Assign animation"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):
+		xml_manager.assign_anims()
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_edges_split(bpy.types.Operator):
 	'''Add edge split sor select object '''
 	bl_idname = "view3d.edge_split"
-	bl_label = "MW Clean Material Slots"
+	bl_label = "Edge split"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -402,7 +434,9 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
 
         #layout.menu("VIEW3D_FG_root_menu")
         layout.separator()
-        layout.operator("view3d.edge_split",		text='EdgeSplit' )
+        layout.operator("view3d.edge_split",		text='Edge-split' )
+        layout.operator("view3d.create_anim",		text='Creation animations' )
+        #layout.operator("view3d.assign_anim",		text='Assigne animations' )
         layout.separator()
         layout.operator("view3d.create_rotate",		text='Define Rotation' )
         layout.operator("view3d.create_translate",	text='Define Translation' )
@@ -505,6 +539,8 @@ def register():
     bpy.utils.register_class(FG_OT_exec)
     bpy.utils.register_class(VIEW3D_FG_root_menu)
     bpy.utils.register_class(FG_OT_edges_split)
+    bpy.utils.register_class(FG_OT_create_anim)
+    bpy.utils.register_class(FG_OT_assign_anim)
     bpy.utils.register_class(FG_OT_create_rotate)
     bpy.utils.register_class(FG_OT_create_translate)
     register_shortcut()
@@ -520,6 +556,8 @@ def unregister():
     bpy.utils.unregister_class(FG_OT_exec)
     bpy.utils.unregister_class(VIEW3D_FG_root_menu)
     bpy.utils.unregister_class(FG_OT_edges_split)
+    bpy.utils.unregister_class(FG_OT_create_anim)
+    bpy.utils.unregister_class(FG_OT_assign_anim)
     bpy.utils.unregister_class(FG_OT_create_rotate)
     bpy.utils.unregister_class(FG_OT_create_translate)
     unregister_shortcut()

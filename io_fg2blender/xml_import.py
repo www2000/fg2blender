@@ -43,6 +43,7 @@ from .ac_manager import AC_OPTION
 from .ac_manager import AC_FILE
 from .xml_manager import XML_OPTION
 from .xml_manager import XML_FILE
+from .xml_manager import ANIM
 #---------------------------------------------------------------------------------------------------------------------
 niv = 0
 path_model = ""
@@ -124,6 +125,18 @@ def readVector_center( node ):
 	childs = node.getElementsByTagName('z-m')
 	if childs:
 		v.z = ret_float_value(childs[0])
+
+	childs = node.getElementsByTagName('x1-m')
+	if childs:
+		v.x = ret_float_value(childs[0])
+	childs = node.getElementsByTagName('y1-m')
+	if childs:
+		v.y = ret_float_value(childs[0])
+	childs = node.getElementsByTagName('z1-m')
+	if childs:
+		v.z = ret_float_value(childs[0])
+
+
 	return v
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -165,6 +178,20 @@ def read_axis_vecteur( node ):
 	return "%s,%s,%s" % (x,y,z)
 #---------------------------------------------------------------------------------------------------------------------
 
+def readVector_axis_vecteur( node ):
+	v = Vector( (0.0,0.0,0.0) )
+	childs = node.getElementsByTagName('x')
+	if childs:
+		v.x = ret_float_value(childs[0])
+	childs = node.getElementsByTagName('y')
+	if childs:
+		v.y = ret_float_value(childs[0])
+	childs = node.getElementsByTagName('z')
+	if childs:
+		v.z = ret_float_value(childs[0])
+	return v
+#---------------------------------------------------------------------------------------------------------------------
+
 def read_axis_points( node ):
 	x1 = y1 =z1 = x2 = y2 =z2 = 'no'
 	childs = node.getElementsByTagName('x1-m')
@@ -190,6 +217,32 @@ def read_axis_points( node ):
 	return "pt1 %s,%s,%s   pt2 %s,%s,%s" % (x1,y1,z1 , x2,y2,z2)
 #---------------------------------------------------------------------------------------------------------------------
 
+def readVector_axis_points( node ):
+	p1 = Vector( (0.0,0.0,0.0) )
+	p2 = Vector( (0.0,0.0,0.0) )
+	childs = node.getElementsByTagName('x1-m')
+	if childs:
+		p1.x = ret_float_value(childs[0])
+	childs = node.getElementsByTagName('y1-m')
+	if childs:
+		p1.y = ret_float_value(childs[0])
+	childs = node.getElementsByTagName('z1-m')
+	if childs:
+		p1.z = ret_float_value(childs[0])
+
+	childs = node.getElementsByTagName('x2-m')
+	if childs:
+		p2.x = ret_float_value(childs[0])
+	childs = node.getElementsByTagName('y2-m')
+	if childs:
+		p2.y = ret_float_value(childs[0])
+	childs = node.getElementsByTagName('z2-m')
+	if childs:
+		p2.z = ret_float_value(childs[0])
+	v = p2 - p1
+	return v
+#---------------------------------------------------------------------------------------------------------------------
+
 def read_axis( node ):
 	childs = node.getElementsByTagName('x1-m')
 	if childs:
@@ -197,6 +250,16 @@ def read_axis( node ):
 	childs = node.getElementsByTagName('x')
 	if childs:
 		return read_axis_vecteur( node )
+#---------------------------------------------------------------------------------------------------------------------
+
+def readVector_axis( node ):
+	v = Vector( (0.0,0.0,0.0) )
+	childs = node.getElementsByTagName('x1-m')
+	if childs:
+		return readVector_axis_points( node )
+	childs = node.getElementsByTagName('x')
+	if childs:
+		return readVector_axis_vecteur( node )
 #---------------------------------------------------------------------------------------------------------------------
 
 def ret_text( node ):
@@ -556,7 +619,10 @@ def parse_node( node, file_name ):
 
 
 		elif node.nodeName == 'animation':
-			print_animation( node )
+			anim = ANIM()
+			anim.extract_anim( node )
+			xml_manager.get_current_xml().anims.append( anim )
+			#print_animation( node )
 	#Attribut nodeType =2
 	elif node.nodeType == 2:
 		print( "%sATTR:%s = %s" % (tabs(),node.nodeName, node.nodeValue) )

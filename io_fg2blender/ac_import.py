@@ -396,7 +396,7 @@ def read_ac(filename, ac_option, extra=None):
 	# close file and byebye
 	f.close()
 	
-	ac_file.create_group_ac()
+	#ac_file.create_group_ac()
 	
 	#print( "Parent restant %d" % len(local_mesh.parent) )
 	#display_texture()

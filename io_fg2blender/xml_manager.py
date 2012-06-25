@@ -26,18 +26,23 @@
 #									XML_MANAGER.PY
 #
 #----------------------------------------------------------------------------------------------------------------------------------
+import xml.dom.minidom
 
 from mathutils import Vector
 from mathutils import Euler
 
+from . import *
 
 from .ac_manager import AC_FILE
+#from .xml_import import ret_text_value
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
 xml_files = []
 xml_current = None
 
+
+DEBUG = True
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
@@ -71,6 +76,7 @@ class XML_FILE:
 		self.eulerXYZ			= Vector( (0.0, 0.0, 0.0) )
 		self.parent_offset		= Vector( (0.0, 0.0, 0.0) )
 		self.parent_eulerXYZ	= Vector( (0.0, 0.0, 0.0) )
+		self.anims				= []
 		self.file_offset		= ""
 
 		
@@ -79,9 +85,230 @@ class XML_FILE:
 			self.ac_files.append( ac_file )
 			self.ac_names.append( ac_file.name )
 #----------------------------------------------------------------------------------------------------------------------------------
+class ANIM:
+	def __init__(self):
+		self.name				= ""
+		self.type				= 0								# 1:Rotate 2:translate 3: group objects
+		self.xml_file			= ""
+		self.factor				= 0.0
+		self.property			= ""
+		self.pos				= Vector( (0.0, 0.0, 0.0) )
+		self.vec				= Vector( (0.0, 0.0, 0.0) )
+		self.objects			= []
+		self.group_objects		= []
+		self.property			= ""
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_type( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('type')
+		if childs:
+			for child in childs:
+				if child.hasChildNodes():
+					value = ret_text_value(child)
+					if value == 'rotate':
+						self.type = 1
+					elif value == 'translate':
+						self.type = 2
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_name( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('name')
+		if childs:
+			self.name = ret_text_value(childs[0])
+			debug_info( "Name %s" % self.name )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_property( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('property')
+		if childs:
+			self.property = ret_text_value(childs[0])
+			debug_info( "Property %s" % self.property )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_objects( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('object-name')
+		for child in childs:
+			value = ret_text_value(child)
+			self.objects.append( value )
+			#print( "%sobject-name : %s" % (tabs(),value) )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_group_objects( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+
+		self.type = 3
+		childs = node.getElementsByTagName('name')
+		if childs:
+			value = ret_text_value(childs[0])
+			self.group_objects.append( value )
+			debug_info( "Creation du group %s" % value )
+			childs = node.getElementsByTagName('object-name')
+			for child in childs:
+				value = ret_text_value(child)
+				self.group_objects.append( value )
+	#---------------------------------------------------------------------------------------------------------------------
+			
+	def extract_head_tail( self, node ):
+		from .xml_import import readVector_axis
+		from .xml_import import readVector_center
+		from .xml_import import tabs
+		childs = node.getElementsByTagName('axis')
+		for child in childs:
+			if child.hasChildNodes():
+				self.vec = readVector_axis(child)
+				#print( "%sAxe : %s" % (tabs(),str(self.vec)) )
+
+		childs = node.getElementsByTagName('center')
+		for child in childs:
+			if child.hasChildNodes():
+				self.pos = readVector_center(child)
+				#print( "%sCenter : %s" % (tabs(),str(self.pos)) )
+	#---------------------------------------------------------------------------------------------------------------------
+			
+	def extract_factor( self, node ):
+		from .xml_import import ret_float_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('factor')
+		for child in childs:
+			if child.hasChildNodes():
+				self.factor = ret_float_value(child)
+				print( "%sFactor : %s" % (tabs(),str(self.factor)) )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_anim( self, node ):
+		self.extract_type( node )
+		self.extract_name( node )
+		self.extract_property( node )
+		self.extract_objects( node )
+		self.extract_head_tail( node )
+		self.extract_factor( node )
+		if self.type == 0:
+			self.extract_group_objects( node )
+		#self.create_armature()
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def insert_keyframe_rotation( self ):
+		obj_armature = bpy.context.scene.objects.active
+
+		bpy.ops.object.posemode_toggle()
+
+		bpy.context.scene.frame_current = 1
+		bpy.ops.pose.select_all( action='SELECT' )
+		obj_armature.pose.bones[-1].rotation_mode = 'XYZ'
+		#obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(0.0), 0.0), 'XYZ' )
+		obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(-self.factor), 0.0), 'XYZ' )
+		try:
+			#bpy.ops.anim.keyframe_insert_menu( type='Location')
+			#bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+			#bpy.ops.anim.keyframe_insert( type='Location')
+			bpy.ops.anim.keyframe_insert( type='Rotation')
+		except:
+			bpy.ops.anim.keying_set_add()
+			bpy.ops.anim.keying_set_active_set()
+			#bpy.ops.anim.keyframe_insert( type='Location')
+			bpy.ops.anim.keyframe_insert( type='Rotation')
+	
+		bpy.context.scene.frame_current = 60
+		bpy.ops.pose.select_all( action='SELECT' )
+		obj_armature.pose.bones[-1].rotation_mode = 'XYZ'
+		obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(self.factor), 0.0), 'XYZ' )
+	
+		try:
+			#bpy.ops.anim.keyframe_insert_menu( type='Location')
+			bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+		except:
+			bpy.ops.anim.keying_set_add()
+			bpy.ops.anim.keying_set_active_set()
+			bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+			#bpy.ops.anim.keyframe_insert_menu( type='Location')
+	
+		bpy.ops.object.posemode_toggle()
+
+		bpy.context.scene.frame_current = 1
+		bpy.context.scene.frame_end = 60
 
 
+	#---------------------------------------------------------------------------------------------------------------------
 
+	def create_armature_rotation( self ):
+		if self.type != 1:
+			return
+		bpy.ops.object.armature_add()
+		#armature = bpy.data.armatures.new( 'Armature')
+		armature = bpy.data.armatures[-1]
+		print( "Creation armature %s" % armature.name )
+
+		armature_name = armature.name 
+        
+		for obj in bpy.data.objects:
+			if obj.type != 'ARMATURE':
+				continue
+			if obj.data.name == armature_name:
+				obj_arma = obj_armature = obj
+
+				break;
+
+		if self.name != "":
+			obj_arma.name = self.name
+		else:
+			self.name = armature.name
+				
+		offset = Vector( (0.0,0.0,0.0) ) + xml_current.offset
+		euler  = Vector( (0.0,0.0,0.0) ) + xml_current.eulerXYZ
+				
+		vec = self.vec /10.0
+		head = self.pos
+		tail = self.pos + vec
+				
+		bpy.ops.object.editmode_toggle()
+
+		bpy.context.object.data.edit_bones["Bone"].head = head #Vector( (0.0,0.0,0.0) ) #self.head
+		bpy.context.object.data.edit_bones["Bone"].tail = tail #self.vec /10.0
+
+		bpy.ops.object.editmode_toggle()
+
+		obj_arma.delta_location = xml_current.offset
+		obj_arma.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
+
+
+		bpy.ops.object.posemode_toggle()
+		bpy.ops.pose.select_all( action='SELECT' )
+		bpy.ops.pose.constraint_add(type='LIMIT_ROTATION')
+
+		bpy.data.objects[obj.name].pose.bones[-1].rotation_mode = 'XYZ'
+		limit_rotation = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
+		limit_rotation.use_limit_x = True
+		limit_rotation.use_limit_y = False
+		limit_rotation.use_limit_z = True
+		limit_rotation.owner_space = 'LOCAL'
+		bpy.ops.object.posemode_toggle()
+
+		self.insert_keyframe_rotation()
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_armature( self ):
+		if self.type == 1:
+			self.create_armature_rotation()
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def debug_info( aff):
+	global DEBUG
+	if DEBUG:
+		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 # xml_files  = tule ( xml_file, no_include )
 def add_xml_file( xml_file, no ):
@@ -142,6 +369,130 @@ def get_ac_file( filename ):
 			if ac_file.name == filename:
 				return ac_file
 	return None
+#----------------------------------------------------------------------------------------------------------------------------------
 
+def create_anims():
+	global xml_files
+	#print( str(bpy.context) )
+	for xml_file, no in xml_files:
+		set_current_xml( xml_file )
+		debug_info( xml_file.name )
+		for anim in xml_file.anims:
+			if anim.type != 1:
+				continue
+			anim.create_armature()
+
+	for xml_file, no in xml_files:
+		for ac_file in xml_file.ac_files:
+			#debug_info( "\tCreation de groups %s" % os.path.basename(ac_file.name) )
+			print( "Creation de groups %s" % os.path.basename(ac_file.name) )
+			ac_file.create_group_ac()
+	assign_obj_to_anim()
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def print_dic_name( xml_file ):
+	global xml_files
+
+	dic_name = {}
+	for ac_file in xml_file.ac_files:
+		dic_name.update( ac_file.dic_name_meshs )
+		
+	debug_info( "dico" )
+	for key,value in dic_name.items():
+		debug_info( "key : %s  value : %s" % ( key, value ) )
+		
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def assign_obj_to_anim():
+	global xml_files
+
+	for xml_file, no in xml_files:
+		set_current_xml( xml_file )
+		debug_info( '\tassign_obj_to_anim() %s' % os.path.basename(xml_file.name) )
+		#print( xml_file.name )
+		dic_name = {}
+		for ac_file in xml_file.ac_files:
+			dic_name.update( ac_file.dic_name_meshs )
+			
+		if len(dic_name) == 0:
+			continue
+
+		if DEBUG:
+			print_dic_name( xml_file )
+		
+		for anim in xml_file.anims:
+			if anim.type != 1:
+				continue
+			for obj_name in anim.objects:
+				#if anim.name == "":
+				#	continue
+				#obj = bpy.data.objects[obj_name]
+				if not obj_name in dic_name:
+					assign_group_obj_to_anim( xml_file, obj_name, anim, dic_name )
+					#print( "**** Erreur objet %s inconnu ***" % obj_name )
+					#continue
+				else:
+					obj_name_bl = dic_name[obj_name]
+					obj = bpy.data.objects[obj_name_bl]
+					obj_armature = bpy.data.objects[anim.name]
+					parent_set( obj, obj_armature )
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def assign_group_obj_to_anim( xml_file, group_name, anim, dic_name ):
+	global xml_files
+
+	print( "**** Erreur objet %s inconnu ***" % group_name )
+	print( "**** xm file %s  ***" % os.path.basename( xml_file.name) )
+	if anim.group_objects:
+		if anim.group_objects[0] != group_name:
+			print( "**** Erreur objet %s inconnu ***" % group_name )
+			print( "**** xm file %s  ***" % os.path.basename( xml_file.name) )
+	
+	for obj_name in anim.group_objects[1:]:
+		if not obj_name in dic_name:
+			print( "**** Erreur objet %s inconnu ***" % obj_name )
+			continue
+		obj_name_bl = dic_name[obj_name]
+		obj = bpy.data.objects[obj_name_bl]
+		obj_armature = bpy.data.objects[anim.name]
+		parent_set( obj, obj_armature )
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def is_obj_link_armature( obj ):
+	objet = bpy.data.objects[obj.name]
+	if objet.parent!= None:
+		while( objet.parent != None ):
+			objet = objet.parent
+		if objet.type == 'ARMATURE':
+			return objet
+		else:
+			return None
+	else:
+		return None
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def parent_set( obj, armature ):
+	debug_info( '\tCreation parenté d objet "%s" sur "%s"' % (obj.name, armature.name) )
+	parent_armature = is_obj_link_armature( obj )
+	if parent_armature:
+		parent_set_armature( parent_armature, armature )
+		return
+
+	bpy.ops.object.select_all(action='DESELECT')
+	bpy.ops.object.select_pattern(pattern=obj.name)
+	bpy.ops.object.select_pattern(pattern=armature.name)
+	bpy.context.scene.objects.active = armature
+	bpy.ops.object.parent_set(type='BONE')
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def parent_set_armature( child, parent ):
+	debug_info( '\tCreation parenté d armature "%s" sur "%s"' % (child.name, parent.name) )
+
+	bpy.ops.object.select_all(action='DESELECT')
+	bpy.ops.object.select_pattern(pattern=child.name)
+	bpy.ops.object.select_pattern(pattern=parent.name)
+	bpy.context.scene.objects.active = parent
+	bpy.ops.object.parent_set(type='BONE')
 
 
