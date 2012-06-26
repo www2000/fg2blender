@@ -52,6 +52,7 @@ option_print_include = False
 option_rotation = False
 option_translation = False
 option_animation = False
+option_light = False
 option_ac_file = False
 
 DEBUG_INFO = False
@@ -444,6 +445,7 @@ def print_animation( node ):
 	global option_rotation
 	global option_translation
 	global option_animation
+	global option_light
 	global niv
 
 	childs = node.getElementsByTagName('type')
@@ -463,7 +465,7 @@ def print_animation( node ):
 						#print( node.toxml() )
 						print_translate( node )
 				elif value == 'light':
-					#if option_light:
+					if option_light:
 						print( "%sAnimation light : %s" % (tabs(),value) )
 						#print( node.toxml() )
 						print_light( node )
@@ -729,7 +731,8 @@ def parse_file( filename, no_inc ):
 			xml_file = XML_FILE()
 
 	xml_file.name = filename
-	xml_manager.add_xml_file( xml_file, no_include )
+	if no_inc == -1:
+		xml_manager.add_xml_file( xml_file, no_include )
 	xml_manager.set_current_xml( xml_file )
 	
 	file_includes = []
@@ -825,6 +828,7 @@ def import_xml(filename, ac_option, xml_option):
 	global option_translation
 	global option_animation
 	global option_ac_file
+	global option_light
 
 
 	time_deb = time.time()
@@ -835,6 +839,7 @@ def import_xml(filename, ac_option, xml_option):
 	option_translation = False
 	option_animation = False
 	option_ac_file = True
+	option_light = False
 
 	if DEBUG_INFO:		
 		option_print_include = True
@@ -842,6 +847,7 @@ def import_xml(filename, ac_option, xml_option):
 		option_translation = True
 		option_animation = True
 		option_ac_file = True
+		option_light = True
 
 	read_file_xml( conversion(filename) )
 

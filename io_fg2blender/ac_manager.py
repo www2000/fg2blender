@@ -601,12 +601,16 @@ def clone_ac( ac_file, xml_extra_position ):
 	new_ac_file.name = ac_file.name
 	set_ac_file( new_ac_file )
 
+	sc = bpy.context.scene
+
 	for obj_name in ac_file.meshs:
 		obj = bpy.data.objects[obj_name]
-		mesh = obj.data
-
-		sc = bpy.context.scene
-		obj_new = bpy.data.objects.new(obj_name,mesh)
+		#print( "CLONE object %s" % obj_name )
+		if obj.type == 'EMPTY':
+			obj_new = bpy.data.objects.new(obj_name, None)
+		else:
+			mesh = obj.data
+			obj_new = bpy.data.objects.new(obj_name,mesh)
 
 		obj_new.location = Vector( (0.0,0.0,0.0) )			#self.location
 		if xml_extra_position:
@@ -620,8 +624,10 @@ def clone_ac( ac_file, xml_extra_position ):
 	
 		o = sc.objects.link(obj_new)
 
-		mesh.validate()
-		mesh.update(calc_edges=True)
+		if obj_new.type != 'EMPTY':
+			mesh.validate()
+			mesh.update(calc_edges=True)
+		
 		current_ac_file.meshs.append( obj_new.name )
 		current_ac_file.dic_name_meshs[obj_name] = obj_new.name
 

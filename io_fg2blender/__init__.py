@@ -482,8 +482,9 @@ class FG_OT_exec(bpy.types.Operator):
 		xml_option.include		= True
 	
 		import_xml( 
-			"/home/rene/programmes/opengl/blender/paf/fgdata_paf/Aircraft/DR400-jsbSim/Models/Interior/Panel/panel.xml",
+			#"/home/rene/programmes/opengl/blender/paf/fgdata_paf/Aircraft/Douglas-Dc3/Models/Cockpit/cockpit.xml",
 			#"/home/rene/programmes/opengl/blender/paf/fgdata_paf/Aircraft/DR400-jsbSim/Models/Interior/Panel/Instruments/clock/clock.xml",
+			"/home/rene/programmes/opengl/blender/paf/fgdata_paf/Aircraft/DR400-jsbSim/Models/Interior/Panel/panel.xml",
 			 ac_option,
 			 xml_option			 )
 			 
