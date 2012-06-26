@@ -55,7 +55,7 @@ option_animation = False
 option_light = False
 option_ac_file = False
 
-DEBUG_INFO = False
+DEBUG_INFO = True
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def conversion(name_path):
@@ -835,7 +835,7 @@ def import_xml(filename, ac_option, xml_option):
 
 	option_include = xml_option.include
 	option_print_include = False
-	option_rotation = True
+	option_rotation = False
 	option_translation = False
 	option_animation = False
 	option_ac_file = True
