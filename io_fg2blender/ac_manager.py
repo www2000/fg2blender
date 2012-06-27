@@ -388,6 +388,8 @@ class MESH:
 		global material_list
 		global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE, CONTEXT
 		global current_ac_file
+		global xml_extra_position
+		global xml_extra_rotation
 		
 		if not self.parent_name:
 			return

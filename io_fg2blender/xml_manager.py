@@ -42,7 +42,7 @@ xml_files = []
 xml_current = None
 
 
-DEBUG = False
+DEBUG = True
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
@@ -181,25 +181,25 @@ class ANIM:
 	#---------------------------------------------------------------------------------------------------------------------
 			
 	def extract_head_tail( self, node ):
-		from .xml_import import readVector_axis
-		from .xml_import import readVector_axis_points
-		from .xml_import import readVector_center
+		from .xml_import import read_vector_axis
+		from .xml_import import read_vector_axis_points
+		from .xml_import import read_vector_center
 		from .xml_import import tabs
 		childs = node.getElementsByTagName('axis')
 		for child in childs:
 			if child.hasChildNodes():
-				self.vec = readVector_axis(child)
+				self.vec = read_vector_axis(child)
 				#print( "%sAxe : %s" % (tabs(),str(self.vec)) )
 
 		childs = node.getElementsByTagName('center')
 		for child in childs:
 			if child.hasChildNodes():
-				self.pos = readVector_center(child)
+				self.pos = read_vector_center(child)
 				#print( "%sCenter : %s" % (tabs(),str(self.pos)) )
 		childs = node.getElementsByTagName('x1-m')
 		if childs:
-			self.vec = readVector_axis_points(node)
-			self.pos = readVector_center(node)
+			self.vec = read_vector_axis_points(node)
+			self.pos = read_vector_center(node)
 			
 		debug_info( "\t\tPos %s" % str(self.pos) )
 		debug_info( "\t\tVec %s" % str(self.vec) )
@@ -306,7 +306,8 @@ class ANIM:
 					_max = ind
 				if ind < _min:
 					_min = ind
-			
+			#if self.interpolation[0][1] > self.interpolation[-1][1]:
+			self.interpolation.reverse()
 			for ind, dep in self.interpolation:
 				coef = _max - _min
 				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
@@ -351,7 +352,8 @@ class ANIM:
 					_max = ind
 				if ind < _min:
 					_min = ind
-			
+			#if self.interpolation[0][1] > self.interpolation[-1][1]:
+			self.interpolation.reverse()
 			for ind, dep in self.interpolation:
 				coef = _max - _min
 				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
@@ -393,7 +395,8 @@ class ANIM:
 				break;
 
 		if self.name != "":
-			obj_arma.name = self.name
+			self.name = obj_arma.name
+			#obj_arma.name = self.name
 		else:
 			self.name = obj_arma.name
 				
@@ -430,7 +433,6 @@ class ANIM:
 		limit_rotation.owner_space = 'LOCAL'
 		bpy.ops.object.posemode_toggle()
 		
-		self.insert_keyframe_rotation_all()
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature_translation( self ):
@@ -498,7 +500,15 @@ class ANIM:
 		limit_rotation.owner_space = 'LOCAL'
 		bpy.ops.object.posemode_toggle()
 		
-		self.insert_keyframe_translation_all()
+	#---------------------------------------------------------------------------------------------------------------------
+	
+	def insert_keyframe_all( self ):
+		if self.type == 1:
+			bpy.context.scene.objects.active = bpy.data.objects[self.name]
+			self.insert_keyframe_rotation_all()
+		elif self.type == 2:
+			bpy.context.scene.objects.active = bpy.data.objects[self.name]
+			self.insert_keyframe_translation_all()
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature( self ):
@@ -606,7 +616,16 @@ def create_anims():
 			#debug_info( "\tCreation de groups %s" % os.path.basename(ac_file.name) )
 			debug_info( 'Creation de groups "%s"' % os.path.basename(ac_file.name) )
 			ac_file.create_group_ac()
+
 	assign_obj_to_anim()
+
+	for xml_file, no in xml_files:
+		set_current_xml( xml_file )
+		for anim in xml_file.anims:
+			if anim.name=="":
+				continue
+			debug_info( 'insertion keyframe : "%s"' % anim.name )
+			anim.insert_keyframe_all()
 
 	bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
 #----------------------------------------------------------------------------------------------------------------------------------

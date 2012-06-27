@@ -38,6 +38,7 @@ from . import *
 
 from math import radians
 from mathutils import Vector
+from mathutils import Euler
 
 from .ac_manager import AC_OPTION
 from .ac_manager import AC_FILE
@@ -94,6 +95,8 @@ def tabs():
 def sup_space( name ):
 	ret = ''
 	for c in name:
+		if c==',':
+			c = '.'
 		if c!=' ' and c!= '\t':
 			ret += c
 	return ret
@@ -115,7 +118,7 @@ def read_center( node ):
 		return ""
 #---------------------------------------------------------------------------------------------------------------------
 
-def readVector_center( node ):
+def read_vector_center( node ):
 	v = Vector( (0.0,0.0,0.0) )
 	childs = node.getElementsByTagName('x-m')
 	if childs:
@@ -141,7 +144,7 @@ def readVector_center( node ):
 	return v
 #---------------------------------------------------------------------------------------------------------------------
 
-def readVector_pitch_deg( node ):
+def read_float_pitch_deg( node ):
 	f = 0.0
 	childs = node.getElementsByTagName('pitch-deg')
 	if childs:
@@ -149,7 +152,7 @@ def readVector_pitch_deg( node ):
 	return f
 #---------------------------------------------------------------------------------------------------------------------
 
-def readVector_roll_deg( node ):
+def read_float_roll_deg( node ):
 	f = 0.0
 	childs = node.getElementsByTagName('roll-deg')
 	if childs:
@@ -157,7 +160,7 @@ def readVector_roll_deg( node ):
 	return f
 #---------------------------------------------------------------------------------------------------------------------
 
-def readVector_heading_deg( node ):
+def read_float_heading_deg( node ):
 	f = 0.0
 	childs = node.getElementsByTagName('heading-deg')
 	if childs:
@@ -197,7 +200,7 @@ def read_axis_vecteur( node ):
 	return "%s,%s,%s" % (x,y,z)
 #---------------------------------------------------------------------------------------------------------------------
 
-def readVector_axis_vecteur( node ):
+def read_vector_axis_vecteur( node ):
 	v = Vector( (0.0,0.0,0.0) )
 	childs = node.getElementsByTagName('x')
 	if childs:
@@ -236,7 +239,7 @@ def read_axis_points( node ):
 	return "pt1 %s,%s,%s   pt2 %s,%s,%s" % (x1,y1,z1 , x2,y2,z2)
 #---------------------------------------------------------------------------------------------------------------------
 
-def readVector_axis_points( node ):
+def read_vector_axis_points( node ):
 	p1 = Vector( (0.0,0.0,0.0) )
 	p2 = Vector( (0.0,0.0,0.0) )
 	childs = node.getElementsByTagName('x1-m')
@@ -266,19 +269,43 @@ def read_axis( node ):
 	childs = node.getElementsByTagName('x1-m')
 	if childs:
 		return read_axis_points( node )
+	childs = node.getElementsByTagName('y1-m')
+	if childs:
+		return read_axis_points( node )
+	childs = node.getElementsByTagName('z1-m')
+	if childs:
+		return read_axis_points( node )
 	childs = node.getElementsByTagName('x')
+	if childs:
+		return read_axis_vecteur( node )
+	childs = node.getElementsByTagName('y')
+	if childs:
+		return read_axis_vecteur( node )
+	childs = node.getElementsByTagName('z')
 	if childs:
 		return read_axis_vecteur( node )
 #---------------------------------------------------------------------------------------------------------------------
 
-def readVector_axis( node ):
+def read_vector_axis( node ):
 	v = Vector( (0.0,0.0,0.0) )
 	childs = node.getElementsByTagName('x1-m')
 	if childs:
-		return readVector_axis_points( node )
+		return read_vector_axis_points( node )
+	childs = node.getElementsByTagName('y1-m')
+	if childs:
+		return read_vector_axis_points( node )
+	childs = node.getElementsByTagName('z1-m')
+	if childs:
+		return read_vector_axis_points( node )
 	childs = node.getElementsByTagName('x')
 	if childs:
-		return readVector_axis_vecteur( node )
+		return read_vector_axis_vecteur( node )
+	childs = node.getElementsByTagName('y')
+	if childs:
+		return read_vector_axis_vecteur( node )
+	childs = node.getElementsByTagName('z')
+	if childs:
+		return read_vector_axis_vecteur( node )
 #---------------------------------------------------------------------------------------------------------------------
 
 def ret_text( node ):
@@ -408,14 +435,14 @@ def print_light( node ):
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
-			value = readVector_axis_vecteur(child)
+			value = read_vector_axis_vecteur(child)
 			print( "%sPosition : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('direction')
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
-			value = readVector_axis_vecteur(child)
+			value = read_vector_axis_vecteur(child)
 			print( "%sDirection : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('ambient')
@@ -519,18 +546,18 @@ def print_offset_path( node ):
 def read_rotation_path( node, xml_file ):
 	xml_parent = xml_manager.get_current_xml()
 	xml_file.parent_eulerXYZ	= Vector( (0.0,0.0,0.0) ) + xml_parent.eulerXYZ# + xml_manager.xml_current.parent_eulerXYZ
-	xml_file.eulerXYZ			= Vector( (0.0,0.0,0.0) ) + xml_parent.eulerXYZ# + xml_manager.xml_current.parent_eulerXYZ
+	xml_file.eulerXYZ			= Vector( (0.0,0.0,0.0) )# + xml_parent.eulerXYZ# + xml_manager.xml_current.parent_eulerXYZ
 	
-	#print( "\t\tExtra   %s" % (os.path.basename(xml_file.name) ) )
-	#print( "\t\tParent  %s" % (os.path.basename(xml_parent.name) ) )
-	#v = xml_file.eulerXYZ
-	#print( "\t\tExtra    euler        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	#v = xml_file.parent_eulerXYZ
-	#print( "\t\tExtra    parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	#v = xml_parent.eulerXYZ
-	#print( "\t\tCurrent  euler         %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	#v = xml_parent.parent_eulerXYZ
-	#print( "\t\tCurrent  parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	print( "\t\tExtra   %s" % (os.path.basename(xml_file.name) ) )
+	print( "\t\tParent  %s" % (os.path.basename(xml_parent.name) ) )
+	v = xml_file.eulerXYZ
+	print( "\t\tExtra    euler        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	v = xml_file.parent_eulerXYZ
+	print( "\t\tExtra    parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	v = xml_parent.eulerXYZ
+	print( "\t\tCurrent  euler         %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	v = xml_parent.parent_eulerXYZ
+	print( "\t\tCurrent  parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
 	
 	
 	childs = node.getElementsByTagName('offsets')
@@ -542,41 +569,44 @@ def read_rotation_path( node, xml_file ):
 				roll = child.getElementsByTagName('roll-deg')
 				if roll:
 					#print( "%sroll-deg : %s" % (tabs(),ret_text_value(roll[0])) )
-					xml_file.eulerXYZ.x = xml_file.parent_eulerXYZ.x + readVector_roll_deg(child)
-					#readVector_center(child)
+					#xml_file.eulerXYZ.x = xml_file.parent_eulerXYZ.x + read_vector_roll_deg(child)
+					xml_file.eulerXYZ.x = xml_file.eulerXYZ.x + read_float_roll_deg(child)
+					#read_vector_center(child)
 				pitch = child.getElementsByTagName('pitch-deg')
 				if pitch:
 					#print( "%spitch-deg : %s" % (tabs(),ret_text_value(pitch[0])) )
-					xml_file.eulerXYZ.y = xml_file.parent_eulerXYZ.y + readVector_pitch_deg(child)
+					#xml_file.eulerXYZ.y = xml_file.parent_eulerXYZ.y + read_vector_pitch_deg(child)
+					xml_file.eulerXYZ.y = xml_file.eulerXYZ.y + read_float_pitch_deg(child)
 				heading = child.getElementsByTagName('heading-deg')
 				if heading:
 					#print( "%sheading-deg : %s" % (tabs(),ret_text_value(heading[0])) )
-					xml_file.eulerXYZ.z = xml_file.parent_eulerXYZ.z + readVector_heading_deg(child)
+					#xml_file.eulerXYZ.z = xml_file.parent_eulerXYZ.z + read_vector_heading_deg(child)
+					xml_file.eulerXYZ.z = xml_file.eulerXYZ.z + read_float_heading_deg(child)
 	else:
 		print( "%sPas de rotation" % tabs() )
 
-	#v = xml_file.eulerXYZ
-	#print( "\t\tExtra    euler        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	#v = xml_file.parent_eulerXYZ
-	#print( "\t\tExtra    parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	v = xml_file.eulerXYZ
+	print( "\t\tExtra    euler        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	v = xml_file.parent_eulerXYZ
+	print( "\t\tExtra    parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
 	
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_offset_path( node, xml_file ):
 	xml_parent = xml_manager.get_current_xml()
 	xml_file.parent_offset	= Vector( (0.0,0.0,0.0) ) + xml_parent.offset# + xml_manager.xml_current.parent_offset
-	xml_file.offset			= Vector( (0.0,0.0,0.0) ) + xml_parent.offset# + xml_manager.xml_current.parent_offset
+	xml_file.offset			= Vector( (0.0,0.0,0.0) )# + xml_parent.offset# + xml_manager.xml_current.parent_offset
 	
-	#print( "\t\tExtra   %s" % (os.path.basename(xml_file.name) ) )
-	#print( "\t\tParent  %s" % (os.path.basename(xml_parent.name) ) )
-	#v = xml_file.offset
-	#print( "\t\tExtra    offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	#v = xml_file.parent_offset
-	#print( "\t\tExtra    parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	#v = xml_parent.offset
-	#print( "\t\tCurrent  offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	#v = xml_parent.parent_offset
-	#print( "\t\tCurrent  parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	print( "\t\tExtra   %s" % (os.path.basename(xml_file.name) ) )
+	print( "\t\tParent  %s" % (os.path.basename(xml_parent.name) ) )
+	v = xml_file.offset
+	print( "\t\tExtra    offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	v = xml_file.parent_offset
+	print( "\t\tExtra    parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	v = xml_parent.offset
+	print( "\t\tCurrent  offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	v = xml_parent.parent_offset
+	print( "\t\tCurrent  parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
 	
 
 	childs = node.getElementsByTagName('offsets')
@@ -588,14 +618,32 @@ def read_offset_path( node, xml_file ):
 				if translations:
 					value = read_center(child)
 					#print( "%sOffset : %s" % (tabs(),value) )
-					xml_file.offset = xml_file.parent_offset + readVector_center(child)
+					#xml_file.offset = xml_file.parent_offset + read_vector_center(child)
+					xml_file.offset = Vector( (0.0,0.0,0.0) )  + read_vector_center(child)
+					
 	else:
 		print( "%sPas d'offset" % tabs() )
 
-	#v = xml_file.offset
-	#print( "\t\tExtra    offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	#v = xml_file.parent_offset
-	#print( "\t\tExtra    parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	v = xml_file.offset
+	print( "\t\tExtra    offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+	v = xml_file.parent_offset
+	print( "\t\tExtra    parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
+#---------------------------------------------------------------------------------------------------------------------
+
+def compute_offset( xml_file ):
+	global path_model
+	
+	e = xml_file.parent_eulerXYZ
+	eleur  = Euler( (e.x, e.y, e.z) )
+
+	mat4 = eleur.to_matrix().to_4x4()
+	pos = mat4 * xml_file.offset
+	
+	tr = xml_file.offset - pos
+
+	xml_file.offset = xml_file.parent_offset + pos#xml_file.offset# + tr
+	xml_file.eulerXYZ = xml_file.eulerXYZ + xml_file.parent_eulerXYZ
+	
 #---------------------------------------------------------------------------------------------------------------------
 
 def absolute_path( filename ):
@@ -655,6 +703,7 @@ def parse_node( node, file_name ):
 								print_offset_path( node.parentNode )
 							read_offset_path( node.parentNode, xml_file )
 							read_rotation_path( node.parentNode, xml_file )
+							compute_offset( xml_file )
 
 				elif ret_text(node.childNodes[0]).find('.ac')!=-1:
 					if option_ac_file:
@@ -694,6 +743,9 @@ def parse_node( node, file_name ):
 								if option_print_include:
 									print_offset_path( node.parentNode )
 								read_offset_path( node.parentNode, xml_file )
+								read_offset_path( node.parentNode, xml_file )
+								read_rotation_path( node.parentNode, xml_file )
+								compute_offset( xml_file )
 
 
 		elif node.nodeName == 'animation':
