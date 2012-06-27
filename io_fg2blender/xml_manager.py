@@ -42,7 +42,7 @@ xml_files = []
 xml_current = None
 
 
-DEBUG = True
+DEBUG = False
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
@@ -298,13 +298,17 @@ class ANIM:
 	def insert_keyframe_rotation_all( self ):
 
 		if len(self.interpolation) != 0:
+			_min = 0.0
 			_max = 0.0
 			for ind, dep in self.interpolation:
 				if ind > _max:
 					_max = ind
+				if ind < _min:
+					_min = ind
 			
 			for ind, dep in self.interpolation:
-				frame = (ind / _max * 59.0) + 1.0
+				coef = _max - _min
+				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
 				value = dep * self.factor
 				self.insert_keyframe_rotation(  frame, value )
 		else:
@@ -339,13 +343,17 @@ class ANIM:
 		obj_armature = bpy.context.scene.objects.active
 
 		if len(self.interpolation) != 0:
+			_min = 0.0
 			_max = 0.0
 			for ind, dep in self.interpolation:
 				if ind > _max:
 					_max = ind
+				if ind < _min:
+					_min = ind
 			
 			for ind, dep in self.interpolation:
-				frame = (ind / _max * 59.0) + 1.0
+				coef = _max - _min
+				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
 				value = dep * self.factor
 				self.insert_keyframe_translation(  frame, value )
 		else:
