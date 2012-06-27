@@ -126,6 +126,11 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 			xml_option = XML_OPTION()
 			xml_option.include		= self.include
 		
+			f = open('/home/rene/tmp/blender/script-fg2bl', mode='w')
+			f.write( filename )
+			#f.write( '\n' )
+			f.close()
+
 			import_xml(	filename, ac_option, xml_option )
 		
 		return {'FINISHED'}
@@ -190,8 +195,12 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 			ac_option.split_angle	= self.split_angle
 			ac_option.context		= context
 		
-		
+			f = open('~/tmp/blender/script-fg2bl', 'w')
+			f.write( filename )
+			t.close()
+			
 			read_ac( filename, ac_option )
+			
 		
 		return {'FINISHED'}
 
@@ -481,12 +490,12 @@ class FG_OT_exec(bpy.types.Operator):
 		xml_option = XML_OPTION()
 		xml_option.include		= True
 	
-		import_xml( 
-			#"/home/rene/programmes/opengl/blender/paf/fgdata_paf/Aircraft/Douglas-Dc3/Models/Cockpit/cockpit.xml",
-			#"/home/rene/programmes/opengl/blender/paf/fgdata_paf/Aircraft/DR400-jsbSim/Models/Interior/Panel/Instruments/clock/clock.xml",
-			"/home/rene/programmes/opengl/blender/paf/fgdata_paf/Aircraft/DR400-jsbSim/Models/Interior/Panel/panel.xml",
-			 ac_option,
-			 xml_option			 )
+			
+		f = open('/home/rene/tmp/blender/script-fg2bl', mode='r')
+		filename = f.readline()
+		f.close()
+		
+		import_xml( filename, ac_option, xml_option )
 			 
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------

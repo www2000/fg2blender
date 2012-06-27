@@ -85,18 +85,31 @@ class XML_FILE:
 			self.ac_files.append( ac_file )
 			self.ac_names.append( ac_file.name )
 #----------------------------------------------------------------------------------------------------------------------------------
+#							CLASS ANIM
+#----------------------------------------------------------------------------------------------------------------------------------
+#	name				= "plane"							string	if transform name
+#	type				= 0									1:Rotate  2:translate  3: group objects
+#	xml_file			= ""								string : xml  file
+#	factor				= 0.0
+#	property			= ""								string : flightgear property of transform
+#	pos					= Vector( (0.0, 0.0, 0.0) )			bone location
+#	vec					= Vector( (0.0, 0.0, 0.0) )			bone vector
+#	objects				= []								objects list  ( name in xml file )
+#	group_objects		= []								list : group_objects[0] name of group
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class ANIM:
 	def __init__(self):
 		self.name				= ""
 		self.type				= 0								# 1:Rotate 2:translate 3: group objects
 		self.xml_file			= ""
 		self.factor				= 0.0
+		self.interpolation		= []
 		self.property			= ""
 		self.pos				= Vector( (0.0, 0.0, 0.0) )
 		self.vec				= Vector( (0.0, 0.0, 0.0) )
 		self.objects			= []
 		self.group_objects		= []
-		self.property			= ""
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_type( self, node ):
@@ -169,6 +182,7 @@ class ANIM:
 			
 	def extract_head_tail( self, node ):
 		from .xml_import import readVector_axis
+		from .xml_import import readVector_axis_points
 		from .xml_import import readVector_center
 		from .xml_import import tabs
 		childs = node.getElementsByTagName('axis')
@@ -182,6 +196,11 @@ class ANIM:
 			if child.hasChildNodes():
 				self.pos = readVector_center(child)
 				#print( "%sCenter : %s" % (tabs(),str(self.pos)) )
+		childs = node.getElementsByTagName('x1-m')
+		if childs:
+			self.vec = readVector_axis_points(node)
+			self.pos = readVector_center(node)
+			
 		debug_info( "\t\tPos %s" % str(self.pos) )
 		debug_info( "\t\tVec %s" % str(self.vec) )
 	#---------------------------------------------------------------------------------------------------------------------
@@ -191,124 +210,147 @@ class ANIM:
 		from .xml_import import tabs
 
 		childs = node.getElementsByTagName('factor')
-		for child in childs:
-			if child.hasChildNodes():
-				self.factor = ret_float_value(child)
-				debug_info( "%s\tFactor : %s" % (tabs(),str(self.factor)) )
+		if childs:
+		#if child.hasChildNodes():
+			self.factor = ret_float_value(childs[0])
+			debug_info( "%s\tFactor : %s" % (tabs(),str(self.factor)) )
+		else:
+			self.factor = 1.0
+			debug_info( "%s\tFactor default: %s" % (tabs(),str(self.factor)) )
 	#---------------------------------------------------------------------------------------------------------------------
-
-	def extract_anim_rotate( self, node ):
+			
+	def extract_interpolation( self, node ):
+		from .xml_import import ret_float_value
 		from .xml_import import tabs
 
-		debug_info( "%sExtract Rotate :" % (tabs()) )
-		self.extract_name( node )
-		self.extract_property( node )
-		self.extract_objects( node )
-		self.extract_head_tail( node )
-		self.extract_factor( node )
-		if self.type == 0:
-			self.extract_group_objects( node )
-		#self.create_armature()
-	#---------------------------------------------------------------------------------------------------------------------
-
-	def extract_anim_translate( self, node ):
-		from .xml_import import tabs
-
-		debug_info( "%sExtract Translate :" % (tabs()) )
-		self.extract_name( node )
-		self.extract_property( node )
-		self.extract_objects( node )
-		self.extract_head_tail( node )
-		self.extract_factor( node )
-		if self.type == 0:
-			self.extract_group_objects( node )
-		#self.create_armature()
+		childs = node.getElementsByTagName('interpolation')
+		if childs:
+			debug_info( "%s\tInterpolation" % tabs() )
+			childs_ind = childs[0].getElementsByTagName('ind')
+			childs_dep = childs[0].getElementsByTagName('dep')
+			for no, child_ind in list(enumerate(childs_ind)):
+				ind = ret_float_value(child_ind)
+				dep = ret_float_value(childs_dep[no])
+				debug_info( "%s\t\tind : %s" % (tabs(),str( (ind, dep) ) ) )
+				self.interpolation.append( (ind,dep) )
+				
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_anim( self, node ):
+		#---------------------------------------------------------------------------------------------------------------------
+
+		def extract_anim_rotate( node ):
+			from .xml_import import tabs
+
+			debug_info( "%sExtract Rotate :" % (tabs()) )
+			self.extract_name( node )
+			self.extract_property( node )
+			self.extract_objects( node )
+			self.extract_head_tail( node )
+			self.extract_factor( node )
+			self.extract_interpolation( node )
+			if self.type == 0:
+				self.extract_group_objects( node )
+		#---------------------------------------------------------------------------------------------------------------------
+
+		def extract_anim_translate( node ):
+			from .xml_import import tabs
+
+			debug_info( "%sExtract Translate :" % (tabs()) )
+			self.extract_name( node )
+			self.extract_property( node )
+			self.extract_objects( node )
+			self.extract_head_tail( node )
+			self.extract_factor( node )
+			if self.type == 0:
+				self.extract_group_objects( node )
+		#---------------------------------------------------------------------------------------------------------------------
 		# pour recopier la valeur et non pas la référence
 		self.xml_file = "" + xml_current.name
 		self.extract_type( node )
 		if self.type == 1:
-			self.extract_anim_rotate( node )
+			extract_anim_rotate( node )
 		elif self.type == 2:
-			self.extract_anim_translate( node )
+			extract_anim_translate( node )
 		elif self.type == 3:
 			self.extract_group_objects( node )
 	#---------------------------------------------------------------------------------------------------------------------
 
-	def insert_keyframe_rotation( self ):
+	def insert_keyframe_rotation( self, frame, value ):
 		obj_armature = bpy.context.scene.objects.active
-
 		bpy.ops.object.posemode_toggle()
 	
-		bpy.context.scene.frame_current = 60
+		bpy.context.scene.frame_current = frame
 		bpy.ops.pose.select_all( action='SELECT' )
 		obj_armature.pose.bones[-1].rotation_mode = 'XYZ'
-		if self.factor <= 0.99:
-			obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(40.0), 0.0), 'XYZ' )
+		obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(value), 0.0), 'XYZ' )
+	
+		try:
+			bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+		except:
+			bpy.ops.anim.keying_set_add()
+			bpy.ops.anim.keying_set_active_set()
+			bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+
+		bpy.ops.object.posemode_toggle()
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def insert_keyframe_rotation_all( self ):
+
+		if len(self.interpolation) != 0:
+			_max = 0.0
+			for ind, dep in self.interpolation:
+				if ind > _max:
+					_max = ind
+			
+			for ind, dep in self.interpolation:
+				frame = (ind / _max * 59.0) + 1.0
+				value = dep * self.factor
+				self.insert_keyframe_rotation(  frame, value )
 		else:
-			obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(self.factor), 0.0), 'XYZ' )
-	
-		try:
-			bpy.ops.anim.keyframe_insert_menu( type='Rotation')
-		except:
-			bpy.ops.anim.keying_set_add()
-			bpy.ops.anim.keying_set_active_set()
-			bpy.ops.anim.keyframe_insert_menu( type='Rotation')
-
-		bpy.context.scene.frame_current = 1
-		bpy.ops.pose.select_all( action='SELECT' )
-		obj_armature.pose.bones[-1].rotation_mode = 'XYZ'
-		obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(0.0), 0.0), 'XYZ' )
-		try:
-			bpy.ops.anim.keyframe_insert( type='Rotation')
-		except:
-			bpy.ops.anim.keying_set_add()
-			bpy.ops.anim.keying_set_active_set()
-			bpy.ops.anim.keyframe_insert( type='Rotation')
-	
-		bpy.ops.object.posemode_toggle()
+			self.insert_keyframe_rotation( 60, self.factor )
+			self.insert_keyframe_rotation(  1, 0.0 )
 
 		bpy.context.scene.frame_current = 1
 		bpy.context.scene.frame_end = 60
 	#---------------------------------------------------------------------------------------------------------------------
 
-	def insert_keyframe_translation( self ):
+	def insert_keyframe_translation( self, frame, value ):
+		obj_armature = bpy.context.scene.objects.active
+		bpy.ops.object.posemode_toggle()
+	
+		bpy.context.scene.frame_current = frame
+		bpy.ops.pose.select_all( action='SELECT' )
+		
+		tr = Vector( (0.0,value,0.0) )
+
+		obj_armature.pose.bones[-1].location = tr
+		try:
+			bpy.ops.anim.keyframe_insert_menu( type='Location')
+		except:
+			bpy.ops.anim.keying_set_add()
+			bpy.ops.anim.keying_set_active_set()
+			bpy.ops.anim.keyframe_insert_menu( type='Location')
+
+		bpy.ops.object.posemode_toggle()
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def insert_keyframe_translation_all( self ):
 		obj_armature = bpy.context.scene.objects.active
 
-		bpy.ops.object.posemode_toggle()
-	
-		bpy.context.scene.frame_current = 60
-		bpy.ops.pose.select_all( action='SELECT' )
-		obj_armature.pose.bones[-1].rotation_mode = 'XYZ'
-		
-		#tr = Vector( (0.0,0.0,0.0) ) + self.vec
-		tr = Vector( (0.0,self.factor,0.0) )# + self.vec
-
-		obj_armature.pose.bones[-1].rotation_mode = 'XYZ'
-		obj_armature.pose.bones[-1].location = tr
-		#obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(40.0), 0.0), 'XYZ' )
-
-		try:
-			bpy.ops.anim.keyframe_insert_menu( type='Location')
-		except:
-			bpy.ops.anim.keying_set_add()
-			bpy.ops.anim.keying_set_active_set()
-			bpy.ops.anim.keyframe_insert_menu( type='Location')
-
-		bpy.context.scene.frame_current = 1
-		bpy.ops.pose.select_all( action='SELECT' )
-		obj_armature.pose.bones[-1].rotation_mode = 'XYZ'
-		obj_armature.pose.bones[-1].location = Vector( (0.0, 0.0, 0.0) )
-		try:
-			bpy.ops.anim.keyframe_insert( type='Location')
-		except:
-			bpy.ops.anim.keying_set_add()
-			bpy.ops.anim.keying_set_active_set()
-			bpy.ops.anim.keyframe_insert( type='Location')
-	
-		bpy.ops.object.posemode_toggle()
+		if len(self.interpolation) != 0:
+			_max = 0.0
+			for ind, dep in self.interpolation:
+				if ind > _max:
+					_max = ind
+			
+			for ind, dep in self.interpolation:
+				frame = (ind / _max * 59.0) + 1.0
+				value = dep * self.factor
+				self.insert_keyframe_translation(  frame, value )
+		else:
+			self.insert_keyframe_translation( 60, self.factor )
+			self.insert_keyframe_translation(  1, 0.0 )
 
 		bpy.context.scene.frame_current = 1
 		bpy.context.scene.frame_end = 60
@@ -323,7 +365,7 @@ class ANIM:
 		
 		#armature = bpy.data.armatures.new( 'Armature')
 		armature = bpy.data.armatures[-1]
-		print( '\tCreation armature rotation : "%s"' % armature.name )
+		print( 'Create armature rotate : "%s"' % armature.name )
 		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
 		debug_info( '\t\tProperty : "%s"' % self.property )
@@ -350,9 +392,12 @@ class ANIM:
 		euler  = Vector( (0.0,0.0,0.0) ) + xml_current.eulerXYZ
 				
 		vec = self.vec /10.0
-		head = self.pos
-		tail = self.pos + vec
-				
+		#head = self.pos
+		#tail = self.pos + vec
+		head = Vector( (0.0,0.0,0.0) )
+		tail = Vector( (0.0,0.0,0.0) ) + vec
+		obj_arma.location = self.pos
+		
 		bpy.ops.object.editmode_toggle()
 
 		bpy.context.object.data.edit_bones["Bone"].head = head #Vector( (0.0,0.0,0.0) ) #self.head
@@ -376,19 +421,15 @@ class ANIM:
 		limit_rotation.owner_space = 'LOCAL'
 		bpy.ops.object.posemode_toggle()
 		
-		self.insert_keyframe_rotation()
+		self.insert_keyframe_rotation_all()
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature_translation( self ):
-		#print( "Context : %s" % bpy.context.mode )
 		bpy.ops.object.armature_add()
-
-		#print( "Context : %s" % bpy.context.mode )
 		bpy.ops.object.move_to_layer( layers = layer(1) )
-		
-		#armature = bpy.data.armatures.new( 'Armature')
+
 		armature = bpy.data.armatures[-1]
-		print( '\tCreation armature translation : "%s"' % armature.name )
+		print( 'Create armature translate : "%s"' % armature.name )
 		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
 		debug_info( '\t\tProperty : "%s"' % self.property )
@@ -416,8 +457,11 @@ class ANIM:
 		euler  = Vector( (0.0,0.0,0.0) ) + xml_current.eulerXYZ
 				
 		vec = self.vec /10.0
-		head = self.pos
-		tail = self.pos + vec
+		#head = self.pos
+		#tail = self.pos + vec
+		head = Vector( (0.0,0.0,0.0) )
+		tail = Vector( (0.0,0.0,0.0) ) + vec
+		obj_arma.location = self.pos
 				
 		bpy.ops.object.editmode_toggle()
 
@@ -445,7 +489,7 @@ class ANIM:
 		limit_rotation.owner_space = 'LOCAL'
 		bpy.ops.object.posemode_toggle()
 		
-		self.insert_keyframe_translation()
+		self.insert_keyframe_translation_all()
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature( self ):
@@ -453,6 +497,10 @@ class ANIM:
 			self.create_armature_rotation()
 		if self.type == 2:
 			self.create_armature_translation()
+#----------------------------------------------------------------------------------------------------------------------------------
+#
+#							END CLASS ANIM
+#
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff):
@@ -547,7 +595,7 @@ def create_anims():
 	for xml_file, no in xml_files:
 		for ac_file in xml_file.ac_files:
 			#debug_info( "\tCreation de groups %s" % os.path.basename(ac_file.name) )
-			print( 'Creation de groups "%s"' % os.path.basename(ac_file.name) )
+			debug_info( 'Creation de groups "%s"' % os.path.basename(ac_file.name) )
 			ac_file.create_group_ac()
 	assign_obj_to_anim()
 
@@ -580,10 +628,12 @@ def assign_obj_to_anim():
 
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file )
-		debug_info( 'assign_obj_to_anim() "%s"' % os.path.basename(xml_file.name) )
+		print( 'assign_obj_to_anim()  in "%s"' % os.path.basename(xml_file.name) )
 		#print( xml_file.name )
+		debug_info( 'assign_to_anim() make dictionnary' )
 		dic_name = {}
 		for ac_file in xml_file.ac_files:
+			debug_info( 'assign_to_anim() add to dictionnary "%s"' % os.path.basename(ac_file.name) )
 			dic_name.update( ac_file.dic_name_meshs )
 			
 		if len(dic_name) == 0:

@@ -69,8 +69,9 @@ class AC_OPTION:
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS AC_FILE
 #----------------------------------------------------------------------------------------------------------------------------------
-#	name		= "fuse.ac"						String  file name
-#	meshs		= [ "fuse",  "cockpit" , ...]	list of String       Mesh name
+#	name			= "fuse.ac"						String  file name
+#	meshs			= [ "fuse",  "cockpit" , ...]	list of String       Mesh name
+#	dic_name_meshs	= {}							Dictionnary : to convert ac name in blender name	
 #
 #	Use by xml parser for create 'clone'
 #			see  clone_ac()
@@ -80,14 +81,17 @@ class AC_FILE:
 	def __init__(self):
 		self.name				= ""
 		self.meshs				= []
-		self.dic_name_meshs		= {}	#----------------------------------------------------------------------------------------------------------------------------------
+		self.dic_name_meshs		= {}	
+	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_group_ac( self ):
-		#return
+		group_name = os.path.basename( self.name )
+		
 		for obj in bpy.data.objects:
 			obj.select = False
-		group_name = os.path.basename( self.name )
-		bpy.data.groups.new( group_name )
+		if not group_name in bpy.data.groups:
+			bpy.data.groups.new( group_name )
+			print( 'Create group : "%s"' % group_name )
 		for mesh_name in self.meshs:
 			obj = bpy.data.objects[mesh_name]
 			obj.select = True
@@ -416,6 +420,7 @@ class MESH:
 		obj_new.location = self.location
 		if xml_extra_position:
 			obj_new.delta_location = xml_extra_position
+			#obj_new.location = self.location + xml_extra_position
 		if xml_extra_rotation:
 			obj_new.delta_rotation_euler = Euler( (xml_extra_rotation.x, xml_extra_rotation.y, xml_extra_rotation.z) )
 			
@@ -605,6 +610,7 @@ def clone_ac( ac_file, xml_extra_position ):
 
 	for obj_name in ac_file.meshs:
 		obj = bpy.data.objects[obj_name]
+		location = obj.location
 		#print( "CLONE object %s" % obj_name )
 		if obj.type == 'EMPTY':
 			obj_new = bpy.data.objects.new(obj_name, None)

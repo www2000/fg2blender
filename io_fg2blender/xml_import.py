@@ -55,7 +55,7 @@ option_animation = False
 option_light = False
 option_ac_file = False
 
-DEBUG_INFO = True
+DEBUG_INFO = False
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def conversion(name_path):
@@ -541,16 +541,16 @@ def read_rotation_path( node, xml_file ):
 			if child.hasChildNodes():
 				roll = child.getElementsByTagName('roll-deg')
 				if roll:
-					print( "%sroll-deg : %s" % (tabs(),ret_text_value(roll[0])) )
+					#print( "%sroll-deg : %s" % (tabs(),ret_text_value(roll[0])) )
 					xml_file.eulerXYZ.x = xml_file.parent_eulerXYZ.x + readVector_roll_deg(child)
 					#readVector_center(child)
 				pitch = child.getElementsByTagName('pitch-deg')
 				if pitch:
-					print( "%spitch-deg : %s" % (tabs(),ret_text_value(pitch[0])) )
+					#print( "%spitch-deg : %s" % (tabs(),ret_text_value(pitch[0])) )
 					xml_file.eulerXYZ.y = xml_file.parent_eulerXYZ.y + readVector_pitch_deg(child)
 				heading = child.getElementsByTagName('heading-deg')
 				if heading:
-					print( "%sheading-deg : %s" % (tabs(),ret_text_value(heading[0])) )
+					#print( "%sheading-deg : %s" % (tabs(),ret_text_value(heading[0])) )
 					xml_file.eulerXYZ.z = xml_file.parent_eulerXYZ.z + readVector_heading_deg(child)
 	else:
 		print( "%sPas de rotation" % tabs() )
@@ -587,7 +587,7 @@ def read_offset_path( node, xml_file ):
 				translations = child.getElementsByTagName('x-m')
 				if translations:
 					value = read_center(child)
-					print( "%sOffset : %s" % (tabs(),value) )
+					#print( "%sOffset : %s" % (tabs(),value) )
 					xml_file.offset = xml_file.parent_offset + readVector_center(child)
 	else:
 		print( "%sPas d'offset" % tabs() )
@@ -641,13 +641,13 @@ def parse_node( node, file_name ):
 					ret_list +=  [ (ret_text(node.childNodes[0]), no_include) ]
 					no_include +=1
 					niv -= 1
-					#if option_print_include:
-					print( "%sinclude : %s" % ( tabs(),ret_text(node.childNodes[0]) ) )
+					if option_print_include:
+						print( "%sinclude : %s" % ( tabs(),ret_text(node.childNodes[0]) ) )
 					niv += 1
 					if node.parentNode:
 						if node.parentNode.nodeName == 'model':
 							xml_file = XML_FILE()
-							xml_file.name = absolute_path( ret_text(node.childNodes[0]) )
+							xml_file.name = absolute_path( conversion(ret_text(node.childNodes[0])) )
 							no_include -= 1
 							xml_manager.add_xml_file( xml_file, no_include )
 							no_include += 1 
@@ -667,6 +667,7 @@ def parse_node( node, file_name ):
 						if xml_manager.is_load_ac( file_ac ):
 							ac_manager.clone_ac(	xml_manager.get_ac_file(file_ac),
 													xml_manager.xml_current )
+							xml_manager.xml_current.add_ac_file( ac_manager.get_ac_file() )
 						else:
 							if os.path.isfile(file_ac):
 								from .ac_import import read_ac
@@ -687,7 +688,7 @@ def parse_node( node, file_name ):
 						if node.parentNode:
 							if node.parentNode.nodeName == 'model':
 								xml_file = XML_FILE()
-								xml_file.name = absolute_path( ret_text(node.childNodes[0]) )
+								xml_file.name = absolute_path( conversion(ret_text(node.childNodes[0])) )
 								xml_manager.add_xml_file( xml_file, no_include )
 								no_include += 1
 								if option_print_include:
