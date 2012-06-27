@@ -262,6 +262,7 @@ class ANIM:
 			self.extract_objects( node )
 			self.extract_head_tail( node )
 			self.extract_factor( node )
+			self.extract_interpolation( node )
 			if self.type == 0:
 				self.extract_group_objects( node )
 		#---------------------------------------------------------------------------------------------------------------------
