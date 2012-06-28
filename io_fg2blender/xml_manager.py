@@ -101,7 +101,7 @@ class XML_FILE:
 class ANIM:
 	def __init__(self):
 		self.name				= ""
-		self.type				= 0								# 1:Rotate 2:translate 3: group objects
+		self.type				= 0								# 1:Rotate 2:translate 3: group objects 4: pick
 		self.xml_file			= ""
 		self.factor				= 0.0
 		self.interpolation		= []
@@ -125,6 +125,8 @@ class ANIM:
 						self.type = 1
 					elif value == 'translate':
 						self.type = 2
+					elif value == 'pick':
+						self.type = 4
 		else:
 			childs = node.getElementsByTagName('name')
 			if childs:
@@ -266,6 +268,15 @@ class ANIM:
 			if self.type == 0:
 				self.extract_group_objects( node )
 		#---------------------------------------------------------------------------------------------------------------------
+
+		def extract_pick( node ):
+			from .xml_import import tabs
+
+			debug_info( "%sExtract Pick :" % (tabs()) )
+			self.extract_name( node )
+			self.extract_property( node )
+			self.extract_objects( node )
+		#---------------------------------------------------------------------------------------------------------------------
 		# pour recopier la valeur et non pas la référence
 		self.xml_file = "" + xml_current.name
 		self.extract_type( node )
@@ -275,6 +286,8 @@ class ANIM:
 			extract_anim_translate( node )
 		elif self.type == 3:
 			self.extract_group_objects( node )
+		elif self.type == 4:
+			extract_pick( node )
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def insert_keyframe_rotation( self, frame, value ):
@@ -516,10 +529,45 @@ class ANIM:
 			self.create_armature_rotation()
 		if self.type == 2:
 			self.create_armature_translation()
+		if self.type == 4:
+			self.create_pick()
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_pick( self ):
+		#print( 'Create Pick in : "%s"' % self.xml_file )
+		for xml_file, no in xml_files:
+			if xml_file.name == self.xml_file:
+				break
+		for obj_name_ac in self.objects:
+			obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
+			print( 'Create Pick : "%s"' % obj_name_ac )
+			#print( 'Create Pick : "%s"  ->  ("%s")' % (obj_name_ac, obj_name_bl) )
+			obj = get_object( obj_name_bl )
+			if obj:
+				if obj.type == 'MESH':
+					if not is_exist_matrial_pick(obj ):
+						obj.data.materials.append( bpy.data.materials['Material_Pick'])
+					obj.show_wire = True
+					obj.show_transparent = True
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #							END CLASS ANIM
 #
+#----------------------------------------------------------------------------------------------------------------------------------
+# because blender problem    bpy.ops.object.select_pattern( obj_name )
+def get_object( obj_name ):
+	for obj in bpy.data.objects:
+		if obj.name == obj_name:
+			#print( 'pick "%s" == "%s"' % (obj.name, obj_name) )
+			return obj
+	return None
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def is_exist_matrial_pick( obj ):
+	for material in obj.data.materials:
+		if material.name == 'Material_Pick':
+			return True
+	return False
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff):
@@ -598,16 +646,29 @@ def layer( No ):
 	return list_layer
 #----------------------------------------------------------------------------------------------------------------------------------
 
+def create_material_pick():
+	for material in bpy.data.materials:
+		if material.name == "Material_Pick":
+			return
+		bl_mat = bpy.data.materials.new( 'Material_Pick' )
+
+		bl_mat.emit				= 0.2
+		bl_mat.type				= 'WIRE'
+		bl_mat.use_transparency = True
+		bl_mat.alpha			= 0.0
+#----------------------------------------------------------------------------------------------------------------------------------
+
 def create_anims():
 	global xml_files
 	
+	create_material_pick()
 	bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
 	#print( str(bpy.context) )
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file )
 		debug_info( xml_file.name )
 		for anim in xml_file.anims:
-			if anim.type != 1 and anim.type != 2:
+			if anim.type != 1 and anim.type != 2 and anim.type != 4:
 				continue
 			anim.create_armature()
 
@@ -753,7 +814,9 @@ def parent_set( obj, armature ):
 		#return
 
 	bpy.ops.object.select_all(action='DESELECT')
-	bpy.ops.object.select_pattern(pattern=obj.name)
+	obj = get_object( obj.name )
+	obj.select = True
+	#bpy.ops.object.select_pattern(pattern=obj.name)
 	bpy.ops.object.select_pattern(pattern=armature.name)
 	bpy.context.scene.objects.active = armature
 	bpy.ops.object.parent_set(type='BONE')

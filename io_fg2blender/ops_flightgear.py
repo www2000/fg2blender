@@ -222,6 +222,7 @@ class FG_OT_exemple(bpy.types.Operator):
 	'''
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
 		# ce que l'on veut faire
+		print( "HelloWord" )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 #

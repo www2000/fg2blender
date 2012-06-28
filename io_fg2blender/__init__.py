@@ -63,6 +63,9 @@ from .ac_manager import AC_OPTION
 from .xml_manager import XML_OPTION
 
 from . import *
+
+
+BIDOUILLE = False
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #							ImportFG CLASS
@@ -126,7 +129,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 			xml_option = XML_OPTION()
 			xml_option.include		= self.include
 		
-			f = open('/home/rene/tmp/blender/script-fg2bl', mode='w')
+			f = open('/home/rene/tmp/script-fg2bl', mode='w')
 			f.write( filename )
 			#f.write( '\n' )
 			f.close()
@@ -194,10 +197,11 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 			ac_option.edge_split	= self.edge_split
 			ac_option.split_angle	= self.split_angle
 			ac_option.context		= context
-		
-			f = open('~/tmp/blender/script-fg2bl', 'w')
-			f.write( filename )
-			t.close()
+			
+			if BIDOUILLE :
+				f = open('~/tmp/blender/script-fg2bl', 'w')
+				f.write( filename )
+				t.close()
 			
 			read_ac( filename, ac_option )
 			
@@ -265,7 +269,9 @@ def register():
 	from . import props_armature
 	from . import ui_menu
 	from . import ui_panel_armature
+	from . import ui_panel_object
 	from . import ui_shortcut
+	from . import ui_button
 
 	bpy.utils.register_class(ImportFG)
 	bpy.utils.register_class(ImportAC)
@@ -275,7 +281,9 @@ def register():
 	props_armature.register()
 	ui_menu.register()
 	ui_panel_armature.register()
+	ui_panel_object.register()
 	ui_shortcut.register()
+	ui_button.register()
 
 	
 def unregister():
@@ -283,7 +291,9 @@ def unregister():
 	from . import props_armature
 	from . import ui_menu
 	from . import ui_panel_armature
+	from . import ui_panel_object
 	from . import ui_shortcut
+	from . import ui_button
 
 	bpy.utils.unregister_class(ImportFG)
 	bpy.utils.unregister_class(ImportAC)
@@ -293,7 +303,9 @@ def unregister():
 	props_armature.unregister()
 	ui_menu.unregister()
 	ui_panel_armature.unregister()
+	ui_panel_object.unregister()
 	ui_shortcut.unregister()
+	ui_button.unregister()
 
 	
 	

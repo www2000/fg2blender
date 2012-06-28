@@ -84,9 +84,6 @@ class VIEW3D_FG_sub_menu_0(bpy.types.Menu):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_exec(bpy.types.Operator):
-	global path
-	global nLayer, nLayerBone
-
 	bl_idname = "fg.exec"
 	bl_label = "fg.exec"
 
@@ -101,9 +98,9 @@ class FG_OT_exec(bpy.types.Operator):
 		ac_optionsplit_angle	= True
 
 		xml_option = XML_OPTION()
-		xml_option.include		= False
+		xml_option.include		= True
 
-		f = open('/home/rene/tmp/blender/script-fg2bl', mode='r')
+		f = open('/home/rene/tmp/script-fg2bl', mode='r')
 		filename = f.readline()
 		f.close()
 

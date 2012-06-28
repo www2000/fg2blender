@@ -104,12 +104,30 @@ def layout_armature(self, obj, context):
 				break;
 
 	boxTitre = layout.column()
+	boxTitre.label( text='Valeurs' )
+	boxValeurs = layout.box()
+	rowValeurs = boxValeurs.row()
+	for xml_file, no in xml_files:
+		for anim in xml_file.anims:
+			if anim.name == obj.name:
+				rowValeurs.label( text="Factor :" )
+				rowValeurs.label( text=str(anim.factor) )
+				break;
+			
+	boxTitre = layout.column()
 	boxTitre.label( text='Objets liés' )
 	boxObjects = layout.box()
-	colObjects = boxObjects.column()
+	row = boxObjects.row()
 	for objet in bpy.data.objects:
 		if objet.parent ==  obj:
-			colObjects.label( text=objet.name )
+			if objet.type == 'MESH':
+				row.label( text=objet.name,icon='OBJECT_DATA' )
+			elif objet.type == 'ARMATURE':
+				colObjects.label( text=objet.name, icon='BONE_DATA' )
+			else:
+				colObjects.label( text=objet.name )
+
+			row.operator("fg.button_select", text="Select").object_name=objet.name
 			
 	boxTitre = layout.column()
 	boxTitre.label( text='Défini' )
@@ -118,7 +136,7 @@ def layout_armature(self, obj, context):
 	for xml_file, no in xml_files:
 		for anim in xml_file.anims:
 			if anim.name == obj.name:
-				colDef.label( text=xml_file.name )
+				colDef.label( text=xml_file.name.partition('Aircraft')[2][1:] )
 				break;
 #----------------------------------------------------------------------------------------------------------------------------------
 #
