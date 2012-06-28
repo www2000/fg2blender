@@ -243,284 +243,6 @@ class ExportFG(bpy.types.Operator, ExportHelper):
 		return {'FINISHED'}
 
 '''
-
-
-#----------------------------------------------------------------------------------------------------------------------------------
-#
-#							Register shortcut
-#
-#----------------------------------------------------------------------------------------------------------------------------------
-
-class FG_OT_create_translate(bpy.types.Operator):
-	'''Add armature type translate '''
-	bl_idname = "view3d.create_translate"
-	bl_label = "Create Translate"
-	bl_options = {'REGISTER', 'UNDO'}
-
-	@classmethod
-	def poll(cls, context):
-		return True
-		return context.active_object != None
-
-	def execute(self, context):
-		import bpy
-		import mathutils
-		from math import radians
-
-		print( "Create_translate : " )
-		armature = bpy.ops.object.armature_add( view_align=True )
-		armature = bpy.data.armatures[-1]
-		print( armature.name )
-		for obj in bpy.data.objects:
-			if obj.type != 'ARMATURE':
-				continue
-			if obj.data.name == armature.name:
-				break 
-		if obj.type == 'ARMATURE':
-			print( "\tSelecion de : %s" %(obj.name) )
-			#bpy.ops.object.select_pattern(pattern=obj.name)
-			context.scene.objects.active = obj
-
-			bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-
-			print("\tActivation Pose Mode")
-			bpy.ops.object.posemode_toggle()
-			bpy.ops.pose.select_all( action='SELECT' )
-			print("\tAjout limite location")
-			bpy.ops.pose.constraint_add(type='LIMIT_LOCATION')
-
-			print("\tActivation des limites en local")
-			limit_translate = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
-			limit_translate.use_min_x = True
-			limit_translate.use_max_x = True
-			limit_translate.use_min_y = False
-			limit_translate.use_max_y = False
-			limit_translate.use_min_z = True
-			limit_translate.use_max_z = True
-			limit_translate.owner_space = 'LOCAL'
-			bpy.ops.object.posemode_toggle()
-
-			print("\tDesactivation Pose Mode")
-		return {'FINISHED'}
-#----------------------------------------------------------------------------------------------------------------------------------
-
-class FG_OT_create_rotate(bpy.types.Operator):
-	'''Add armature type rotate '''
-	bl_idname = "view3d.create_rotate"
-	bl_label = "Create Rotate"
-	bl_options = {'REGISTER', 'UNDO'}
-
-	@classmethod
-	def poll(cls, context):
-		return True
-		return context.active_object != None
-
-	def execute(self, context):
-		import bpy
-		import mathutils
-		from math import radians
-
-		print( "Create_rotate : " )
-		armature = bpy.ops.object.armature_add( view_align=True )
-		armature = bpy.data.armatures[-1]
-		print( armature.name )
-		for obj in bpy.data.objects:
-			if obj.type != 'ARMATURE':
-				continue
-			if obj.data.name == armature.name:
-				break 
-		if obj.type == 'ARMATURE':
-			print( "\tSelecion de : %s" %(obj.name) )
-			#bpy.ops.object.select_pattern(pattern=obj.name)
-			context.scene.objects.active = obj
-
-			#bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-
-			print("\tActivation Pose Mode")
-			bpy.ops.object.posemode_toggle()
-			bpy.ops.pose.select_all( action='SELECT' )
-			print("\tAjout limite rotation")
-			bpy.ops.pose.constraint_add(type='LIMIT_ROTATION')
-
-			print("\tMatrice en mode EulerXYZ")
-			bpy.data.objects[obj.name].pose.bones[-1].rotation_mode = 'XYZ'
-			print("\tActivation des limites en local")
-			limit_rotation = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
-			limit_rotation.use_limit_x = True
-			limit_rotation.use_limit_y = False
-			limit_rotation.use_limit_z = True
-			limit_rotation.owner_space = 'LOCAL'
-			bpy.ops.object.posemode_toggle()
-
-			print("\tDesactivation Pose Mode")
-		return {'FINISHED'}
-#----------------------------------------------------------------------------------------------------------------------------------
-
-class FG_OT_create_anim(bpy.types.Operator):
-	'''Add armature type rotate '''
-	bl_idname = "view3d.create_anim"
-	bl_label = "Create Annimation"
-	bl_options = {'REGISTER', 'UNDO'}
-
-	@classmethod
-	def poll(cls, context):
-		return True
-
-	def execute(self, context):
-		xml_manager.create_anims()
-		return {'FINISHED'}
-#----------------------------------------------------------------------------------------------------------------------------------
-
-class FG_OT_assign_anim(bpy.types.Operator):
-	'''Add armature type rotate '''
-	bl_idname = "view3d.assign_anim"
-	bl_label = "Assign animation"
-	bl_options = {'REGISTER', 'UNDO'}
-
-	@classmethod
-	def poll(cls, context):
-		return True
-
-	def execute(self, context):
-		xml_manager.assign_anims()
-		return {'FINISHED'}
-#----------------------------------------------------------------------------------------------------------------------------------
-
-class FG_OT_edges_split(bpy.types.Operator):
-	'''Add edge split sor select object '''
-	bl_idname = "view3d.edge_split"
-	bl_label = "Edge split"
-	bl_options = {'REGISTER', 'UNDO'}
-
-	@classmethod
-	def poll(cls, context):
-		if not context.active_object:
-			return False
-		return context.active_object.type == 'MESH'#None
-
-	def execute(self, context):
-		import bpy
-		import mathutils
-		from math import radians
-
-		print( "Smooth Object : " )
-		list_objects = context.selected_objects
-		active_object =	context.scene.objects.active
-		for obj in bpy.data.objects:
-			obj.select = False
-
-		for obj in list_objects:
-			if obj.type == 'MESH':
-				obj.select = True
-				context.scene.objects.active = obj
-				angle = obj.data.auto_smooth_angle
-				print( "\tObject : %s    angle=%0.2f" % (obj.name,degrees(angle)) )
-
-				try:
-					bpy.ops.object.modifier_add( type='EDGE_SPLIT')	
-					for mod in obj.modifiers:
-						if mod.type=='EDGE_SPLIT':
-							mod.split_angle = angle
-				except:
-					print( "Erreur modifier_add Edge-split" )
-
-				obj.select = False
-
-		for obj in list_objects:
-			obj.select = True
-		context.scene.objects.active = active_object
-
-				
-		return {'FINISHED'}
-#----------------------------------------------------------------------------------------------------------------------------------
-
-class VIEW3D_FG_root_menu(bpy.types.Menu):
-    bl_label = "Flightgear Tools Menu"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        #layout.menu("VIEW3D_FG_root_menu")
-        layout.separator()
-        layout.operator("view3d.edge_split",		text='Edge-split' )
-        layout.operator("view3d.create_anim",		text='Creation animations' )
-        #layout.operator("view3d.assign_anim",		text='Assigne animations' )
-        layout.separator()
-        layout.operator("view3d.create_rotate",		text='Define Rotation' )
-        layout.operator("view3d.create_translate",	text='Define Translation' )
-        layout.separator()
-#----------------------------------------------------------------------------------------------------------------------------------
-
-class VIEW3D_FG_sub_menu_0(bpy.types.Menu):
-    bl_label = "Assign Material"
-
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        for material_name in bpy.data.materials.keys():
-            layout.operator("view3d.assign_material",
-                text=material_name,
-                icon='MATERIAL_DATA').matname = material_name
-
-        layout.operator("view3d.assign_material",
-                        text="Add New",
-                        icon='ZOOMIN')
-#----------------------------------------------------------------------------------------------------------------------------------
-
-class FG_OT_exec(bpy.types.Operator):
-	global path
-	global nLayer, nLayerBone
-	
-	bl_idname = "fg.exec"
-	bl_label = "fg.exec"
-
-	#from io_scene_xplane import layer
-	
-	def execute(self, context ):
-		from .ac_manager import AC_OPTION
-		from .xml_manager import XML_OPTION
-		from .xml_import import import_xml
-
-		ac_option = AC_OPTION()
-		ac_option.smooth_all	= True
-		ac_optionedge_split		= True
-		ac_optionsplit_angle	= True
-	
-		xml_option = XML_OPTION()
-		xml_option.include		= True
-	
-			
-		f = open('/home/rene/tmp/blender/script-fg2bl', mode='r')
-		filename = f.readline()
-		f.close()
-		
-		import_xml( filename, ac_option, xml_option )
-			 
-		return {'FINISHED'}
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def register_shortcut():
-    kc = bpy.context.window_manager.keyconfigs.addon
-    km = kc.keymaps.new(name="3D View", space_type="VIEW_3D")
-    kmi = km.keymap_items.new('fg.exec', 'F', 'PRESS', ctrl=True)
-    kmi = km.keymap_items.new('wm.call_menu', 'F', 'PRESS')
-    kmi.properties.name = 'VIEW3D_FG_root_menu' 
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def unregister_shortcut():
-    kc = bpy.context.window_manager.keyconfigs.addon
-    km = kc.keymaps["3D_View_xplane"]
-    for kmi in km.keymap_items:
-        if kmi.idname == 'fg.exec':
-            km.keymap_items.remove(kmi)
-        if kmi.idname == 'fg.exec':
-            km.keymap_items.remove(kmi)
-            #if kmi.properties.name ==  "XPLANE_OT_exec":
-            #    break
-#----------------------------------------------------------------------------------------------------------------------------------
-
-
 #====================================================================================================================
 #
 #
@@ -529,11 +251,6 @@ def unregister_shortcut():
 #
 #
 #====================================================================================================================
-
-
-
-
-
 # Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):
     self.layout.operator(ImportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
@@ -544,39 +261,42 @@ def menu_func_import(self, context):
 
 
 def register():
-    bpy.utils.register_class(ImportFG)
-    bpy.utils.register_class(ImportAC)
-    bpy.utils.register_class(FG_OT_exec)
-    bpy.utils.register_class(VIEW3D_FG_root_menu)
-    bpy.utils.register_class(FG_OT_edges_split)
-    bpy.utils.register_class(FG_OT_create_anim)
-    bpy.utils.register_class(FG_OT_assign_anim)
-    bpy.utils.register_class(FG_OT_create_rotate)
-    bpy.utils.register_class(FG_OT_create_translate)
-    register_shortcut()
-    #bpy.utils.register_class(ExportFG)
+	from . import ops_flightgear
+	from . import props_armature
+	from . import ui_menu
+	from . import ui_panel_armature
+	from . import ui_shortcut
 
-    bpy.types.INFO_MT_file_import.append(menu_func_import)
-    #bpy.types.INFO_MT_file_export.append(menu_func_export)
+	bpy.utils.register_class(ImportFG)
+	bpy.utils.register_class(ImportAC)
+	bpy.types.INFO_MT_file_import.append(menu_func_import)
 
+	ops_flightgear.register()
+	props_armature.register()
+	ui_menu.register()
+	ui_panel_armature.register()
+	ui_shortcut.register()
 
+	
 def unregister():
-    bpy.utils.unregister_class(ImportFG)
-    bpy.utils.unregister_class(ImportAC)
-    bpy.utils.unregister_class(FG_OT_exec)
-    bpy.utils.unregister_class(VIEW3D_FG_root_menu)
-    bpy.utils.unregister_class(FG_OT_edges_split)
-    bpy.utils.unregister_class(FG_OT_create_anim)
-    bpy.utils.unregister_class(FG_OT_assign_anim)
-    bpy.utils.unregister_class(FG_OT_create_rotate)
-    bpy.utils.unregister_class(FG_OT_create_translate)
-    unregister_shortcut()
-    #bpy.utils.unregister_class(ExportAC)
+	from . import ops_flightgear
+	from . import props_armature
+	from . import ui_menu
+	from . import ui_panel_armature
+	from . import ui_shortcut
 
-    bpy.types.INFO_MT_file_import.remove(menu_func_import)
-    #bpy.types.INFO_MT_file_export.remove(menu_func_export)
+	bpy.utils.unregister_class(ImportFG)
+	bpy.utils.unregister_class(ImportAC)
+	bpy.types.INFO_MT_file_import.remove(menu_func_import)
 
+	ops_flightgear.unregister()
+	props_armature.unregister()
+	ui_menu.unregister()
+	ui_panel_armature.unregister()
+	ui_shortcut.unregister()
 
+	
+	
 if __name__ == "__main__":
 	try:
 		unregister()

@@ -545,20 +545,8 @@ def print_offset_path( node ):
 
 def read_rotation_path( node, xml_file ):
 	xml_parent = xml_manager.get_current_xml()
-	xml_file.parent_eulerXYZ	= Vector( (0.0,0.0,0.0) ) + xml_parent.eulerXYZ# + xml_manager.xml_current.parent_eulerXYZ
-	xml_file.eulerXYZ			= Vector( (0.0,0.0,0.0) )# + xml_parent.eulerXYZ# + xml_manager.xml_current.parent_eulerXYZ
-	
-	print( "\t\tExtra   %s" % (os.path.basename(xml_file.name) ) )
-	print( "\t\tParent  %s" % (os.path.basename(xml_parent.name) ) )
-	v = xml_file.eulerXYZ
-	print( "\t\tExtra    euler        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	v = xml_file.parent_eulerXYZ
-	print( "\t\tExtra    parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	v = xml_parent.eulerXYZ
-	print( "\t\tCurrent  euler         %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	v = xml_parent.parent_eulerXYZ
-	print( "\t\tCurrent  parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	
+	xml_file.parent_eulerXYZ	= Vector( (0.0,0.0,0.0) ) + xml_parent.eulerXYZ
+	xml_file.eulerXYZ			= Vector( (0.0,0.0,0.0) )
 	
 	childs = node.getElementsByTagName('offsets')
 	
@@ -568,70 +556,36 @@ def read_rotation_path( node, xml_file ):
 			if child.hasChildNodes():
 				roll = child.getElementsByTagName('roll-deg')
 				if roll:
-					#print( "%sroll-deg : %s" % (tabs(),ret_text_value(roll[0])) )
-					#xml_file.eulerXYZ.x = xml_file.parent_eulerXYZ.x + read_vector_roll_deg(child)
 					xml_file.eulerXYZ.x = xml_file.eulerXYZ.x + read_float_roll_deg(child)
-					#read_vector_center(child)
 				pitch = child.getElementsByTagName('pitch-deg')
 				if pitch:
-					#print( "%spitch-deg : %s" % (tabs(),ret_text_value(pitch[0])) )
-					#xml_file.eulerXYZ.y = xml_file.parent_eulerXYZ.y + read_vector_pitch_deg(child)
 					xml_file.eulerXYZ.y = xml_file.eulerXYZ.y + read_float_pitch_deg(child)
 				heading = child.getElementsByTagName('heading-deg')
 				if heading:
-					#print( "%sheading-deg : %s" % (tabs(),ret_text_value(heading[0])) )
-					#xml_file.eulerXYZ.z = xml_file.parent_eulerXYZ.z + read_vector_heading_deg(child)
 					xml_file.eulerXYZ.z = xml_file.eulerXYZ.z + read_float_heading_deg(child)
 	else:
 		print( "%sPas de rotation" % tabs() )
-
-	v = xml_file.eulerXYZ
-	print( "\t\tExtra    euler        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	v = xml_file.parent_eulerXYZ
-	print( "\t\tExtra    parent_euler  %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_offset_path( node, xml_file ):
 	xml_parent = xml_manager.get_current_xml()
-	xml_file.parent_offset	= Vector( (0.0,0.0,0.0) ) + xml_parent.offset# + xml_manager.xml_current.parent_offset
-	xml_file.offset			= Vector( (0.0,0.0,0.0) )# + xml_parent.offset# + xml_manager.xml_current.parent_offset
+	xml_file.parent_offset	= Vector( (0.0,0.0,0.0) ) + xml_parent.offset
+	xml_file.offset			= Vector( (0.0,0.0,0.0) )
 	
-	print( "\t\tExtra   %s" % (os.path.basename(xml_file.name) ) )
-	print( "\t\tParent  %s" % (os.path.basename(xml_parent.name) ) )
-	v = xml_file.offset
-	print( "\t\tExtra    offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	v = xml_file.parent_offset
-	print( "\t\tExtra    parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	v = xml_parent.offset
-	print( "\t\tCurrent  offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	v = xml_parent.parent_offset
-	print( "\t\tCurrent  parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	
-
 	childs = node.getElementsByTagName('offsets')
 	if childs:
-		#childs = node.getElementsByTagName('center')
 		for child in childs:
 			if child.hasChildNodes():
 				translations = child.getElementsByTagName('x-m')
 				if translations:
 					value = read_center(child)
-					#print( "%sOffset : %s" % (tabs(),value) )
-					#xml_file.offset = xml_file.parent_offset + read_vector_center(child)
 					xml_file.offset = Vector( (0.0,0.0,0.0) )  + read_vector_center(child)
 					
 	else:
 		print( "%sPas d'offset" % tabs() )
-
-	v = xml_file.offset
-	print( "\t\tExtra    offset        %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
-	v = xml_file.parent_offset
-	print( "\t\tExtra    parent_offset %0.2f, %0.2f, %0.2f" % ( v.x, v.y, v.z ) )
 #---------------------------------------------------------------------------------------------------------------------
 
 def compute_offset( xml_file ):
-	global path_model
 	
 	e = xml_file.parent_eulerXYZ
 	eleur  = Euler( (e.x, e.y, e.z) )
@@ -639,11 +593,9 @@ def compute_offset( xml_file ):
 	mat4 = eleur.to_matrix().to_4x4()
 	pos = mat4 * xml_file.offset
 	
-	tr = xml_file.offset - pos
-
-	xml_file.offset = xml_file.parent_offset + pos#xml_file.offset# + tr
+	#tr = xml_file.offset - pos
+	xml_file.offset = xml_file.parent_offset + pos
 	xml_file.eulerXYZ = xml_file.eulerXYZ + xml_file.parent_eulerXYZ
-	
 #---------------------------------------------------------------------------------------------------------------------
 
 def absolute_path( filename ):

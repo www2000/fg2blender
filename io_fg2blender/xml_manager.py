@@ -34,7 +34,6 @@ from mathutils import Euler
 from . import *
 
 from .ac_manager import AC_FILE
-#from .xml_import import ret_text_value
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -42,7 +41,7 @@ xml_files = []
 xml_current = None
 
 
-DEBUG = True
+DEBUG = False
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
@@ -65,6 +64,7 @@ class XML_OPTION:
 #	parent_offset		= ( 0.0 , 0.0 , 0.0 )				parent location
 #	parent_eulerXYZ		= ( 0.0 , 0.0 , 0.0 )				parent rotation
 #	file_offset 		= "include.xml"						strings    where xml define offset (parent file name)   (not use)
+#	anims				= [ ANIM() , ANIM() , ... ]			List of ANIM  object
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class XML_FILE:
@@ -627,7 +627,7 @@ def create_anims():
 			debug_info( 'insertion keyframe : "%s"' % anim.name )
 			anim.insert_keyframe_all()
 
-	bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
+	#bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def print_dic_name( xml_file ):
