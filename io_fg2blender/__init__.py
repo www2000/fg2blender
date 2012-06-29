@@ -53,6 +53,7 @@ from math import degrees
 from bpy_extras.io_utils import ExportHelper
 from bpy_extras.io_utils import ImportHelper
 
+from bpy.props import IntProperty
 from bpy.props import FloatProperty
 from bpy.props import StringProperty
 from bpy.props import BoolProperty
@@ -65,7 +66,7 @@ from .xml_manager import XML_OPTION
 from . import *
 
 
-BIDOUILLE = False
+
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #							ImportFG CLASS
@@ -94,6 +95,14 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 	split_angle	= FloatProperty(name="Split angle", description="Value of edge-spit", min=0.0, max=180.0, default=65.0 )
 	include		= BoolProperty(name="Include file", description="Read file include", default=True)
 
+	mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=True)
+	mesh_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=0)
+	mesh_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=20)
+
+	armature_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=True)
+	armature_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=1)
+	armature_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=20)
+
 	def draw(self, context):
 		scn = context.scene
 		layout = self.layout
@@ -105,6 +114,10 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 		row.prop( self, "smooth_all" )
 		row.prop( self, "edge_split" )
 		row.prop( self, "split_angle" )
+		row.prop( self, "mesh_active_layer" )
+		if not self.mesh_active_layer:
+			row.prop( self, "mesh_rotate_layer_0" )
+			row.prop( self, "mesh_rotate_layer_1" )
 
 		row = layout.row()
 		row.label( text = "Option xml" )
@@ -112,6 +125,10 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 		row = box_option_xml.column()
 		#row.label( text = "Option xml" )
 		row.prop( self, "include" )
+		row.prop( self, "armature_active_layer" )
+		if not self.armature_active_layer:
+			row.prop( self, "armature_rotate_layer_0" )
+			row.prop( self, "armature_rotate_layer_1" )
 
 
 	def execute(self, context):
@@ -123,18 +140,30 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 			print( filename )
 			ac_option = AC_OPTION()
 			ac_option.smooth_all	= self.smooth_all
-			ac_optionedge_split		= self.edge_split
-			ac_optionsplit_angle	= self.split_angle
+			ac_option.edge_split	= self.edge_split
+			ac_option.split_angle	= self.split_angle
+			ac_option.active_layer	= self.mesh_active_layer
+			ac_option.layer_beg		= self.mesh_rotate_layer_0
+			ac_option.layer_end		= self.mesh_rotate_layer_1
 		
 			xml_option = XML_OPTION()
 			xml_option.include		= self.include
+			xml_option.active_layer	= self.armature_active_layer
+			xml_option.layer_beg	= self.armature_rotate_layer_0
+			xml_option.layer_end	= self.armature_rotate_layer_1
 		
-			f = open('/home/rene/tmp/script-fg2bl', mode='w')
-			f.write( filename )
-			#f.write( '\n' )
-			f.close()
+			if xml_manager.BIDOUILLE :
+				f = open('/home/rene/tmp/script-fg2bl', mode='w')
+				f.write( filename )
+				f.close()
+				#xml_option = XML_OPTION()
+				#xml_option.include		= False
+				xml_option.active_layer	= False
+				xml_option.layer_beg	= 1
+				xml_option.layer_end	= 10
 
 			import_xml(	filename, ac_option, xml_option )
+			bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
 		
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -163,7 +192,10 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 	smooth_all	= BoolProperty(name="Smooth all", description="Tools smooth", default=True)
 	edge_split	= BoolProperty(name="Edge split", description="Object modifiers", default=True)
 	split_angle	= FloatProperty(name="Split angle", description="Value of edge-spit", min=0.0, max=180.0, default=65.0 )
-	include		= BoolProperty(name="Include file", description="Read file include", default=True)
+
+	mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=True)
+	mesh_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=0)
+	mesh_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=20)
 
 	def draw(self, context):
 		scn = context.scene
@@ -176,14 +208,11 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 		row.prop( self, "smooth_all" )
 		row.prop( self, "edge_split" )
 		row.prop( self, "split_angle" )
-		'''
-		row = layout.row()
-		row.label( text = "Option xml" )
-		box_option_xml = layout.box()
-		row = box_option_xml.column()
-		#row.label( text = "Option xml" )
-		row.prop( self, "include" )
-		'''
+
+		row.prop( self, "mesh_active_layer" )
+		if not self.mesh_active_layer:
+			row.prop( self, "mesh_rotate_layer_0" )
+			row.prop( self, "mesh_rotate_layer_1" )
 
 	def execute(self, context):
 
@@ -198,7 +227,7 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 			ac_option.split_angle	= self.split_angle
 			ac_option.context		= context
 			
-			if BIDOUILLE :
+			if xml_manager.BIDOUILLE :
 				f = open('~/tmp/blender/script-fg2bl', 'w')
 				f.write( filename )
 				t.close()

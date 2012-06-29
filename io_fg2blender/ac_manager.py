@@ -65,6 +65,9 @@ class AC_OPTION:
 		self.smooth_all		= True
 		self.edge_split		= True
 		self.split_angle	= 60.0
+		self.active_layer	= True
+		self.layer_beg		= 1
+		self.layer_end		= 20
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS AC_FILE

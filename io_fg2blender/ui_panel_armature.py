@@ -32,7 +32,7 @@ import bpy
 
 #--------------------------------------------------------------------------------------------------------------------------------
 
-class ANIM_PT_armature(bpy.types.Panel):
+class FG_PT_armature(bpy.types.Panel):
 	'''Flight Object Panel'''
 	bl_label = "FLightgear"
 	#bl_space_type = "PROPERTIES"
@@ -99,38 +99,38 @@ def layout_armature(self, obj, context):
 	for xml_file, no in xml_files:
 		for anim in xml_file.anims:
 			if anim.name == obj.name:
-				colProperty.label( text="Value :" )
+				colProperty.label( text="Property:" )
 				colProperty.label( text=anim.property )
 				break;
 
 	boxTitre = layout.column()
-	boxTitre.label( text='Valeurs' )
+	boxTitre.label( text='Valeurs:' )
 	boxValeurs = layout.box()
 	rowValeurs = boxValeurs.row()
 	for xml_file, no in xml_files:
 		for anim in xml_file.anims:
 			if anim.name == obj.name:
-				rowValeurs.label( text="Factor :" )
+				rowValeurs.label( text="Factor:" )
 				rowValeurs.label( text=str(anim.factor) )
 				break;
 			
 	boxTitre = layout.column()
-	boxTitre.label( text='Objets liés' )
+	boxTitre.label( text='Objets liés:' )
 	boxObjects = layout.box()
-	row = boxObjects.row()
 	for objet in bpy.data.objects:
 		if objet.parent ==  obj:
+			row = boxObjects.row()
 			if objet.type == 'MESH':
 				row.label( text=objet.name,icon='OBJECT_DATA' )
 			elif objet.type == 'ARMATURE':
-				colObjects.label( text=objet.name, icon='BONE_DATA' )
+				row.label( text=objet.name, icon='BONE_DATA' )
 			else:
-				colObjects.label( text=objet.name )
+				row.label( text=objet.name )
 
 			row.operator("fg.button_select", text="Select").object_name=objet.name
 			
 	boxTitre = layout.column()
-	boxTitre.label( text='Défini' )
+	boxTitre.label( text='xml file:' )
 	boxDef = layout.box()
 	colDef = boxDef.column()
 	for xml_file, no in xml_files:
@@ -148,10 +148,10 @@ def layout_armature(self, obj, context):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def register():
-	bpy.utils.register_class(ANIM_PT_armature)
+	bpy.utils.register_class(FG_PT_armature)
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
-	bpy.utils.unregister_class(ANIM_PT_armature)
+	bpy.utils.unregister_class(FG_PT_armature)
 
 

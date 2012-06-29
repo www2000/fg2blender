@@ -56,6 +56,12 @@ option_animation = False
 option_light = False
 option_ac_file = False
 
+option_rotate_layer = False
+option_rotate_beg = True
+option_rotate_end = True
+
+layer = -1
+
 DEBUG_INFO = False
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -614,6 +620,7 @@ def parse_node( node, file_name ):
 	global option_print_include
 	global option_ac_file
 	global no_include
+	global layer
 	
 
 	ret_list = []
@@ -669,6 +676,7 @@ def parse_node( node, file_name ):
 							ac_manager.clone_ac(	xml_manager.get_ac_file(file_ac),
 													xml_manager.xml_current )
 							xml_manager.xml_current.add_ac_file( ac_manager.get_ac_file() )
+							layer = layer + 1
 						else:
 							if os.path.isfile(file_ac):
 								from .ac_import import read_ac
@@ -681,7 +689,7 @@ def parse_node( node, file_name ):
 								read_ac(	filename 	= conversion(file_ac),
 											ac_option	= ac_option,
 											extra		= xml_manager.xml_current )
-
+								layer = layer + 1
 								ac_file = ac_manager.get_ac_file()
 								xml_manager.xml_current.add_ac_file( ac_file )
 							else:
@@ -722,9 +730,25 @@ def parse_node( node, file_name ):
 
 def parse_file( filename, no_inc ):
 	global niv 
+	global layer
 	global path_model
 	global option_include
 	global no_include
+	global option_rotate_layer
+	global option_rotate_beg
+	global option_rotate_end
+	global layer
+
+
+	if option_rotate_layer:
+		#layer = layer + 1
+		if layer < option_rotate_beg:
+			layer = option_rotate_beg
+		if layer > option_rotate_end:
+			layer = option_rotate_beg
+		print ( 'Layer %d' % layer )	
+		bpy.context.scene.layers = xml_manager.layer( layer-1 )
+			
 	
 	#xml_file = XML_FILE()
 	if no_inc == -1:
@@ -834,11 +858,18 @@ def import_xml(filename, ac_option, xml_option):
 	global option_animation
 	global option_ac_file
 	global option_light
+	global option_rotate_layer
+	global option_rotate_beg
+	global option_rotate_end
 
 
 	time_deb = time.time()
 
 	option_include = xml_option.include
+	option_rotate_layer = not xml_option.active_layer
+	option_rotate_beg = xml_option.layer_beg
+	option_rotate_end = xml_option.layer_end
+
 	option_print_include = False
 	option_rotation = False
 	option_translation = False

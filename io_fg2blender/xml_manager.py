@@ -42,7 +42,7 @@ xml_current = None
 
 
 DEBUG = False
-
+BIDOUILLE = False
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -52,6 +52,9 @@ DEBUG = False
 class XML_OPTION:
 	def __init__(self):
 		self.include		= False
+		self.active_layer	= True
+		self.layer_beg		= 1
+		self.layer_end		= 20
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_FILE
@@ -385,7 +388,9 @@ class ANIM:
 		bpy.ops.object.armature_add()
 
 		#print( "Context : %s" % bpy.context.mode )
-		bpy.ops.object.move_to_layer( layers = layer(1) )
+		#bpy.context.scene.layers = layer( 10 )
+		#bpy.context.scene.active_layer = 10
+		bpy.ops.object.move_to_layer( layers = layer(10) )
 		
 		#armature = bpy.data.armatures.new( 'Armature')
 		armature = bpy.data.armatures[-1]
@@ -450,7 +455,9 @@ class ANIM:
 
 	def create_armature_translation( self ):
 		bpy.ops.object.armature_add()
-		bpy.ops.object.move_to_layer( layers = layer(1) )
+		#bpy.context.scene.layers = layer( 10 )
+		#bpy.context.scene.active_layer = 10
+		bpy.ops.object.move_to_layer( layers = layer(10) )
 
 		armature = bpy.data.armatures[-1]
 		print( 'Create armature translate : "%s"' % armature.name )
@@ -532,23 +539,38 @@ class ANIM:
 		if self.type == 4:
 			self.create_pick()
 	#---------------------------------------------------------------------------------------------------------------------
+	def assign_pick( self, obj_name_bl ):
+		obj = get_object( obj_name_bl )
+		if obj:
+			if obj.type == 'MESH':
+				if not is_exist_matrial_pick(obj ):
+					obj.data.materials.append( bpy.data.materials['Material_Pick'])
+				obj.show_wire = True
+				obj.show_transparent = True
+
 
 	def create_pick( self ):
-		#print( 'Create Pick in : "%s"' % self.xml_file )
 		for xml_file, no in xml_files:
 			if xml_file.name == self.xml_file:
 				break
 		for obj_name_ac in self.objects:
-			obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
-			print( 'Create Pick : "%s"' % obj_name_ac )
-			#print( 'Create Pick : "%s"  ->  ("%s")' % (obj_name_ac, obj_name_bl) )
-			obj = get_object( obj_name_bl )
-			if obj:
-				if obj.type == 'MESH':
-					if not is_exist_matrial_pick(obj ):
-						obj.data.materials.append( bpy.data.materials['Material_Pick'])
-					obj.show_wire = True
-					obj.show_transparent = True
+			#print( 'xml file "%s"' % os.path.basename(xml_file.name) )
+			#print( "Nb ac file : %d" % len(xml_file.ac_files) )
+			
+			if not obj_name_ac in xml_file.ac_files[0].dic_name_meshs:
+				group_objects = find_group( obj_name_ac, xml_file )
+				if group_objects:
+					debug_info( '\tgroup : "%s"' % str(self.group_objects)  )
+					for obj_name_bl in group_objects[1:]:
+						print( 'Create Pick : "%s"' % obj_name_bl )
+						self.assign_pick( obj_name_bl )
+				else:
+					print( '**** Erreur objet "%s" inconnu ***' % obj_name )
+					continue
+			else:
+				obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
+				print( 'Create Pick : "%s"' % obj_name_bl )
+				self.assign_pick( obj_name_bl )
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #							END CLASS ANIM
@@ -662,7 +684,10 @@ def create_anims():
 	global xml_files
 	
 	create_material_pick()
-	bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
+	bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
+	if not bpy.context.scene.layers[10]:
+		bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
+
 	#print( str(bpy.context) )
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file )
@@ -688,7 +713,8 @@ def create_anims():
 			debug_info( 'insertion keyframe : "%s"' % anim.name )
 			anim.insert_keyframe_all()
 
-	#bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
+	bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+#bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def print_dic_name( xml_file ):
@@ -759,14 +785,13 @@ def assign_obj_to_anim():
 					parent_set( obj, obj_armature )
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def find_group( group_name ):
+def find_group( group_name, xml_file ):
 	global xml_files
 	
-	for xml_file, no in xml_files:
-		for anim in  xml_file.anims:
-			if anim.group_objects:
-				if anim.group_objects[0] == group_name:
-					return anim.group_objects
+	for anim in  xml_file.anims:
+		if anim.group_objects:
+			if anim.group_objects[0] == group_name:
+				return anim.group_objects
 	return None
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -775,7 +800,7 @@ def assign_group_obj_to_anim( xml_file, group_name, anim, dic_name ):
 	global xml_files
 
 	debug_info( '\tRecherche de group name : "%s"' % group_name )
-	group_objects = find_group( group_name )
+	group_objects = find_group( group_name, xml_file )
 	if group_objects:
 		debug_info( '\tgroup : "%s"' % str(anim.group_objects)  )
 		for obj_name in group_objects[1:]:
@@ -801,6 +826,13 @@ def is_obj_link_armature( obj ):
 		if objet.type == 'ARMATURE':
 			return objet
 		else:
+			debug_info( "**** Clear Transform *****" )
+			bpy.ops.object.select_all(action='DESELECT')
+			obj.select = True
+			bpy.context.scene.objects.active = obj
+			obj_parent = obj.parent
+			bpy.ops.object.parent_clear( type='CLEAR_KEEP_TRANSFORM' )
+			obj.parent = obj_parent
 			return None
 	else:
 		return None

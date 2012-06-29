@@ -33,7 +33,7 @@ import os
 
 #--------------------------------------------------------------------------------------------------------------------------------
 
-class OBJECT_PT_object(bpy.types.Panel):
+class FG_PT_object(bpy.types.Panel):
 	'''Flight Object Panel'''
 	bl_label = "FLightgear"
 	#bl_space_type = "PROPERTIES"
@@ -93,10 +93,10 @@ def layout_object(self, obj, context):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def register():
-	bpy.utils.register_class(OBJECT_PT_object)
+	bpy.utils.register_class(FG_PT_object)
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
-	bpy.utils.unregister_class(OBJECT_PT_object)
+	bpy.utils.unregister_class(FG_PT_object)
 
 

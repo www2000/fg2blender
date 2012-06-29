@@ -94,17 +94,25 @@ class FG_OT_exec(bpy.types.Operator):
 		
 		ac_option = AC_OPTION()
 		ac_option.smooth_all	= True
-		ac_optionedge_split		= True
-		ac_optionsplit_angle	= True
+		ac_option.edge_split	= True
+		ac_option.split_angle	= 60.0
 
 		xml_option = XML_OPTION()
 		xml_option.include		= True
+		xml_option.active_layer	= False
+		xml_option.layer_beg	= 1
+		xml_option.layer_end	= 10
 
-		f = open('/home/rene/tmp/script-fg2bl', mode='r')
-		filename = f.readline()
-		f.close()
+		if xml_manager.BIDOUILLE:
+			f = open('/home/rene/tmp/script-fg2bl', mode='r')
+			filename = f.readline()
+			f.close()
+		else:
+			print( "Bidouille OK" )
+			return {'FINISHED'}
 
 		import_xml( filename, ac_option, xml_option )
+		bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 #
