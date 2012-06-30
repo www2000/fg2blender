@@ -27,84 +27,224 @@
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
+
+
+
+
+
+
+familles = ['controls','engines','fuel','gear']
+
+controls = [	'/controls/flight/aileron',
+				'/controls/flight/aileron-trim',
+				'/controls/flight/elevator',
+				'/controls/flight/elevator-trim',
+				'/controls/flight/rudder',
+				'/controls/flight/rudder-trim',
+				'/controls/flight/flaps',
+				'/controls/flight/slats',
+				'/controls/flight/BLC',
+				'/controls/flight/spoilers',
+				'/controls/flight/speedbrake',
+				'/controls/flight/wing-sweep',
+				'/controls/flight/wing-fold',
+				'/controls/flight/drag-chute'		]
+         
+flight_controls = [		'/controls/flight/aileron',
+						'/controls/flight/aileron-trim',
+						'/controls/flight/elevator',
+						'/controls/flight/elevator-trim',
+						'/controls/flight/rudder',
+						'/controls/flight/rudder-trim',
+						'/controls/flight/flaps',
+						'/controls/flight/slats',
+						'/controls/flight/BLC',
+						'/controls/flight/spoilers',
+						'/controls/flight/speedbrake',
+						'/controls/flight/wing-sweep',
+						'/controls/flight/wing-fold',
+						'/controls/flight/drag-chute'	]
+
+engines = [		'/controls/engines/throttle_idle',
+				'/controls/engines/engine[%d]/throttle',
+				'/controls/engines/engine[%d]/starter',
+				'/controls/engines/engine[%d]/fuel-pump',
+				'/controls/engines/engine[%d]/fire-switch',
+				'/controls/engines/engine[%d]/fire-bottle-discharge',
+				'/controls/engines/engine[%d]/cutoff',
+				'/controls/engines/engine[%d]/mixture',
+				'/controls/engines/engine[%d]/propeller-pitch',
+				'/controls/engines/engine[%d]/magnetos',
+				'/controls/engines/engine[%d]/boost',
+				'/controls/engines/engine[%d]/WEP',
+				'/controls/engines/engine[%d]/cowl-flaps-norm',
+				'/controls/engines/engine[%d]/feather',
+				'/controls/engines/engine[%d]/ignition',
+				'/controls/engines/engine[%d]/augmentation',
+				'/controls/engines/engine[%d]/afterburner',
+				'/controls/engines/engine[%d]/reverser',
+				'/controls/engines/engine[%d]/water-injection',
+				'/controls/engines/engine[%d]/condition'		]
+
+fuels = [	'/controls/fuel/dump-valve',
+			'/controls/fuel/tank[%d]/fuel_selector',
+			'/controls/fuel/tank[%d]/to_engine',
+			'/controls/fuel/tank[%d]/to_tank',
+			'/controls/fuel/tank[%d]/boost-pump[%d]',
+			'/consumables/fuel/tank[%d]/level-lbs',
+			'/consumables/fuel/tank[%d]/level-gal_us',
+			'/consumables/fuel/tank[%d]/capacity-gal_us',
+			'/consumables/fuel/tank[%d]/density-ppg',
+			'/consumables/fuel/total-fuel-lbs',
+			'/consumables/fuel/total-gal_us'	]
+            
+gears = [	'/controls/gear/brake-left',
+			'/controls/gear/brake-right',
+			'/controls/gear/brake-parking',
+			'/controls/gear/steering',
+			'/controls/gear/gear-down',
+			'/controls/gear/antiskid',
+			'/controls/gear/tailhook',
+			'/controls/gear/tailwheel-lock',
+			'/controls/gear/wheel[%d]/alternate-extension'		]
+
+
+
+
+
+
 import bpy
+from . import *
+
+
+
 #----------------------------------------------------------------------------------------------------------------------------------
 
-class fgAnimSettings(bpy.types.PropertyGroup):
+def dynamic_items( self, context ):
+	obj = context.active_object
+
+	if obj.data.fg.familly == 'controls':
+		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc in flight_controls ]
+	elif obj.data.fg.familly == 'engines':
+	    items = [ (en,en.split('/')[-1],en.split('/')[-1]) for en in engines ]
+	elif obj.data.fg.familly == 'fuel':
+	    items =	[ (fu,fu.split('/')[-1],fu.split('/')[-1]) for fu in fuels ]
+	elif obj.data.fg.familly == 'gear':
+	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge in gears ]
+	else:
+		items = [  ('error','error','error') ]
+	return items
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def dynamic_items_xml_file( self, context ):
+	#items = [ (xf.name,xf.name.split('/')[-1],xf.name.split('/')[-1]) for xf,no in xml_manager.xml_files ]
+	items = [ (xf.name,xf.name,xf.name) for xf,no in xml_manager.xml_files ]
+	return items
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_PROP_armature(bpy.types.PropertyGroup):
+	familly = bpy.props.EnumProperty(	attr='familly',
+				                        name='Familly',
+				                        description="familly animation",
+				                        default='custom',
+				                        items = [ ('custom','custom','custom') ]
+				                        	+	[ (famille,famille,famille) for famille in familles ]    )
+
+	familly_value = bpy.props.EnumProperty(	attr='familly_value',
+											name='Value',
+											description="property flight_control",
+											items = dynamic_items
+									)
 
 
-   familly = bpy.props.EnumProperty(      attr='familly',
-                                 name='familly',
-                                 description="familly animation",
-                                 default='none',
-                                 items=[   ('none','none','none'),
-                                       ('controls','controls','controls'),
-                                       ('instrumentation','instrumentation','instrumentation'),
-                                       ('flight_control','flight_control','flight_control'),
-                                       ('engines','engines','engines'),
-                                       ('fuel','fuel','fuel'),
-                                       ('gear','gear','gear'),
-                                       ('anti-ice','anti-ice','anti-ice'),
-                                       ('electric','electric','electric'),
-                                       ('pneumatic','pneumatic','pneumatic'),
-                                       ('pressurization','pressurization','pressurization'),
-                                       ('lights','lights','lights'),
-                                       ('armament','armament','armament'),
-                                       ('seat','seat','seat'),
-                                       ('apu','apu','apu'),
-                                       ('autoflight','autoflight','autoflight'),
-                                       ('position','position','position'),
-                                       ('orientation','orientation','orientation'),
-                                       ('velocities','velocities','velocities'),
-                                       ('acceleration','acceleration','acceleration')
-                                       ]   )
+	property_value = bpy.props.StringProperty(	attr = 'value', name = 'value')
 
-   controls = bpy.props.EnumProperty(      attr='controls',
-                                 name='controls',
-                                 description="property control",
-                                 default='aileron',
-                                 items=[   
-                                       ('aileron','aileron','aileron' ),
-                                       ('aileron-trim','aileron-trim','aileron-trim' ),
-                                       ('elevator','elevator','elevator' ),
-                                       ('elevator-trim','elevator-trim','elevator-trim' )
-                                    ]   )
+	factor = bpy.props.FloatProperty(	attr = 'factor', name = 'Factor')
 
+	xml_file = bpy.props.StringProperty(	attr = 'xml_file', name = 'xml_file')
 
-   instrumentation = bpy.props.EnumProperty(      attr='instrumentation',
-                                       name='instrumentation',
-                                       description="property instrumentation",
-                                       default='adf',
-                                       items=[   
-                                       ('adf','adf','adf' ),
-                                       ('airspeed-indicator','airspeed-indicator','airspeed-indicator' ),
-                                       ('altimeter','altimeter','altimeter' )
-                                    ]   )
+	xml_present = bpy.props.EnumProperty(	attr='xml_file_present',
+										    name='Present',
+										    description="familly animation",
+										    items = dynamic_items_xml_file )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def addProjectRNA():
-   # basic classes
-   bpy.utils.register_class(fgAnimSettings)   
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="familly",
+														type=FG_PROP_armature,
+														name="Familly",
+														description="Property familly")
 
-   bpy.types.Object.property = bpy.props.PointerProperty(   attr="familly",
-                                             type=fgAnimSettings,
-                                             name="familly",
-                                             description="Property familly")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="familly_value",
+														type=FG_PROP_armature,
+														name="Familly value",
+														description="Familly value")
                                              
-   bpy.types.Object.controls = bpy.props.PointerProperty(   attr="controls",
-                                             type=fgAnimSettings,
-                                             name="controls",
-                                             description="Property controls")
-                                             
-   bpy.types.Object.instrumentation = bpy.props.PointerProperty(   attr="instrumentation",
-                                             type=fgAnimSettings,
-                                             name="instrumentation",
-                                             description="Property instrumentation")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_value",
+														type=FG_PROP_armature,
+														name="Property",
+														description="Property value")
+
+	bpy.types.Armature.fg =  bpy.props.PointerProperty(	attr="factor",
+														type=FG_PROP_armature,
+														name="Factor",
+														description="Property value")
+	
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file",
+														type=FG_PROP_armature,
+														name="xml file",
+														description="Property value")
+
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='xml_file_present',
+														type=FG_PROP_armature,
+													    name='xml file present',
+													    description="familly" )
+
 #----------------------------------------------------------------------------------------------------------------------------------
+class FG_OT_select_file(bpy.types.Operator):
+	bl_idname = "object.custom_draw"
+	bl_label = "Import"
+
+	filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+	'''
+	my_float = bpy.props.FloatProperty(name="Float")
+	my_bool = bpy.props.BoolProperty(name="Toggle Option")
+	my_string = bpy.props.StringProperty(name="String Value")
+	'''
+	def execute(self, context):
+		print( self.filepath)
+		return {'FINISHED'}
+
+	def invoke(self, context, event):
+		context.window_manager.fileselect_add(self)
+		return {'RUNNING_MODAL'}
+	'''
+	def draw(self, context):
+		layout = self.layout
+		col = layout.column()
+		col.label(text="Custom Interface!")
+
+		row = col.row()
+		row.prop(self, "my_float")
+		row.prop(self, "my_bool")
+
+		col.prop(self, "my_string")
+	 '''
+
+
+
+
+
+
+
+
+
+
+
 
 def removeProjectRNA():
     # complex classes, depending on basic classes
-    bpy.utils.unregister_class(fgAnimSettings)
+    bpy.utils.unregister_class(FG_PROP_armature)
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
@@ -116,6 +256,8 @@ def removeProjectRNA():
     
     
 def register():
+	bpy.utils.register_class( FG_PROP_armature )
+	bpy.utils.register_class(FG_OT_select_file)
 	addProjectRNA()
 
 def unregister():

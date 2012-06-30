@@ -34,7 +34,7 @@ import bpy
 #   Button
 class FG_OT_button_select(bpy.types.Operator):
 	bl_idname = "fg.button_select"
-	bl_label = "Button"
+	bl_label = "Select"
 
 	object_name = bpy.props.StringProperty()
 

@@ -409,7 +409,8 @@ class ANIM:
 				continue
 			if obj.data.name == armature_name:
 				obj_arma = obj_armature = obj
-
+				obj_arma.data.fg.property_value = self.property
+				obj_arma.data.fg.factor = self.factor
 				break;
 
 		if self.name != "":
@@ -475,7 +476,8 @@ class ANIM:
 				continue
 			if obj.data.name == armature_name:
 				obj_arma = obj_armature = obj
-
+				obj_arma.data.fg.property_value = self.property
+				obj_arma.data.fg.factor = self.factor
 				break;
 
 		if self.name != "":
@@ -565,7 +567,7 @@ class ANIM:
 						print( 'Create Pick : "%s"' % obj_name_bl )
 						self.assign_pick( obj_name_bl )
 				else:
-					print( '**** Erreur objet "%s" inconnu ***' % obj_name )
+					print( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
 					continue
 			else:
 				obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
@@ -696,6 +698,8 @@ def create_anims():
 			if anim.type != 1 and anim.type != 2 and anim.type != 4:
 				continue
 			anim.create_armature()
+			obj = bpy.context.scene.objects.active
+			obj.data.fg.xml_file = xml_file.name
 
 	for xml_file, no in xml_files:
 		for ac_file in xml_file.ac_files:

@@ -227,10 +227,10 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 			ac_option.split_angle	= self.split_angle
 			ac_option.context		= context
 			
-			if xml_manager.BIDOUILLE :
-				f = open('~/tmp/blender/script-fg2bl', 'w')
+			if xml_manager.BIDOUILLE:
+				f = open('/home/rene/tmp/script-fg2bl', mode='w')
 				f.write( filename )
-				t.close()
+				f.close()
 			
 			read_ac( filename, ac_option )
 			
