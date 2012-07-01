@@ -63,13 +63,12 @@ def layout_property(self, obj, context):
 	layout = self.layout
 	xml_files = xml_manager.xml_files
 
-	boxTitre = layout.column()
-	boxTitre.label( text='Property' )
-	boxAnimProperty = layout.box()
+	col = layout.column()
+	col.label( text='Property' )
+	box = layout.box()
 
-	rowProperty = boxAnimProperty.row()
-	#rowProperty.label( text='Familly :' )
-	rowProperty.prop( obj.data.fg, "familly" )
+	row = box.row()
+	row.prop( obj.data.fg, "familly" )
 
 	anim = None
 	for xml_file, no in xml_files:
@@ -77,26 +76,24 @@ def layout_property(self, obj, context):
 			if anim.name == obj.name:
 				break;
 
-	if anim:
 
-		if obj.data.fg.familly != 'custom':
-			rowProperty = boxAnimProperty.row()
-			#rowProperty.label( text='value :' )
-			rowProperty.prop(obj.data.fg, "familly_value")
-			value = obj.data.fg.familly_value
+	if obj.data.fg.familly != 'custom':
+		row = box.row()
+		row.prop(obj.data.fg, "familly_value")
+		value = obj.data.fg.familly_value
 
-			anim.property = value
-			#obj.property.value = value
+		#print( context.mode )
+		#obj.data.fg.property_value = value
 
-		colProperty = boxAnimProperty.row()
-		colProperty.alignment = 'LEFT'
-		if obj.data.fg.familly != 'custom':
-			colProperty.label( text="Property:" )
-			colProperty.label( text=anim.property )
-		else:
-			colProperty.alignment = 'EXPAND'
-			colProperty.prop( obj.data.fg,  "property_value" )
-			anim.property = obj.data.fg.property_value
+	row = box.row()
+	row.alignment = 'LEFT'
+	if obj.data.fg.familly != 'custom':
+		row.label( text="Property:" )
+		#if anim :
+		row.label( text=obj.data.fg.familly_value )
+	else:
+		row.alignment = 'EXPAND'
+		row.prop( obj.data.fg,  "property_value" )
 
 #--------------------------------------------------------------------------------------------------------------------------------
 
@@ -110,15 +107,11 @@ def layout_armature(self, obj, context):
 	boxTitre.label( text='Type' )
 	boxType = layout.box()
 	colType = boxType.column()
-	for xml_file, no in xml_files:
-		for anim in xml_file.anims:
-			if anim.name == obj.name:
-				if anim.type == 1:
-					colType.label( text="Rotation" )
-					break;
-				elif anim.type == 2:
-					colType.label( text="Translation" )
-					break;
+
+	if obj.data.fg.type_anim == 1:
+		colType.label( text="Rotation" )
+	elif obj.data.fg.type_anim == 2:
+		colType.label( text="Translation" )
 
 	layout_property( self, obj, context )
 			
@@ -142,20 +135,22 @@ def layout_armature(self, obj, context):
 			else:
 				row.label( text=objet.name )
 
-			#row.operator("fg.button_select", text="Select").object_name=objet.name
 			row.operator("fg.button_select").object_name=objet.name
 			
 	boxTitre = layout.column()
 	boxTitre.label( text='xml file:' )
-	boxDef = layout.box()
-	colDef = boxDef.column()
-	colDef = boxDef.prop( obj.data.fg, "xml_file" )
+	box = layout.box()
+	row = box.row(align=True)
+	row.prop( obj.data.fg, "xml_file" )
+	ret = row.operator( "object.file_select", icon='FILESEL' ).filepath
+	
+	#print( ret )
 
-	colDef = boxDef.column()
+	row = box.row(align=True)
 	for xml_file, no in xml_files:
 		for anim in xml_file.anims:
 			if anim.name == obj.name:
-				colDef.label( text=xml_file.name.partition('Aircraft')[2][1:] )
+				row.prop( obj.data.fg, "xml_present" )
 				break;
 
 #----------------------------------------------------------------------------------------------------------------------------------

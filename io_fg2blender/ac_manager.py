@@ -448,6 +448,8 @@ class MESH:
 		#mesh.update(calc_edges=True)
 		mesh.validate()
 		mesh.update(calc_edges=True)
+
+		obj_new.fg.ac_file = "" + self.filename
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_texture( self ):
@@ -638,6 +640,8 @@ def clone_ac( ac_file, xml_extra_position ):
 		if obj_new.type != 'EMPTY':
 			mesh.validate()
 			mesh.update(calc_edges=True)
+			
+			obj_new.fg.ac_file = "" + ac_file.name
 		
 		current_ac_file.meshs.append( obj_new.name )
 		current_ac_file.dic_name_meshs[obj_name] = obj_new.name

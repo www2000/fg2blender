@@ -409,8 +409,9 @@ class ANIM:
 				continue
 			if obj.data.name == armature_name:
 				obj_arma = obj_armature = obj
-				obj_arma.data.fg.property_value = self.property
-				obj_arma.data.fg.factor = self.factor
+				obj_arma.data.fg.familly = "custom"
+				obj_arma.data.fg.property_value = "" + self.property
+				obj_arma.data.fg.factor = 0.0 + self.factor
 				break;
 
 		if self.name != "":
@@ -476,8 +477,9 @@ class ANIM:
 				continue
 			if obj.data.name == armature_name:
 				obj_arma = obj_armature = obj
-				obj_arma.data.fg.property_value = self.property
-				obj_arma.data.fg.factor = self.factor
+				obj_arma.data.fg.familly = "custom"
+				obj_arma.data.fg.property_value = "" + self.property
+				obj_arma.data.fg.factor = 0.0 + self.factor
 				break;
 
 		if self.name != "":
@@ -536,11 +538,18 @@ class ANIM:
 	def create_armature( self ):
 		if self.type == 1:
 			self.create_armature_rotation()
+			obj = bpy.context.scene.objects.active
+			if obj:
+				obj.data.fg.type_anim = 0 + self.type
 		if self.type == 2:
 			self.create_armature_translation()
+			obj = bpy.context.scene.objects.active
+			if obj:
+				obj.data.fg.type_anim = 0 + self.type
 		if self.type == 4:
 			self.create_pick()
 	#---------------------------------------------------------------------------------------------------------------------
+
 	def assign_pick( self, obj_name_bl ):
 		obj = get_object( obj_name_bl )
 		if obj:
@@ -549,7 +558,7 @@ class ANIM:
 					obj.data.materials.append( bpy.data.materials['Material_Pick'])
 				obj.show_wire = True
 				obj.show_transparent = True
-
+	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_pick( self ):
 		for xml_file, no in xml_files:
@@ -699,7 +708,8 @@ def create_anims():
 				continue
 			anim.create_armature()
 			obj = bpy.context.scene.objects.active
-			obj.data.fg.xml_file = xml_file.name
+			if obj:
+				obj.data.fg.xml_file = "" + xml_file.name
 
 	for xml_file, no in xml_files:
 		for ac_file in xml_file.ac_files:

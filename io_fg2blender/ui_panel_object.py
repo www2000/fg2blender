@@ -69,13 +69,16 @@ def layout_object(self, obj, context):
 	box = layout.box()
 	col = box.column()
 
+	'''
 	for xml_file, no in xml_files:
 		for ac_file in xml_file.ac_files:
 			for mesh in ac_file.meshs:
 				if mesh == obj.name:
 					col.label( text=ac_file.name.partition('Aircraft')[2][1:] )
 					break;
-
+	'''
+	col.prop( obj.fg, "ac_file" )
+	
 	if obj.parent:
 		boxTitre = layout.column()
 		boxTitre.label( text='Parent' )

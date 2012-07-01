@@ -18,7 +18,7 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: 
+# Contributors: Alexis
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ def dynamic_items( self, context ):
 
 def dynamic_items_xml_file( self, context ):
 	#items = [ (xf.name,xf.name.split('/')[-1],xf.name.split('/')[-1]) for xf,no in xml_manager.xml_files ]
-	items = [ (xf.name,xf.name,xf.name) for xf,no in xml_manager.xml_files ]
+	items = [ ("","","") ] + [ (xf.name,xf.name,xf.name) for xf,no in xml_manager.xml_files ]
 	return items
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -161,15 +161,17 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 	factor = bpy.props.FloatProperty(	attr = 'factor', name = 'Factor')
 
-	xml_file = bpy.props.StringProperty(	attr = 'xml_file', name = 'xml_file')
+	xml_file = bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File')
 
-	xml_present = bpy.props.EnumProperty(	attr='xml_file_present',
-										    name='Present',
+	xml_present = bpy.props.EnumProperty(	attr='xml_present',
+										    name='xml Present',
 										    description="familly animation",
 										    items = dynamic_items_xml_file )
+
+	type_anim = bpy.props.IntProperty(	attr = 'type_anim', name = 'Type')
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def addProjectRNA():
+def RNA_armature():
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="familly",
 														type=FG_PROP_armature,
 														name="Familly",
@@ -195,43 +197,26 @@ def addProjectRNA():
 														name="xml file",
 														description="Property value")
 
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='xml_file_present',
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='xml_present',
 														type=FG_PROP_armature,
 													    name='xml file present',
 													    description="familly" )
 
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='type_anim',
+														type=FG_PROP_armature,
+													    name='type_anim',
+													    description="familly" )
 #----------------------------------------------------------------------------------------------------------------------------------
-class FG_OT_select_file(bpy.types.Operator):
-	bl_idname = "object.custom_draw"
-	bl_label = "Import"
 
-	filepath = bpy.props.StringProperty(subtype="FILE_PATH")
-	'''
-	my_float = bpy.props.FloatProperty(name="Float")
-	my_bool = bpy.props.BoolProperty(name="Toggle Option")
-	my_string = bpy.props.StringProperty(name="String Value")
-	'''
-	def execute(self, context):
-		print( self.filepath)
-		return {'FINISHED'}
+class FG_PROP_object(bpy.types.PropertyGroup):
+	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = 'ac File')
+#----------------------------------------------------------------------------------------------------------------------------------
 
-	def invoke(self, context, event):
-		context.window_manager.fileselect_add(self)
-		return {'RUNNING_MODAL'}
-	'''
-	def draw(self, context):
-		layout = self.layout
-		col = layout.column()
-		col.label(text="Custom Interface!")
-
-		row = col.row()
-		row.prop(self, "my_float")
-		row.prop(self, "my_bool")
-
-		col.prop(self, "my_string")
-	 '''
-
-
+def RNA_object():
+	bpy.types.Object.fg = bpy.props.PointerProperty(	attr="ac_file",
+														type=FG_PROP_object,
+														name="ac_file",
+														description="File .ac")
 
 
 
@@ -243,8 +228,9 @@ class FG_OT_select_file(bpy.types.Operator):
 
 
 def removeProjectRNA():
-    # complex classes, depending on basic classes
-    bpy.utils.unregister_class(FG_PROP_armature)
+	# complex classes, depending on basic classes
+	bpy.utils.unregister_class( FG_PROP_armature )
+	bpy.utils.unregister_class( FG_PROP_object )
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
@@ -257,8 +243,9 @@ def removeProjectRNA():
     
 def register():
 	bpy.utils.register_class( FG_PROP_armature )
-	bpy.utils.register_class(FG_OT_select_file)
-	addProjectRNA()
+	bpy.utils.register_class( FG_PROP_object )
+	RNA_armature()
+	RNA_object()
 
 def unregister():
 	removeProjectRNA()

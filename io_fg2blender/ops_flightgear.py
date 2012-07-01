@@ -90,6 +90,8 @@ class FG_OT_create_translate(bpy.types.Operator):
 			limit_translate.owner_space = 'LOCAL'
 			bpy.ops.object.posemode_toggle()
 
+			obj.data.fg.type_anim = 2
+
 			print("\tDesactivation Pose Mode")
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -140,7 +142,12 @@ class FG_OT_create_rotate(bpy.types.Operator):
 			limit_rotation.use_limit_y = False
 			limit_rotation.use_limit_z = True
 			limit_rotation.owner_space = 'LOCAL'
+			bpy.data.objects[obj.name].pose.bones[-1].lock_rotation = ( True, False, True )
 			bpy.ops.object.posemode_toggle()
+			
+			obj.lock_rotation = ( True, False, True )
+			
+			obj.data.fg.type_anim = 1
 
 			print("\tDesactivation Pose Mode")
 		return {'FINISHED'}
@@ -210,6 +217,21 @@ class FG_OT_edges_split(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_select_file(bpy.types.Operator):
+	bl_idname = "object.file_select"
+	bl_label = ""
+
+	filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+
+	def execute(self, context):
+		#print( self.filepath)
+		return {'FINISHED'}
+
+	def invoke(self, context, event):
+		context.window_manager.fileselect_add(self)
+		return {'RUNNING_MODAL'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_exemple(bpy.types.Operator):
 	'''C'est un exemple d'operateur blender '''
 	bl_idname = "view3d.exemple"					# sera appelé par bpy.ops.view3d.exemple()
@@ -234,17 +256,19 @@ class FG_OT_exemple(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def register():
-    bpy.utils.register_class(FG_OT_edges_split)
-    bpy.utils.register_class(FG_OT_create_anim)
-    bpy.utils.register_class(FG_OT_create_rotate)
-    bpy.utils.register_class(FG_OT_create_translate)
-    bpy.utils.register_class(FG_OT_exemple)
+	bpy.utils.register_class( FG_OT_edges_split)
+	bpy.utils.register_class( FG_OT_create_anim)
+	bpy.utils.register_class( FG_OT_create_rotate)
+	bpy.utils.register_class( FG_OT_create_translate)
+	bpy.utils.register_class( FG_OT_exemple)
+	bpy.utils.register_class( FG_OT_select_file )
 
 
 def unregister():
-    bpy.utils.unregister_class(FG_OT_edges_split)
-    bpy.utils.unregister_class(FG_OT_create_anim)
-    bpy.utils.unregister_class(FG_OT_create_rotate)
-    bpy.utils.unregister_class(FG_OT_create_translate)
-    bpy.utils.unregister_class(FG_OT_exemple)
+	bpy.utils.unregister_class( FG_OT_edges_split)
+	bpy.utils.unregister_class( FG_OT_create_anim)
+	bpy.utils.unregister_class( FG_OT_create_rotate)
+	bpy.utils.unregister_class( FG_OT_create_translate)
+	bpy.utils.unregister_class( FG_OT_exemple)
+	bpy.utils.unregister_class( FG_OT_select_file )
 
