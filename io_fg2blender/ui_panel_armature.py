@@ -32,17 +32,16 @@ import bpy
 
 #--------------------------------------------------------------------------------------------------------------------------------
 
-class FG_PT_armature(bpy.types.Panel):
+class FG_PT_armature_properties(bpy.types.Panel):
 	'''Flight Object Panel'''
-	bl_label = "FLightgear"
-	#bl_space_type = "PROPERTIES"
-	#bl_region_type = "WINDOW"
-	bl_space_type = 'VIEW_3D'
-	bl_region_type = 'TOOLS'
-	#bl_context = "object"
+	bl_label		= "FLightgear"
+	bl_space_type	= "PROPERTIES"
+	bl_region_type	= "WINDOW"
+	bl_context = "object"
 
 	@classmethod
 	def poll(self,context):
+		#print( context.mode )
 		obj = context.object
 
 		if obj:      
@@ -54,12 +53,61 @@ class FG_PT_armature(bpy.types.Panel):
 		obj = context.active_object
 		if obj:
 			if obj.type == "ARMATURE":
-				layout_armature(self, obj, context);
+				layout_armature_properties(self, obj, context);
 #--------------------------------------------------------------------------------------------------------------------------------
 
-def layout_property(self, obj, context):
-	from . import xml_manager
+class FG_PT_armature_tool(bpy.types.Panel):
+	'''Flight Object Panel'''
+	bl_label		= "FLightgear"
+	bl_space_type	= 'VIEW_3D'
+	bl_region_type	= 'TOOLS'
 
+	@classmethod
+	def poll(self,context):
+		#print( context.mode )
+		obj = context.object
+
+		if obj:      
+			if obj.type in ("ARMATURE"):
+				return True
+		return False
+
+	def draw(self, context):
+		obj = context.active_object
+		if obj:
+			if obj.type == "ARMATURE":
+				layout_armature_tool(self, obj, context);
+#--------------------------------------------------------------------------------------------------------------------------------
+
+def layout_armature_tool(self, obj, context):
+	from . import xml_manager
+	
+	layout = self.layout
+	xml_files = xml_manager.xml_files
+
+	boxTitre = layout.column()
+	boxTitre.label( text='Type' )
+	boxType = layout.box()
+	colType = boxType.column()
+
+	if obj.data.fg.type_anim == 1:
+		colType.label( text="Rotation" )
+	elif obj.data.fg.type_anim == 2:
+		colType.label( text="Translation" )
+
+
+	col = layout.column()
+	col.prop( obj.data.fg, "factor" )
+			
+	box_link_object( self, obj, context )
+
+	if obj.parent:			
+		box_parent( self, obj, context )			
+#--------------------------------------------------------------------------------------------------------------------------------
+
+def layout_armature_properties(self, obj, context):
+	from . import xml_manager
+	
 	layout = self.layout
 	xml_files = xml_manager.xml_files
 
@@ -76,14 +124,10 @@ def layout_property(self, obj, context):
 			if anim.name == obj.name:
 				break;
 
-
 	if obj.data.fg.familly != 'custom':
 		row = box.row()
 		row.prop(obj.data.fg, "familly_value")
 		value = obj.data.fg.familly_value
-
-		#print( context.mode )
-		#obj.data.fg.property_value = value
 
 	row = box.row()
 	row.alignment = 'LEFT'
@@ -94,15 +138,24 @@ def layout_property(self, obj, context):
 	else:
 		row.alignment = 'EXPAND'
 		row.prop( obj.data.fg,  "property_value" )
-
-#--------------------------------------------------------------------------------------------------------------------------------
-
-def layout_armature(self, obj, context):
-	from . import xml_manager
+			
+	col = layout.column()
+	col.prop( obj.data.fg, "factor" )
+			
+			
+	boxTitre = layout.column()
+	boxTitre.label( text='xml file:' )
+	box = layout.box()
+	row = box.row(align=True)
+	row.prop( obj.data.fg, "xml_file" )
+	ret = row.operator( "object.file_select", icon='FILESEL' ).filepath
 	
-	layout = self.layout
-	xml_files = xml_manager.xml_files
-
+	row = box.row(align=True)
+	for xml_file, no in xml_files:
+		for anim in xml_file.anims:
+			if anim.name == obj.name:
+				row.prop( obj.data.fg, "xml_present" )
+				break;
 	boxTitre = layout.column()
 	boxTitre.label( text='Type' )
 	boxType = layout.box()
@@ -113,17 +166,36 @@ def layout_armature(self, obj, context):
 	elif obj.data.fg.type_anim == 2:
 		colType.label( text="Translation" )
 
-	layout_property( self, obj, context )
-			
+
 	col = layout.column()
-	for xml_file, no in xml_files:
-		for anim in xml_file.anims:
-			if anim.name == obj.name:
-				col.prop( obj.data.fg, "factor" )
-				break;
+	col.prop( obj.data.fg, "factor" )
 			
+	box_link_object( self, obj, context )
+
+	if obj.parent:
+		box_parent( self, obj, context )			
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def box_parent( self, obj, context ):
+	layout = self.layout
+
+	box = layout.column()
+	box.label( text='Parent' )
+	box = layout.box()
+	row = box.row()
+	if obj.parent.type == 'MESH':
+		row.label( text=obj.parent.name,icon='OBJECT_DATA' )
+	elif obj.type == 'ARMATURE':
+		row.label( text=obj.parent.name, icon='BONE_DATA' )
+	else:
+		row.label( text=obj.parent.name )
+	row.operator("fg.button_select", text="Select").object_name=obj.parent.name
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def box_link_object( self, obj, context ):
+	layout = self.layout
 	boxTitre = layout.column()
-	boxTitre.label( text='Objets liés:' )
+	boxTitre.label( text='Objet(s) lié(s):' )
 	boxObjects = layout.box()
 	for objet in bpy.data.objects:
 		if objet.parent ==  obj:
@@ -136,23 +208,6 @@ def layout_armature(self, obj, context):
 				row.label( text=objet.name )
 
 			row.operator("fg.button_select").object_name=objet.name
-			
-	boxTitre = layout.column()
-	boxTitre.label( text='xml file:' )
-	box = layout.box()
-	row = box.row(align=True)
-	row.prop( obj.data.fg, "xml_file" )
-	ret = row.operator( "object.file_select", icon='FILESEL' ).filepath
-	
-	#print( ret )
-
-	row = box.row(align=True)
-	for xml_file, no in xml_files:
-		for anim in xml_file.anims:
-			if anim.name == obj.name:
-				row.prop( obj.data.fg, "xml_present" )
-				break;
-
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
@@ -163,10 +218,12 @@ def layout_armature(self, obj, context):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def register():
-	bpy.utils.register_class(FG_PT_armature)
+	bpy.utils.register_class(FG_PT_armature_tool)
+	bpy.utils.register_class(FG_PT_armature_properties)
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
-	bpy.utils.unregister_class(FG_PT_armature)
+	bpy.utils.unregister_class(FG_PT_armature_tool)
+	bpy.utils.unregister_class(FG_PT_armature_properties)
 
 

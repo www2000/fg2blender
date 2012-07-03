@@ -39,10 +39,11 @@ from .ac_manager import AC_FILE
 
 xml_files = []
 xml_current = None
+xml_current_no = 0
 
 
-DEBUG = False
-BIDOUILLE = False
+DEBUG = True
+BIDOUILLE = True
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -73,6 +74,7 @@ class XML_OPTION:
 class XML_FILE:
 	def __init__(self):
 		self.name				= ""
+		self.no					= 0
 		self.ac_names			= []
 		self.ac_files			= []
 		self.offset				= Vector( (0.0, 0.0, 0.0) )
@@ -104,8 +106,9 @@ class XML_FILE:
 class ANIM:
 	def __init__(self):
 		self.name				= ""
-		self.type				= 0								# 1:Rotate 2:translate 3: group objects 4: pick
+		self.type				= 0								# 1:Rotate 2:translate 3: group objects 4:pick 5:light
 		self.xml_file			= ""
+		self.xml_file_no		= 0
 		self.factor				= 0.0
 		self.interpolation		= []
 		self.property			= ""
@@ -130,6 +133,8 @@ class ANIM:
 						self.type = 2
 					elif value == 'pick':
 						self.type = 4
+					elif value == 'light':
+						self.type = 5
 		else:
 			childs = node.getElementsByTagName('name')
 			if childs:
@@ -280,8 +285,17 @@ class ANIM:
 			self.extract_property( node )
 			self.extract_objects( node )
 		#---------------------------------------------------------------------------------------------------------------------
+
+		def extract_light( node ):
+			from .xml_import import tabs
+
+			debug_info( "%sExtract light :" % (tabs()) )
+			self.extract_name( node )
+			self.extract_objects( node )
+		#---------------------------------------------------------------------------------------------------------------------
 		# pour recopier la valeur et non pas la référence
 		self.xml_file = "" + xml_current.name
+		self.xml_file_no = 0 + xml_current.no
 		self.extract_type( node )
 		if self.type == 1:
 			extract_anim_rotate( node )
@@ -291,6 +305,8 @@ class ANIM:
 			self.extract_group_objects( node )
 		elif self.type == 4:
 			extract_pick( node )
+		elif self.type == 5:
+			extract_light( node )
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def insert_keyframe_rotation( self, frame, value ):
@@ -396,6 +412,7 @@ class ANIM:
 		armature = bpy.data.armatures[-1]
 		print( 'Create armature rotate : "%s"' % armature.name )
 		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
+		debug_info( '\t\t   no   xml: %d' % self.xml_file_no )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
 		debug_info( '\t\tProperty : "%s"' % self.property )
 		debug_info( "\t\tPos %s" % str(self.pos) )
@@ -437,8 +454,9 @@ class ANIM:
 
 		bpy.ops.object.editmode_toggle()
 
-		obj_arma.delta_location = xml_current.offset
-		obj_arma.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
+		ac_manager.compute_extra_transforme( obj_arma, offset, euler )
+		#obj_arma.delta_location = xml_current.offset
+		#obj_arma.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
 
 
 		bpy.ops.object.posemode_toggle()
@@ -464,6 +482,7 @@ class ANIM:
 		armature = bpy.data.armatures[-1]
 		print( 'Create armature translate : "%s"' % armature.name )
 		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
+		debug_info( '\t\t       no  : %d' % self.xml_file_no )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
 		debug_info( '\t\tProperty : "%s"' % self.property )
 		debug_info( "\t\tPos %s" % str(self.pos) )
@@ -505,8 +524,9 @@ class ANIM:
 
 		bpy.ops.object.editmode_toggle()
 
-		obj_arma.delta_location = xml_current.offset
-		obj_arma.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
+		ac_manager.compute_extra_transforme( obj_arma, offset, euler )
+		#obj_arma.delta_location = xml_current.offset
+		#obj_arma.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
 
 
 		bpy.ops.object.posemode_toggle()
@@ -535,19 +555,48 @@ class ANIM:
 			self.insert_keyframe_translation_all()
 	#---------------------------------------------------------------------------------------------------------------------
 
+	def create_light( self ):
+		for xml_file, no in xml_files:
+			if xml_file.name == self.xml_file and no == self.xml_file_no:
+				break
+		for obj_name_ac in self.objects:
+			debug_info( 'Light' )
+			debug_info( 'xml file no %d  -- "%s"' % (self.xml_file_no, os.path.basename(xml_file.name)) )
+			debug_info( "Nb ac file : %d" % len(xml_file.ac_files) )
+			
+			if not obj_name_ac in xml_file.ac_files[0].dic_name_meshs:
+				group_objects = find_group( obj_name_ac, xml_file )
+				if group_objects:
+					debug_info( '\tgroup : "%s"' % str(self.group_objects)  )
+					for obj_name_bl in group_objects[1:]:
+						print( 'Create light : "%s"' % obj_name_bl )
+						bpy.data.objects[obj_name_bl].draw_type = 'WIRE'
+						#self.assign_pick( obj_name_bl )
+				else:
+					print( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
+					continue
+			else:
+				obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
+				print( 'Create light : "%s"' % obj_name_bl )
+				bpy.data.objects[obj_name_bl].draw_type = 'WIRE'
+				#self.assign_pick( obj_name_bl )
+	#---------------------------------------------------------------------------------------------------------------------
+
 	def create_armature( self ):
 		if self.type == 1:
 			self.create_armature_rotation()
 			obj = bpy.context.scene.objects.active
 			if obj:
 				obj.data.fg.type_anim = 0 + self.type
-		if self.type == 2:
+		elif self.type == 2:
 			self.create_armature_translation()
 			obj = bpy.context.scene.objects.active
 			if obj:
 				obj.data.fg.type_anim = 0 + self.type
-		if self.type == 4:
+		elif self.type == 4:
 			self.create_pick()
+		elif self.type == 5:
+			self.create_light()
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def assign_pick( self, obj_name_bl ):
@@ -562,26 +611,28 @@ class ANIM:
 
 	def create_pick( self ):
 		for xml_file, no in xml_files:
-			if xml_file.name == self.xml_file:
+			if xml_file.name == self.xml_file and no == self.xml_file_no:
 				break
 		for obj_name_ac in self.objects:
-			#print( 'xml file "%s"' % os.path.basename(xml_file.name) )
-			#print( "Nb ac file : %d" % len(xml_file.ac_files) )
+			debug_info( 'Pick' )
+			debug_info( 'xml file no %d  -- "%s"' % (self.xml_file_no, os.path.basename(xml_file.name)) )
+			debug_info( "Nb ac file : %d" % len(xml_file.ac_files) )
 			
-			if not obj_name_ac in xml_file.ac_files[0].dic_name_meshs:
-				group_objects = find_group( obj_name_ac, xml_file )
-				if group_objects:
-					debug_info( '\tgroup : "%s"' % str(self.group_objects)  )
-					for obj_name_bl in group_objects[1:]:
-						print( 'Create Pick : "%s"' % obj_name_bl )
-						self.assign_pick( obj_name_bl )
+			if xml_file.ac_files:
+				if not obj_name_ac in xml_file.ac_files[0].dic_name_meshs:
+					group_objects = find_group( obj_name_ac, xml_file )
+					if group_objects:
+						debug_info( '\tgroup : "%s"' % str(self.group_objects)  )
+						for obj_name_bl in group_objects[1:]:
+							print( 'Create Pick : "%s"' % obj_name_bl )
+							self.assign_pick( obj_name_bl )
+					else:
+						print( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
+						continue
 				else:
-					print( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
-					continue
-			else:
-				obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
-				print( 'Create Pick : "%s"' % obj_name_bl )
-				self.assign_pick( obj_name_bl )
+					obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
+					print( 'Create Pick : "%s"' % obj_name_bl )
+					self.assign_pick( obj_name_bl )
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #							END CLASS ANIM
@@ -614,17 +665,25 @@ def add_xml_file( xml_file, no ):
 		xml_files.append( (xml_file,no) )
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def set_current_xml( xml_file=None ):
+def set_current_xml( xml_file=None, no=0 ):
 	global xml_current
+	global xml_current_no
 	
 	if xml_file:
 		xml_current = xml_file
+		xml_current_no = no
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def get_current_xml():
 	global xml_current
 	
 	return  xml_current
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def get_current_xml_no():
+	global xml_current_no
+	
+	return  xml_current_no
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def is_defined( filename ):
@@ -695,16 +754,19 @@ def create_anims():
 	global xml_files
 	
 	create_material_pick()
+	# Change layer
 	bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
 	if not bpy.context.scene.layers[10]:
 		bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
+		
+	bpy.context.scene.objects.active = None
 
 	#print( str(bpy.context) )
 	for xml_file, no in xml_files:
-		set_current_xml( xml_file )
+		set_current_xml( xml_file, no )
 		debug_info( xml_file.name )
 		for anim in xml_file.anims:
-			if anim.type != 1 and anim.type != 2 and anim.type != 4:
+			if anim.type != 1 and anim.type != 2 and anim.type != 4 and anim.type != 5:
 				continue
 			anim.create_armature()
 			obj = bpy.context.scene.objects.active
@@ -720,7 +782,7 @@ def create_anims():
 	assign_obj_to_anim()
 
 	for xml_file, no in xml_files:
-		set_current_xml( xml_file )
+		set_current_xml( xml_file, no )
 		for anim in xml_file.anims:
 			if anim.name=="":
 				continue
@@ -756,7 +818,7 @@ def assign_obj_to_anim():
 	global xml_files
 
 	for xml_file, no in xml_files:
-		set_current_xml( xml_file )
+		set_current_xml( xml_file, no )
 		print( 'assign_obj_to_anim()  in "%s"' % os.path.basename(xml_file.name) )
 		#print( xml_file.name )
 		debug_info( 'assign_to_anim() make dictionnary' )
@@ -846,8 +908,19 @@ def is_obj_link_armature( obj ):
 			bpy.context.scene.objects.active = obj
 			obj_parent = obj.parent
 			bpy.ops.object.parent_clear( type='CLEAR_KEEP_TRANSFORM' )
-			obj.parent = obj_parent
+			#obj.parent = obj_parent
 			return None
+	else:
+		return None
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def is_obj_link_empty( obj ):
+	objet = bpy.data.objects[obj.name]
+	#debug_info( "\tObj name %s" % objet.name )
+	if objet.parent!= None:
+		objet = objet.parent
+		if objet.type == 'EMPTY':
+			return objet
 	else:
 		return None
 #----------------------------------------------------------------------------------------------------------------------------------

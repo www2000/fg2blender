@@ -33,14 +33,14 @@ import os
 
 #--------------------------------------------------------------------------------------------------------------------------------
 
-class FG_PT_object(bpy.types.Panel):
+class FG_PT_object_properties(bpy.types.Panel):
 	'''Flight Object Panel'''
 	bl_label = "FLightgear"
-	#bl_space_type = "PROPERTIES"
-	#bl_region_type = "WINDOW"
-	bl_space_type = 'VIEW_3D'
-	bl_region_type = 'TOOLS'
-	#bl_context = "object"
+	bl_space_type = "PROPERTIES"
+	bl_region_type = "WINDOW"
+	#bl_space_type = 'VIEW_3D'
+	#bl_region_type = 'TOOLS'
+	bl_context = "object"
 
 	@classmethod
 	def poll(self,context):
@@ -58,6 +58,28 @@ class FG_PT_object(bpy.types.Panel):
 				layout_object(self, obj, context);
 #--------------------------------------------------------------------------------------------------------------------------------
 
+class FG_PT_object_tool(bpy.types.Panel):
+	'''Flight Object Panel'''
+	bl_label = "FLightgear"
+	bl_space_type = "VIEW_3D"
+	bl_region_type = "TOOLS"
+
+	@classmethod
+	def poll(self,context):
+		obj = context.object
+
+		if obj:      
+			if obj.type in ("MESH"):
+				return True
+		return False
+
+	def draw(self, context):
+		obj = context.active_object
+		if obj:
+			if obj.type == "MESH":
+				layout_object_tool(self, obj, context);
+#--------------------------------------------------------------------------------------------------------------------------------
+
 def layout_object(self, obj, context):
 	from . import xml_manager
 	
@@ -69,16 +91,22 @@ def layout_object(self, obj, context):
 	box = layout.box()
 	col = box.column()
 
-	'''
-	for xml_file, no in xml_files:
-		for ac_file in xml_file.ac_files:
-			for mesh in ac_file.meshs:
-				if mesh == obj.name:
-					col.label( text=ac_file.name.partition('Aircraft')[2][1:] )
-					break;
-	'''
-	col.prop( obj.fg, "ac_file" )
+	col.prop( obj.data.fg, "ac_file" )
 	
+	if obj.parent:
+		boxTitre = layout.column()
+		boxTitre.label( text='Parent' )
+		box = layout.box()
+		row = box.row()
+		row.label( text=obj.parent.name, icon='BONE_DATA' )
+		row.operator("fg.button_select", text="Select").object_name=obj.parent.name
+#--------------------------------------------------------------------------------------------------------------------------------
+
+def layout_object_tool(self, obj, context):
+	from . import xml_manager
+	
+	layout = self.layout
+
 	if obj.parent:
 		boxTitre = layout.column()
 		boxTitre.label( text='Parent' )
@@ -96,10 +124,12 @@ def layout_object(self, obj, context):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def register():
-	bpy.utils.register_class(FG_PT_object)
+	bpy.utils.register_class(FG_PT_object_properties)
+	bpy.utils.register_class(FG_PT_object_tool)
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
-	bpy.utils.unregister_class(FG_PT_object)
+	bpy.utils.unregister_class(FG_PT_object_properties)
+	bpy.utils.unregister_class(FG_PT_object_tool)
 
 

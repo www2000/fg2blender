@@ -232,6 +232,7 @@ class MESH:
 
 		sc = bpy.context.scene
 		o = sc.objects.link(obj_new)
+		#o = sc.objects.link(obj_new)
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_uv( self, mesh ):
@@ -423,11 +424,33 @@ class MESH:
 		current_ac_file.dic_name_meshs[obj_name] = obj_new.name
 
 		obj_new.location = self.location
+		#v =  Vector( (0.0,0.0,0.0) ) + self.location
+		#print( "Location : x=%0.4f y=%0.4f z=%0.4f" % (v.x,v.y,v.z) )
+		'''
 		if xml_extra_position:
 			obj_new.delta_location = xml_extra_position
 			#obj_new.location = self.location + xml_extra_position
 		if xml_extra_rotation:
+			e = xml_extra_rotation
+			#print( "Euler : x=%0.4f y=%0.4f z=%0.4f" % (e.x,e.y,e.z) )
+			eleur  = Euler( (e.x, e.y, e.z) )
+
+			mat4 = eleur.to_matrix().to_4x4()
+			w = Vector( (0.0,0.0,0.0) ) + self.location
+			pos = mat4 * w
+			tr = Vector( (0.0,0.0,0.0) ) + pos - w
+			w = Vector( (0.0,0.0,0.0) ) + tr
+			#print( "tr : x=%0.4f y=%0.4f z=%0.4f" % (w.x,w.y,w.z) )
+	
+			w = Vector( (0.0,0.0,0.0) ) + obj_new.delta_location
+			obj_new.delta_location = Vector( (0.0,0.0,0.0) ) + w  + tr
+			#w = Vector( (0.0,0.0,0.0) ) + obj_new.delta_location
+			#print( "extra_location : x=%0.4f y=%0.4f z=%0.4f" % (w.x,w.y,w.z) )
+		
 			obj_new.delta_rotation_euler = Euler( (xml_extra_rotation.x, xml_extra_rotation.y, xml_extra_rotation.z) )
+		'''
+		
+		compute_extra_transforme( obj_new, xml_extra_position, xml_extra_rotation )
 			
 		self.mesh_name_bl = obj_new.name
 	
@@ -449,7 +472,7 @@ class MESH:
 		mesh.validate()
 		mesh.update(calc_edges=True)
 
-		obj_new.fg.ac_file = "" + self.filename
+		obj_new.data.fg.ac_file = "" + self.filename
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_texture( self ):
@@ -605,6 +628,30 @@ def set_ac_file( new_ac_file ):
 	current_ac_file = new_ac_file
 #----------------------------------------------------------------------------------------------------------------------------------
 
+def compute_extra_transforme( obj, translate, rotate ):
+	if translate:
+		obj.delta_location = Vector( (0.0,0.0,0.0) ) + translate
+	#obj_new.location = self.location + xml_extra_position
+	if rotate:
+		e = rotate
+		#print( "Euler : x=%0.4f y=%0.4f z=%0.4f" % (e.x,e.y,e.z) )
+		eleur  = Euler( (e.x, e.y, e.z) )
+
+		mat4 = eleur.to_matrix().to_4x4()
+		w = Vector( (0.0,0.0,0.0) ) + obj.location
+		pos = mat4 * w
+		tr = Vector( (0.0,0.0,0.0) ) + pos - w
+		w = Vector( (0.0,0.0,0.0) ) + tr
+		#print( "tr : x=%0.4f y=%0.4f z=%0.4f" % (w.x,w.y,w.z) )
+
+		w = Vector( (0.0,0.0,0.0) ) + obj.delta_location
+		obj.delta_location = Vector( (0.0,0.0,0.0) ) + w  + tr
+		#w = Vector( (0.0,0.0,0.0) ) + obj_new.delta_location
+		#print( "extra_location : x=%0.4f y=%0.4f z=%0.4f" % (w.x,w.y,w.z) )
+	
+		obj.delta_rotation_euler = Euler( (rotate.x, rotate.y, rotate.z) )
+#----------------------------------------------------------------------------------------------------------------------------------
+
 def clone_ac( ac_file, xml_extra_position ):
 	time_deb = time.time()
 	print( "\tac_manager:clone_ac() %s" % ac_file.name.partition( 'Aircraft'+os.sep )[2] )
@@ -625,13 +672,13 @@ def clone_ac( ac_file, xml_extra_position ):
 			mesh = obj.data
 			obj_new = bpy.data.objects.new(obj_name,mesh)
 
-		obj_new.location = Vector( (0.0,0.0,0.0) )			#self.location
+		obj_new.location = Vector( (0.0,0.0,0.0) )	+ obj.location		#self.location
 		if xml_extra_position:
 			offset = Vector( (0.0,0.0,0.0) ) + xml_extra_position.offset
 			euler  = Vector( (0.0,0.0,0.0) ) + xml_extra_position.eulerXYZ
 			obj_new.delta_location = offset
 			obj_new.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
-			
+			compute_extra_transforme( obj_new, offset, euler )
 			debug_info( "\tExtra offset  %0.2f, %0.2f, %0.2f" % ( offset.x, offset.y, offset.z ) )
 			debug_info( "\tExtra rotate  %0.2f, %0.2f, %0.2f" % ( euler.x, euler.y, euler.z ) )
 	
@@ -641,7 +688,7 @@ def clone_ac( ac_file, xml_extra_position ):
 			mesh.validate()
 			mesh.update(calc_edges=True)
 			
-			obj_new.fg.ac_file = "" + ac_file.name
+			obj_new.data.fg.ac_file = "" + ac_file.name
 		
 		current_ac_file.meshs.append( obj_new.name )
 		current_ac_file.dic_name_meshs[obj_name] = obj_new.name

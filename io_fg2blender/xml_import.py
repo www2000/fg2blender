@@ -656,6 +656,7 @@ def parse_node( node, file_name ):
 							xml_file = XML_FILE()
 							xml_file.name = absolute_path( conversion(ret_text(node.childNodes[0])) )
 							no_include -= 1
+							xml_file.no = no_include
 							xml_manager.add_xml_file( xml_file, no_include )
 							no_include += 1 
 							if option_print_include:
@@ -698,6 +699,7 @@ def parse_node( node, file_name ):
 							if node.parentNode.nodeName == 'model':
 								xml_file = XML_FILE()
 								xml_file.name = absolute_path( conversion(ret_text(node.childNodes[0])) )
+								xml_file.no = no_include
 								xml_manager.add_xml_file( xml_file, no_include )
 								no_include += 1
 								if option_print_include:
@@ -760,9 +762,10 @@ def parse_file( filename, no_inc ):
 			xml_file = XML_FILE()
 
 	xml_file.name = filename
+	xml_file.no = no_inc
 	if no_inc == -1:
 		xml_manager.add_xml_file( xml_file, no_include )
-	xml_manager.set_current_xml( xml_file )
+	xml_manager.set_current_xml( xml_file=xml_file, no=no_include )
 	
 	file_includes = []
 	niv = 0
@@ -887,6 +890,29 @@ def import_xml(filename, ac_option, xml_option):
 
 	read_file_xml( conversion(filename) )
 
+
 	time_end = time.time()
 	print( "Import %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
+	nb_rotate = 0
+	nb_translate = 0
+	nb_pick = 0
+	nb_light = 0
+	nb_xml = 0
+	for xml_file, no in xml_manager.xml_files:
+		for anim in xml_file.anims:
+			if anim.type == 1:
+				nb_rotate = nb_rotate + 1
+			elif anim.type == 2:
+				nb_translate = nb_translate + 1
+			elif anim.type == 4:
+				nb_pick = nb_pick + 1
+			elif anim.type == 5:
+				nb_light = nb_light + 1
+		nb_xml = nb_xml + 1
+	print( "\tNb xml file   : %d" % nb_xml )
+	print( "\tNb rotate     : %d" % nb_rotate )
+	print( "\tNb translate  : %d" % nb_translate )
+	print( "\tNb pick       : %d" % nb_pick )
+	print( "\tNb light      : %d" % nb_light )
+	
 

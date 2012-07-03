@@ -43,7 +43,6 @@ class FG_OT_button_select(bpy.types.Operator):
 			obj.select = False
 		obj = bpy.data.objects[self.object_name]
 		obj.select = True
-		#bpy.data.context.active = obj
 		bpy.context.scene.objects.active = obj
 		return{'FINISHED'}    
 #----------------------------------------------------------------------------------------------------------------------------------
