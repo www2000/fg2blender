@@ -174,7 +174,9 @@ class MESH:
 		self.crease			= -1.0
 		self.filename		= ""
 		self.bDDS			= False
-		
+		self.texrep			= (1.0,1.0)
+		self.texoff			= (0.0,0.0)
+
 	def reset(self):
 		del self.vertices
 		del self.edges
@@ -196,6 +198,8 @@ class MESH:
 		self.mat_no			= -1
 		self.crease			= -1.0
 		self.bDDS			= False
+		self.texrep			= (1.0,1.0)
+		self.texoff			= (0.0,0.0)
 		#self.filename		= ""
 
 		

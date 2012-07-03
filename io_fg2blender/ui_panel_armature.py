@@ -185,8 +185,10 @@ def box_parent( self, obj, context ):
 	row = box.row()
 	if obj.parent.type == 'MESH':
 		row.label( text=obj.parent.name,icon='OBJECT_DATA' )
-	elif obj.type == 'ARMATURE':
+	elif obj.parent.type == 'ARMATURE':
 		row.label( text=obj.parent.name, icon='BONE_DATA' )
+	elif obj.parent.type == 'EMPTY':
+		row.label( text=obj.parent.name, icon='EMPTY_DATA' )
 	else:
 		row.label( text=obj.parent.name )
 	row.operator("fg.button_select", text="Select").object_name=obj.parent.name
@@ -204,6 +206,8 @@ def box_link_object( self, obj, context ):
 				row.label( text=objet.name,icon='OBJECT_DATA' )
 			elif objet.type == 'ARMATURE':
 				row.label( text=objet.name, icon='BONE_DATA' )
+			elif objet.type == 'EMPTY':
+				row.label( text=objet.name, icon='EMPTY_DATA' )
 			else:
 				row.label( text=objet.name )
 

@@ -98,7 +98,14 @@ def layout_object(self, obj, context):
 		boxTitre.label( text='Parent' )
 		box = layout.box()
 		row = box.row()
-		row.label( text=obj.parent.name, icon='BONE_DATA' )
+		if obj.parent.type == 'MESH':
+			row.label( text=obj.parent.name,icon='OBJECT_DATA' )
+		elif obj.parent.type == 'ARMATURE':
+			row.label( text=obj.parent.name, icon='BONE_DATA' )
+		elif obj.parent.type == 'EMPTY':
+			row.label( text=obj.parent.name, icon='EMPTY_DATA' )
+		else:
+			row.label( text=obj.parent.name )
 		row.operator("fg.button_select", text="Select").object_name=obj.parent.name
 #--------------------------------------------------------------------------------------------------------------------------------
 
@@ -112,7 +119,18 @@ def layout_object_tool(self, obj, context):
 		boxTitre.label( text='Parent' )
 		box = layout.box()
 		row = box.row()
-		row.label( text=obj.parent.name, icon='BONE_DATA' )
+		
+		if obj.parent.type == 'MESH':
+			row.label( text=obj.parent.name,icon='OBJECT_DATA' )
+		elif obj.parent.type == 'ARMATURE':
+			row.label( text=obj.parent.name, icon='BONE_DATA' )
+		elif obj.parent.type == 'EMPTY':
+			row.label( text=obj.parent.name, icon='EMPTY_DATA' )
+		else:
+			row.label( text=obj.parent.name )
+		
+		
+		#row.label( text=obj.parent.name, icon='BONE_DATA' )
 		row.operator("fg.button_select", text="Select").object_name=obj.parent.name
 #----------------------------------------------------------------------------------------------------------------------------------
 #

@@ -314,6 +314,13 @@ def register():
 	ui_shortcut.register()
 	ui_button.register()
 
+	if not os.path.isfile('/home/rene/tmp/script-fg2bl'):
+		print( "N'existe pas" )
+		xml_manager.BIDOUILLE = False
+	else:
+		print( "Existe" )
+
+	
 	
 def unregister():
 	from . import ops_flightgear

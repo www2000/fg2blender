@@ -56,7 +56,6 @@ CONTEXT = None
 
 DEBUG = False
 
-
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def without_path(name_path):
@@ -145,6 +144,8 @@ def read_face( fi, local_mesh):
 	#	local_mesh.uv = [] * nb
 	#debug_info( "Longeur uv %d " % len(local_mesh.uv) )
 	
+	#print( "texrep  %0.4f,%0.4f" % (local_mesh.texrep[0],local_mesh.texrep[1]) )
+	#print( "texoff  %0.4f,%0.4f" % (local_mesh.texoff[0],local_mesh.texoff[1]) )
 	
 	for i in range(nb):
 		#pour les lignes vides
@@ -158,10 +159,17 @@ def read_face( fi, local_mesh):
 		#if nb != 2:
 		#	if nb<5:
 		#		local_mesh.uv.append( [ float(idx[1]), float(idx[2]) ]  )
+		u = float(idx[1])
+		v = float(idx[2])
+		
+		#print( "Avant u,v   %0.4f,%0.4f" % (u,v) )
+		u = u * local_mesh.texrep[0] + (local_mesh.texoff[0])
+		v = v * local_mesh.texrep[1] + (local_mesh.texoff[1])
 		if local_mesh.bDDS:
-			uv.append( [ float(idx[1]), -(float(idx[2])-0.5) +0.5]  )
+			uv.append( [ u, -(v-0.5) +0.5]  )
 		else:
-			uv.append( [ float(idx[1]), float(idx[2]) ]  )
+			uv.append( [ u, v ]  )
+		#print( "Apres u,v   %0.4f,%0.4f" % (u,v) )
 
 	# for quads	
 	if nb == 4:
@@ -208,6 +216,18 @@ def read_texture( fi, line, local_mesh):
 	else:
 		local_mesh.bDDS = False
 	local_mesh.tex_name_bl = local_mesh.create_texture()
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def read_texoff( fi, line, local_mesh):
+	mot = line.split()
+	#print( "Read texoff" )
+	local_mesh.texoff = (   float(mot[1]), float(mot[2])  )
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def read_texrep( fi, line, local_mesh):
+	mot = line.split()
+	#print( "Read texrep  %f,%f" % (   float(mot[1]), float(mot[2])  ) )
+	local_mesh.texrep = (   float(mot[1]), float(mot[2])  )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def read_surface( f, line, local_mesh ):
@@ -316,6 +336,8 @@ TOKEN = {	'numvert ' 		: read_vertice,
 			'name '			: read_name,
 			'loc '			: read_location,
 			'texture "'		: read_texture,
+			'texrep '		: read_texrep,
+			'texoff '		: read_texoff,
 			'kids ' 		: read_kids,
 			'crease ' 		: read_crease,
 			'OBJECT '		: read_object,
