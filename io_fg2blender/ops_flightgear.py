@@ -232,6 +232,21 @@ class FG_OT_select_file(bpy.types.Operator):
 		return {'RUNNING_MODAL'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_only_render(bpy.types.Operator):
+	bl_idname = "fg.only_render"
+	bl_label = ""
+
+	def execute(self, context):
+		#print( self.filepath)
+		return {'FINISHED'}
+
+	def invoke(self, context, event):
+		#print( context.space_data.type )
+		if context.space_data.type=='VIEW_3D':
+			context.space_data.show_only_render = not  context.space_data.show_only_render
+		return {'RUNNING_MODAL'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_exemple(bpy.types.Operator):
 	'''C'est un exemple d'operateur blender '''
 	bl_idname = "view3d.exemple"					# sera appelé par bpy.ops.view3d.exemple()
@@ -262,6 +277,7 @@ def register():
 	bpy.utils.register_class( FG_OT_create_translate)
 	bpy.utils.register_class( FG_OT_exemple)
 	bpy.utils.register_class( FG_OT_select_file )
+	bpy.utils.register_class( FG_OT_only_render )
 
 
 def unregister():
@@ -271,4 +287,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_create_translate)
 	bpy.utils.unregister_class( FG_OT_exemple)
 	bpy.utils.unregister_class( FG_OT_select_file )
+	bpy.utils.unregister_class( FG_OT_only_render )
 

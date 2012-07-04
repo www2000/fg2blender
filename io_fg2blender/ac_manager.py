@@ -300,7 +300,7 @@ class MESH:
 		if self.uv!=[]:
 			texture = None
 			for texture in bpy.data.textures:
-				if texture.name == self.tex_name_bl:
+				if texture.name == tronc_name(self.tex_name_bl):
 					break
 			mesh = obj_new.data	
 
@@ -319,7 +319,7 @@ class MESH:
 
 
 
-			if find_material_not_use( self.mat_no, self.tex_name_bl ) != -1:
+			if find_material_not_use( self.mat_no, tronc_name(self.tex_name_bl) ) != -1:
 				ml = material_list[no]
 				bl_mat = ml[0]
 				ac_mat = ml[3]
@@ -340,8 +340,8 @@ class MESH:
 				#material_list[self.mat_no][4] = True
 				debug_info( "Assign not use de material   %d %s %s" % (no, ml[0].name, ml[2]) )
 
-			elif find_material_use( self.mat_no, self.tex_name_bl ) != -1:
-				no = get_number_material_use( self.mat_no, self.tex_name_bl )
+			elif find_material_use( self.mat_no, tronc_name(self.tex_name_bl) ) != -1:
+				no = get_number_material_use( self.mat_no, tronc_name(self.tex_name_bl) )
 				ml = material_list[no]
 				bl_mat = ml[0]
 				ac_mat = ml[3]
@@ -352,7 +352,7 @@ class MESH:
 				if ac_mat.trans != 0.0:
 					obj_new.show_transparent = True
 
-			elif find_material_use_with_diff( self.mat_no, self.tex_name_bl ) != -1:
+			elif find_material_use_with_diff( self.mat_no, tronc_name(self.tex_name_bl) ) != -1:
 				ml = material_list[no]
 				ac_mat = ml[3]
 				bl_mat = bpy.data.materials.new(ac_mat.name_ac)

@@ -106,7 +106,7 @@ class XML_FILE:
 class ANIM:
 	def __init__(self):
 		self.name				= ""
-		self.type				= 0								# 1:Rotate 2:translate 3: group objects 4:pick 5:light
+		self.type				= 0								# 1:Rotate 2:translate 3: group objects 4:pick 5:light 6:shader
 		self.xml_file			= ""
 		self.xml_file_no		= 0
 		self.factor				= 0.0
@@ -116,6 +116,8 @@ class ANIM:
 		self.vec				= Vector( (0.0, 0.0, 0.0) )
 		self.objects			= []
 		self.group_objects		= []
+		self.texture			= ""
+		self.ac_file			= ""
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_type( self, node ):
@@ -135,10 +137,27 @@ class ANIM:
 						self.type = 4
 					elif value == 'light':
 						self.type = 5
+					elif value == 'shader':
+						self.type = 6
 		else:
 			childs = node.getElementsByTagName('name')
 			if childs:
 				self.type = 3
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_texture( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+		from . import xml_import
+
+		childs = node.getElementsByTagName('texture')
+		if childs:
+			self.texture = xml_import.conversion(  ret_text_value(childs[0]) )
+			self.texture = os.getcwd() + os.sep + self.texture 
+			debug_info( "\t%sTexture name %s" % (tabs(),self.texture) )
+			ac_files = get_xml_file( self.xml_file, self.xml_file_no ).ac_files
+			if len(ac_files)>0:
+				self.ac_file = ac_files[0]
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_name( self, node ):
@@ -293,6 +312,23 @@ class ANIM:
 			self.extract_name( node )
 			self.extract_objects( node )
 		#---------------------------------------------------------------------------------------------------------------------
+
+		def extract_empty( node ):
+			from .xml_import import tabs
+
+			debug_info( "%sExtract empty block:" % (tabs()) )
+			self.extract_name( node )
+			self.extract_objects( node )
+		#---------------------------------------------------------------------------------------------------------------------
+
+		def extract_shader( node ):
+			from .xml_import import tabs
+
+			debug_info( "%sExtract shader block:" % (tabs()) )
+			self.extract_name( node )
+			self.extract_objects( node )
+			self.extract_texture( node )
+		#---------------------------------------------------------------------------------------------------------------------
 		# pour recopier la valeur et non pas la référence
 		self.xml_file = "" + xml_current.name
 		self.xml_file_no = 0 + xml_current.no
@@ -307,6 +343,10 @@ class ANIM:
 			extract_pick( node )
 		elif self.type == 5:
 			extract_light( node )
+		elif self.type == 6:
+			extract_shader( node )
+		elif self.type == 0:
+			extract_empty( node )			#without type
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def insert_keyframe_rotation( self, frame, value ):
@@ -580,6 +620,73 @@ class ANIM:
 				print( 'Create light : "%s"' % obj_name_bl )
 				bpy.data.objects[obj_name_bl].draw_type = 'WIRE'
 				#self.assign_pick( obj_name_bl )
+	#----------------------------------------------------------------------------------------------------------------------------------
+
+	def create_texture( self ):
+	
+		img_name = os.path.basename(self.texture)
+		if img_name == "":
+			return
+		
+		#print( 'Creation de la texture "%s"' % img_name )
+		#print( '              pathname "%s"' % self.texture )
+		#print( '    repertoire courant "%s"' % os.getcwd() )
+ 		
+		name_path = self.texture
+	
+		filenamepath = img_name
+	
+		debug_info( "create_texture()  name_path : %s" % (name_path) )
+	
+		for tex in bpy.data.textures:
+			if tex.name==img_name:
+				debug_info( "texture existante()  %s" % (img_name) )
+				return tex
+	
+		try:
+			img = bpy.data.images.load( name_path )
+		except:
+			print( '*** erreur **** %s introuvale' % (name_path) )
+			if BIDOUILLE:
+				left_name = name_path.partition('Aircraft')[2]
+				name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + left_name
+				print( '*** bidouillle **** %s introuvale' % (name_path) )
+				
+				#img = bpy.data.images.new(name='void', width=1024, height=1024, alpha=True, float_buffer=True)
+				img = bpy.data.images.load( name_path )
+			else:
+				return None
+	
+		tex = bpy.data.textures.new( img_name, 'IMAGE')
+		tex.image = img
+		tex.use_alpha = True
+		debug_info( '    Creation de la texture img="%s"  name="%s"' % (img_name, tex.name) )
+		return tex
+	#----------------------------------------------------------------------------------------------------------------------------------
+
+	def assign_texture( self, tex ):
+		if not tex:
+			return
+		
+		for obj_name in self.objects:
+			if obj_name in self.ac_file.dic_name_meshs:
+				obj_name_bl = self.ac_file.dic_name_meshs[obj_name]
+				obj_bl = bpy.data.objects[obj_name_bl]
+			
+				if obj_bl:
+					mesh = obj_bl.data
+					for texture_slot in mesh.materials[0].texture_slots:
+						if texture_slot != None:
+							if texture_slot.texture.name == tex.name:
+								return
+
+					debug_info( '    Assigne objet="%s"  texture="%s"' % (obj_bl.name, tex.name) )
+					texture_slot = mesh.materials[0].texture_slots.add() 
+					#mesh.materials[0].texture_slots.add() 
+					texture_slot.texture = tex
+					texture_slot.texture_coords	= 'REFLECTION'
+					texture_slot.use_map_alpha	= True
+					texture_slot.alpha_factor	= 0.1
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature( self ):
@@ -597,10 +704,13 @@ class ANIM:
 			self.create_pick()
 		elif self.type == 5:
 			self.create_light()
+		elif self.type == 6:
+			tex = self.create_texture()
+			self.assign_texture(tex)
 	#---------------------------------------------------------------------------------------------------------------------
 
-	def assign_pick( self, obj_name_bl ):
-		obj = get_object( obj_name_bl )
+	def assign_pick( self, obj_name ):
+		obj = get_object( obj_name )
 		if obj:
 			if obj.type == 'MESH':
 				if not is_exist_matrial_pick(obj ):
@@ -701,8 +811,12 @@ def isnot_defined( filename ):
 
 def get_xml_file( filename, no_include ):
 	global xml_files
-	
+
+	if no_include == -1:
+		no_include = 0
 	for xml_file, no in xml_files:
+		#print( xml_file.name )
+		#print ( no )
 		if xml_file.name == filename and no_include == no:
 			return xml_file
 	return None
@@ -752,35 +866,48 @@ def create_material_pick():
 
 def create_anims():
 	global xml_files
-	
+	#
+	#	Create material Pick an groupd (ac filename)
+	#
 	create_material_pick()
 	# Change layer
 	bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
 	if not bpy.context.scene.layers[10]:
 		bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
 		
-	bpy.context.scene.objects.active = None
+	for xml_file, no in xml_files:
+		for ac_file in xml_file.ac_files:
+			debug_info( 'Creation de groups "%s"' % os.path.basename(ac_file.name) )
+			ac_file.create_group_ac()
 
-	#print( str(bpy.context) )
+	bpy.context.scene.objects.active = None
+	#
+	#	Create Anim
+	#
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
 		debug_info( xml_file.name )
 		for anim in xml_file.anims:
-			if anim.type != 1 and anim.type != 2 and anim.type != 4 and anim.type != 5:
+			if anim.type in [ 0, 3 ]:
 				continue
 			anim.create_armature()
 			obj = bpy.context.scene.objects.active
 			if obj:
 				obj.data.fg.xml_file = "" + xml_file.name
-
-	for xml_file, no in xml_files:
-		for ac_file in xml_file.ac_files:
-			#debug_info( "\tCreation de groups %s" % os.path.basename(ac_file.name) )
-			debug_info( 'Creation de groups "%s"' % os.path.basename(ac_file.name) )
-			ac_file.create_group_ac()
-
+				#Assign goupe ac_file to armature
+				ac_file = xml_file.ac_files[0]
+				if ac_file:
+					ac_name = os.path.basename( ac_file.name )
+					if ac_name in bpy.data.groups:
+						bpy.ops.object.group_link( group = ac_name)
+						print( 'Assign group group : "%s"' % ac_name )
+	#
+	#	Assign objct to anim
+	#
 	assign_obj_to_anim()
-
+	#
+	#	Insert keyframe
+	#
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
 		for anim in xml_file.anims:
@@ -869,7 +996,21 @@ def find_group( group_name, xml_file ):
 			if anim.group_objects[0] == group_name:
 				return anim.group_objects
 	return None
+#----------------------------------------------------------------------------------------------------------------------------------
 
+def find_obj_in_empty_animation( obj_name ):
+	global xml_files
+	
+	debug_info( '\tRecherche in empty <animation> : "%s"' % obj_name )
+	for xml_file, no in  xml_files:
+		for ac_file in xml_file.ac_files:
+			for objet in ac_file.meshs:
+				if objet == obj_name:
+					print( 'Find obj="%s" in "%s"' % (obj_name , os.path.basename(xml_file.name)) )
+					print( 'Find obj="%s" in "%s"' % (obj_name , os.path.basename(ac_file.name)) )
+					obj_name_bl = ac_file.dic_name_meshs[obj_name]
+					return obj_name_bl
+	return None
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def assign_group_obj_to_anim( xml_file, group_name, anim, dic_name ):
@@ -878,19 +1019,32 @@ def assign_group_obj_to_anim( xml_file, group_name, anim, dic_name ):
 	debug_info( '\tRecherche de group name : "%s"' % group_name )
 	group_objects = find_group( group_name, xml_file )
 	if group_objects:
-		debug_info( '\tgroup : "%s"' % str(anim.group_objects)  )
+		debug_info( '\tgroup : "%s"' % str(group_objects)  )
 		for obj_name in group_objects[1:]:
 			if not obj_name in dic_name:
-				print( '**** Erreur objet "%s" inconnu ***' % obj_name )
+				obj_name_bl = find_obj_in_empty_animation(obj_name)
+				if obj_name_bl:
+					obj = bpy.data.objects[obj_name_bl]
+					obj_armature = bpy.data.objects[anim.name]
+					parent_set( obj, obj_armature )
+				else:
+					print( '**** Erreur objet "%s" inconnu ***' % obj_name )
 				continue
-			obj_name_bl = dic_name[obj_name]
-			obj = bpy.data.objects[obj_name_bl]
-			obj_armature = bpy.data.objects[anim.name]
-			parent_set( obj, obj_armature )
+			else:
+				obj_name_bl = dic_name[obj_name]
+				obj = bpy.data.objects[obj_name_bl]
+				obj_armature = bpy.data.objects[anim.name]
+				parent_set( obj, obj_armature )
+		return
+
+	obj_name_bl = find_obj_in_empty_animation(group_name)
+	if obj_name_bl:
+		obj = bpy.data.objects[obj_name_bl]
+		obj_armature = bpy.data.objects[anim.name]
+		parent_set( obj, obj_armature )
 	else:
 		print( '**** xm file "%s"  ***' % xml_file.name )
 		print( '**** Erreur objet "%s" inconnu ***' % group_name )
-	
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def is_obj_link_armature( obj ):
