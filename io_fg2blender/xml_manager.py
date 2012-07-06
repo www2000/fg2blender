@@ -416,7 +416,7 @@ class ANIM:
 		'''
 
 		for fcurve in obj_armature.animation_data.action.fcurves:
-			print( fcurve.data_path )
+			#print( fcurve.data_path )
 			for keyframe in fcurve.keyframe_points:
 				keyframe.interpolation = 'LINEAR'
 		#obj_armature.animation_data.action.fcurves.new('pose.bones["Bone"].rotation_euler')
@@ -502,6 +502,12 @@ class ANIM:
 				obj_arma = obj_armature = obj
 				obj_arma.data.fg.familly = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
+				obj_arma.data.fg.range_beg = 0.0
+				obj_arma.data.fg.range_end = 1.0
+				obj_arma.data.fg.time = 60.0 / 24.0
+				obj_arma.data.fg.range_beg_ini = 0.0
+				obj_arma.data.fg.range_end_ini = 1.0
+				obj_arma.data.fg.time_ini = 60.0 / 24.0
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				break;
@@ -575,6 +581,12 @@ class ANIM:
 				obj_arma = obj_armature = obj
 				obj_arma.data.fg.familly = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
+				obj_arma.data.fg.range_beg = 0.0
+				obj_arma.data.fg.range_end = 1.0
+				obj_arma.data.fg.time = 60.0 / 24.0
+				obj_arma.data.fg.range_beg_ini = 0.0
+				obj_arma.data.fg.range_end_ini = 1.0
+				obj_arma.data.fg.time_ini = 60.0 / 24.0
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				break;
@@ -964,13 +976,7 @@ def create_anims():
 #bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def print_dic_name( xml_file ):
-	global xml_files
-
-	dic_name = {}
-	for ac_file in xml_file.ac_files:
-		dic_name.update( ac_file.dic_name_meshs )
-		
+def print_dic_name( xml_file, dic_name ):
 	debug_info( "\tDictionnary     : (xml name) to (blender name)" )
 	for key,value in dic_name.items():
 		debug_info( '\t\tkey : "%s"  value : "%s"' % ( key, value ) )
@@ -990,6 +996,7 @@ def assign_obj_to_anim():
 
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
+		debug_info( '-----------------------------------' )
 		print( 'assign_obj_to_anim()  in "%s"' % os.path.basename(xml_file.name) )
 		#print( xml_file.name )
 		debug_info( 'assign_to_anim() make dictionnary' )
@@ -1002,17 +1009,18 @@ def assign_obj_to_anim():
 			continue
 
 		if DEBUG:
-			print_dic_name( xml_file )
+			print_dic_name( xml_file, dic_name )
 		
 		for anim in xml_file.anims:
 			if anim.type != 1 and anim.type != 2:
 				continue
 			debug_info( '\tassign_obj_to_anim() pour l armature "%s"' % anim.name )
 			for obj_name in anim.objects:
+				debug_info( '\tRecherche object : "%s" ' % obj_name )
 				if obj_name in dic_name:
-					debug_info( '\tObject : "%s"   (blender:"%s")' % (obj_name, dic_name[obj_name]) )
+					debug_info( '\t\tObject : "%s"   (blender:"%s")' % (obj_name, dic_name[obj_name]) )
 				else:
-					debug_info( '\tObject : "%s" pas contenu dans le dictionnary)' % (obj_name) )
+					debug_info( '\t\tObject : "%s" pas contenu dans le dictionnary)' % (obj_name) )
 					
 			for obj_name in anim.objects:
 				#if anim.name == "":

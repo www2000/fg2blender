@@ -426,7 +426,7 @@ class MESH:
 		obj_new = bpy.data.objects.new(obj_name,mesh)
 		current_ac_file.meshs.append( obj_new.name )
 		current_ac_file.dic_name_meshs[obj_name] = obj_new.name
-
+		#print( 'Dictionnaire "%s" -> "%s"' % (obj_name,obj_new.name) )
 		obj_new.location = self.location
 		#v =  Vector( (0.0,0.0,0.0) ) + self.location
 		#print( "Location : x=%0.4f y=%0.4f z=%0.4f" % (v.x,v.y,v.z) )
@@ -656,6 +656,13 @@ def compute_extra_transforme( obj, translate, rotate ):
 		obj.delta_rotation_euler = Euler( (rotate.x, rotate.y, rotate.z) )
 #----------------------------------------------------------------------------------------------------------------------------------
 
+def find_key( name, dic ):
+	for key, value in dic.items():
+		if value == name:
+			return key
+	return ""
+#----------------------------------------------------------------------------------------------------------------------------------
+
 def clone_ac( ac_file, xml_extra_position ):
 	time_deb = time.time()
 	print( "\tac_manager:clone_ac() %s" % ac_file.name.partition( 'Aircraft'+os.sep )[2] )
@@ -693,9 +700,11 @@ def clone_ac( ac_file, xml_extra_position ):
 			mesh.update(calc_edges=True)
 			
 			obj_new.data.fg.ac_file = "" + ac_file.name
-		
+			
+		obj_name_ac = find_key( obj_name, ac_file.dic_name_meshs )
+		#print( 'Dictionnaire "%s" -> "%s"' % (obj_name_ac,obj_new.name) )
 		current_ac_file.meshs.append( obj_new.name )
-		current_ac_file.dic_name_meshs[obj_name] = obj_new.name
+		current_ac_file.dic_name_meshs[obj_name_ac] = obj_new.name
 
 	#new_ac_file.create_group_ac()
 	time_end = time.time()

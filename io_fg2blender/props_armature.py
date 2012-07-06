@@ -118,6 +118,7 @@ from . import *
 
 
 #----------------------------------------------------------------------------------------------------------------------------------
+
 def update_keyframe( obj, coef ):
 	#from mathutils import Euler
 	
@@ -129,14 +130,36 @@ def update_keyframe( obj, coef ):
 				#print( keyframe.co )
 #----------------------------------------------------------------------------------------------------------------------------------
 
+def update_keyframe_time( obj, coef ):
+	#from mathutils import Euler
+	
+	if obj.animation_data:
+		for fcurve in obj.animation_data.action.fcurves:
+			for keyframe in fcurve.keyframe_points:
+				#keyframe.interpolation = 'LINEAR'
+				keyframe.co.x = ((keyframe.co.x-1) * coef ) +1
+				#print( keyframe.co )
+#----------------------------------------------------------------------------------------------------------------------------------
+
 def update_factor( self, context ):
 	obj = context.active_object
 	if obj:
-		if obj.type == 'ARMATURE':
-			if obj.data.fg.type_anim in [ 1,2]:
-				coef = obj.data.fg.factor  / obj.data.fg.factor_ini
-				update_keyframe( obj, coef )
-				obj.data.fg.factor_ini = obj.data.fg.factor
+		#if obj.type == 'ARMATURE':
+		if obj.data.fg.type_anim in [ 1,2]:
+			coef = obj.data.fg.factor  / obj.data.fg.factor_ini
+			update_keyframe( obj, coef )
+			obj.data.fg.factor_ini = obj.data.fg.factor
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def update_time( self, context ):
+	obj = context.active_object
+	if obj:
+		#if obj.type == 'ARMATURE':
+		if obj.data.fg.type_anim in [ 1,2]:
+			coef = 0.0
+			coef = 0.0 + obj.data.fg.time  / obj.data.fg.time_ini
+			update_keyframe_time( obj, coef )
+			obj.data.fg.time_ini = 0.0 +  obj.data.fg.time
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def dynamic_items( self, context ):
@@ -180,7 +203,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 	factor = bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
 	
-	factor_ini = bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini', update=update_factor)
+	factor_ini = bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
 
 	xml_file = bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File')
 
@@ -190,6 +213,13 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 										    items = dynamic_items_xml_file )
 
 	type_anim = bpy.props.IntProperty(	attr = 'type_anim', name = 'Type')
+
+	range_beg = bpy.props.FloatProperty(	attr = 'range_beg', name = 'min')
+	range_end = bpy.props.FloatProperty(	attr = 'range_end', name = 'max')
+	time = bpy.props.FloatProperty(	attr = 'time', name = 'time', update=update_time)
+	range_beg_ini = bpy.props.FloatProperty(	attr = 'range_beg_ini', name = 'min')
+	range_end_ini = bpy.props.FloatProperty(	attr = 'range_end_ini', name = 'max')
+	time_ini = bpy.props.FloatProperty(	attr = 'time_ini', name = 'time')
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_armature():
@@ -231,6 +261,30 @@ def RNA_armature():
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='type_anim',
 														type=FG_PROP_armature,
 													    name='type_anim',
+													    description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg',
+														type=FG_PROP_armature,
+													    name='range_beg',
+													    description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end',
+														type=FG_PROP_armature,
+													    name='range_end',
+													    description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time',
+														type=FG_PROP_armature,
+													    name='time',
+													    description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg_ini',
+														type=FG_PROP_armature,
+													    name='range_beg_ini',
+													    description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end_ini',
+														type=FG_PROP_armature,
+													    name='range_end_ini',
+													    description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time',
+														type=FG_PROP_armature,
+													    name='time_ini',
 													    description="familly" )
 #----------------------------------------------------------------------------------------------------------------------------------
 

@@ -107,7 +107,7 @@ def layout_armature_tool(self, obj, context):
 
 def layout_armature_properties(self, obj, context):
 	from . import xml_manager
-	
+	#----------------------------------------------------
 	layout = self.layout
 	xml_files = xml_manager.xml_files
 
@@ -123,7 +123,7 @@ def layout_armature_properties(self, obj, context):
 		for anim in xml_file.anims:
 			if anim.name == obj.name:
 				break;
-
+	#----------------------------------------------------
 	if obj.data.fg.familly != 'custom':
 		row = box.row()
 		row.prop(obj.data.fg, "familly_value")
@@ -138,9 +138,9 @@ def layout_armature_properties(self, obj, context):
 	else:
 		row.alignment = 'EXPAND'
 		row.prop( obj.data.fg,  "property_value" )
-			
-	col = layout.column()
-	col.prop( obj.data.fg, "factor" )
+	#----------------------------------------------------
+	#col = layout.column()
+	#col.prop( obj.data.fg, "factor" )
 			
 			
 	boxTitre = layout.column()
@@ -156,6 +156,7 @@ def layout_armature_properties(self, obj, context):
 			if anim.name == obj.name:
 				row.prop( obj.data.fg, "xml_present" )
 				break;
+	#----------------------------------------------------
 	boxTitre = layout.column()
 	boxTitre.label( text='Type' )
 	boxType = layout.box()
@@ -165,13 +166,16 @@ def layout_armature_properties(self, obj, context):
 		colType.label( text="Rotation" )
 	elif obj.data.fg.type_anim == 2:
 		colType.label( text="Translation" )
+	#----------------------------------------------------
+	row = layout.row()
+	row.prop( obj.data.fg, "factor" )
+	row.prop( obj.data.fg, "time" )
 
-
-	col = layout.column()
-	col.prop( obj.data.fg, "factor" )
-			
+	row = layout.row()
+	row.prop( obj.data.fg, "range_beg" )
+	row.prop( obj.data.fg, "range_end" )
+	#----------------------------------------------------
 	box_link_object( self, obj, context )
-
 	if obj.parent:
 		box_parent( self, obj, context )			
 #----------------------------------------------------------------------------------------------------------------------------------
