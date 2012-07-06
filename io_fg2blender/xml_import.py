@@ -668,7 +668,13 @@ def parse_node( node, file_name ):
 				elif ret_text(node.childNodes[0]).find('.ac')!=-1:
 					if option_ac_file:
 						dir_name  = os.path.normpath( os.path.dirname(  file_name ) )
-						file_ac = dir_name + os.sep + ret_text(node.childNodes[0])
+						file_ac = ret_text(node.childNodes[0])
+						dir_name_ac = os.path.dirname(file_ac)
+						
+						if dir_name.find(dir_name_ac) != -1:
+							file_ac = os.path.basename( file_ac )
+
+						file_ac = dir_name + os.sep + file_ac
 
 						if file_ac.find(os.getcwd()) == -1:
 							file_ac = os.getcwd() + os.sep + file_ac
@@ -897,6 +903,7 @@ def import_xml(filename, ac_option, xml_option):
 	nb_translate = 0
 	nb_pick = 0
 	nb_light = 0
+	nb_shader = 0
 	nb_xml = 0
 	for xml_file, no in xml_manager.xml_files:
 		for anim in xml_file.anims:
@@ -908,11 +915,14 @@ def import_xml(filename, ac_option, xml_option):
 				nb_pick = nb_pick + 1
 			elif anim.type == 5:
 				nb_light = nb_light + 1
+			elif anim.type == 6:
+				nb_shader = nb_shader + 1
 		nb_xml = nb_xml + 1
 	print( "\tNb xml file   : %d" % nb_xml )
 	print( "\tNb rotate     : %d" % nb_rotate )
 	print( "\tNb translate  : %d" % nb_translate )
 	print( "\tNb pick       : %d" % nb_pick )
 	print( "\tNb light      : %d" % nb_light )
+	print( "\tNb shader     : %d" % nb_shader )
 	
 

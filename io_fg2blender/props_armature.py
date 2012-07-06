@@ -117,7 +117,26 @@ import bpy
 from . import *
 
 
+#----------------------------------------------------------------------------------------------------------------------------------
+def update_keyframe( obj, coef ):
+	#from mathutils import Euler
+	
+	if obj.animation_data:
+		for fcurve in obj.animation_data.action.fcurves:
+			for keyframe in fcurve.keyframe_points:
+				#keyframe.interpolation = 'LINEAR'
+				keyframe.co.y = keyframe.co.y * coef
+				#print( keyframe.co )
+#----------------------------------------------------------------------------------------------------------------------------------
 
+def update_factor( self, context ):
+	obj = context.active_object
+	if obj:
+		if obj.type == 'ARMATURE':
+			if obj.data.fg.type_anim in [ 1,2]:
+				coef = obj.data.fg.factor  / obj.data.fg.factor_ini
+				update_keyframe( obj, coef )
+				obj.data.fg.factor_ini = obj.data.fg.factor
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def dynamic_items( self, context ):
@@ -159,7 +178,9 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 	property_value = bpy.props.StringProperty(	attr = 'value', name = 'value')
 
-	factor = bpy.props.FloatProperty(	attr = 'factor', name = 'Factor')
+	factor = bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
+	
+	factor_ini = bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini', update=update_factor)
 
 	xml_file = bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File')
 
@@ -190,6 +211,11 @@ def RNA_armature():
 	bpy.types.Armature.fg =  bpy.props.PointerProperty(	attr="factor",
 														type=FG_PROP_armature,
 														name="Factor",
+														description="Property value")
+	
+	bpy.types.Armature.fg =  bpy.props.PointerProperty(	attr="factor_ini",
+														type=FG_PROP_armature,
+														name="Factor ini",
 														description="Property value")
 	
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file",

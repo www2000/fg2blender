@@ -43,7 +43,7 @@ xml_current_no = 0
 
 
 DEBUG = False
-BIDOUILLE = False
+BIDOUILLE = True
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -391,6 +391,35 @@ class ANIM:
 
 		bpy.context.scene.frame_current = 1
 		bpy.context.scene.frame_end = 60
+
+		obj_armature = bpy.context.scene.objects.active
+
+		'''
+		print( obj_armature.name )
+		anim_data = obj_armature.animation_data_create()
+		#anim_data = obj_armature.data.animation_data_create()
+		print( anim_data.action )
+		if anim_data:
+			print( anim_data.action )
+			anim_data.action = bpy.data.actions.new(obj_armature.name+'Action')
+			#anim_data.action.fcurves.new('rotation_euler_x', action_group='Bone')
+			#anim_data.action.fcurves.new('rotation_euler_y', action_group='Bone')
+			#anim_data.action.fcurves.new('rotation_euler_Z', action_group='Bone')
+			anim_data.action.groups.new('Bone')
+			anim_data.action.id_root = 'OBJECT'
+			anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler[0]', action_group='Bone')
+			anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler[1]', action_group='Bone')
+			anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler[2]', action_group='Bone')
+			anim_data.action.fcurves.new('X Euler Rotation (Bone)', action_group='Bone')
+			#anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler')
+		return
+		'''
+
+		for fcurve in obj_armature.animation_data.action.fcurves:
+			print( fcurve.data_path )
+			for keyframe in fcurve.keyframe_points:
+				keyframe.interpolation = 'LINEAR'
+		#obj_armature.animation_data.action.fcurves.new('pose.bones["Bone"].rotation_euler')
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def insert_keyframe_translation( self, frame, value ):
@@ -437,6 +466,11 @@ class ANIM:
 
 		bpy.context.scene.frame_current = 1
 		bpy.context.scene.frame_end = 60
+
+		obj_armature = bpy.context.scene.objects.active
+		for fcurve in obj_armature.animation_data.action.fcurves:
+			for keyframe in fcurve.keyframe_points:
+				keyframe.interpolation = 'LINEAR'
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature_rotation( self ):
@@ -469,6 +503,7 @@ class ANIM:
 				obj_arma.data.fg.familly = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.factor = 0.0 + self.factor
+				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				break;
 
 		if self.name != "":
@@ -496,6 +531,9 @@ class ANIM:
 
 		ac_manager.compute_extra_transforme( obj_arma, offset, euler )
 		#obj_arma.delta_location = xml_current.offset
+		#euler = xml_current.eulerXYZ
+		#obj_arma.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
+		#obj_arma.delta_location = xml_current.offset
 		#obj_arma.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
 
 
@@ -510,7 +548,6 @@ class ANIM:
 		limit_rotation.use_limit_z = True
 		limit_rotation.owner_space = 'LOCAL'
 		bpy.ops.object.posemode_toggle()
-		
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature_translation( self ):
@@ -539,6 +576,7 @@ class ANIM:
 				obj_arma.data.fg.familly = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.factor = 0.0 + self.factor
+				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				break;
 
 		if self.name != "":
@@ -566,6 +604,7 @@ class ANIM:
 
 		ac_manager.compute_extra_transforme( obj_arma, offset, euler )
 		#obj_arma.delta_location = xml_current.offset
+		#euler = xml_current.eulerXYZ
 		#obj_arma.delta_rotation_euler = Euler( (euler.x, euler.y, euler.z) )
 
 
@@ -583,6 +622,8 @@ class ANIM:
 		limit_rotation.use_max_z = True
 		limit_rotation.owner_space = 'LOCAL'
 		bpy.ops.object.posemode_toggle()
+		
+		#ac_manager.compute_extra
 		
 	#---------------------------------------------------------------------------------------------------------------------
 	
@@ -666,6 +707,8 @@ class ANIM:
 
 	def assign_texture( self, tex ):
 		if not tex:
+			return
+		if self.ac_file == "":
 			return
 		
 		for obj_name in self.objects:
@@ -895,12 +938,13 @@ def create_anims():
 			if obj:
 				obj.data.fg.xml_file = "" + xml_file.name
 				#Assign goupe ac_file to armature
-				ac_file = xml_file.ac_files[0]
-				if ac_file:
-					ac_name = os.path.basename( ac_file.name )
-					if ac_name in bpy.data.groups:
-						bpy.ops.object.group_link( group = ac_name)
-						print( 'Assign group group : "%s"' % ac_name )
+				if len(xml_file.ac_files)>0:
+					ac_file = xml_file.ac_files[0]
+					if ac_file:
+						ac_name = os.path.basename( ac_file.name )
+						if ac_name in bpy.data.groups:
+							bpy.ops.object.group_link( group = ac_name)
+							print( 'Assign group group : "%s"' % ac_name )
 	#
 	#	Assign objct to anim
 	#
