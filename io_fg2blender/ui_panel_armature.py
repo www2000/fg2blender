@@ -94,6 +94,8 @@ def layout_armature_tool(self, obj, context):
 		colType.label( text="Rotation" )
 	elif obj.data.fg.type_anim == 2:
 		colType.label( text="Translation" )
+	elif obj.data.fg.type_anim == 7:
+		colType.label( text="Spin" )
 
 
 	col = layout.column()
@@ -166,6 +168,8 @@ def layout_armature_properties(self, obj, context):
 		colType.label( text="Rotation" )
 	elif obj.data.fg.type_anim == 2:
 		colType.label( text="Translation" )
+	elif obj.data.fg.type_anim == 7:
+		colType.label( text="Spin" )
 	#----------------------------------------------------
 	row = layout.row()
 	row.prop( obj.data.fg, "factor" )

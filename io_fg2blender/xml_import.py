@@ -904,6 +904,7 @@ def import_xml(filename, ac_option, xml_option):
 	nb_pick = 0
 	nb_light = 0
 	nb_shader = 0
+	nb_spin = 0
 	nb_xml = 0
 	for xml_file, no in xml_manager.xml_files:
 		for anim in xml_file.anims:
@@ -917,6 +918,8 @@ def import_xml(filename, ac_option, xml_option):
 				nb_light = nb_light + 1
 			elif anim.type == 6:
 				nb_shader = nb_shader + 1
+			elif anim.type == 7:
+				nb_spin = nb_spin + 1
 		nb_xml = nb_xml + 1
 	print( "\tNb xml file   : %d" % nb_xml )
 	print( "\tNb rotate     : %d" % nb_rotate )
@@ -924,5 +927,6 @@ def import_xml(filename, ac_option, xml_option):
 	print( "\tNb pick       : %d" % nb_pick )
 	print( "\tNb light      : %d" % nb_light )
 	print( "\tNb shader     : %d" % nb_shader )
+	print( "\tNb spin       : %d" % nb_spin )
 	
 

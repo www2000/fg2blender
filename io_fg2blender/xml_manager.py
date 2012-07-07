@@ -41,8 +41,9 @@ xml_files = []
 xml_current = None
 xml_current_no = 0
 
+no_debug = 0
 
-DEBUG = False
+DEBUG = True
 BIDOUILLE = True
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
@@ -93,7 +94,8 @@ class XML_FILE:
 #							CLASS ANIM
 #----------------------------------------------------------------------------------------------------------------------------------
 #	name				= "plane"							string	if transform name
-#	type				= 0									1:Rotate  2:translate  3: group objects
+#	type				= 0									1:Rotate 2:translate 3: group objects 4:pick 
+#															5:light 6:shader 7: Spin
 #	xml_file			= ""								string : xml  file
 #	factor				= 0.0
 #	property			= ""								string : flightgear property of transform
@@ -107,9 +109,9 @@ class ANIM:
 	def __init__(self):
 		self.name				= ""
 		self.type				= 0								# 1:Rotate 2:translate 3: group objects 4:pick 5:light 6:shader
-		self.xml_file			= ""
+		self.xml_file			= ""							# 7: Spin
 		self.xml_file_no		= 0
-		self.factor				= 0.0
+		self.factor				= 1.0
 		self.interpolation		= []
 		self.property			= ""
 		self.pos				= Vector( (0.0, 0.0, 0.0) )
@@ -139,6 +141,9 @@ class ANIM:
 						self.type = 5
 					elif value == 'shader':
 						self.type = 6
+					elif value == 'spin':
+						print( 'Spin animation' )
+						self.type = 7
 		else:
 			childs = node.getElementsByTagName('name')
 			if childs:
@@ -269,9 +274,11 @@ class ANIM:
 		#---------------------------------------------------------------------------------------------------------------------
 
 		def extract_anim_rotate( node ):
+			global no_debug
 			from .xml_import import tabs
 
-			debug_info( "%sExtract Rotate :" % (tabs()) )
+			debug_info( "%sExtract Rotate : %00d" % (tabs(),no_debug) )
+			no_debug += 1
 			self.extract_name( node )
 			self.extract_property( node )
 			self.extract_objects( node )
@@ -283,9 +290,11 @@ class ANIM:
 		#---------------------------------------------------------------------------------------------------------------------
 
 		def extract_anim_translate( node ):
+			global no_debug
 			from .xml_import import tabs
 
-			debug_info( "%sExtract Translate :" % (tabs()) )
+			debug_info( "%sExtract Translate : %00d" % (tabs(),no_debug) )
+			no_debug += 1
 			self.extract_name( node )
 			self.extract_property( node )
 			self.extract_objects( node )
@@ -329,6 +338,23 @@ class ANIM:
 			self.extract_objects( node )
 			self.extract_texture( node )
 		#---------------------------------------------------------------------------------------------------------------------
+
+		def extract_spin( node ):
+			global no_debug
+			from .xml_import import tabs
+
+			debug_info( "%sExtract spin : %00d" % (tabs(),no_debug) )
+			no_debug += 1
+			self.extract_name( node )
+			self.extract_property( node )
+			self.extract_objects( node )
+			self.extract_head_tail( node )
+			self.extract_factor( node )
+			self.factor = 360.0
+			self.extract_interpolation( node )
+			if self.type == 0:
+				self.extract_group_objects( node )
+		#---------------------------------------------------------------------------------------------------------------------
 		# pour recopier la valeur et non pas la référence
 		self.xml_file = "" + xml_current.name
 		self.xml_file_no = 0 + xml_current.no
@@ -345,6 +371,8 @@ class ANIM:
 			extract_light( node )
 		elif self.type == 6:
 			extract_shader( node )
+		elif self.type == 7:
+			extract_spin( node )
 		elif self.type == 0:
 			extract_empty( node )			#without type
 	#---------------------------------------------------------------------------------------------------------------------
@@ -484,7 +512,7 @@ class ANIM:
 		
 		#armature = bpy.data.armatures.new( 'Armature')
 		armature = bpy.data.armatures[-1]
-		print( 'Create armature rotate : "%s"' % armature.name )
+		print( 'Create armature rotate : "%s"' % (armature.name) )
 		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
 		debug_info( '\t\t   no   xml: %d' % self.xml_file_no )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
@@ -563,7 +591,7 @@ class ANIM:
 		bpy.ops.object.move_to_layer( layers = layer(10) )
 
 		armature = bpy.data.armatures[-1]
-		print( 'Create armature translate : "%s"' % armature.name )
+		print( 'Create armature translate : "%s"' % (armature.name) )
 		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
 		debug_info( '\t\t       no  : %d' % self.xml_file_no )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
@@ -646,6 +674,9 @@ class ANIM:
 		elif self.type == 2:
 			bpy.context.scene.objects.active = bpy.data.objects[self.name]
 			self.insert_keyframe_translation_all()
+		elif self.type == 7:
+			bpy.context.scene.objects.active = bpy.data.objects[self.name]
+			self.insert_keyframe_rotation_all()
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_light( self ):
@@ -762,6 +793,11 @@ class ANIM:
 		elif self.type == 6:
 			tex = self.create_texture()
 			self.assign_texture(tex)
+		if self.type == 7:
+			self.create_armature_rotation()
+			obj = bpy.context.scene.objects.active
+			if obj:
+				obj.data.fg.type_anim = 0 + self.type
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def assign_pick( self, obj_name ):
@@ -1012,7 +1048,8 @@ def assign_obj_to_anim():
 			print_dic_name( xml_file, dic_name )
 		
 		for anim in xml_file.anims:
-			if anim.type != 1 and anim.type != 2:
+			#if anim.type != 1 and anim.type != 2:
+			if not anim.type in [ 1, 2, 7 ]:
 				continue
 			debug_info( '\tassign_obj_to_anim() pour l armature "%s"' % anim.name )
 			for obj_name in anim.objects:
