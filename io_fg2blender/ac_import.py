@@ -276,7 +276,8 @@ def read_name( f, line, local_mesh ):
 	mot = line.split()
 
 	mesh_name = mot[1].split('"')[1]
-	local_mesh.set_name( mesh_name[:21] )
+	#local_mesh.set_name( mesh_name[:21] )
+	local_mesh.set_name( mesh_name )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def read_crease( f, line, local_mesh ):

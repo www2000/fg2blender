@@ -47,14 +47,14 @@ class FG_PT_object_properties(bpy.types.Panel):
 		obj = context.object
 
 		if obj:      
-			if obj.type in ("MESH"):
+			if obj.type in ('MESH','EMPTY'):
 				return True
 		return False
 
 	def draw(self, context):
 		obj = context.active_object
 		if obj:
-			if obj.type == "MESH":
+			if obj.type in ('MESH','EMPTY'):
 				layout_object(self, obj, context);
 #--------------------------------------------------------------------------------------------------------------------------------
 
@@ -69,14 +69,14 @@ class FG_PT_object_tool(bpy.types.Panel):
 		obj = context.object
 
 		if obj:      
-			if obj.type in ("MESH"):
+			if obj.type in ('MESH','EMPTY'):
 				return True
 		return False
 
 	def draw(self, context):
 		obj = context.active_object
 		if obj:
-			if obj.type == "MESH":
+			if obj.type in ("MESH",'EMPTY'):
 				layout_object_tool(self, obj, context);
 #--------------------------------------------------------------------------------------------------------------------------------
 
@@ -91,7 +91,8 @@ def layout_object(self, obj, context):
 	box = layout.box()
 	col = box.column()
 
-	col.prop( obj.data.fg, "ac_file" )
+	if obj.type != 'EMPTY':
+		col.prop( obj.data.fg, "ac_file" )
 	
 	if obj.parent:
 		boxTitre = layout.column()

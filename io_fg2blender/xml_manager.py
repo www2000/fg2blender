@@ -43,8 +43,8 @@ xml_current_no = 0
 
 no_debug = 0
 
-DEBUG = True
-BIDOUILLE = True
+DEBUG = False
+BIDOUILLE = False
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -500,6 +500,18 @@ class ANIM:
 			for keyframe in fcurve.keyframe_points:
 				keyframe.interpolation = 'LINEAR'
 	#---------------------------------------------------------------------------------------------------------------------
+	
+	def insert_keyframe_all( self ):
+		if self.type == 1:
+			bpy.context.scene.objects.active = bpy.data.objects[self.name]
+			self.insert_keyframe_rotation_all()
+		elif self.type == 2:
+			bpy.context.scene.objects.active = bpy.data.objects[self.name]
+			self.insert_keyframe_translation_all()
+		elif self.type == 7:
+			bpy.context.scene.objects.active = bpy.data.objects[self.name]
+			self.insert_keyframe_rotation_all()
+	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature_rotation( self ):
 		#print( "Context : %s" % bpy.context.mode )
@@ -662,21 +674,6 @@ class ANIM:
 		limit_rotation.use_max_z = True
 		limit_rotation.owner_space = 'LOCAL'
 		bpy.ops.object.posemode_toggle()
-		
-		#ac_manager.compute_extra
-		
-	#---------------------------------------------------------------------------------------------------------------------
-	
-	def insert_keyframe_all( self ):
-		if self.type == 1:
-			bpy.context.scene.objects.active = bpy.data.objects[self.name]
-			self.insert_keyframe_rotation_all()
-		elif self.type == 2:
-			bpy.context.scene.objects.active = bpy.data.objects[self.name]
-			self.insert_keyframe_translation_all()
-		elif self.type == 7:
-			bpy.context.scene.objects.active = bpy.data.objects[self.name]
-			self.insert_keyframe_rotation_all()
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_light( self ):
@@ -746,6 +743,57 @@ class ANIM:
 		tex.use_alpha = True
 		debug_info( '    Creation de la texture img="%s"  name="%s"' % (img_name, tex.name) )
 		return tex
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_pick( self ):
+		for xml_file, no in xml_files:
+			if xml_file.name == self.xml_file and no == self.xml_file_no:
+				break
+		for obj_name_ac in self.objects:
+			debug_info( 'Pick' )
+			debug_info( 'xml file no %d  -- "%s"' % (self.xml_file_no, os.path.basename(xml_file.name)) )
+			debug_info( "Nb ac file : %d" % len(xml_file.ac_files) )
+			
+			if xml_file.ac_files:
+				if not obj_name_ac in xml_file.ac_files[0].dic_name_meshs:
+					group_objects = find_group( obj_name_ac, xml_file )
+					if group_objects:
+						debug_info( '\tgroup : "%s"' % str(self.group_objects)  )
+						for obj_name_bl in group_objects[1:]:
+							print( 'Create Pick : "%s"' % obj_name_bl )
+							self.assign_pick( obj_name_bl )
+					else:
+						print( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
+						continue
+				else:
+					obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
+					print( 'Create Pick : "%s"' % obj_name_bl )
+					self.assign_pick( obj_name_bl )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_armature( self ):
+		if self.type == 1:
+			self.create_armature_rotation()
+			obj = bpy.context.scene.objects.active
+			if obj:
+				obj.data.fg.type_anim = 0 + self.type
+		elif self.type == 2:
+			self.create_armature_translation()
+			obj = bpy.context.scene.objects.active
+			if obj:
+				obj.data.fg.type_anim = 0 + self.type
+		elif self.type == 4:
+			self.create_pick()
+		elif self.type == 5:
+			self.create_light()
+		elif self.type == 6:
+			tex = self.create_texture()
+			self.assign_texture(tex)
+		if self.type == 7:
+			self.create_armature_rotation()
+			obj = bpy.context.scene.objects.active
+			if obj:
+				obj.data.fg.type_anim = 0 + self.type
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def assign_texture( self, tex ):
@@ -775,31 +823,6 @@ class ANIM:
 					texture_slot.alpha_factor	= 0.1
 	#---------------------------------------------------------------------------------------------------------------------
 
-	def create_armature( self ):
-		if self.type == 1:
-			self.create_armature_rotation()
-			obj = bpy.context.scene.objects.active
-			if obj:
-				obj.data.fg.type_anim = 0 + self.type
-		elif self.type == 2:
-			self.create_armature_translation()
-			obj = bpy.context.scene.objects.active
-			if obj:
-				obj.data.fg.type_anim = 0 + self.type
-		elif self.type == 4:
-			self.create_pick()
-		elif self.type == 5:
-			self.create_light()
-		elif self.type == 6:
-			tex = self.create_texture()
-			self.assign_texture(tex)
-		if self.type == 7:
-			self.create_armature_rotation()
-			obj = bpy.context.scene.objects.active
-			if obj:
-				obj.data.fg.type_anim = 0 + self.type
-	#---------------------------------------------------------------------------------------------------------------------
-
 	def assign_pick( self, obj_name ):
 		obj = get_object( obj_name )
 		if obj:
@@ -808,32 +831,6 @@ class ANIM:
 					obj.data.materials.append( bpy.data.materials['Material_Pick'])
 				obj.show_wire = True
 				obj.show_transparent = True
-	#---------------------------------------------------------------------------------------------------------------------
-
-	def create_pick( self ):
-		for xml_file, no in xml_files:
-			if xml_file.name == self.xml_file and no == self.xml_file_no:
-				break
-		for obj_name_ac in self.objects:
-			debug_info( 'Pick' )
-			debug_info( 'xml file no %d  -- "%s"' % (self.xml_file_no, os.path.basename(xml_file.name)) )
-			debug_info( "Nb ac file : %d" % len(xml_file.ac_files) )
-			
-			if xml_file.ac_files:
-				if not obj_name_ac in xml_file.ac_files[0].dic_name_meshs:
-					group_objects = find_group( obj_name_ac, xml_file )
-					if group_objects:
-						debug_info( '\tgroup : "%s"' % str(self.group_objects)  )
-						for obj_name_bl in group_objects[1:]:
-							print( 'Create Pick : "%s"' % obj_name_bl )
-							self.assign_pick( obj_name_bl )
-					else:
-						print( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
-						continue
-				else:
-					obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
-					print( 'Create Pick : "%s"' % obj_name_bl )
-					self.assign_pick( obj_name_bl )
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #							END CLASS ANIM
@@ -947,12 +944,12 @@ def create_material_pick():
 	for material in bpy.data.materials:
 		if material.name == "Material_Pick":
 			return
-		bl_mat = bpy.data.materials.new( 'Material_Pick' )
+	bl_mat = bpy.data.materials.new( 'Material_Pick' )
 
-		bl_mat.emit				= 0.2
-		bl_mat.type				= 'WIRE'
-		bl_mat.use_transparency = True
-		bl_mat.alpha			= 0.0
+	bl_mat.emit				= 0.2
+	bl_mat.type				= 'WIRE'
+	bl_mat.use_transparency = True
+	bl_mat.alpha			= 0.0
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def create_anims():
@@ -1144,6 +1141,7 @@ def is_obj_link_armature( obj ):
 		objet = objet.parent
 		if objet.type == 'ARMATURE':
 			return objet
+		'''
 		else:
 			debug_info( "**** Clear Transform *****" )
 			bpy.ops.object.select_all(action='DESELECT')
@@ -1153,6 +1151,7 @@ def is_obj_link_armature( obj ):
 			bpy.ops.object.parent_clear( type='CLEAR_KEEP_TRANSFORM' )
 			#obj.parent = obj_parent
 			return None
+		'''
 	else:
 		return None
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1163,6 +1162,12 @@ def is_obj_link_empty( obj ):
 	if objet.parent!= None:
 		objet = objet.parent
 		if objet.type == 'EMPTY':
+			debug_info( "**** Clear Transform *****" )
+			bpy.ops.object.select_all(action='DESELECT')
+			obj.select = True
+			bpy.context.scene.objects.active = obj
+			obj_parent = obj.parent
+			bpy.ops.object.parent_clear( type='CLEAR_KEEP_TRANSFORM' )
 			return objet
 	else:
 		return None
@@ -1173,13 +1178,16 @@ def parent_set( obj, armature ):
 	parent_armature = is_obj_link_armature( obj )
 	if parent_armature:
 		parent_set_armature( parent_armature, armature )
+	parent_empty = is_obj_link_empty( obj )
+	if parent_empty:
+		parent_set_armature_simple( parent_empty, armature )
 		#return
 
 	bpy.ops.object.select_all(action='DESELECT')
 	obj = get_object( obj.name )
 	obj.select = True
 	#bpy.ops.object.select_pattern(pattern=obj.name)
-	bpy.ops.object.select_pattern(pattern=armature.name)
+	bpy.ops.object.select_pattern(pattern=armature.name,case_sensitive=True)
 	bpy.context.scene.objects.active = armature
 	bpy.ops.object.parent_set(type='BONE')
 
@@ -1189,9 +1197,19 @@ def parent_set_armature( parent, child ):
 	debug_info( '\t\t\tCreation parenté d armature "%s" sur "%s"' % (child.name, parent.name) )
 
 	bpy.ops.object.select_all(action='DESELECT')
-	bpy.ops.object.select_pattern(pattern=child.name)
-	bpy.ops.object.select_pattern(pattern=parent.name)
+	bpy.ops.object.select_pattern(pattern=child.name,case_sensitive=True)
+	bpy.ops.object.select_pattern(pattern=parent.name,case_sensitive=True)
 	bpy.context.scene.objects.active = parent
 	bpy.ops.object.parent_set(type='BONE')
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def parent_set_armature_simple( parent, child ):
+	debug_info( '\t\t\tCreation parenté simple de "%s" sur "%s"' % (child.name, parent.name) )
+
+	bpy.ops.object.select_all(action='DESELECT')
+	bpy.ops.object.select_pattern(pattern=child.name,case_sensitive=True)
+	bpy.ops.object.select_pattern(pattern=parent.name,case_sensitive=True)
+	bpy.context.scene.objects.active = parent
+	bpy.ops.object.parent_set(type='OBJECT')
 
 

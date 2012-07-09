@@ -56,6 +56,7 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
         layout.separator()
         layout.operator("view3d.edge_split",		text='Edge-split' )
         layout.operator("view3d.create_anim",		text='Creation animations' )
+        layout.operator("view3d.select_property",	text='Select property' )
 
         layout.separator()
         layout.operator("view3d.create_rotate",		text='Define Rotation' )
@@ -98,7 +99,7 @@ class FG_OT_exec(bpy.types.Operator):
 		ac_option.split_angle	= 60.0
 
 		xml_option = XML_OPTION()
-		xml_option.include		= True
+		xml_option.include		= False
 		xml_option.active_layer	= False
 		xml_option.layer_beg	= 1
 		xml_option.layer_end	= 10

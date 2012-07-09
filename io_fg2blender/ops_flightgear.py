@@ -217,6 +217,39 @@ class FG_OT_edges_split(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_select_property(bpy.types.Operator):
+	'''Add edge split sor select object '''
+	bl_idname = "view3d.select_property"
+	bl_label = "Edge split"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if not context.active_object:
+			return False
+		return context.active_object.type == 'ARMATURE'#None
+
+	def execute(self, context):
+		import bpy
+		import mathutils
+		from math import radians
+
+		def select_childs( parent ):
+			for obj in bpy.data.objects:
+				if obj.parent == parent:
+					obj.select=True
+	
+		#bpy.ops.object.select_all( action='DESELECT' )
+		obj = context.active_object
+		property_name =  obj.data.fg.property_value
+		for obj in bpy.data.objects:
+			if obj.type == 'ARMATURE':
+				if obj.data.fg.property_value == property_name:
+					select_childs( obj )
+					obj.select = True
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_select_file(bpy.types.Operator):
 	bl_idname = "object.file_select"
 	bl_label = ""
@@ -272,6 +305,7 @@ class FG_OT_exemple(bpy.types.Operator):
 
 def register():
 	bpy.utils.register_class( FG_OT_edges_split)
+	bpy.utils.register_class( FG_OT_select_property)
 	bpy.utils.register_class( FG_OT_create_anim)
 	bpy.utils.register_class( FG_OT_create_rotate)
 	bpy.utils.register_class( FG_OT_create_translate)
@@ -282,6 +316,7 @@ def register():
 
 def unregister():
 	bpy.utils.unregister_class( FG_OT_edges_split)
+	bpy.utils.unregister_class( FG_OT_select_property)
 	bpy.utils.unregister_class( FG_OT_create_anim)
 	bpy.utils.unregister_class( FG_OT_create_rotate)
 	bpy.utils.unregister_class( FG_OT_create_translate)
