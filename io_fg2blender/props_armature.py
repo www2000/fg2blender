@@ -30,8 +30,125 @@
 
 
 
+ 
+familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear']
+ 
+ 
+ 
+#Tuples ('Property',min,max,time)
+#               min max :       'x' : valeur variable
+#               time :          True/False : cinématique ou non
+ 
+ 
+APUs = [                 ('/controls/APU/off-start-run',0,1,False),
+                                ('/controls/APU/fire-switch',0,'x',False)                                       ]
+ 
+anti_ices = [    ('/controls/anti-ice/wing-heat',0,1,False),
+                                ('/controls/anti-ice/pitot-heat',0,1,False),
+                                ('/controls/anti-ice/wiper',0,'x',False),
+                                ('/controls/anti-ice/window-heat',0,1,False),
+                                ('/controls/anti-ice/engine[%d]/carb-heat',0,1,False),
+                                ('/controls/anti-ice/engine[%d]/inlet-heat',0,1,False)  ]
+ 
+armaments = [    ('/controls/armament/master-arm',0,1,False),
+                                ('/controls/armament/station-select',0,1,False),
+                                ('/controls/armament/release-all',0,1,False),
+                                ('/controls/armament/station[%d]/stick-size',0,1,False),
+                                ('/controls/armament/station[%d]/release-stick',0,1,False),
+                                ('/controls/armament/station[%d]/release-all',0,1,False),
+                                ('/controls/armament/station[%d]/jettison-all',0,1,False),      ]
+ 
+autoflights = [  ('/controls/autoflight/autopilot[%d]/engage',0,1,False),
+                                ('/controls/autoflight/autothrottle-arm',0,1,False),
+                                ('/controls/autoflight/autothrottle-engage',0,1,False),
+                                ('/controls/autoflight/heading-select',0,360,False),
+                                ('/controls/autoflight/altitude-select',0,'x',False),
+                                ('/controls/autoflight/bank-angle-select',0,'x',False),
+                                ('/controls/autoflight/vertical-speed-select',0,'x',False),
+                                ('/controls/autoflight/speed-select',0,'x',False),
+                                ('/controls/autoflight/mach-select',0,'x',False),
+                                ('/controls/autoflight/vertical-mode',0,'x',False),
+                                ('/controls/autoflight/lateral-mode',0,1,False),        ]
+                               
+electrics = [    ('/controls/electric/battery-switch',0,1,False),
+                                ('/controls/electric/external-power',0,1,False),
+                                ('/controls/electric/APU-generator',0,1,False),
+                                ('/controls/electric/engine[%d]/generator',0,1,False),
+                                ('/controls/electric/engine[%d]/bus-tie',0,1,False)     ]
+ 
+                               
+#engines comportement des variables à affiner
+engines = [             ('/controls/engines/throttle_idle',0,1,False),
+                                ('/controls/engines/engine[%d]/throttle',0,1,False),
+                                ('/controls/engines/engine[%d]/starter',0,1,False),
+                                ('/controls/engines/engine[%d]/fuel-pump',0,1,False),
+                                ('/controls/engines/engine[%d]/fire-switch',0,1,False),
+                                ('/controls/engines/engine[%d]/fire-bottle-discharge',0,1,False),
+                                ('/controls/engines/engine[%d]/cutoff',0,1,False),
+                                ('/controls/engines/engine[%d]/mixture',0,1,False),
+                                ('/controls/engines/engine[%d]/propeller-pitch',0,1,False),
+                                ('/controls/engines/engine[%d]/magnetos',0,3,False),
+                                ('/controls/engines/engine[%d]/boost',0,1,False),
+                                ('/controls/engines/engine[%d]/WEP',0,1,False),
+                                ('/controls/engines/engine[%d]/cowl-flaps-norm',0,1,False),
+                                ('/controls/engines/engine[%d]/feather',0,1,False),
+                                ('/controls/engines/engine[%d]/ignition',0,3,False),
+                                ('/controls/engines/engine[%d]/augmentation',0,1,False),
+                                ('/controls/engines/engine[%d]/afterburner',0,1,False),
+                                ('/controls/engines/engine[%d]/reverser',0,1,False),
+                                ('/controls/engines/engine[%d]/water-injection',0,1,False),
+                                ('/controls/engines/engine[%d]/condition',0,1,False)    ]
+ 
+flights = [              ('/controls/flight/aileron',-1,1,False),
+                                ('/controls/flight/aileron-trim',-1,1,False),
+                                ('/controls/flight/elevator',-1,1,False),
+                                ('/controls/flight/elevator-trim',-1,1,False),
+                                ('/controls/flight/rudder',-1,1,False),
+                                ('/controls/flight/rudder-trim',-1,1,False),
+                                ('/controls/flight/flaps',0,1,False),
+                                ('/controls/flight/slats',0,1,False),
+                                ('/controls/flight/BLC',0,1,False),
+                                ('/controls/flight/spoilers',0,1,False),
+                                ('/controls/flight/speedbrake',0,1,False),
+                                ('/controls/flight/wing-sweep',0,1,False),
+                                ('/controls/flight/wing-fold',0,1,False),
+                                ('/controls/flight/drag-chute',0,1,False)                       ]
+ 
+fuels = [                ('/controls/fuel/dump-valve',0,1,False),
+                                ('/controls/fuel/tank[%d]/fuel_selector',0,1,False),
+                                ('/controls/fuel/tank[%d]/to_engine',0,'x',False),
+                                ('/controls/fuel/tank[%d]/to_tank',0,'x',False),
+                                ('/controls/fuel/tank[%d]/boost-pump[%d]',0,1,False)    ]
+ 
+consumables = [ ('/consumables/fuel/tank[%d]/level-lbs',0,'x',False),
+                                ('/consumables/fuel/tank[%d]/level-gal_us',0,'x',False),
+                                ('/consumables/fuel/tank[%d]/capacity-gal_us',0,'x',False),
+                                ('/consumables/fuel/tank[%d]/density-ppg',0,'x',False),
+                                ('/consumables/fuel/total-fuel-lbs',0,'x',False),
+                                ('/consumables/fuel/total-gal_us',0,'x',False)                  ]
+                               
+gears = [                ('/controls/gear/brake-left',0,1,False),
+                                ('/controls/gear/brake-right',0,1,False),
+                                ('/controls/gear/brake-parking',0,1,False),
+                                ('/controls/gear/steering',0,'x',False),
+                                ('/controls/gear/gear-down',0,1,True),
+                                ('/controls/gear/antiskid',0,1,False),
+                                ('/controls/gear/tailhook',0,1,False),
+                                ('/controls/gear/tailwheel-lock',0,1,False),
+                                ('/controls/gear/wheel[%d]/alternate-extension',0,1,False),
+                                ('/gear/gear[%d]/caster-angle-deg',0,1,False),
+                                ('/gear/gear[%d]/compression-m',0,1,False),
+                                ('/gear/gear[%d]/compression-norm',0,1,False),
+                                ('/gear/gear[%d]/ground-friction-factor',0,1,False),
+                                ('/gear/gear[%d]/ground-is-solid',0,1,False),
+                                ('/gear/gear[%d]/has-brake',0,1,False),
+                                ('/gear/gear[%d]/position-norm',0,1,True),
+                                ('/gear/gear[%d]/rollspeed-ms',0,'x',False),
+                                ('/gear/gear[%d]/rollspeed-ms',0,1,False)       ]
+ 
+ 
 
-
+'''
 
 familles = ['controls','engines','fuel','gear']
 
@@ -50,21 +167,6 @@ controls = [	'/controls/flight/aileron',
 				'/controls/flight/wing-fold',
 				'/controls/flight/drag-chute'		]
          
-flight_controls = [		'/controls/flight/aileron',
-						'/controls/flight/aileron-trim',
-						'/controls/flight/elevator',
-						'/controls/flight/elevator-trim',
-						'/controls/flight/rudder',
-						'/controls/flight/rudder-trim',
-						'/controls/flight/flaps',
-						'/controls/flight/slats',
-						'/controls/flight/BLC',
-						'/controls/flight/spoilers',
-						'/controls/flight/speedbrake',
-						'/controls/flight/wing-sweep',
-						'/controls/flight/wing-fold',
-						'/controls/flight/drag-chute'	]
-
 engines = [		'/controls/engines/throttle_idle',
 				'/controls/engines/engine[%d]/throttle',
 				'/controls/engines/engine[%d]/starter',
@@ -85,6 +187,21 @@ engines = [		'/controls/engines/throttle_idle',
 				'/controls/engines/engine[%d]/reverser',
 				'/controls/engines/engine[%d]/water-injection',
 				'/controls/engines/engine[%d]/condition'		]
+
+flight_controls = [		'/controls/flight/aileron',
+						'/controls/flight/aileron-trim',
+						'/controls/flight/elevator',
+						'/controls/flight/elevator-trim',
+						'/controls/flight/rudder',
+						'/controls/flight/rudder-trim',
+						'/controls/flight/flaps',
+						'/controls/flight/slats',
+						'/controls/flight/BLC',
+						'/controls/flight/spoilers',
+						'/controls/flight/speedbrake',
+						'/controls/flight/wing-sweep',
+						'/controls/flight/wing-fold',
+						'/controls/flight/drag-chute'	]
 
 fuels = [	'/controls/fuel/dump-valve',
 			'/controls/fuel/tank[%d]/fuel_selector',
@@ -109,7 +226,7 @@ gears = [	'/controls/gear/brake-left',
 			'/controls/gear/wheel[%d]/alternate-extension'		]
 
 
-
+'''
 
 
 
@@ -165,14 +282,28 @@ def update_time( self, context ):
 def dynamic_items( self, context ):
 	obj = context.active_object
 
-	if obj.data.fg.familly == 'controls':
-		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc in flight_controls ]
-	elif obj.data.fg.familly == 'engines':
-	    items = [ (en,en.split('/')[-1],en.split('/')[-1]) for en in engines ]
+	#familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear']
+
+	if obj.data.fg.familly == 'APU':
+		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for (fc, _min, _max, b )in APUs ]
+	elif obj.data.fg.familly == 'anti_ice':
+		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc, _min, _max, b in anti_ices ]
+	elif obj.data.fg.familly == 'armament':
+		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc, _min, _max, b in armaments ]
+	elif obj.data.fg.familly == 'autoflight':
+		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc, _min, _max, b in autoflights ]
+	elif obj.data.fg.familly == 'electric':
+		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc, _min, _max, b in electrics ]
+	elif obj.data.fg.familly == 'controls':
+		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc, _min, _max, b in flight_controls ]
+	elif obj.data.fg.familly == 'engine':
+	    items = [ (en,en.split('/')[-1],en.split('/')[-1]) for en, _min, _max, b in engines ]
+	elif obj.data.fg.familly == 'flight':
+	    items =	[ (fu,fu.split('/')[-1],fu.split('/')[-1]) for fu, _min, _max, b in flights ]
 	elif obj.data.fg.familly == 'fuel':
-	    items =	[ (fu,fu.split('/')[-1],fu.split('/')[-1]) for fu in fuels ]
+	    items =	[ (fu,fu.split('/')[-1],fu.split('/')[-1]) for fu, _min, _max, b in fuels ]
 	elif obj.data.fg.familly == 'gear':
-	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge in gears ]
+	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge, _min, _max, b in gears ]
 	else:
 		items = [  ('error','error','error') ]
 	return items
