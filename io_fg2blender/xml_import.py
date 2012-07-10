@@ -18,7 +18,7 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: 
+# Contributors: Clément
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -853,7 +853,50 @@ def read_file_xml( name ):
 		print( "Erreur : fichier 	 n'appartient pas a un avion " )
 
 	os.chdir( current_path )
+#---------------------------------------------------------------------------------------------------------------------
 
+def charge_xml( filename ):
+	global option_include
+	global option_print_include
+	global option_rotation
+	global option_translation
+	global option_animation
+	global option_ac_file
+	global option_light
+	global option_rotate_layer
+	global option_rotate_beg
+	global option_rotate_end
+
+	option_include = False
+	option_print_include = False
+	option_rotation = False
+	option_translation = False
+	option_animation = False
+	option_ac_file = False
+	option_light = False
+	option_rotate_layer = False
+	option_rotate_beg = 0
+	option_rotate_end = 1
+	
+	print( "xml_import:charge_xml()  %s " % filename )
+	if os.path.isfile(filename):
+		fsock = open(filename)
+		try:
+			xmldoc = xml.dom.minidom.parse(fsock)
+		except:
+			fsock.close()                 
+			fsock = codecs.open(filename, 'r+', 'iso-8859-1' )
+			print( " **********************************************************************************" )
+			print( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
+			print( " **********************************************************************************" )
+			print( " ***************  Changement de Codec ; Ah les messieurs iso-8859-1 ***************" )
+			print( " **********************************************************************************" )
+			xmldoc = xml.dom.minidom.parse(fsock)
+
+		fsock.close()                 
+		#node = xmldoc.documentElement
+
+	return xmldoc
 #---------------------------------------------------------------------------------------------------------------------
 #
 #							ENTRY function

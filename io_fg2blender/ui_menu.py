@@ -54,14 +54,18 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.separator()
-        layout.operator("view3d.edge_split",		text='Edge-split' )
         layout.operator("view3d.create_anim",		text='Creation animations' )
+        layout.separator()
+        layout.operator("view3d.edge_split",		text='Edge-split' )
         layout.operator("view3d.select_property",	text='Select property' )
+        layout.operator("view3d.time_2x",			text='Time x2' )
+        layout.operator("view3d.time_0_5x",			text='Time x0.5' )
 
         layout.separator()
         layout.operator("view3d.create_rotate",		text='Define Rotation' )
         layout.operator("view3d.create_translate",	text='Define Translation' )
         layout.separator()
+        layout.operator("view3d.write_xml",			text='Ecrit xml' )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_0(bpy.types.Menu):
@@ -99,7 +103,7 @@ class FG_OT_exec(bpy.types.Operator):
 		ac_option.split_angle	= 60.0
 
 		xml_option = XML_OPTION()
-		xml_option.include		= False
+		xml_option.include		= True
 		xml_option.active_layer	= False
 		xml_option.layer_beg	= 1
 		xml_option.layer_end	= 10

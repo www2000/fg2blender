@@ -28,6 +28,9 @@
 #----------------------------------------------------------------------------------------------------------------------------------
 
 import bpy
+import xml.dom.minidom
+
+from . import *
 
 from math import radians
 from math import degrees
@@ -227,26 +230,47 @@ class FG_OT_select_property(bpy.types.Operator):
 	def poll(cls, context):
 		if not context.active_object:
 			return False
-		return context.active_object.type == 'ARMATURE'#None
+		return context.active_object.type in( 'MESH','ARMATURE')
 
 	def execute(self, context):
 		import bpy
 		import mathutils
 		from math import radians
-
+		#-------------------------------------------------------------------
 		def select_childs( parent ):
 			for obj in bpy.data.objects:
-				if obj.parent == parent:
-					obj.select=True
-	
-		#bpy.ops.object.select_all( action='DESELECT' )
-		obj = context.active_object
-		property_name =  obj.data.fg.property_value
-		for obj in bpy.data.objects:
-			if obj.type == 'ARMATURE':
-				if obj.data.fg.property_value == property_name:
-					select_childs( obj )
-					obj.select = True
+				if not obj.parent:
+					continue
+				if obj.parent.name == parent.name:
+					o = obj
+					o.select=True
+					select_childs( o )
+		#-------------------------------------------------------------------
+		def find_armature( obj ):
+			o = obj
+			while o.parent:
+				if o.parent.type == 'ARMATURE':
+					return o.parent
+				o = o.parent
+			return None
+		#-------------------------------------------------------------------
+		print( '--- Select property  ---' )
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				obj = find_armature( obj )
+				if not obj:
+					continue
+			if obj.type != 'ARMATURE':
+				continue
+			property_name =  obj.data.fg.property_value
+			print( property_name )
+			for o in bpy.data.objects:
+				if o.type == 'ARMATURE':
+					if o.data.fg.property_value == property_name:
+						
+						select_childs( o )
+						o.select = True
+				
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -277,7 +301,95 @@ class FG_OT_only_render(bpy.types.Operator):
 		#print( context.space_data.type )
 		if context.space_data.type=='VIEW_3D':
 			context.space_data.show_only_render = not  context.space_data.show_only_render
+		return {'FINISHED'}
 		return {'RUNNING_MODAL'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_time_2x(bpy.types.Operator):
+	bl_idname = "view3d.time_2x"
+	bl_label = ""
+
+	def invoke(self, context, event):
+		end = context.scene.frame_end
+		old = context.scene.render.frame_map_old
+		new = context.scene.render.frame_map_new
+		if new == 100.0:
+			end = context.scene.frame_end = 60.0
+			old = context.scene.render.frame_map_old = 60.0
+			new = context.scene.render.frame_map_new = 60.0
+
+		context.scene.frame_end = new *0.5
+		context.scene.render.frame_map_old = old
+		context.scene.render.frame_map_new = new *0.5
+		return {'FINISHED'}
+		return {'RUNNING_MODAL'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_time_0_5x(bpy.types.Operator):
+	bl_idname = "view3d.time_0_5x"
+	bl_label = ""
+
+	def invoke(self, context, event):
+		end = context.scene.frame_end
+		old = context.scene.render.frame_map_old
+		new = context.scene.render.frame_map_new
+		if new == 100.0:
+			end = context.scene.frame_end = 60.0
+			old = context.scene.render.frame_map_old = 60.0
+			new = context.scene.render.frame_map_new = 60.0
+
+		context.scene.frame_end = new *2.0
+		context.scene.render.frame_map_old = old
+		context.scene.render.frame_map_new = new * 2.0
+		return {'FINISHED'}
+		return {'RUNNING_MODAL'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_write_xml(bpy.types.Operator):
+	bl_idname = "view3d.write_xml"
+	bl_label = "Write"
+	
+	filename = bpy.props.StringProperty()
+	
+	#---------------------------------------------------------------------------
+	def exist_xml(self, name ):
+		for text in bpy.data.texts:
+			if text.name == name:
+				return True
+		return False
+	#---------------------------------------------------------------------------
+
+	def charge_xml(self, filename):
+		from .xml_import import charge_xml
+
+		if len(xml_manager.xml_files)<1:
+			return
+			
+		name = os.path.basename( filename )
+
+		if self.exist_xml( name ):
+			bpy.data.texts[name].clear()
+		else:
+			bpy.data.texts.new( name )
+		
+		node = charge_xml( filename )
+		bpy.data.texts[name].use_tabs_as_spaces = True
+		bpy.data.texts[name].write( node.toxml() )
+	#---------------------------------------------------------------------------
+	def execute( self, context ):
+		if self.filename != "":
+			print( self.filename )
+			self.charge_xml( self.filename )
+		return {'FINISHED'}
+
+	#---------------------------------------------------------------------------
+
+	def invoke(self, context, event):
+		print( self.filename )
+		filename = xml_manager.xml_files[0][0].name
+		print( filename )
+		self.charge_xml( filename )
+		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_exemple(bpy.types.Operator):
@@ -312,7 +424,9 @@ def register():
 	bpy.utils.register_class( FG_OT_exemple)
 	bpy.utils.register_class( FG_OT_select_file )
 	bpy.utils.register_class( FG_OT_only_render )
-
+	bpy.utils.register_class( FG_OT_time_0_5x )
+	bpy.utils.register_class( FG_OT_time_2x )
+	bpy.utils.register_class( FG_OT_write_xml )
 
 def unregister():
 	bpy.utils.unregister_class( FG_OT_edges_split)
@@ -323,4 +437,7 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_exemple)
 	bpy.utils.unregister_class( FG_OT_select_file )
 	bpy.utils.unregister_class( FG_OT_only_render )
+	bpy.utils.unregister_class( FG_OT_time_0_5x )
+	bpy.utils.unregister_class( FG_OT_time_2x )
+	bpy.utils.unregister_class( FG_OT_write_xml )
 

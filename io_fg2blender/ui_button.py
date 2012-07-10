@@ -45,6 +45,21 @@ class FG_OT_button_select(bpy.types.Operator):
 		obj.select = True
 		bpy.context.scene.objects.active = obj
 		return{'FINISHED'}    
+#--------------------------------------------------------------------------------------------------------------------------------
+#   Button
+class FG_OT_button_charge_xml(bpy.types.Operator):
+	bl_idname = "fg.charge_xml"
+	bl_label = "Select"
+
+	file_name = bpy.props.StringProperty()
+
+	def execute(self, context):	
+		for obj in bpy.data.objects:
+			obj.select = False
+		obj = bpy.data.objects[self.object_name]
+		obj.select = True
+		bpy.context.scene.objects.active = obj
+		return{'FINISHED'}    
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #

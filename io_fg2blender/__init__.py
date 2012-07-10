@@ -164,7 +164,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 
 			import_xml(	filename, ac_option, xml_option )
 			bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
-		
+			#bpy.ops.view3d.create_anim()
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 #
