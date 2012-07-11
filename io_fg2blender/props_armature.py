@@ -304,6 +304,8 @@ def dynamic_items( self, context ):
 	    items =	[ (fu,fu.split('/')[-1],fu.split('/')[-1]) for fu, _min, _max, b in fuels ]
 	elif obj.data.fg.familly == 'gear':
 	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge, _min, _max, b in gears ]
+	elif obj.data.fg.familly == 'consumable':
+	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge, _min, _max, b in consumables ]
 	else:
 		items = [  ('error','error','error') ]
 	return items
@@ -331,6 +333,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 
 	property_value = bpy.props.StringProperty(	attr = 'value', name = 'value')
+	property_idx = bpy.props.IntProperty(	attr = 'value', name = 'value')
 
 	factor = bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
 	
@@ -365,6 +368,11 @@ def RNA_armature():
 														description="Familly value")
                                              
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_value",
+														type=FG_PROP_armature,
+														name="Property",
+														description="Property value")
+
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_idx",
 														type=FG_PROP_armature,
 														name="Property",
 														description="Property value")

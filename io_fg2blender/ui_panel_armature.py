@@ -140,6 +140,11 @@ def layout_armature_properties(self, obj, context):
 	else:
 		row.alignment = 'EXPAND'
 		row.prop( obj.data.fg,  "property_value" )
+
+	if obj.data.fg.property_idx != -1:
+		row = box.row()
+		row.prop( obj.data.fg,  "property_idx" )
+	
 	#----------------------------------------------------
 	#col = layout.column()
 	#col.prop( obj.data.fg, "factor" )

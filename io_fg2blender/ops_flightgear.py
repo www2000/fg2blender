@@ -347,7 +347,7 @@ class FG_OT_time_0_5x(bpy.types.Operator):
 
 class FG_OT_write_xml(bpy.types.Operator):
 	bl_idname = "view3d.write_xml"
-	bl_label = "Write"
+	bl_label = "Write File"
 	
 	filename = bpy.props.StringProperty()
 	
@@ -386,9 +386,13 @@ class FG_OT_write_xml(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		print( self.filename )
-		filename = xml_manager.xml_files[0][0].name
-		print( filename )
-		self.charge_xml( filename )
+		filename = self.filename
+		if filename == "":
+			filename = xml_manager.xml_files[0][0].name
+		
+		right_name = filename.partition('Aircraft')[2]
+		name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + right_name
+		self.charge_xml( name_path )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 

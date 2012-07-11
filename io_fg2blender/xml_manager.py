@@ -513,6 +513,56 @@ class ANIM:
 			self.insert_keyframe_rotation_all()
 	#---------------------------------------------------------------------------------------------------------------------
 
+	def create_property( self, obj ):
+		from . import props_armature
+		#props = props_armature.APUs + props_armature.armaments + props_armature.autoflights + props_armature.electrics\
+		#			+ props_armature.engines + props_armature.flights + props_armature.fuels + props_armature.consumables\
+		#			+ props_armature.gears
+		#------------------------------------------------------------
+
+		def find_prop( obj, left, right, familly, name ):
+			for prop in familly:
+				left_prop = prop[0]
+				right_prop = ''
+				if prop[0].find('[') != -1:
+					left_prop = prop[0].partition('[')[0]
+					right_prop = prop[0].partition(']')[2]
+			
+				if left_prop == left and right_prop == right:
+					print( ' Bingo "%s"' , prop )
+					obj.data.fg.familly = name
+					obj.data.fg.familly_value = prop[0]
+					idx = obj.data.fg.property_value.partition('[')[2]
+					idx = idx.partition(']')[0]
+					obj.data.fg.property_idx = int(idx)
+		#------------------------------------------------------------
+
+		def find_in_familly( obj, left, right ):
+			find_prop( obj, left, right, props_armature.APUs, 'APU' )
+			find_prop( obj, left, right, props_armature.anti_ices, 'anti_ice' )
+			find_prop( obj, left, right, props_armature.armaments, 'armament' )
+			find_prop( obj, left, right, props_armature.autoflights, 'autoflight' )
+			find_prop( obj, left, right, props_armature.electrics, 'electric' )
+			find_prop( obj, left, right, props_armature.engines, 'engine' )
+			find_prop( obj, left, right, props_armature.flights, 'flight' )
+			find_prop( obj, left, right, props_armature.fuels, 'fuel' )
+			find_prop( obj, left, right, props_armature.consumables, 'consumable' )
+			find_prop( obj, left, right, props_armature.gears, 'gear' )
+		
+		
+		#------------------------------------------------------------
+		if obj.data.fg.property_value[0] != '/':
+			obj.data.fg.property_value = '/' + obj.data.fg.property_value
+		print( ' Recherche  property "%s"' % obj.data.fg.property_value )
+		left = obj.data.fg.property_value
+		right = ''
+		if obj.data.fg.property_value.find('[') != -1:
+			left = obj.data.fg.property_value.partition('[')[0]
+			right = obj.data.fg.property_value.partition(']')[2]
+
+		find_in_familly( obj, left, right )
+	#---------------------------------------------------------------------------------------------------------------------
+
 	def create_armature_rotation( self ):
 		#print( "Context : %s" % bpy.context.mode )
 		bpy.ops.object.armature_add()
@@ -542,6 +592,7 @@ class ANIM:
 				obj_arma = obj_armature = obj
 				obj_arma.data.fg.familly = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
+				obj_arma.data.fg.property_idx = -1
 				obj_arma.data.fg.range_beg = 0.0
 				obj_arma.data.fg.range_end = 1.0
 				obj_arma.data.fg.time = 60.0 / 24.0
@@ -550,6 +601,7 @@ class ANIM:
 				obj_arma.data.fg.time_ini = 60.0 / 24.0
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
+				self.create_property( obj_arma )
 				break;
 
 		if self.name != "":
@@ -621,6 +673,7 @@ class ANIM:
 				obj_arma = obj_armature = obj
 				obj_arma.data.fg.familly = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
+				obj_arma.data.fg.property_idx = -1
 				obj_arma.data.fg.range_beg = 0.0
 				obj_arma.data.fg.range_end = 1.0
 				obj_arma.data.fg.time = 60.0 / 24.0
@@ -629,6 +682,7 @@ class ANIM:
 				obj_arma.data.fg.time_ini = 60.0 / 24.0
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
+				self.create_property( obj_arma )
 				break;
 
 		if self.name != "":
@@ -729,8 +783,8 @@ class ANIM:
 		except:
 			print( '*** erreur **** %s introuvale' % (name_path) )
 			if BIDOUILLE:
-				left_name = name_path.partition('Aircraft')[2]
-				name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + left_name
+				right_name = name_path.partition('Aircraft')[2]
+				name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + right_name
 				print( '*** bidouillle **** %s introuvale' % (name_path) )
 				
 				#img = bpy.data.images.new(name='void', width=1024, height=1024, alpha=True, float_buffer=True)
