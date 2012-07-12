@@ -426,6 +426,7 @@ class MESH:
 		obj_new = bpy.data.objects.new(obj_name,mesh)
 		current_ac_file.meshs.append( obj_new.name )
 		current_ac_file.dic_name_meshs[obj_name] = obj_new.name
+		obj_new.data.fg.name_ac = obj_name
 		#print( 'Dictionnaire "%s" -> "%s"' % (obj_name,obj_new.name) )
 		obj_new.location = self.location
 		#v =  Vector( (0.0,0.0,0.0) ) + self.location
@@ -698,13 +699,17 @@ def clone_ac( ac_file, xml_extra_position ):
 		if obj_new.type != 'EMPTY':
 			mesh.validate()
 			mesh.update(calc_edges=True)
-			
+			#print( "Configure fg.ac_file" )
+			#print( obj_new.name )
+			#print( obj_new.type )
 			obj_new.data.fg.ac_file = "" + ac_file.name
 			
 		obj_name_ac = find_key( obj_name, ac_file.dic_name_meshs )
 		#print( 'Dictionnaire "%s" -> "%s"' % (obj_name_ac,obj_new.name) )
 		current_ac_file.meshs.append( obj_new.name )
 		current_ac_file.dic_name_meshs[obj_name_ac] = obj_new.name
+		if obj_new.type == 'MESH':
+			obj_new.data.fg.name_ac = obj_name_ac
 
 	#new_ac_file.create_group_ac()
 	time_end = time.time()

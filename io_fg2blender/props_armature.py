@@ -31,7 +31,7 @@
 
 
  
-familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear']
+familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear', 'consumable']
  
  
  
@@ -429,6 +429,7 @@ def RNA_armature():
 
 class FG_PROP_mesh(bpy.types.PropertyGroup):
 	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = 'ac File')
+	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = 'ac File')
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_mesh():
@@ -436,6 +437,10 @@ def RNA_mesh():
 														type=FG_PROP_mesh,
 														name="ac_file",
 														description="File .ac")
+	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="name_ac",
+														type=FG_PROP_mesh,
+														name="name_ac",
+														description="name in ac file")
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #

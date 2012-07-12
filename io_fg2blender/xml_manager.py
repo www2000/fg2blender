@@ -397,7 +397,7 @@ class ANIM:
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def insert_keyframe_rotation_all( self ):
-
+		obj_armature = bpy.context.scene.objects.active
 		if len(self.interpolation) != 0:
 			_min = 0.0
 			_max = 0.0
@@ -407,6 +407,17 @@ class ANIM:
 				if ind < _min:
 					_min = ind
 			#if self.interpolation[0][1] > self.interpolation[-1][1]:
+			if obj_armature.data.fg.range_beg !=-999.0:
+				if obj_armature.data.fg.range_beg <_min:
+					_min = obj_armature.data.fg.range_beg
+			if obj_armature.data.fg.range_end !=-999.0:
+				if obj_armature.data.fg.range_end >_max:
+					_max = obj_armature.data.fg.range_beg
+					
+			print( obj_armature.name )
+			print( obj_armature.data.fg.property_value )
+			print( 'min=%0.2f max=%0.2f' % (_min,_max) )
+				
 			self.interpolation.reverse()
 			for ind, dep in self.interpolation:
 				coef = _max - _min
@@ -515,9 +526,6 @@ class ANIM:
 
 	def create_property( self, obj ):
 		from . import props_armature
-		#props = props_armature.APUs + props_armature.armaments + props_armature.autoflights + props_armature.electrics\
-		#			+ props_armature.engines + props_armature.flights + props_armature.fuels + props_armature.consumables\
-		#			+ props_armature.gears
 		#------------------------------------------------------------
 
 		def find_prop( obj, left, right, familly, name ):
@@ -532,9 +540,18 @@ class ANIM:
 					print( ' Bingo "%s"' , prop )
 					obj.data.fg.familly = name
 					obj.data.fg.familly_value = prop[0]
-					idx = obj.data.fg.property_value.partition('[')[2]
-					idx = idx.partition(']')[0]
-					obj.data.fg.property_idx = int(idx)
+					if obj.data.fg.property_value.find('[') != -1:
+						idx = obj.data.fg.property_value.partition('[')[2]
+						idx = idx.partition(']')[0]
+						obj.data.fg.property_idx = int(idx)
+
+					if prop[1] != 'x':
+						obj.data.fg.range_beg = prop[1]
+						obj.data.fg.range_beg_ini = prop[1]
+					if prop[2] != 'x':
+						obj.data.fg.range_end = prop[2]
+						obj.data.fg.range_end_ini = prop[2]
+					
 		#------------------------------------------------------------
 
 		def find_in_familly( obj, left, right ):
@@ -551,6 +568,11 @@ class ANIM:
 		
 		
 		#------------------------------------------------------------
+
+		if len(obj.data.fg.property_value) == 0:
+			return
+			
+
 		if obj.data.fg.property_value[0] != '/':
 			obj.data.fg.property_value = '/' + obj.data.fg.property_value
 		print( ' Recherche  property "%s"' % obj.data.fg.property_value )
@@ -564,15 +586,10 @@ class ANIM:
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature_rotation( self ):
-		#print( "Context : %s" % bpy.context.mode )
 		bpy.ops.object.armature_add()
 
-		#print( "Context : %s" % bpy.context.mode )
-		#bpy.context.scene.layers = layer( 10 )
-		#bpy.context.scene.active_layer = 10
 		bpy.ops.object.move_to_layer( layers = layer(10) )
 		
-		#armature = bpy.data.armatures.new( 'Armature')
 		armature = bpy.data.armatures[-1]
 		print( 'Create armature rotate : "%s"' % (armature.name) )
 		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
@@ -593,11 +610,13 @@ class ANIM:
 				obj_arma.data.fg.familly = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.property_idx = -1
+				obj_arma.data.fg.time = 60.0 / 24.0
 				obj_arma.data.fg.range_beg = 0.0
 				obj_arma.data.fg.range_end = 1.0
-				obj_arma.data.fg.time = 60.0 / 24.0
-				obj_arma.data.fg.range_beg_ini = 0.0
-				obj_arma.data.fg.range_end_ini = 1.0
+				obj_arma.data.fg.range_beg = -999.0
+				obj_arma.data.fg.range_end = -999.0
+				obj_arma.data.fg.range_beg_ini = -999.0
+				obj_arma.data.fg.range_end_ini = -999.0
 				obj_arma.data.fg.time_ini = 60.0 / 24.0
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
@@ -1036,7 +1055,7 @@ def create_anims():
 			obj = bpy.context.scene.objects.active
 			if obj:
 				obj.data.fg.xml_file = "" + xml_file.name
-				#Assign goupe ac_file to armature
+				#Assign group ac_file to armature
 				if len(xml_file.ac_files)>0:
 					ac_file = xml_file.ac_files[0]
 					if ac_file:

@@ -359,22 +359,27 @@ class FG_OT_write_xml(bpy.types.Operator):
 		return False
 	#---------------------------------------------------------------------------
 
-	def charge_xml(self, filename):
+	def charge_xml(self, context, filename):
 		from .xml_import import charge_xml
+		from . import xml_export
 
 		if len(xml_manager.xml_files)<1:
 			return
 			
 		name = os.path.basename( filename )
-
-		if self.exist_xml( name ):
-			bpy.data.texts[name].clear()
+		script_name = name +'.script'
+		
+		if self.exist_xml( script_name ):
+			bpy.data.texts[script_name].clear()
 		else:
-			bpy.data.texts.new( name )
+			#bpy.ops.text.new( name )
+			bpy.data.texts.new( script_name )
 		
 		node = charge_xml( filename )
-		bpy.data.texts[name].use_tabs_as_spaces = True
-		bpy.data.texts[name].write( node.toxml() )
+		xml_export.write_animation_all( context, node, name )
+		bpy.data.texts[script_name].use_tabs_as_spaces = True
+		bpy.data.texts[script_name].write( node.toprettyxml() )
+		#bpy.data.texts[name].write( node.toxml() )
 	#---------------------------------------------------------------------------
 	def execute( self, context ):
 		if self.filename != "":
@@ -392,7 +397,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 		
 		right_name = filename.partition('Aircraft')[2]
 		name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + right_name
-		self.charge_xml( name_path )
+		self.charge_xml( context, name_path )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
