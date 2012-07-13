@@ -43,7 +43,7 @@ xml_current_no = 0
 
 no_debug = 0
 
-DEBUG = True
+DEBUG = False
 BIDOUILLE = True
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
@@ -120,6 +120,7 @@ class ANIM:
 		self.group_objects		= []
 		self.texture			= ""
 		self.ac_file			= ""
+		self.offset_deg			= 0.0
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_type( self, node ):
@@ -194,6 +195,17 @@ class ANIM:
 			value = ret_text_value(child)
 			self.objects.append( value )
 			debug_info( "%s\tAppend object-name : %s" % (tabs(),value) )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_offset_deg( self, node ):
+		from .xml_import import ret_float_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('offset-deg')
+		for child in childs:
+			value = ret_float_value(child)
+			self.offset_deg = value
+			debug_info( "%s\tOffset-deg : %0.2f" % (tabs(),value) )
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_group_objects( self, node ):
@@ -285,6 +297,7 @@ class ANIM:
 			self.extract_head_tail( node )
 			self.extract_factor( node )
 			self.extract_interpolation( node )
+			self.extract_offset_deg( node )
 			if self.type == 0:
 				self.extract_group_objects( node )
 		#---------------------------------------------------------------------------------------------------------------------
@@ -422,12 +435,14 @@ class ANIM:
 			self.interpolation.reverse()
 			for ind, dep in self.interpolation:
 				coef = _max - _min
+				if coef == 0.0:
+					coef = 1.0
 				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
 				value = dep * self.factor
 				self.insert_keyframe_rotation(  frame, value )
 		else:
-			self.insert_keyframe_rotation( 60, self.factor )
-			self.insert_keyframe_rotation(  1, 0.0 )
+			self.insert_keyframe_rotation( 60, self.offset_deg + self.factor )
+			self.insert_keyframe_rotation(  1, self.offset_deg + 0.0 )
 
 		bpy.context.scene.frame_current = 1
 		bpy.context.scene.frame_end = 60
@@ -621,6 +636,7 @@ class ANIM:
 				obj_arma.data.fg.time_ini = 60.0 / 24.0
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
+				obj_arma.data.fg.offset_deg = 0.0 + self.offset_deg
 				self.create_property( obj_arma )
 				break;
 
@@ -1053,9 +1069,11 @@ def create_anims():
 		debug_info( xml_file.name )
 		for anim in xml_file.anims:
 			debug_info( 'Animation type = %d' % anim.type )
-			if not anim.type in [ 1,2,7 ]:
+			if anim.type in [ 0 ]:
 				continue
 			anim.create_armature()
+			if not anim.type in [ 1,2,7 ]:
+				continue
 			obj = bpy.context.scene.objects.active
 			if obj:
 				debug_info( 'Modif xml_file="%s" obj="%s"' % (xml_file.name,obj.name) )

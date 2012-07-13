@@ -322,43 +322,42 @@ def dynamic_items_xml_file( self, context ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_armature(bpy.types.PropertyGroup):
-	familly = bpy.props.EnumProperty(	attr='familly',
-				                        name='Familly',
-				                        description="familly animation",
-				                        default='custom',
-				                        items = [ ('custom','custom','custom') ]
-				                        	+	[ (famille,famille,famille) for famille in familles ]    )
+	familly			= bpy.props.EnumProperty(	attr='familly',
+						                        name='Familly',
+						                        description="familly animation",
+						                        default='custom',
+						                        items = [ ('custom','custom','custom') ]
+						                        	+	[ (famille,famille,famille) for famille in familles ]    )
 
-	familly_value = bpy.props.EnumProperty(	attr='familly_value',
-											name='Value',
-											description="property flight_control",
-											items = dynamic_items
-									)
+	familly_value	= bpy.props.EnumProperty(	attr='familly_value',
+												name='Value',
+												description="property flight_control",
+													items = dynamic_items			)
 
+	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'value')
+	property_idx	= bpy.props.IntProperty(	attr = 'value', name = 'value')
 
-	property_value = bpy.props.StringProperty(	attr = 'value', name = 'value')
-	property_idx = bpy.props.IntProperty(	attr = 'value', name = 'value')
-
-	factor = bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
+	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
 	
-	factor_ini = bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
+	factor_ini		= bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
 
-	xml_file = bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File')
-	xml_file_no = bpy.props.IntProperty(	attr = 'xml_file_no', name = 'No xml File')
+	xml_file		= bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File')
+	xml_file_no		= bpy.props.IntProperty(	attr = 'xml_file_no', name = 'No xml File')
 
-	xml_present = bpy.props.EnumProperty(	attr='xml_present',
-										    name='xml Present',
-										    description="familly animation",
-										    items = dynamic_items_xml_file )
+	xml_present		= bpy.props.EnumProperty(	attr='xml_present',
+											    name='xml Present',
+											    description="familly animation",
+											    items = dynamic_items_xml_file )
 
-	type_anim = bpy.props.IntProperty(	attr = 'type_anim', name = 'Type')
+	type_anim		= bpy.props.IntProperty(	attr = 'type_anim', name = 'Type')
 
-	range_beg = bpy.props.FloatProperty(	attr = 'range_beg', name = 'min')
-	range_end = bpy.props.FloatProperty(	attr = 'range_end', name = 'max')
-	time = bpy.props.FloatProperty(	attr = 'time', name = 'time', update=update_time)
-	range_beg_ini = bpy.props.FloatProperty(	attr = 'range_beg_ini', name = 'min')
-	range_end_ini = bpy.props.FloatProperty(	attr = 'range_end_ini', name = 'max')
-	time_ini = bpy.props.FloatProperty(	attr = 'time_ini', name = 'time')
+	range_beg		= bpy.props.FloatProperty(	attr = 'range_beg', name = 'min')
+	range_end		= bpy.props.FloatProperty(	attr = 'range_end', name = 'max')
+	time			= bpy.props.FloatProperty(	attr = 'time', name = 'time', update=update_time)
+	range_beg_ini	= bpy.props.FloatProperty(	attr = 'range_beg_ini', name = 'min')
+	range_end_ini	= bpy.props.FloatProperty(	attr = 'range_end_ini', name = 'max')
+	time_ini		= bpy.props.FloatProperty(	attr = 'time_ini', name = 'time')
+	offset_deg		= bpy.props.FloatProperty(	attr = 'offset_deg', name = 'time')
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_armature():
@@ -434,6 +433,10 @@ def RNA_armature():
 														type=FG_PROP_armature,
 													    name='time_ini',
 													    description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='offset_deg',
+														type=FG_PROP_armature,
+													    name='offset_deg',
+													    description="Initial deg" )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_mesh(bpy.types.PropertyGroup):

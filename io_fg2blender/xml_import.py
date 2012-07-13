@@ -62,7 +62,7 @@ option_rotate_end = True
 
 layer = -1
 
-DEBUG_INFO = True
+DEBUG_INFO = False
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def conversion(name_path):
@@ -878,6 +878,7 @@ def charge_xml( filename ):
 	option_rotate_beg = 0
 	option_rotate_end = 1
 	
+	xmldoc = None
 	print( "xml_import:charge_xml()  %s " % filename )
 	if os.path.isfile(filename):
 		fsock = open(filename)
@@ -895,7 +896,8 @@ def charge_xml( filename ):
 
 		fsock.close()                 
 		#node = xmldoc.documentElement
-
+	else:
+		print( "*** Erreur: Fichier inconnu ***" )
 	return xmldoc
 #---------------------------------------------------------------------------------------------------------------------
 #

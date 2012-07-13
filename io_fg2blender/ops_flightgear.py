@@ -378,6 +378,8 @@ class FG_OT_write_xml(bpy.types.Operator):
 			bpy.data.texts.new( script_name )
 		
 		node = charge_xml( filename )
+		if node == None:
+			return
 		xml_export.write_animation_all( context, node, name, no )
 		bpy.data.texts[script_name].use_tabs_as_spaces = True
 		bpy.data.texts[script_name].write( node.toprettyxml() )
