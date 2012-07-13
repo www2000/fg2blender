@@ -68,7 +68,7 @@ autoflights = [  ('/controls/autoflight/autopilot[%d]/engage',0,1,False),
                                 ('/controls/autoflight/speed-select',0,'x',False),
                                 ('/controls/autoflight/mach-select',0,'x',False),
                                 ('/controls/autoflight/vertical-mode',0,'x',False),
-                                ('/controls/autoflight/lateral-mode',0,1,False),        ]
+                                ('/controls/autoflight/lateral-mode',0,1,False)        ]
                                
 electrics = [    ('/controls/electric/battery-switch',0,1,False),
                                 ('/controls/electric/external-power',0,1,False),
