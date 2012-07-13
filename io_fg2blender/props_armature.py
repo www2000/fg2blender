@@ -263,6 +263,8 @@ def update_factor( self, context ):
 	if obj:
 		#if obj.type == 'ARMATURE':
 		if obj.data.fg.type_anim in [ 1,2]:
+			if obj.data.fg.factor_ini == 0.0:
+				obj.data.fg.factor_ini = obj.data.fg.factor
 			coef = obj.data.fg.factor  / obj.data.fg.factor_ini
 			update_keyframe( obj, coef )
 			obj.data.fg.factor_ini = obj.data.fg.factor
@@ -274,6 +276,8 @@ def update_time( self, context ):
 		#if obj.type == 'ARMATURE':
 		if obj.data.fg.type_anim in [ 1,2]:
 			coef = 0.0
+			if obj.data.fg.time_ini == 0.0:
+				obj.data.fg.time_ini = obj.data.fg.time
 			coef = 0.0 + obj.data.fg.time  / obj.data.fg.time_ini
 			update_keyframe_time( obj, coef )
 			obj.data.fg.time_ini = 0.0 +  obj.data.fg.time
@@ -340,6 +344,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 	factor_ini = bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
 
 	xml_file = bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File')
+	xml_file_no = bpy.props.IntProperty(	attr = 'xml_file_no', name = 'No xml File')
 
 	xml_present = bpy.props.EnumProperty(	attr='xml_present',
 										    name='xml Present',
@@ -390,6 +395,10 @@ def RNA_armature():
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file",
 														type=FG_PROP_armature,
 														name="xml file",
+														description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file_no",
+														type=FG_PROP_armature,
+														name="xml file no",
 														description="Property value")
 
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='xml_present',

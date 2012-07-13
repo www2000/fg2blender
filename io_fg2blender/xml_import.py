@@ -62,7 +62,7 @@ option_rotate_end = True
 
 layer = -1
 
-DEBUG_INFO = False
+DEBUG_INFO = True
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def conversion(name_path):

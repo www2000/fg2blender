@@ -43,7 +43,7 @@ xml_current_no = 0
 
 no_debug = 0
 
-DEBUG = False
+DEBUG = True
 BIDOUILLE = True
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
@@ -358,6 +358,7 @@ class ANIM:
 		# pour recopier la valeur et non pas la référence
 		self.xml_file = "" + xml_current.name
 		self.xml_file_no = 0 + xml_current.no
+		debug_info( '\tfg.data.xml_file = %d-"%s"' % (self.xml_file_no,self.xml_file) )
 		self.extract_type( node )
 		if self.type == 1:
 			extract_anim_rotate( node )
@@ -1027,6 +1028,7 @@ def create_material_pick():
 
 def create_anims():
 	global xml_files
+	debug_info( '------' )
 	#
 	#	Create material Pick an groupd (ac filename)
 	#
@@ -1047,14 +1049,19 @@ def create_anims():
 	#
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
+		debug_info( '------' )
 		debug_info( xml_file.name )
 		for anim in xml_file.anims:
-			if anim.type in [ 0, 3 ]:
+			debug_info( 'Animation type = %d' % anim.type )
+			if not anim.type in [ 1,2,7 ]:
 				continue
 			anim.create_armature()
 			obj = bpy.context.scene.objects.active
 			if obj:
+				debug_info( 'Modif xml_file="%s" obj="%s"' % (xml_file.name,obj.name) )
+				debug_info( xml_file.name )
 				obj.data.fg.xml_file = "" + xml_file.name
+				obj.data.fg.xml_file_no = 0 + no
 				#Assign group ac_file to armature
 				if len(xml_file.ac_files)>0:
 					ac_file = xml_file.ac_files[0]

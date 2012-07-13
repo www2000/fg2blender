@@ -157,7 +157,8 @@ def layout_armature_properties(self, obj, context):
 	row.prop( obj.data.fg, "xml_file" )
 	ret = row.operator( "object.file_select", icon='FILESEL' ).filepath
 	row = box.row()
-	row.operator( "view3d.write_xml" ).filename = obj.data.fg.xml_file
+	#row.operator( "view3d.write_xml" ).filename = obj.data.fg.xml_file
+	row.operator( "view3d.write_xml" ).obj_name = obj.name#.data.fg.xml_file
 	
 	
 	row = box.row(align=True)

@@ -349,7 +349,9 @@ class FG_OT_write_xml(bpy.types.Operator):
 	bl_idname = "view3d.write_xml"
 	bl_label = "Write File"
 	
-	filename = bpy.props.StringProperty()
+	#filename = bpy.props.StringProperty()
+	obj_name = bpy.props.StringProperty()
+	#objet = None
 	
 	#---------------------------------------------------------------------------
 	def exist_xml(self, name ):
@@ -359,12 +361,12 @@ class FG_OT_write_xml(bpy.types.Operator):
 		return False
 	#---------------------------------------------------------------------------
 
-	def charge_xml(self, context, filename):
+	def charge_xml(self, context, filename, no):
 		from .xml_import import charge_xml
 		from . import xml_export
 
-		if len(xml_manager.xml_files)<1:
-			return
+		#if len(xml_manager.xml_files)<1:
+		#	return
 			
 		name = os.path.basename( filename )
 		script_name = name +'.script'
@@ -376,7 +378,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 			bpy.data.texts.new( script_name )
 		
 		node = charge_xml( filename )
-		xml_export.write_animation_all( context, node, name )
+		xml_export.write_animation_all( context, node, name, no )
 		bpy.data.texts[script_name].use_tabs_as_spaces = True
 		bpy.data.texts[script_name].write( node.toprettyxml() )
 		#bpy.data.texts[name].write( node.toxml() )
@@ -390,14 +392,18 @@ class FG_OT_write_xml(bpy.types.Operator):
 	#---------------------------------------------------------------------------
 
 	def invoke(self, context, event):
-		print( self.filename )
-		filename = self.filename
+		print( self.obj_name )
+		obj = bpy.data.objects[self.obj_name]
+		filename = obj.data.fg.xml_file
+		no		 = obj.data.fg.xml_file_no
+		print( filename )
+		#filename = self.filename
 		if filename == "":
 			filename = xml_manager.xml_files[0][0].name
 		
 		right_name = filename.partition('Aircraft')[2]
 		name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + right_name
-		self.charge_xml( context, name_path )
+		self.charge_xml( context, name_path, no )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 

@@ -103,7 +103,7 @@ class FG_OT_exec(bpy.types.Operator):
 		ac_option.split_angle	= 60.0
 
 		xml_option = XML_OPTION()
-		xml_option.include		= False
+		xml_option.include		= True
 		xml_option.active_layer	= False
 		xml_option.layer_beg	= 1
 		xml_option.layer_end	= 10

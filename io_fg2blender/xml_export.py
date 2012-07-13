@@ -72,7 +72,7 @@ def write_animation( context, node, obj ):
 			y = degrees(y) / armature.data.fg.factor
 		if t == 2:
 			y = (y) / armature.data.fg.factor
-		print( 'ind=%0.2f dep=%0.2f' % (x, y) )
+		#print( 'ind=%0.2f dep=%0.2f' % (x, y) )
 
 		str_x = "%0.4f" % fabs(x)
 		str_y = "%0.4f" % fabs(y)
@@ -87,7 +87,7 @@ def write_animation( context, node, obj ):
 			y = degrees(y) / armature.data.fg.factor
 		if t == 2:
 			y = (y) / armature.data.fg.factor
-		print( 'ind=%0.2f dep=%0.2f' % (x, y) )
+		#print( 'ind=%0.2f dep=%0.2f' % (x, y) )
 
 		str_x = "%0.4f" % x
 		str_y = "%0.4f" % y
@@ -107,7 +107,7 @@ def write_animation( context, node, obj ):
 			entry = create_node( 'entry' )
 			x = keyframe.co.x
 			y = keyframe.co.y
-			print( 'x=%0.2f y=%0.2f' % (x, y) )
+			#print( 'x=%0.2f y=%0.2f' % (x, y) )
 			x = (x -1.0)/59.0
 			if t == 1:
 				y = degrees(y) / armature.data.fg.factor
@@ -167,7 +167,7 @@ def write_animation( context, node, obj ):
 	#---------------------------------------------------------------------------
 	
 	nodePropertyList = node.getElementsByTagName( 'PropertyList' )
-	print( obj.name )
+	#print( obj.name )
 	txt = node.createComment( obj.name ) 
 	nodePropertyList[0].appendChild( txt )
 
@@ -206,7 +206,7 @@ def write_animation( context, node, obj ):
 	nodePropertyList[0].appendChild( animation  )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
-def write_animation_all( context, node, filename ):
+def write_animation_all( context, node, filename, no ):
 	#---------------------------------------------------------------------------
 
 	def remove_animation( node, doc ):
@@ -258,7 +258,8 @@ def write_animation_all( context, node, filename ):
 	for obj in bpy.data.objects:
 		if obj.type != 'ARMATURE':
 			continue
-		if obj.data.fg.xml_file.find( filename ) != -1:
+		if obj.data.fg.xml_file.find( filename ) != -1 and obj.data.fg.xml_file_no == no:
+			print( obj.name )
 			write_animation( context, node, obj )
 		
 	
