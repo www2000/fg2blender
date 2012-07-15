@@ -42,6 +42,18 @@ from mathutils import Euler
 #---------------------------------------------------------------------------------------------------------------------
 
 DEBUG_INFO = False
+
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def build_property_name( armature ):
+	prop_name = armature.data.fg.familly_value
+	if prop_name.find('%d')!=-1:
+		idx = armature.data.fg.property_idx
+		left  = prop_name.partition('[')[0]
+		right = prop_name.partition(']')[2]
+		return left + '[' +  str(armature.data.fg.property_idx) + ']' + right
+	return prop_name
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def write_animation( context, node, obj ):
@@ -60,6 +72,8 @@ def write_animation( context, node, obj ):
 	#---------------------------------------------------------------------------
 
 	def test_need_interpolation( armature ):
+		if armature.animation_data == None:
+			return True
 		fcurve = armature.animation_data.action.fcurves[1]
 		if len(fcurve.keyframe_points) != 2:
 			return True
@@ -98,9 +112,12 @@ def write_animation( context, node, obj ):
 	#---------------------------------------------------------------------------
 
 	def append_interpolation( node_animation, armature, t ):
+		if armature.animation_data == None:
+			return True
 		if not test_need_interpolation(armature):
 			return
 		fcurve = armature.animation_data.action.fcurves[1]
+
 		interpolation = create_node('interpolation')
 		#print( fcurve.data_path )
 		for keyframe in fcurve.keyframe_points:
@@ -128,6 +145,8 @@ def write_animation( context, node, obj ):
 				if obj.parent == armature:
 					if obj.type == 'MESH':
 						name = obj.data.fg.name_ac
+						if name == "":
+							name = obj.name
 					elif obj.type in [ 'EMPTY', 'ARMATURE' ]:
 						append_objects( node_animation, obj )
 						return
@@ -143,7 +162,8 @@ def write_animation( context, node, obj ):
 		head = armature.data.bones["Bone"].head
 		tail = armature.data.bones["Bone"].tail
 		v = tail - head
-		v = v * 10.0
+		v.normalize()
+		#v = v * 10.0
 		x_value = create_node_value( 'x', '%0.4f' % (v.x) )
 		y_value = create_node_value( 'y', '%0.4f' % (v.y) )
 		z_value = create_node_value( 'z', '%0.4f' % (v.z) )
@@ -165,6 +185,30 @@ def write_animation( context, node, obj ):
 		center.appendChild( y_value )
 		center.appendChild( z_value )
 	#---------------------------------------------------------------------------
+
+	def append_property( node_animation, armature ):
+		obj_ctx = bpy.context.scene.objects.active
+		bpy.context.scene.objects.active = armature
+
+		value = armature.data.fg.familly
+		#print( 'objet "%s"' % obj.name )
+		#print( 'Familly "%s"' % obj.data.fg.familly )
+		#print( 'Familly_value "%s"' % obj.data.fg.familly_value )
+		#print( 'Property_value "%s"' % obj.data.fg.property_value )
+		if value == "custom":
+			value = armature.data.fg.property_value
+		else:
+			value = armature.data.fg.familly_value
+
+		print( 'Value "%s"' % value )
+	
+		if value != "error" and value != '':
+			if value.find('%d')!=-1:
+				value = build_property_name( armature )
+			prop = create_node_value( 'property', value )
+			node_animation.appendChild( prop )
+		bpy.context.scene.objects.active = obj_ctx
+	#---------------------------------------------------------------------------
 	
 	nodePropertyList = node.getElementsByTagName( 'PropertyList' )
 	#print( obj.name )
@@ -185,9 +229,7 @@ def write_animation( context, node, obj ):
 		animation.appendChild( type_anim )
 	append_objects( animation, obj )
 	#--- Property ------------
-	if obj.data.fg.property_value != '':
-		prop = create_node_value( 'property', obj.data.fg.property_value )
-		animation.appendChild( prop )
+	append_property( animation, obj )
 	#--- Factor ------------
 	value = '%0.6f' % obj.data.fg.factor
 	if t == 7:
@@ -224,11 +266,6 @@ def write_animation_all( context, node, filename, no ):
 					node.appendChild( txt )
 					node.removeChild( child )
 	#---------------------------------------------------------------------------
-
-	def cleanDoc(document,indent="",newl=""):
-		node=document.documentElement
-		cleanNode(node,indent,newl)
-	#---------------------------------------------------------------------------
 	 
 	def cleanNode(currentNode,indent,newl):
 		filter=indent+newl
@@ -242,6 +279,11 @@ def write_animation_all( context, node, filename, no ):
 		                currentNode.removeChild(node)
 		    for node in currentNode.childNodes:
 		        cleanNode(node,indent,newl)
+	#---------------------------------------------------------------------------
+
+	def cleanDoc(document,indent="",newl=""):
+		node=document.documentElement
+		cleanNode(node,indent,newl)
 	#---------------------------------------------------------------------------
  	
 	print( 'Recherche xml_file "%s"' % filename )
