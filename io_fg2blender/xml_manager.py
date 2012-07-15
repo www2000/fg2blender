@@ -952,6 +952,13 @@ def add_xml_file( xml_file, no ):
 	if xml_file:
 		xml_files.append( (xml_file,no) )
 #----------------------------------------------------------------------------------------------------------------------------------
+# xml_files  = tule ( xml_file, no_include )
+def exist_xml_file( xml_file, no ):
+	if (xml_file,no) in xml_files:
+		return True
+	else:
+		return False
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def set_current_xml( xml_file=None, no=0 ):
 	global xml_current

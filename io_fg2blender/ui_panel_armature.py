@@ -101,7 +101,7 @@ def layout_armature_tool(self, obj, context):
 	col = layout.column()
 	col.prop( obj.data.fg, "factor" )
 			
-	box_link_object( self, obj, context )
+	box_child_object( self, obj, context )
 
 	if obj.parent:			
 		box_parent( self, obj, context )			
@@ -136,28 +136,27 @@ def layout_armature_properties(self, obj, context):
 	if obj.data.fg.familly != 'custom':
 		row.label( text="Property:" )
 		#if anim :
-		row.label( text=obj.data.fg.familly_value )
+		from . import xml_export
+		value = xml_export.build_property_name( obj )
+		row.label( text=value )
+		#obj.data.fg.property_value = obj.data.fg.familly_value
 	else:
 		row.alignment = 'EXPAND'
 		row.prop( obj.data.fg,  "property_value" )
 
-	if obj.data.fg.property_idx != -1:
+	if obj.data.fg.familly_value.find('%d') != -1:
 		row = box.row()
 		row.prop( obj.data.fg,  "property_idx" )
 	
 	#----------------------------------------------------
-	#col = layout.column()
-	#col.prop( obj.data.fg, "factor" )
-			
-			
 	boxTitre = layout.column()
 	boxTitre.label( text='xml file:' )
 	box = layout.box()
 	row = box.row(align=True)
 	row.prop( obj.data.fg, "xml_file" )
-	ret = row.operator( "object.file_select", icon='FILESEL' ).filepath
+	row.operator( "object.file_select", icon='FILESEL' )
+
 	row = box.row()
-	#row.operator( "view3d.write_xml" ).filename = obj.data.fg.xml_file
 	row.operator( "view3d.write_xml" ).obj_name = obj.name#.data.fg.xml_file
 	
 	
@@ -188,7 +187,7 @@ def layout_armature_properties(self, obj, context):
 	row.prop( obj.data.fg, "range_beg" )
 	row.prop( obj.data.fg, "range_end" )
 	#----------------------------------------------------
-	box_link_object( self, obj, context )
+	box_child_object( self, obj, context )
 	if obj.parent:
 		box_parent( self, obj, context )			
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -211,12 +210,23 @@ def box_parent( self, obj, context ):
 	row.operator("fg.button_select", text="Select").object_name=obj.parent.name
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def box_link_object( self, obj, context ):
+def find_child_object( obj ):
+	list_obj = []
+	for objet in bpy.data.objects:
+		if objet.parent ==  obj:
+			list_obj.append( objet )
+	return list_obj
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def box_child_object( self, obj, context ):
+	lst = find_child_object( obj )
+	if not lst:
+		return
 	layout = self.layout
 	boxTitre = layout.column()
-	boxTitre.label( text='Objet(s) lié(s):' )
+	boxTitre.label( text='Child(s) object(s):' )
 	boxObjects = layout.box()
-	for objet in bpy.data.objects:
+	for objet in lst:
 		if objet.parent ==  obj:
 			row = boxObjects.row()
 			if objet.type == 'MESH':

@@ -91,9 +91,25 @@ class FG_OT_create_translate(bpy.types.Operator):
 			limit_translate.use_min_z = True
 			limit_translate.use_max_z = True
 			limit_translate.owner_space = 'LOCAL'
+			obj.lock_location = ( True, False, True )
 			bpy.ops.object.posemode_toggle()
 
-			obj.data.fg.type_anim = 2
+
+			obj.data.fg.type_anim		= 2
+			obj.data.fg.xml_file		= ""
+			obj.data.fg.xml_file_no		= 0
+			obj.data.fg.familly			= "custom"
+			obj.data.fg.familly_value	= "error"
+			obj.data.fg.property_value	= ""
+			obj.data.fg.property_idx	= -1
+			obj.data.fg.time			= 2.5
+			obj.data.fg.range_beg		= 0.0
+			obj.data.fg.range_beg_ini	= 0.0
+			obj.data.fg.range_end		= 1.0
+			obj.data.fg.range_end_ini	= 1.0
+			obj.data.fg.factor			= 1.0
+			obj.data.fg.factor_ini		= 1.0
+			obj.data.fg.offset_deg		= 0.0
 
 			print("\tDesactivation Pose Mode")
 		return {'FINISHED'}
@@ -150,7 +166,21 @@ class FG_OT_create_rotate(bpy.types.Operator):
 			
 			obj.lock_rotation = ( True, False, True )
 			
-			obj.data.fg.type_anim = 1
+			obj.data.fg.type_anim		= 1
+			obj.data.fg.xml_file		= ""
+			obj.data.fg.xml_file_no		= 0
+			obj.data.fg.familly			= "custom"
+			obj.data.fg.familly_value	= "error"
+			obj.data.fg.property_value	= ""
+			obj.data.fg.property_idx	= -1
+			obj.data.fg.time			= 2.5
+			obj.data.fg.range_beg		= 0.0
+			obj.data.fg.range_beg_ini	= 0.0
+			obj.data.fg.range_end		= 1.0
+			obj.data.fg.range_end_ini	= 1.0
+			obj.data.fg.factor			= 1.0
+			obj.data.fg.factor_ini		= 1.0
+			obj.data.fg.offset_deg		= 0.0
 
 			print("\tDesactivation Pose Mode")
 		return {'FINISHED'}
@@ -278,14 +308,24 @@ class FG_OT_select_file(bpy.types.Operator):
 	bl_idname = "object.file_select"
 	bl_label = ""
 
-	filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+	#filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+	filepath = bpy.props.StringProperty()
+	filter_glob = StringProperty(default="*.xml", options={'HIDDEN'})
+	
 
 	def execute(self, context):
-		#print( self.filepath)
+		obj = context.active_object
+
+		if obj.type == 'ARMATURE':
+			obj.data.fg.xml_file = self.filepath
+		
+		#context.window_manager.fileselect_add(self)
 		return {'FINISHED'}
 
 	def invoke(self, context, event):
 		context.window_manager.fileselect_add(self)
+		#print( self.filepath )
+		#return {'FINISHED'}
 		return {'RUNNING_MODAL'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -301,7 +341,7 @@ class FG_OT_only_render(bpy.types.Operator):
 		#print( context.space_data.type )
 		if context.space_data.type=='VIEW_3D':
 			context.space_data.show_only_render = not  context.space_data.show_only_render
-		return {'FINISHED'}
+		#return {'FINISHED'}
 		return {'RUNNING_MODAL'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -361,6 +401,17 @@ class FG_OT_write_xml(bpy.types.Operator):
 		return False
 	#---------------------------------------------------------------------------
 
+	def creer_xml(self, filename):
+		no = len(xml_manager.xml_files)
+		xml_file = xml_manager.XML_FILE()
+		xml_file.name =  filename
+		xml_file.no =  no
+		xml_manager.add_xml_file( xml_file, no )
+		obj = bpy.data.objects[self.obj_name]
+		obj.data.fg.xml_file	= filename
+		obj.data.fg.xml_file_no	= no
+	#---------------------------------------------------------------------------
+
 	def charge_xml(self, context, filename, no):
 		from .xml_import import charge_xml
 		from . import xml_export
@@ -379,7 +430,12 @@ class FG_OT_write_xml(bpy.types.Operator):
 		
 		node = charge_xml( filename )
 		if node == None:
-			return
+			node = xml.dom.minidom.Document()
+			prop_list = node.createElement( 'PropertyList' )
+			node.appendChild( prop_list )
+			print( name )
+			print( script_name )
+			#return
 		xml_export.write_animation_all( context, node, name, no )
 		bpy.data.texts[script_name].use_tabs_as_spaces = True
 		bpy.data.texts[script_name].write( node.toprettyxml() )
@@ -403,8 +459,14 @@ class FG_OT_write_xml(bpy.types.Operator):
 		if filename == "":
 			filename = xml_manager.xml_files[0][0].name
 		
-		right_name = filename.partition('Aircraft')[2]
-		name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + right_name
+		if filename.find('Aircraft')!=-1:
+			right_name = filename.partition('Aircraft')[2]
+			name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + right_name
+		else:
+			if not xml_manager.exist_xml_file( filename, no ):
+				self.creer_xml( filename )
+			name_path	= filename 
+			no			= obj.data.fg.xml_file_no
 		self.charge_xml( context, name_path, no )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
