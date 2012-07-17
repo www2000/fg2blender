@@ -140,18 +140,22 @@ def write_animation( context, node, obj ):
 	#---------------------------------------------------------------------------
 
 	def append_objects( node_animation, armature ):
+		#print( 'Append_object pour "%s"' % armature.name )
 		for obj in bpy.data.objects:
-			if obj.parent:
-				if obj.parent == armature:
+			if 	obj.parent:
+				if obj.parent.name == armature.name:
+					#print( 'child object pour "%s"' % obj.name )
 					if obj.type == 'MESH':
 						name = obj.data.fg.name_ac
 						if name == "":
 							name = obj.name
 					elif obj.type in [ 'EMPTY', 'ARMATURE' ]:
+						#print( '-Append_object recursion sur "%s"' % obj.name )
 						append_objects( node_animation, obj )
-						return
+						continue
 					else:
 						name = obj.name
+					#print( 'Append_object "%s" pour "%s"' % (name,armature.name) )
 					o = create_node_value( 'object-name', name )
 					node_animation.appendChild( o )
 	#---------------------------------------------------------------------------
@@ -227,6 +231,7 @@ def write_animation( context, node, obj ):
 	elif t == 7:
 		type_anim = create_node_value( 'type', 'spin' )
 		animation.appendChild( type_anim )
+	#--- Object-name ------------
 	append_objects( animation, obj )
 	#--- Property ------------
 	append_property( animation, obj )
@@ -246,6 +251,28 @@ def write_animation( context, node, obj ):
 	if t in [1,2]:
 		append_interpolation( animation, obj, t  )
 	nodePropertyList[0].appendChild( animation  )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def find_child( obj ):
+	lst = []
+	for objet in bpy.data.objects:
+		if objet.parent == obj:
+			lst += [objet]
+	return lst
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def write_animation_recurs( context, node, obj ):
+	print( 'Write animation "%s"' % obj.name )
+	write_animation( context, node, obj )
+	lst = find_child(obj)
+	for objet in lst:
+		if objet.type != 'ARMATURE':
+			continue
+		print( 'Write animation list "%s"' % objet.name )
+
+		#write_animation( context, node, objet )
+		if objet.parent!= None:
+			write_animation_recurs( context, node, objet)
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def write_animation_all( context, node, filename, no ):
@@ -300,8 +327,10 @@ def write_animation_all( context, node, filename, no ):
 	for obj in bpy.data.objects:
 		if obj.type != 'ARMATURE':
 			continue
+		if obj.parent != None:
+			continue
 		if obj.data.fg.xml_file.find( filename ) != -1 and obj.data.fg.xml_file_no == no:
 			print( obj.name )
-			write_animation( context, node, obj )
+			write_animation_recurs( context, node, obj )
 		
 	

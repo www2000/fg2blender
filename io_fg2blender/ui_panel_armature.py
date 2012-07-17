@@ -119,12 +119,6 @@ def layout_armature_properties(self, obj, context):
 
 	row = box.row()
 	row.prop( obj.data.fg, "familly" )
-
-	anim = None
-	for xml_file, no in xml_files:
-		for anim in xml_file.anims:
-			if anim.name == obj.name:
-				break;
 	#----------------------------------------------------
 	if obj.data.fg.familly != 'custom':
 		row = box.row()
@@ -161,11 +155,6 @@ def layout_armature_properties(self, obj, context):
 	
 	
 	row = box.row(align=True)
-	for xml_file, no in xml_files:
-		for anim in xml_file.anims:
-			if anim.name == obj.name:
-				row.prop( obj.data.fg, "xml_present" )
-				break;
 	#----------------------------------------------------
 	boxTitre = layout.column()
 	boxTitre.label( text='Type' )
