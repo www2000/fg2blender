@@ -394,7 +394,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 	#objet = None
 	
 	#---------------------------------------------------------------------------
-	def exist_xml(self, name ):
+	def exist_in_text_editor(self, name ):
 		for text in bpy.data.texts:
 			if text.name == name:
 				return True
@@ -433,7 +433,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 		name = os.path.basename( filename )
 		script_name = name +'.script'
 		
-		if self.exist_xml( script_name ):
+		if self.exist_in_text_editor( script_name ):
 			bpy.data.texts[script_name].clear()
 		else:
 			#bpy.ops.text.new( name )

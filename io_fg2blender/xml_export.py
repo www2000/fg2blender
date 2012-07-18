@@ -313,7 +313,7 @@ def write_animation_all( context, node, filename, no ):
 		cleanNode(node,indent,newl)
 	#---------------------------------------------------------------------------
  	
-	print( 'Recherche xml_file "%s"' % filename )
+	print( 'xml_export.write_animation_all() Recherche xml_file "%s"' % filename )
 	cleanDoc(node,"\t","\n\r")
 	#return
 	nodePropertyList = node.getElementsByTagName( 'PropertyList' )
@@ -327,8 +327,11 @@ def write_animation_all( context, node, filename, no ):
 	for obj in bpy.data.objects:
 		if obj.type != 'ARMATURE':
 			continue
+		#print( obj.name )
+		#print( obj.parent.name )
 		if obj.parent != None:
-			continue
+			if obj.parent.type != 'EMPTY':
+				continue
 		if obj.data.fg.xml_file.find( filename ) != -1 and obj.data.fg.xml_file_no == no:
 			print( obj.name )
 			write_animation_recurs( context, node, obj )
