@@ -41,7 +41,7 @@ familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flig
  
  
 APUs = [                 ('/controls/APU/off-start-run',0,1,False),
-                                ('/controls/APU/fire-switch',0,'x',False)                                       ]
+                                ('/controls/APU/fire-switch',0,'x',False)                         ]
  
 anti_ices = [    ('/controls/anti-ice/wing-heat',0,1,False),
                                 ('/controls/anti-ice/pitot-heat',0,1,False),
@@ -56,7 +56,7 @@ armaments = [    ('/controls/armament/master-arm',0,1,False),
                                 ('/controls/armament/station[%d]/stick-size',0,1,False),
                                 ('/controls/armament/station[%d]/release-stick',0,1,False),
                                 ('/controls/armament/station[%d]/release-all',0,1,False),
-                                ('/controls/armament/station[%d]/jettison-all',0,1,False),      ]
+                                ('/controls/armament/station[%d]/jettison-all',0,1,False)      ]
  
 autoflights = [  ('/controls/autoflight/autopilot[%d]/engage',0,1,False),
                                 ('/controls/autoflight/autothrottle-arm',0,1,False),
