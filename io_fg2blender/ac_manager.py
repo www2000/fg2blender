@@ -636,25 +636,19 @@ def set_ac_file( new_ac_file ):
 def compute_extra_transforme( obj, translate, rotate ):
 	if translate:
 		obj.delta_location = Vector( (0.0,0.0,0.0) ) + translate
-	#obj_new.location = self.location + xml_extra_position
+
 	if rotate:
 		e = rotate
-		#print( "Euler : x=%0.4f y=%0.4f z=%0.4f" % (e.x,e.y,e.z) )
 		eleur  = Euler( (e.x, e.y, e.z) )
 
 		mat4 = eleur.to_matrix().to_4x4()
 		w = Vector( (0.0,0.0,0.0) ) + obj.location
 		pos = mat4 * w
 		tr = Vector( (0.0,0.0,0.0) ) + pos - w
-		w = Vector( (0.0,0.0,0.0) ) + tr
-		#print( "tr : x=%0.4f y=%0.4f z=%0.4f" % (w.x,w.y,w.z) )
-
 		w = Vector( (0.0,0.0,0.0) ) + obj.delta_location
-		obj.delta_location = Vector( (0.0,0.0,0.0) ) + w  + tr
-		#w = Vector( (0.0,0.0,0.0) ) + obj_new.delta_location
-		#print( "extra_location : x=%0.4f y=%0.4f z=%0.4f" % (w.x,w.y,w.z) )
-	
-		obj.delta_rotation_euler = Euler( (rotate.x, rotate.y, rotate.z) )
+
+		obj.delta_location			= Vector( (0.0,0.0,0.0) ) + w  + tr
+		obj.delta_rotation_euler	= Euler( (rotate.x, rotate.y, rotate.z) )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def find_key( name, dic ):

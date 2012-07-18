@@ -424,9 +424,14 @@ class ANIM:
 			if obj_armature.data.fg.range_beg !=-999.0:
 				if obj_armature.data.fg.range_beg <_min:
 					_min = obj_armature.data.fg.range_beg
+			else:
+				obj_armature.data.fg.range_beg = obj_armature.data.fg.range_beg_ini = _min
+				
 			if obj_armature.data.fg.range_end !=-999.0:
 				if obj_armature.data.fg.range_end >_max:
 					_max = obj_armature.data.fg.range_beg
+			else:
+				obj_armature.data.fg.range_end = obj_armature.data.fg.range_end_ini = _max
 					
 			print( obj_armature.name )
 			print( obj_armature.data.fg.property_value )
