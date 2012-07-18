@@ -897,7 +897,7 @@ def charge_xml( filename ):
 		fsock.close()                 
 		#node = xmldoc.documentElement
 	else:
-		print( "*** Erreur: Fichier inconnu ***" )
+		print( "*** xml_import.charge_xml( filename ) Erreur: Fichier inconnu ***" )
 	return xmldoc
 #---------------------------------------------------------------------------------------------------------------------
 #

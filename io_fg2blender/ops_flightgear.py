@@ -402,19 +402,30 @@ class FG_OT_write_xml(bpy.types.Operator):
 	#---------------------------------------------------------------------------
 
 	def creer_xml(self, filename):
-		no = len(xml_manager.xml_files)
-		xml_file = xml_manager.XML_FILE()
-		xml_file.name =  filename
-		xml_file.no =  no
-		xml_manager.add_xml_file( xml_file, no )
+		new_filename = ""
+		new_no = 0
+		for xml_file, no in xml_manager.xml_files:
+			if xml_file.name == filename:
+				new_filename = filename
+				new_no		 = no
+				break;
+		
+		if new_filename == "":
+			no = len(xml_manager.xml_files)
+			xml_file = xml_manager.XML_FILE()
+			new_filename = filename
+			new_no		 = no
+			xml_manager.add_xml_file( new_filename, new_no )
+
 		obj = bpy.data.objects[self.obj_name]
-		obj.data.fg.xml_file	= filename
-		obj.data.fg.xml_file_no	= no
+		obj.data.fg.xml_file	= new_filename
+		obj.data.fg.xml_file_no	= new_no
 	#---------------------------------------------------------------------------
 
 	def charge_xml(self, context, filename, no):
 		from .xml_import import charge_xml
 		from . import xml_export
+		from . import xml_import
 
 		#if len(xml_manager.xml_files)<1:
 		#	return
@@ -427,8 +438,9 @@ class FG_OT_write_xml(bpy.types.Operator):
 		else:
 			#bpy.ops.text.new( name )
 			bpy.data.texts.new( script_name )
-		
-		node = charge_xml( filename )
+
+		node = xml_import.charge_xml( filename )
+
 		if node == None:
 			node = xml.dom.minidom.Document()
 			prop_list = node.createElement( 'PropertyList' )
