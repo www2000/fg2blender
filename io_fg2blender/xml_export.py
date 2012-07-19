@@ -166,7 +166,6 @@ def write_animation( context, node, obj ):
 		head = armature.data.bones["Bone"].head
 		tail = armature.data.bones["Bone"].tail
 		
-		w = tail - head
 		m = armature.matrix_basis
 		ht = m * head
 		tt = m * tail
@@ -187,8 +186,8 @@ def write_animation( context, node, obj ):
 		center = create_node( 'center' )
 		node_animation.appendChild( center )
 		head = armature.data.bones["Bone"].head
+
 		m = armature.matrix_basis
-		
 		v = m * head
  		
 		x_value = create_node_value( 'x-m', '%0.4f' % (v.x) )

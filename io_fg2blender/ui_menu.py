@@ -65,7 +65,7 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
         layout.operator("view3d.create_rotate",		text='Define Rotation' )
         layout.operator("view3d.create_translate",	text='Define Translation' )
         layout.separator()
-        layout.operator("view3d.write_xml",			text='Ecrit xml' )
+        layout.operator("view3d.unwrap_4_faces",	text='Unwrap 4 faces' )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_0(bpy.types.Menu):

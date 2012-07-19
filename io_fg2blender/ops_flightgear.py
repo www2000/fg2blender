@@ -32,8 +32,11 @@ import xml.dom.minidom
 
 from . import *
 
+from mathutils import Vector
+
 from math import radians
 from math import degrees
+from math import acos
 
 
 from bpy.props import FloatProperty
@@ -484,6 +487,270 @@ class FG_OT_write_xml(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_unwrap_4_faces(bpy.types.Operator):
+	'''C'est un exemple d'operateur blender '''
+	bl_idname = "view3d.unwrap_4_faces"					# sera appelé par bpy.ops.view3d.exemple()
+	bl_label = "Exemple d'operateur"
+	bl_options = {'REGISTER', 'UNDO'}
+
+
+	#---------------------------------------------------------------------------
+	@classmethod
+	def poll(cls, context):
+		if not context.active_object:
+			return False
+		return context.active_object.type in( 'MESH')
+
+	#---------------------------------------------------------------------------
+
+	def invoke(self, context, event):
+		#---------------------------------------------------------------------------
+
+		def compute_uv_up( indices, vertices, uvtex, idx, mat, bb, dim, coef,  _max, decal ):
+			dim = m * dim
+			
+			w = dim
+			print( "dimension x=%0.2f y=%0.2f z=%0.2f" % (w.x,w.y,w.z) )
+			for i in range(8):
+				w = Vector( (bb[i][0],bb[i][1],bb[i][2]) )
+				print( "ind  %d      bb x=%0.2f y=%0.2f z=%0.2f" % (i, w.x,w.y,w.z) )
+
+			b = Vector( (bb[0][0],bb[0][1],bb[0][2]) )
+			w = Vector( (bb[6][0],bb[6][1],bb[6][2]) )
+
+			b = m * b
+			w = m * w
+
+			j = 0
+			for i in indices:
+				v = vertices[i].co
+				w = m * v
+				print( "vertice x=%0.2f y=%0.2f z=%0.2f" % (v.x,v.y,v.z) )
+				u = (w.x-b.x)/coef
+				v = (w.y-b.y)/coef
+				print( "uv  u=%0.2f v=%0.2f" % (u,v) )
+				if u >decal:
+					decal = u
+				
+				uvtex.data[idx+j].uv = ( 0.0+u + _max, v )
+				j = j + 1
+			return decal
+		#---------------------------------------------------------------------------
+
+		def compute_uv_down( indices, vertices, uvtex, idx, mat, bb, dim, coef,  _max, decal  ):
+			dim = m * dim
+			
+			w = dim
+
+			b = Vector( (bb[0][0],bb[0][1],bb[0][2]) )
+			w = Vector( (bb[6][0],bb[6][1],bb[6][2]) )
+
+			b = m * b
+			w = m * w
+
+			j = 0
+			for i in indices:
+				v = vertices[i].co
+				w = m * v
+				print( "vertice x=%0.2f y=%0.2f z=%0.2f" % (v.x,v.y,v.z) )
+				u = (w.x-b.x)/coef
+				v = (w.y-b.y)/coef
+				print( "uv  u=%0.2f v=%0.2f" % (u,v) )
+				if u >decal:
+					decal = u
+				
+				uvtex.data[idx+j].uv = ( 0.0+u + _max, v )
+				j = j + 1
+			return decal
+		#---------------------------------------------------------------------------
+		
+		def compute_uv_left( indices, vertices, uvtex, idx, mat, bb, dim, coef,  _max, decal  ):
+			dim = m * dim
+			
+			w = dim
+
+			b = Vector( (bb[0][0],bb[0][1],bb[0][2]) )
+			w = Vector( (bb[6][0],bb[6][1],bb[6][2]) )
+
+			b = m * b
+			w = m * w
+
+			j = 0
+			for i in indices:
+				v = vertices[i].co
+				w = m * v
+				print( "vertice x=%0.2f y=%0.2f z=%0.2f" % (v.x,v.y,v.z) )
+				u = -(w.z-b.z)/coef
+				v = (w.y-b.y)/coef
+				print( "uv  u=%0.2f v=%0.2f" % (u,v) )
+				if u >decal:
+					decal = u
+				
+				uvtex.data[idx+j].uv = ( 0.0+u + _max, v )
+				j = j + 1
+			return decal
+		#---------------------------------------------------------------------------
+
+		def compute_uv_right( indices, vertices, uvtex, idx, mat, bb, dim, coef,  _max, decal  ):
+			dim = m * dim
+			
+			w = dim
+
+			b = Vector( (bb[0][0],bb[0][1],bb[0][2]) )
+			w = Vector( (bb[6][0],bb[6][1],bb[6][2]) )
+
+			b = m * b
+			w = m * w
+			
+
+			j = 0
+			for i in indices:
+				v = vertices[i].co
+				w = m * v
+				print( "vertice x=%0.2f y=%0.2f z=%0.2f" % (v.x,v.y,v.z) )
+				u = -(w.z-b.z)/coef
+				v = (w.y-b.y)/coef
+				print( "uv  u=%0.2f v=%0.2f" % (u,v) )
+				if u >decal:
+					decal = u
+				
+				uvtex.data[idx+j].uv = ( 0.0+u + _max, v )
+				j = j + 1
+			return decal
+	#---------------------------------------------------------------------------
+
+		_max = 0
+		
+		obj = context.active_object
+		up		= Vector( (0.0,0.0,1.0) )
+		front	= Vector( (1.0,0.0,0.0) )
+		m = obj.matrix_world
+
+		mesh = obj.data
+		mesh.uv_textures.new()
+		uvtex = mesh.uv_layers.active
+		bb = obj.bound_box
+		dim = obj.dimensions
+		#bb = m * bb
+		#dim = m * dim
+		idx = 0
+
+		coef = dim.x
+		if dim.y > coef:
+			coef = dim.y
+		if dim.z > coef:
+			coef = dim.z
+		
+		coef = -coef
+		decal = 0		
+		for polygon in obj.data.polygons:
+			if not polygon.select:
+				idx = idx + len(polygon.vertices)
+				continue
+			n = Vector( (0.0,0.0,0.0) ) + polygon.normal
+			n.normalize()
+			v = m * n
+			#v.normalize()
+			#v = n
+			angle =  degrees( up.angle(v) )
+			
+			uv = Vector( (0.0,0.0) )
+			if angle < 45:# or angle >= 360-45:
+				print( "------------------------------------" )
+				print( "Normal x=%0.2f y=%0.2f z=%0.2f" % (v.x,v.y,v.z) )
+				print( "dot=%0.2f" % angle )
+				decal = compute_uv_up( polygon.vertices, mesh.vertices, uvtex, idx, m, bb, dim, coef,  _max, decal )
+				print( 'Up decal %0.2f' % decal )
+			idx = idx + len(polygon.vertices)
+				
+		_max = _max + decal
+		
+		idx = 0
+		decal = 0		
+		for polygon in obj.data.polygons:
+			if not polygon.select:
+				idx = idx + len(polygon.vertices)
+				continue
+			n = Vector( (0.0,0.0,0.0) ) + polygon.normal
+			n.normalize()
+			v = m * n
+			#v.normalize()
+			#v = n
+			angle =  degrees( up.angle(v) )
+			
+			uv = Vector( (0.0,0.0) )
+			
+			if 135 < angle and angle <= 225:
+				print( "------------------------------------" )
+				print( "Normal x=%0.2f y=%0.2f z=%0.2f" % (v.x,v.y,v.z) )
+				print( "dot=%0.2f" % angle )
+				decal = compute_uv_down( polygon.vertices, mesh.vertices, uvtex, idx, m, bb, dim, coef,  _max, decal )
+				print( 'Down decal %0.2f' % decal )
+			idx = idx + len(polygon.vertices)
+
+		
+		_max = _max + decal
+		idx = 0
+		decal = 0		
+		for polygon in obj.data.polygons:
+			if not polygon.select:
+				idx = idx + len(polygon.vertices)
+				continue
+			n = Vector( (0.0,0.0,0.0) ) + polygon.normal
+			n.normalize()
+			v = m * n
+			angle =  degrees( up.angle(v) )
+			
+			uv = Vector( (0.0,0.0) )
+			if angle < 45 or angle > 360-45:
+				idx = idx + len(polygon.vertices)
+				continue
+			elif 135 < angle and angle < 225 :
+				idx = idx + len(polygon.vertices)
+				continue
+			else:
+				angle = degrees( front.angle(v) )
+				if angle < 90 and angle >= 0:
+					decal = compute_uv_right( polygon.vertices, mesh.vertices, uvtex, idx, m, bb, dim, coef,  _max, decal )
+					print( "dot=%0.2f" % angle )
+					print( 'Right' )
+			idx = idx + len(polygon.vertices)
+		
+		_max = _max + decal
+		idx = 0
+		decal = 0		
+		for polygon in obj.data.polygons:
+			if not polygon.select:
+				idx = idx + len(polygon.vertices)
+				continue
+			n = Vector( (0.0,0.0,0.0) ) + polygon.normal
+			n.normalize()
+			v = m * n
+			#v.normalize()
+			#v = n
+			angle =  degrees( up.angle(v) )
+			
+			if angle < 45 or angle > 360-45:
+				idx = idx + len(polygon.vertices)
+				continue
+			elif angle < 225 and angle > 135:
+				idx = idx + len(polygon.vertices)
+				continue
+			else:
+				angle = degrees( front.angle(v) )
+				if angle < 90 and angle >= 0:
+					idx = idx + len(polygon.vertices)
+					continue
+				else:
+					compute_uv_left( polygon.vertices, mesh.vertices, uvtex, idx, m, bb, dim, coef,  _max, decal )
+					print( "dot=%0.2f" % angle )
+					print( 'Left' )
+			idx = idx + len(polygon.vertices)
+
+		#bpy.data.objects['Cube'].data.polygons[1].normal
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_exemple(bpy.types.Operator):
 	'''C'est un exemple d'operateur blender '''
 	bl_idname = "view3d.exemple"					# sera appelé par bpy.ops.view3d.exemple()
@@ -519,6 +786,7 @@ def register():
 	bpy.utils.register_class( FG_OT_time_0_5x )
 	bpy.utils.register_class( FG_OT_time_2x )
 	bpy.utils.register_class( FG_OT_write_xml )
+	bpy.utils.register_class( FG_OT_unwrap_4_faces )
 
 def unregister():
 	bpy.utils.unregister_class( FG_OT_edges_split)
@@ -532,4 +800,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_time_0_5x )
 	bpy.utils.unregister_class( FG_OT_time_2x )
 	bpy.utils.unregister_class( FG_OT_write_xml )
+	bpy.utils.unregister_class( FG_OT_unwrap_4_faces )
 
