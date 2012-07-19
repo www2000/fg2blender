@@ -322,18 +322,11 @@ def dynamic_items_xml_file( self, context ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_armature(bpy.types.PropertyGroup):
-	familly			= bpy.props.EnumProperty(	attr='familly',
-						                        name='Familly',
-						                        description="familly animation",
-						                        default='custom',
+	familly			= bpy.props.EnumProperty(	attr='familly', name='Familly', description="familly animation", default='custom',
 						                        items = [ ('custom','custom','custom') ]
 						                        	+	[ (famille,famille,famille) for famille in familles ]    )
 
-	familly_value	= bpy.props.EnumProperty(	attr='familly_value',
-												name='Value',
-												description="property flight_control",
-													items = dynamic_items			)
-
+	familly_value	= bpy.props.EnumProperty(	attr = 'familly_value', name='Value', description="property flight_control", items = dynamic_items )
 	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'value')
 	property_idx	= bpy.props.IntProperty(	attr = 'value', name = 'value')
 	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
@@ -344,31 +337,31 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 	type_anim		= bpy.props.IntProperty(	attr = 'type_anim', name = 'Type')
 	range_beg		= bpy.props.FloatProperty(	attr = 'range_beg', name = 'min')
 	range_end		= bpy.props.FloatProperty(	attr = 'range_end', name = 'max')
-	time			= bpy.props.FloatProperty(	attr = 'time', name = 'time', update=update_time)
 	range_beg_ini	= bpy.props.FloatProperty(	attr = 'range_beg_ini', name = 'min')
 	range_end_ini	= bpy.props.FloatProperty(	attr = 'range_end_ini', name = 'max')
+	time			= bpy.props.FloatProperty(	attr = 'time', name = 'time', update=update_time)
 	time_ini		= bpy.props.FloatProperty(	attr = 'time_ini', name = 'time')
 	offset_deg		= bpy.props.FloatProperty(	attr = 'offset_deg', name = 'time')
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_armature():
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="familly", type=FG_PROP_armature, name="Familly", description="Property familly")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="familly_value", type=FG_PROP_armature, name="Familly value", description="Familly value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_value", type=FG_PROP_armature, name="Property", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_idx", type=FG_PROP_armature, name="Property", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="factor", type=FG_PROP_armature, name="Factor", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="factor_ini", type=FG_PROP_armature, name="Factor ini", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file", type=FG_PROP_armature, name="xml file", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file_no", type=FG_PROP_armature, name="xml file no", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='xml_present', type=FG_PROP_armature, name='xml file present', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='type_anim', type=FG_PROP_armature, name='type_anim', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg', type=FG_PROP_armature, name='range_beg', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end', type=FG_PROP_armature, name='range_end', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time', type=FG_PROP_armature, name='time', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg_ini', type=FG_PROP_armature, name='range_beg_ini', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end_ini', type=FG_PROP_armature, name='range_end_ini', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time', type=FG_PROP_armature, name='time_ini', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='offset_deg', type=FG_PROP_armature, name='offset_deg', description="Initial deg" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="familly",			type=FG_PROP_armature, name="Familly", description="Property familly")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="familly_value",	type=FG_PROP_armature, name="Familly value", description="Familly value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_value",	type=FG_PROP_armature, name="Property", description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_idx",	type=FG_PROP_armature, name="Property", description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="factor",			type=FG_PROP_armature, name="Factor", description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="factor_ini",		type=FG_PROP_armature, name="Factor ini", description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file",		type=FG_PROP_armature, name="xml file", description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file_no",		type=FG_PROP_armature, name="xml file no", description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='xml_present',		type=FG_PROP_armature, name='xml file present', description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='type_anim',		type=FG_PROP_armature, name='type_anim', description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg',		type=FG_PROP_armature, name='range_beg', description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end',		type=FG_PROP_armature, name='range_end', description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg_ini',	type=FG_PROP_armature, name='range_beg_ini', description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end_ini',	type=FG_PROP_armature, name='range_end_ini', description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time',			type=FG_PROP_armature, name='time', description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time_ini',		type=FG_PROP_armature, name='time_ini', description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='offset_deg',		type=FG_PROP_armature, name='offset_deg', description="Initial deg" )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_mesh(bpy.types.PropertyGroup):

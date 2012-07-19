@@ -146,21 +146,22 @@ class FG_OT_create_rotate(bpy.types.Operator):
 			context.scene.objects.active = obj
 
 			#bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-
 			print("\tActivation Pose Mode")
 			bpy.ops.object.posemode_toggle()
+
 			bpy.ops.pose.select_all( action='SELECT' )
 			print("\tAjout limite rotation")
 			bpy.ops.pose.constraint_add(type='LIMIT_ROTATION')
 
 			print("\tMatrice en mode EulerXYZ")
-			bpy.data.objects[obj.name].pose.bones[-1].rotation_mode = 'XYZ'
 			print("\tActivation des limites en local")
 			limit_rotation = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
 			limit_rotation.use_limit_x = True
 			limit_rotation.use_limit_y = False
 			limit_rotation.use_limit_z = True
 			limit_rotation.owner_space = 'LOCAL'
+
+			bpy.data.objects[obj.name].pose.bones[-1].rotation_mode = 'XYZ'
 			bpy.data.objects[obj.name].pose.bones[-1].lock_rotation = ( True, False, True )
 			bpy.ops.object.posemode_toggle()
 			
