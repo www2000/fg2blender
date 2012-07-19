@@ -165,9 +165,15 @@ def write_animation( context, node, obj ):
 		node_animation.appendChild( axis )
 		head = armature.data.bones["Bone"].head
 		tail = armature.data.bones["Bone"].tail
-		v = tail - head
+		
+		w = tail - head
+		m = armature.matrix_basis
+		ht = m * head
+		tt = m * tail
+		v = tt - ht
 		v.normalize()
-		#v = v * 10.0
+
+
 		x_value = create_node_value( 'x', '%0.4f' % (v.x) )
 		y_value = create_node_value( 'y', '%0.4f' % (v.y) )
 		z_value = create_node_value( 'z', '%0.4f' % (v.z) )
@@ -180,7 +186,11 @@ def write_animation( context, node, obj ):
 	def append_center( node_animation, armature ):
 		center = create_node( 'center' )
 		node_animation.appendChild( center )
-		v = armature.location
+		head = armature.data.bones["Bone"].head
+		m = armature.matrix_basis
+		
+		v = m * head
+ 		
 		x_value = create_node_value( 'x-m', '%0.4f' % (v.x) )
 		y_value = create_node_value( 'y-m', '%0.4f' % (v.y) )
 		z_value = create_node_value( 'z-m', '%0.4f' % (v.z) )
