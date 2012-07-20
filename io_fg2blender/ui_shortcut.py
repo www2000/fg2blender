@@ -37,6 +37,8 @@ def register_shortcut():
     kmi = km.keymap_items.new('fg.exec', 'F', 'PRESS', ctrl=True)
     kmi = km.keymap_items.new('wm.call_menu', 'F', 'PRESS')
     kmi.properties.name = 'VIEW3D_FG_root_menu' 
+    #kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS')
+    #kmi.properties.name = 'VIEW3D_FG_root_menu' 
     kmi = km.keymap_items.new('fg.only_render', 'R', 'PRESS', ctrl=True)
 #----------------------------------------------------------------------------------------------------------------------------------
 
