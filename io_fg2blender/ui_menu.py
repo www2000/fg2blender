@@ -65,23 +65,19 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
         layout.operator("view3d.create_rotate",		text='Define Rotation' )
         layout.operator("view3d.create_translate",	text='Define Translation' )
         layout.separator()
-        layout.operator("view3d.unwrap_4_faces",	text='Unwrap 4 faces' )
+        layout.menu( 'VIEW3D_FG_sub_menu_unwrap' )
+        #layout.operator("view3d.unwrap_4_faces",	text='Unwrap 4 faces' )
 #----------------------------------------------------------------------------------------------------------------------------------
 
-class VIEW3D_FG_sub_menu_0(bpy.types.Menu):
-    bl_label = "Assign Material"
+class VIEW3D_FG_sub_menu_unwrap(bpy.types.Menu):
+    bl_label = "Unwrap 4 faces"
 
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        for material_name in bpy.data.materials.keys():
-            layout.operator("view3d.assign_material",
-                text=material_name,
-                icon='MATERIAL_DATA').matname = material_name
-
-        layout.operator("view3d.assign_material",
-                        text="Add New",
-                        icon='ZOOMIN')
+        layout.operator("view3d.unwrap_4_faces",	text='Along X' ).axis = 'X'
+        layout.operator("view3d.unwrap_4_faces",	text='Along Y' ).axis = 'Y'
+        layout.operator("view3d.unwrap_4_faces",	text='Along Z' ).axis = 'Z'
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-F       utilise pour le "debuggage"
 # Réouvre le dernier xml     contenu dans '/home/rene/tmp/blender/script-fg2bl'
@@ -131,10 +127,11 @@ class FG_OT_exec(bpy.types.Operator):
 def register():
     bpy.utils.register_class(FG_OT_exec)
     bpy.utils.register_class(VIEW3D_FG_root_menu)
-
+    bpy.utils.register_class(VIEW3D_FG_sub_menu_unwrap)
 def unregister():
     bpy.utils.unregister_class(FG_OT_exec)
     bpy.utils.unregister_class(VIEW3D_FG_root_menu)
+    bpy.utils.unregister_class(VIEW3D_FG_sub_menu_unwrap)
 
 
 
