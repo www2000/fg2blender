@@ -799,7 +799,7 @@ class ANIM:
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_texture( self ):
-	
+		from . import xml_import
 		img_name = os.path.basename(self.texture)
 		if img_name == "":
 			return
@@ -821,15 +821,18 @@ class ANIM:
 	
 		try:
 			img = bpy.data.images.load( name_path )
+			
+			
 		except:
 			print( '*** erreur **** %s introuvale' % (name_path) )
+			right_name = name_path.partition('Aircraft')[2]
+			name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft' + right_name
+			name_path = xml_import.conversion( name_path )
+			img = bpy.data.images.load( name_path )
+			print( '*** bidouillle **** %s introuvale' % (name_path) )
 			if BIDOUILLE:
-				right_name = name_path.partition('Aircraft')[2]
-				name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + right_name
-				print( '*** bidouillle **** %s introuvale' % (name_path) )
-				
+				print( "Bonjour" )
 				#img = bpy.data.images.new(name='void', width=1024, height=1024, alpha=True, float_buffer=True)
-				img = bpy.data.images.load( name_path )
 			else:
 				return None
 	
@@ -897,12 +900,13 @@ class ANIM:
 		if self.ac_file == "":
 			return
 		
+		#print( str(self.objects) )
 		for obj_name in self.objects:
 			if obj_name in self.ac_file.dic_name_meshs:
 				obj_name_bl = self.ac_file.dic_name_meshs[obj_name]
 				obj_bl = bpy.data.objects[obj_name_bl]
 			
-				if obj_bl:
+				if obj_bl.type == 'MESH':
 					mesh = obj_bl.data
 					for texture_slot in mesh.materials[0].texture_slots:
 						if texture_slot != None:
@@ -916,6 +920,22 @@ class ANIM:
 					texture_slot.texture_coords	= 'REFLECTION'
 					texture_slot.use_map_alpha	= True
 					texture_slot.alpha_factor	= 0.1
+				elif obj_bl.type == 'EMPTY':
+					for obj in bpy.data.objects:
+						if obj.parent == obj_bl:
+							mesh = obj.data
+							for texture_slot in mesh.materials[0].texture_slots:
+								if texture_slot != None:
+									if texture_slot.texture.name == tex.name:
+										return
+
+							debug_info( '    Assigne objet="%s"  texture="%s"' % (obj_bl.name, tex.name) )
+							texture_slot = mesh.materials[0].texture_slots.add() 
+							#mesh.materials[0].texture_slots.add() 
+							texture_slot.texture = tex
+							texture_slot.texture_coords	= 'REFLECTION'
+							texture_slot.use_map_alpha	= True
+							texture_slot.alpha_factor	= 0.1
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def assign_pick( self, obj_name ):

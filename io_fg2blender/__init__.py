@@ -295,6 +295,7 @@ def menu_func_import(self, context):
 
 def register():
 	from . import ops_flightgear
+	from . import ops_unwrap
 	from . import props_armature
 	from . import ui_menu
 	from . import ui_panel_armature
@@ -307,6 +308,7 @@ def register():
 	bpy.types.INFO_MT_file_import.append(menu_func_import)
 
 	ops_flightgear.register()
+	ops_unwrap.register()
 	props_armature.register()
 	ui_menu.register()
 	ui_panel_armature.register()
@@ -324,6 +326,7 @@ def register():
 	
 def unregister():
 	from . import ops_flightgear
+	from . import ops_unwrap
 	from . import props_armature
 	from . import ui_menu
 	from . import ui_panel_armature
@@ -336,6 +339,7 @@ def unregister():
 	bpy.types.INFO_MT_file_import.remove(menu_func_import)
 
 	ops_flightgear.unregister()
+	ops_unwrap.unregister()
 	props_armature.unregister()
 	ui_menu.unregister()
 	ui_panel_armature.unregister()
