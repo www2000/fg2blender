@@ -126,9 +126,9 @@ def write_animation( context, node, obj ):
 			y = keyframe.co.y
 			#print( 'x=%0.2f y=%0.2f' % (x, y) )
 			x = (x -1.0)/59.0
-			if t == 1:
+			if t == 1:	#rotation
 				y = degrees(y) / armature.data.fg.factor
-			if t == 2:
+			if t == 2:	#translation
 				y = (y) / armature.data.fg.factor
 			ind = create_node_value( 'ind', '%0.4f' % x )
 			dep = create_node_value( 'dep', '%0.4f' % y )
