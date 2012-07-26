@@ -18,7 +18,7 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: 
+# Contributors: Alexis Laillé
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -114,7 +114,12 @@ def layout_object_tool(self, obj, context):
 	from . import xml_manager
 	
 	layout = self.layout
-
+	
+	box = layout.box()
+	row = box.row()
+	row.operator("view3d.show_animation", text="show")
+	row.operator("view3d.show_all", text="show_all")
+	
 	if obj.parent:
 		boxTitre = layout.column()
 		boxTitre.label( text='Parent' )

@@ -18,7 +18,7 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: Alexis
+# Contributors: Alexis Laillé
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -41,14 +41,14 @@ familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flig
  
  
 APUs = [                 ('/controls/APU/off-start-run',0,1,False),
-                                ('/controls/APU/fire-switch',0,'x',False)                         ]
+                                ('/controls/APU/fire-switch',0,'x',False)						]
  
 anti_ices = [    ('/controls/anti-ice/wing-heat',0,1,False),
                                 ('/controls/anti-ice/pitot-heat',0,1,False),
                                 ('/controls/anti-ice/wiper',0,'x',False),
                                 ('/controls/anti-ice/window-heat',0,1,False),
                                 ('/controls/anti-ice/engine[%d]/carb-heat',0,1,False),
-                                ('/controls/anti-ice/engine[%d]/inlet-heat',0,1,False)  ]
+                                ('/controls/anti-ice/engine[%d]/inlet-heat',0,1,False)			]
  
 armaments = [    ('/controls/armament/master-arm',0,1,False),
                                 ('/controls/armament/station-select',0,1,False),
@@ -56,7 +56,7 @@ armaments = [    ('/controls/armament/master-arm',0,1,False),
                                 ('/controls/armament/station[%d]/stick-size',0,1,False),
                                 ('/controls/armament/station[%d]/release-stick',0,1,False),
                                 ('/controls/armament/station[%d]/release-all',0,1,False),
-                                ('/controls/armament/station[%d]/jettison-all',0,1,False)      ]
+                                ('/controls/armament/station[%d]/jettison-all',0,1,False)		]
  
 autoflights = [  ('/controls/autoflight/autopilot[%d]/engage',0,1,False),
                                 ('/controls/autoflight/autothrottle-arm',0,1,False),
@@ -68,13 +68,13 @@ autoflights = [  ('/controls/autoflight/autopilot[%d]/engage',0,1,False),
                                 ('/controls/autoflight/speed-select',0,'x',False),
                                 ('/controls/autoflight/mach-select',0,'x',False),
                                 ('/controls/autoflight/vertical-mode',0,'x',False),
-                                ('/controls/autoflight/lateral-mode',0,1,False)        ]
+                                ('/controls/autoflight/lateral-mode',0,1,False)					]
                                
 electrics = [    ('/controls/electric/battery-switch',0,1,False),
                                 ('/controls/electric/external-power',0,1,False),
                                 ('/controls/electric/APU-generator',0,1,False),
                                 ('/controls/electric/engine[%d]/generator',0,1,False),
-                                ('/controls/electric/engine[%d]/bus-tie',0,1,False)     ]
+                                ('/controls/electric/engine[%d]/bus-tie',0,1,False)				]
  
                                
 #engines comportement des variables à affiner
@@ -97,7 +97,7 @@ engines = [             ('/controls/engines/throttle_idle',0,1,False),
                                 ('/controls/engines/engine[%d]/afterburner',0,1,False),
                                 ('/controls/engines/engine[%d]/reverser',0,1,False),
                                 ('/controls/engines/engine[%d]/water-injection',0,1,False),
-                                ('/controls/engines/engine[%d]/condition',0,1,False)    ]
+                                ('/controls/engines/engine[%d]/condition',0,1,False)			]
  
 flights = [              ('/controls/flight/aileron',-1,1,False),
                                 ('/controls/flight/aileron-trim',-1,1,False),
@@ -112,13 +112,13 @@ flights = [              ('/controls/flight/aileron',-1,1,False),
                                 ('/controls/flight/speedbrake',0,1,False),
                                 ('/controls/flight/wing-sweep',0,1,False),
                                 ('/controls/flight/wing-fold',0,1,False),
-                                ('/controls/flight/drag-chute',0,1,False)                       ]
+                                ('/controls/flight/drag-chute',0,1,False)						]
  
 fuels = [                ('/controls/fuel/dump-valve',0,1,False),
                                 ('/controls/fuel/tank[%d]/fuel_selector',0,1,False),
                                 ('/controls/fuel/tank[%d]/to_engine',0,'x',False),
                                 ('/controls/fuel/tank[%d]/to_tank',0,'x',False),
-                                ('/controls/fuel/tank[%d]/boost-pump[%d]',0,1,False)    ]
+                                ('/controls/fuel/tank[%d]/boost-pump[%d]',0,1,False)			]
  
 consumables = [ ('/consumables/fuel/tank[%d]/level-lbs',0,'x',False),
                                 ('/consumables/fuel/tank[%d]/level-gal_us',0,'x',False),
@@ -144,7 +144,7 @@ gears = [                ('/controls/gear/brake-left',0,1,False),
                                 ('/gear/gear[%d]/has-brake',0,1,False),
                                 ('/gear/gear[%d]/position-norm',0,1,True),
                                 ('/gear/gear[%d]/rollspeed-ms',0,'x',False),
-                                ('/gear/gear[%d]/rollspeed-ms',0,1,False)       ]
+                                ('/gear/gear[%d]/rollspeed-ms',0,1,False)						]
  
  
 

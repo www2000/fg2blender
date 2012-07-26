@@ -18,7 +18,7 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: 
+# Contributors: Alexis Laillé
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -84,6 +84,11 @@ def layout_armature_tool(self, obj, context):
 	
 	layout = self.layout
 	xml_files = xml_manager.xml_files
+
+	box = layout.box()
+	row = box.row()
+	row.operator("view3d.show_animation", text="show")
+	row.operator("view3d.show_all", text="show_all")
 
 	boxTitre = layout.column()
 	boxTitre.label( text='Type' )
