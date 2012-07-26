@@ -18,7 +18,7 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: 
+# Contributors: Alexis Laillé
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -120,6 +120,7 @@ class FG_OT_create_translate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_rotate(bpy.types.Operator):
+	'''Add armature type rotate '''
 	bl_idname = "view3d.create_rotate"
 	bl_label = "Create Rotate"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -306,7 +307,47 @@ class FG_OT_select_property(bpy.types.Operator):
 				
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
+class FG_OT_show_animation(bpy.types.Operator):
+	'''Show all object used by the same property and hid other '''
+	bl_idname = "view3d.show_animation"
+	bl_label = "Show animate objects"
+	bl_options = {'REGISTER', 'UNDO'}
 
+	@classmethod
+	def poll(cls, context):
+		if not context.active_object:
+			return False
+		return context.active_object.type in( 'MESH','ARMATURE')
+
+	def execute(self, context):
+		import bpy
+		import mathutils
+		from math import radians
+		bpy.ops.view3d.select_property()
+		bpy.ops.object.select_all(action='INVERT')
+		bpy.ops.object.hide_view_set(unselected=False)
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+class FG_OT_show_all(bpy.types.Operator):
+	'''Show all object used by the same property and hid other '''
+	bl_idname = "view3d.show_all"
+	bl_label = "Show all objects"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if not context.active_object:
+			return False
+		return context.active_object.type in( 'MESH','ARMATURE')
+
+	def execute(self, context):
+		import bpy
+		import mathutils
+		from math import radians
+		bpy.ops.object.hide_view_clear()
+		bpy.ops.object.select_all(action='INVERT')
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
 class FG_OT_select_file(bpy.types.Operator):
 	bl_idname = "object.file_select"
 	bl_label = ""
@@ -517,6 +558,8 @@ def register():
 	bpy.utils.register_class( FG_OT_create_translate)
 	bpy.utils.register_class( FG_OT_exemple)
 	bpy.utils.register_class( FG_OT_select_file )
+	bpy.utils.register_class( FG_OT_show_animation )
+	bpy.utils.register_class( FG_OT_show_all )
 	bpy.utils.register_class( FG_OT_only_render )
 	bpy.utils.register_class( FG_OT_time_0_5x )
 	bpy.utils.register_class( FG_OT_time_2x )
@@ -530,6 +573,8 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_create_translate)
 	bpy.utils.unregister_class( FG_OT_exemple)
 	bpy.utils.unregister_class( FG_OT_select_file )
+	bpy.utils.unregister_class( FG_OT_show_animation )
+	bpy.utils.unregister_class( FG_OT_show_all )
 	bpy.utils.unregister_class( FG_OT_only_render )
 	bpy.utils.unregister_class( FG_OT_time_0_5x )
 	bpy.utils.unregister_class( FG_OT_time_2x )
