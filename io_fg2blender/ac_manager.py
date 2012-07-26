@@ -260,15 +260,24 @@ class MESH:
 			debug_info( "Nb uv_textures : %d " % len(mesh.uv_textures[-1].data) )
 			debug_info( "Nb faces       : %d " % len(self.faces) )
 			debug_info( "Nb points      : %d " % len(self.vertices) )
+			debug_info( "Nb uvtext		: %d " % len(uvtex.data) )
 		
 			#optimisation foreach_set don't work
 			#uvtex.data.add(len(self.uv))
 			#uvtex.data.foreach_set( "uv", unpack_face_list(self.uv) )
+			#for i in range(len(self.faces)):
+			#	print( str(self.uv[i]) )
+			#	for j in range(len(self.uv[i])):
+			#		debug_info( "uv[%d]  %0.4f,%0.4f" % (i,self.uv[i][j][0],self.uv[i][j][1]) )
+				
 			for i in range(len(self.faces)):
 				nb = len(self.faces[i])
 				debug_info( "Face no        : %d " % i )
 				debug_info( "Nb points      : %d " % nb )
-				debug_info( "Nb uv : %d  nb self.uv : %d      idx : %d" % (len(uvtex.data), len(self.uv), idx ) )
+				debug_info( "Nb uv : %d  nb self.uv : %d      idx : %d" % (len(uvtex.data), len(self.uv[i]), idx ) )
+				debug_info( "uvtext = %s" % str( uvtex.data )    )
+				#for uvloop in uvtex.data:
+				#	print( str(uvloop.uv) )
 				# triangle or  quad or edge
 				if nb >= 2:
 					j = self.faces[i][0]
@@ -388,7 +397,7 @@ class MESH:
 				
 				debug_info( "Creation de material   %d-%s %d %s" % (nb, ml[0].name, ml[1], ml[2]) )
 			else:
-				print( "*****Cas non résolut******" );
+				print( "*****Cas non résolu******" );
 
 	#----------------------------------------------------------------------------------------------------------------------------------
 
