@@ -136,6 +136,7 @@ def read_face( fi, local_mesh):
 
 	nb = int(line.split()[1])
 	#debug_info( "read_face()  nb = %d " % nb )
+	#print( "read_face()  nb = %d " % nb )
 
 	f = []
 	uv = []
@@ -206,6 +207,8 @@ def read_face( fi, local_mesh):
 		for i in range(nb-2):
 			local_mesh.uv.append( (uv[0],uv[i+1],uv[i+2]) )
 	#debug_info( "Longeur uv %d " % len(local_mesh.uv) )
+	#print( "Nb face  %d " % len(local_mesh.faces) )
+	#print( "Nb uv    %d " % len(local_mesh.uv) )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def read_texture( fi, line, local_mesh):
