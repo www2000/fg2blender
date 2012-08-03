@@ -366,7 +366,7 @@ def RNA_armature():
 
 class FG_PROP_mesh(bpy.types.PropertyGroup):
 	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = 'ac File')
-	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = 'ac File')
+	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = 'ac name')
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_mesh():
