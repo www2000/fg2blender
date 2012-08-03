@@ -93,7 +93,7 @@ def layout_object(self, obj, context):
 	col.prop( obj.data.fg, "name_ac" )
 
 	boxTitre = layout.column()
-	boxTitre.label( text='Ac file' )
+	boxTitre.label( text='AC3D file' )
 	box = layout.box()
 	col = box.column()
 
