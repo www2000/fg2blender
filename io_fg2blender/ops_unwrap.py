@@ -144,7 +144,7 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 	#---------------------------------------------------------------------------
 
 		_max = 0
-		
+
 		obj = context.active_object
 		up		= Vector( (0.0,0.0,1.0) )
 		front	= Vector( (0.0,1.0,0.0) )
@@ -152,9 +152,9 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 		if self.axis == 'X':
 			mat_rot = Matrix.Rotation(radians(0.0), 4, 'Z')
 		elif self.axis == 'Y':
-			mat_rot = Matrix.Rotation(radians(90.0), 4, 'Z')
-		elif self.axis == 'Z':
 			mat_rot = Matrix.Rotation(radians(-90.0), 4, 'Y')
+		elif self.axis == 'Z':
+			mat_rot = Matrix.Rotation(radians(90.0), 4, 'Z')
 		
 		m = mw * mat_rot
 		m3 = m.to_3x3()
@@ -188,6 +188,16 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 		#w = Vector( (bb[6][0],bb[6][1],bb[6][2]) )
 		#bb = m * b
 		dim = obj.dimensions
+
+		print( str(context.selected_objects) )
+		if len(context.selected_objects) == 2:
+			for bbox in context.selected_objects:
+				if bbox != obj:
+					break
+			print( bbox.name )
+			dim = bbox.dimensions
+
+
 		idx = 0
 
 		coef = dim.x
@@ -195,6 +205,14 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 			coef = dim.y
 		if dim.z > coef:
 			coef = dim.z
+
+		if self.axis == 'X':
+			coef = dim.x
+		elif self.axis == 'Y':
+			coef = dim.y
+		elif self.axis == 'Z':
+			coef = dim.z
+		
 		
 		#coef = coef
 
