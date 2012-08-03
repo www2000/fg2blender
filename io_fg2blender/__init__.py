@@ -287,7 +287,7 @@ class ExportFG(bpy.types.Operator, ExportHelper):
 # Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):
     self.layout.operator(ImportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
-    self.layout.operator(ImportAC.bl_idname, text="Flightgear (.ac)")		# text=Title in the menu
+#    self.layout.operator(ImportAC.bl_idname, text="Flightgear (.ac)")		# text=Title in the menu
 
 #def menu_func_export(self, context):
 #    self.layout.operator(ExportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
