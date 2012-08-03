@@ -327,7 +327,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 						                        	+	[ (famille,famille,famille) for famille in familles ]    )
 
 	familly_value	= bpy.props.EnumProperty(	attr = 'familly_value', name='Node', description="node of familly", items = dynamic_items )
-	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'value')
+	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'Property')
 	property_idx	= bpy.props.IntProperty(	attr = 'value', name = '%d ', min=0)
 	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
 	factor_ini		= bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
