@@ -194,7 +194,7 @@ class FG_OT_create_rotate(bpy.types.Operator):
 class FG_OT_create_anim(bpy.types.Operator):
 	'''Add armature type rotate '''
 	bl_idname = "view3d.create_anim"
-	bl_label = "Create Annimation"
+	bl_label = "Create Animation"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
