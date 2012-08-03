@@ -107,7 +107,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 		scn = context.scene
 		layout = self.layout
 		row = layout.row()
-		row.label( text = "Option ac" )
+		row.label( text = "Option AC3D" )
 
 		box_option_ac = layout.box()
 		row = box_option_ac.column()
@@ -120,7 +120,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 			row.prop( self, "mesh_rotate_layer_1" )
 
 		row = layout.row()
-		row.label( text = "Option xml" )
+		row.label( text = "Option XML" )
 		box_option_xml = layout.box()
 		row = box_option_xml.column()
 		#row.label( text = "Option xml" )
