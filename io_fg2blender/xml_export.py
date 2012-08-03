@@ -48,6 +48,8 @@ DEBUG_INFO = False
 
 def build_property_name( armature ):
 	prop_name = armature.data.fg.familly_value
+	if prop_name[0]=="/":
+		prop_name = prop_name[1:]
 	if prop_name.find('%d')!=-1:
 		idx = armature.data.fg.property_idx
 		left  = prop_name.partition('[')[0]
