@@ -215,9 +215,21 @@ class FG_OT_edges_split(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		if not context.active_object:
-			return False
-		return context.active_object.type == 'MESH'#None
+		bModifier = False
+		for obj in context.selected_objects:
+			if obj.type != 'MESH':
+				continue
+			bObjModifier = False
+			for modifier in obj.modifiers:
+				if modifier.type == 'EDGE_SPLIT':
+					bObjModifier = True
+
+			if bObjModifier == False:
+				bModifier = True
+		
+		return bModifier
+					
+					
 
 	def execute(self, context):
 		import bpy
@@ -232,20 +244,26 @@ class FG_OT_edges_split(bpy.types.Operator):
 
 		for obj in list_objects:
 			if obj.type == 'MESH':
-				obj.select = True
-				context.scene.objects.active = obj
-				angle = obj.data.auto_smooth_angle
-				print( "\tObject : %s    angle=%0.2f" % (obj.name,degrees(angle)) )
+				bModifier = True
+				for modifier in obj.modifiers:
+					if modifier.type == 'EDGE_SPLIT':
+						bModifier = False
 
-				try:
-					bpy.ops.object.modifier_add( type='EDGE_SPLIT')	
-					for mod in obj.modifiers:
-						if mod.type=='EDGE_SPLIT':
-							mod.split_angle = angle
-				except:
-					print( "Erreur modifier_add Edge-split" )
+				if bModifier:
+					obj.select = True
+					context.scene.objects.active = obj
+					angle = obj.data.auto_smooth_angle
+					print( "\tObject : %s    angle=%0.2f" % (obj.name,degrees(angle)) )
 
-				obj.select = False
+					try:
+						bpy.ops.object.modifier_add( type='EDGE_SPLIT')	
+						for mod in obj.modifiers:
+							if mod.type=='EDGE_SPLIT':
+								mod.split_angle = angle
+					except:
+						print( "Erreur modifier_add Edge-split" )
+
+					obj.select = False
 
 		for obj in list_objects:
 			obj.select = True
