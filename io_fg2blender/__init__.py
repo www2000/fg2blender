@@ -201,7 +201,7 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 		scn = context.scene
 		layout = self.layout
 		row = layout.row()
-		row.label( text = "Option ac" )
+		row.label( text = "Option AC3D" )
 
 		box_option_ac = layout.box()
 		row = box_option_ac.column()
