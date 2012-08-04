@@ -127,7 +127,7 @@ consumables = [ 				('consumables/fuel/tank[%d]/level-lbs',0,'x',False),
                                 ('consumables/fuel/total-fuel-lbs',0,'x',False),
                                 ('consumables/fuel/total-gal_us',0,'x',False)                  ]
                                
-gears = [                (/controls/gear/brake-left',0,1,False),
+gears = [                		('controls/gear/brake-left',0,1,False),
                                 ('controls/gear/brake-right',0,1,False),
                                 ('controls/gear/brake-parking',0,1,False),
                                 ('controls/gear/steering',0,'x',False),
