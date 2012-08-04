@@ -87,7 +87,13 @@ def layout_object(self, obj, context):
 	xml_files = xml_manager.xml_files
 
 	boxTitre = layout.column()
-	boxTitre.label( text='Ac file' )
+	boxTitre.label( text='Name in .ac file' )
+	box = layout.box()
+	col = box.column()
+	col.prop( obj.data.fg, "name_ac" )
+
+	boxTitre = layout.column()
+	boxTitre.label( text='AC3D file' )
 	box = layout.box()
 	col = box.column()
 

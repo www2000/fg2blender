@@ -53,10 +53,13 @@ BIDOUILLE = True
 
 class XML_OPTION:
 	def __init__(self):
-		self.include		= False
-		self.active_layer	= True
-		self.layer_beg		= 1
-		self.layer_end		= 20
+		self.include			= False
+		self.mesh_active_layer	= True
+		self.mesh_layer_beg		= 1
+		self.mesh_layer_end		= 20
+		self.arma_active_layer	= True
+		self.arma_layer_beg		= 1
+		self.arma_layer_end		= 20
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_FILE
@@ -103,6 +106,7 @@ class XML_FILE:
 #	vec					= Vector( (0.0, 0.0, 0.0) )			bone vector
 #	objects				= []								objects list  ( name in xml file )
 #	group_objects		= []								list : group_objects[0] name of group
+#	layer				= 0									number of layer
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class ANIM:
@@ -121,6 +125,8 @@ class ANIM:
 		self.texture			= ""
 		self.ac_file			= ""
 		self.offset_deg			= 0.0
+		self.layer				= 0						
+		self.active_layer		= False
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_type( self, node ):
@@ -369,10 +375,16 @@ class ANIM:
 				self.extract_group_objects( node )
 		#---------------------------------------------------------------------------------------------------------------------
 		# pour recopier la valeur et non pas la référence
-		self.xml_file = "" + xml_current.name
-		self.xml_file_no = 0 + xml_current.no
-		debug_info( '\tfg.data.xml_file = %d-"%s"' % (self.xml_file_no,self.xml_file) )
+		from . import xml_import
+		
+		self.xml_file		= "" + xml_current.name
+		self.xml_file_no	= 0 + xml_current.no
+		self.layer			= 0 + xml_import.arma_layer
+		self.active_layer	= xml_import.option_arma_rotate_layer
+
 		self.extract_type( node )
+		debug_info( '\tfg.data.xml_file = %d-"%s"' % (self.xml_file_no,self.xml_file) )
+		
 		if self.type == 1:
 			extract_anim_rotate( node )
 		elif self.type == 2:
@@ -534,6 +546,7 @@ class ANIM:
 	#---------------------------------------------------------------------------------------------------------------------
 	
 	def insert_keyframe_all( self ):
+		print( "self.insert_keyframe_all()" )
 		if self.type == 1:
 			bpy.context.scene.objects.active = bpy.data.objects[self.name]
 			self.insert_keyframe_rotation_all()
@@ -609,7 +622,7 @@ class ANIM:
 	def create_armature_rotation( self ):
 		bpy.ops.object.armature_add()
 
-		bpy.ops.object.move_to_layer( layers = layer(10) )
+		#bpy.ops.object.move_to_layer( layers = layer(10) )
 		
 		armature = bpy.data.armatures[-1]
 		print( 'Create armature rotate : "%s"' % (armature.name) )
@@ -693,7 +706,7 @@ class ANIM:
 		bpy.ops.object.armature_add()
 		#bpy.context.scene.layers = layer( 10 )
 		#bpy.context.scene.active_layer = 10
-		bpy.ops.object.move_to_layer( layers = layer(10) )
+		#bpy.ops.object.move_to_layer( layers = layer(10) )
 
 		armature = bpy.data.armatures[-1]
 		print( 'Create armature translate : "%s"' % (armature.name) )
@@ -870,6 +883,10 @@ class ANIM:
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature( self ):
+		if self.active_layer:
+			bpy.context.scene.layers = layer( self.layer-2 )
+			print( "create_armature in layer %s" % str(self.layer-2) )
+				
 		if self.type == 1:
 			self.create_armature_rotation()
 			obj = bpy.context.scene.objects.active
@@ -1077,15 +1094,18 @@ def create_material_pick():
 def create_anims():
 	global xml_files
 	debug_info( '------' )
+	# Save active layers
+	save_active_layers = [ b for b in bpy.context.scene.layers ]
+
 	#
 	#	Create material Pick an groupd (ac filename)
 	#
 	create_material_pick()
 	# Change layer
-	bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
-	if not bpy.context.scene.layers[10]:
-		bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
-		
+	#bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
+	#if not bpy.context.scene.layers[10]:
+	#	bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
+	# Create group	
 	for xml_file, no in xml_files:
 		for ac_file in xml_file.ac_files:
 			debug_info( 'Creation de groups "%s"' % os.path.basename(ac_file.name) )
@@ -1123,6 +1143,7 @@ def create_anims():
 	#
 	#	Assign objct to anim
 	#
+	bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
 	assign_obj_to_anim()
 	#
 	#	Insert keyframe
@@ -1135,7 +1156,9 @@ def create_anims():
 			debug_info( 'insertion keyframe : "%s"' % anim.name )
 			anim.insert_keyframe_all()
 
-	bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+	#restore active layer
+	bpy.context.scene.layers = save_active_layers
+
 #bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
 #----------------------------------------------------------------------------------------------------------------------------------
 

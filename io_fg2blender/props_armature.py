@@ -322,13 +322,13 @@ def dynamic_items_xml_file( self, context ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_armature(bpy.types.PropertyGroup):
-	familly			= bpy.props.EnumProperty(	attr='familly', name='Familly', description="familly animation", default='custom',
+	familly			= bpy.props.EnumProperty(	attr='familly', name='Familly', description="familly of properties", default='custom',
 						                        items = [ ('custom','custom','custom') ]
 						                        	+	[ (famille,famille,famille) for famille in familles ]    )
 
-	familly_value	= bpy.props.EnumProperty(	attr = 'familly_value', name='Value', description="property flight_control", items = dynamic_items )
-	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'value')
-	property_idx	= bpy.props.IntProperty(	attr = 'value', name = 'value')
+	familly_value	= bpy.props.EnumProperty(	attr = 'familly_value', name='Node', description="node of familly", items = dynamic_items )
+	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'Property')
+	property_idx	= bpy.props.IntProperty(	attr = 'value', name = '%d ', min=0)
 	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
 	factor_ini		= bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
 	xml_file		= bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File')
@@ -366,7 +366,7 @@ def RNA_armature():
 
 class FG_PROP_mesh(bpy.types.PropertyGroup):
 	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = 'ac File')
-	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = 'ac File')
+	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = 'ac name')
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_mesh():
