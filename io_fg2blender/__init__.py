@@ -95,12 +95,12 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 	split_angle	= FloatProperty(name="Split angle", description="Value of edge-spit", min=0.0, max=180.0, default=65.0 )
 	include		= BoolProperty(name="Include file", description="Read file include", default=True)
 
-	mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=True)
-	mesh_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=0)
-	mesh_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=20)
+	mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=False)
+	mesh_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=1)
+	mesh_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=10)
 
-	armature_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=True)
-	armature_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=1)
+	armature_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=False)
+	armature_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=11)
 	armature_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=20)
 
 	def draw(self, context):
@@ -139,18 +139,18 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 		for filename in paths:
 			print( filename )
 			ac_option = AC_OPTION()
-			ac_option.smooth_all	= self.smooth_all
-			ac_option.edge_split	= self.edge_split
-			ac_option.split_angle	= self.split_angle
-			ac_option.active_layer	= self.mesh_active_layer
-			ac_option.layer_beg		= self.mesh_rotate_layer_0
-			ac_option.layer_end		= self.mesh_rotate_layer_1
+			ac_option.smooth_all			= self.smooth_all
+			ac_option.edge_split			= self.edge_split
+			ac_option.split_angle			= self.split_angle
 		
 			xml_option = XML_OPTION()
-			xml_option.include		= self.include
-			xml_option.active_layer	= self.armature_active_layer
-			xml_option.layer_beg	= self.armature_rotate_layer_0
-			xml_option.layer_end	= self.armature_rotate_layer_1
+			xml_option.include				= self.include
+			xml_option.mesh_active_layer	= self.mesh_active_layer
+			xml_option.mesh_layer_beg		= self.mesh_rotate_layer_0
+			xml_option.mesh_layer_end		= self.mesh_rotate_layer_1
+			xml_option.arma_active_layer	= self.armature_active_layer
+			xml_option.arma_layer_beg		= self.armature_rotate_layer_0
+			xml_option.arma_layer_end		= self.armature_rotate_layer_1
 		
 			if xml_manager.BIDOUILLE :
 				f = open('/home/rene/tmp/script-fg2bl', mode='w')
@@ -158,12 +158,12 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 				f.close()
 				#xml_option = XML_OPTION()
 				#xml_option.include		= False
-				xml_option.active_layer	= False
-				xml_option.layer_beg	= 1
-				xml_option.layer_end	= 10
+				#xml_option.active_layer	= False
+				#xml_option.layer_beg	= 1
+				#xml_option.layer_end	= 10
 
 			import_xml(	filename, ac_option, xml_option )
-			bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+			#bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
 			#bpy.ops.view3d.create_anim()
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
