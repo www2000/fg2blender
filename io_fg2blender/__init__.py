@@ -111,9 +111,9 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 
 		box_option_ac = layout.box()
 		row = box_option_ac.column()
-		row.prop( self, "smooth_all" )
-		row.prop( self, "edge_split" )
-		row.prop( self, "split_angle" )
+		#row.prop( self, "smooth_all" )
+		#row.prop( self, "edge_split" )
+		#row.prop( self, "split_angle" )
 		row.prop( self, "mesh_active_layer" )
 		if not self.mesh_active_layer:
 			row.prop( self, "mesh_rotate_layer_0" )
