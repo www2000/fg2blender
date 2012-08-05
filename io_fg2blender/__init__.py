@@ -76,7 +76,7 @@ from . import *
 class ImportFG(bpy.types.Operator, ImportHelper):
 	'''This appears in the tooltip of the operator and in the generated docs'''
 	bl_idname = "import.fg2blender"  # this is important since its how bpy.ops.export.some_data is constructed
-	bl_label = "Import .xml"
+	bl_label = "Import FlightGear"
 	bl_options = {'PRESET'}	
 
 	# ExportHelper mixin class uses this
