@@ -95,7 +95,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 	split_angle	= FloatProperty(name="Split angle", description="Value of edge-spit", min=0.0, max=180.0, default=65.0 )
 	include		= BoolProperty(name="Include file", description="Read file include", default=True)
 
-	mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=False)
+	mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=True)
 	mesh_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=1)
 	mesh_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=10)
 
