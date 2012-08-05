@@ -102,9 +102,14 @@ class FG_OT_exec(bpy.types.Operator):
 
 		xml_option = XML_OPTION()
 		xml_option.include		= True
-		xml_option.active_layer	= False
-		xml_option.layer_beg	= 1
-		xml_option.layer_end	= 10
+
+		xml_option.mesh_active_layer	= False
+		xml_option.mesh_layer_beg		= 1
+		xml_option.mesh_layer_end		= 10
+		xml_option.arma_active_layer	= False
+		xml_option.arma_layer_beg		= 11
+		xml_option.arma_layer_end		= 20
+		
 
 		if xml_manager.BIDOUILLE:
 			f = open('/home/rene/tmp/script-fg2bl', mode='r')
@@ -116,6 +121,8 @@ class FG_OT_exec(bpy.types.Operator):
 
 		import_xml( filename, ac_option, xml_option )
 		bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+		bpy.ops.object.select_all(action='SELECT')
+		bpy.ops.view3d.edge_split()
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 #
