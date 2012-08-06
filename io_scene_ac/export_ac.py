@@ -12,10 +12,8 @@ import os
 import bpy
 import mathutils
 
-
-
-
-
+from math import radians
+from math import degrees
 
 
 TEX_PATH		= False
@@ -45,9 +43,6 @@ def extract_path(name_path):
 
 
 
-
-
-
 def without_path(name_path):
 	name = ""
 	for c in reversed(name_path):
@@ -58,29 +53,13 @@ def without_path(name_path):
 	return name
 
 
-
-
-
-def write_some_data(filepath, s):
-	f = open(filepath, 'a+')
-	f.write("%s" % s)
-	f.close()
-
-def writeln_some_data(filepath, s):
-	f = open(filepath, 'a+')
-	f.write("%s\n" % s)
-	f.close()
-
+	
 def write_file(fi, s):
 	fi.write("%s" % s)
 
 def writeln_file(fi, s):
 	fi.write("%s\n" % s)
 
-
-def new_file(filepath):
-	f = open(filepath, 'w')
-	f.close()
 
 def significatif( st ):
 	new_str = ""
@@ -113,27 +92,35 @@ def significatif( st ):
 	return new_str
 		
 		
+'''
+	mesh.edges
+    Edge in a Mesh datablock
+    is_loose
+        Loose edge
+        Type :	boolean, default False
+    select
+        Type :	boolean, default False
+   
+'''
 
 def write_edges( f, mesh ):
+	
 	nbEdges = len(mesh.edges)
+	
 	writeln_file( f, "numsurf " + str(nbEdges) )
+	
+	mesh_materials = mesh.materials
+	no = 0 # by default, put 'default white'                                                                                                                                                                         
+	if len(mesh_materials) > 0:                                                                                                                                                                                         
+			if mesh_materials[0] is not None:                                                                                                                                                         
+					if mesh_materials[0].name!="DefaultWhite":
+					
+						no = list_material.index(mesh_materials[0].name)+1 #+1 because we have 'default white'    
 
-	no = 1
-	try:
-		material = mesh.materials[0]
-	except:
-		no = 0
-
-	if no ==1:
-		matName = material.name
-		try:
-			no = list_material.index(matName)
-		except:
-			no = 0
 
 	for i in range(nbEdges):
 		edge = mesh.edges[i]
-		
+	
 		nbVertices = len(edge.vertices)
 
 		writeln_file( f, "SURF 0x02" )
@@ -142,82 +129,82 @@ def write_edges( f, mesh ):
 		
 		for ed in edge.vertices:
 			writeln_file( f, "%d 0 0" % ed )
-		#writeln_file( f, "%d 0 0" % (edge.vertices[0]) )
-		#writeln_file( f, "%d 0 0" % (edge.vertices[1]) )
 		
-	#writeln_file( f, "kids 0" )
 
 
-
-def write_faces( filename, mesh ):
-	f = open(filename, 'a+')
+def write_faces( f, mesh ):
 	
-	nbFaces = len(mesh.faces)
-	# if O face    mesh = edge
+	nbFaces = len(mesh.polygons)
+	
 	if nbFaces == 0 :
 		write_edges( f, mesh )
-		f.close()
 		return
 		
-	#  count face of mesh
+	#count face of mesh
 	writeln_file( f, "numsurf " + str(nbFaces) )
 	
-	no = 1
-	try:
-		material = mesh.materials[0]
-	except:
-		no = 0
-	
-	# found material use by face
-	if no==1:
-		matName = material.name
-		try:
-			no = list_material.index(matName)
-		except:
-			no = 0
-	
+	totUvNr=0	
+	uvnr=0
 	# for each face
 	for i in range(nbFaces):
-		face = mesh.faces[i]
+		face = mesh.polygons[i]
+		nbVertices = len(face.vertices)
+		uvnr=nbVertices*2
+		
 		try :
-			uv_tex = mesh.uv_textures[0].data[i].uv
+			uv_tex = mesh.uv_layers.active.data[:]
 			uv = []
-			for ct in uv_tex:
-				uv += ct
+			for j in range(nbVertices):
+				uv.append(uv_tex[totUvNr+j].uv[0])
+				uv.append(uv_tex[totUvNr+j].uv[1])
+		
 		except:
 			uv =[]
-			for j in range(8):
+			for j in range(uvnr):
 				uv += [0.0]
+
+		totUvNr = totUvNr+ nbVertices	
+		
+		'''
+		Surf section	SURF %d
+
+		The start of a surface. The parameter specifies the surface type and flags. T
+		he first 4 bits (flags & 0xF) is the type (0 = polygon, 1 = closedline, 2 = line). 
+		The next four bits (flags >> 4) specify the shading and backface. 
+		bit1 = shaded surface bit2 = twosided.
+		'''
+		flaglow  = 0 # polygon
+		flaghigh = 0
+		
+		if face.use_smooth:
+			flaghigh = flaghigh+ 1
 			
-
-		if len(mesh.materials) != 0:
-			no = mesh.faces[i].material_index
-			matName = mesh.materials[no].name
-			no = list_material.index(matName)
-			#print( "Face no %d material %s no %d" % (i,matName,no) )
-	
-
-
-
-		nbVertices = len(face.vertices)
+		if mesh.show_double_sided:
+			flaghigh = flaghigh+ 2
+			
+		surfstr = "SURF 0x%d%d" % (flaghigh, flaglow)
 		# face header
-		writeln_file( f, "SURF 0x10" )
-		writeln_file( f, "mat %d" % no)
+		writeln_file( f, surfstr)
+		
+		# calculating material number:
+		mesh_materials = mesh.materials
+		matno = 0 # by default, put 'default white'                                                                                                                                                                         
+		if len(mesh_materials) > 0:                                                                                                                                                                                         
+				if mesh_materials[face.material_index] is not None:                                                                                                                                                         
+						if mesh_materials[face.material_index].name!="DefaultWhite":
+						
+							matno = list_material.index(mesh_materials[face.material_index].name)+1 #+1 because we have 'default white'    
+		
+		
+		# found material used by face
+		
+		writeln_file( f, "mat %d" % matno)
 		writeln_file( f, "refs "+str(nbVertices) )
-		# write two first vertex
-		writeln_file( f, "%d %s %s" % ( face.vertices[0], significatif("%0.12f"%uv[0]), significatif("%0.12f"%uv[1]) ) )
-		writeln_file( f, "%d %s %s" % ( face.vertices[1], significatif("%0.12f"%uv[2]), significatif("%0.12f"%uv[3]) ) )
-		# if triangle
-		if nbVertices >= 3:
-			writeln_file( f, "%d %s %s" % ( face.vertices[2], significatif("%0.12f"%uv[4]), significatif("%0.12f"%uv[5]) ) )
-		# if quad
-		if nbVertices == 4:
-			writeln_file( f, "%d %s %s" % ( face.vertices[3], significatif("%0.12f"%uv[6]), significatif("%0.12f"%uv[7]) ) )
 	
-	#writeln_file( f, "kids 0" )
-	f.close()
-
-
+		iVxy = 0
+		for iVert in range(nbVertices):
+			writeln_file( f, "%d %s %s" % ( face.vertices[iVert], significatif("%0.12f"%uv[iVxy]), significatif("%0.12f"%uv[iVxy+1]) ) )
+			iVxy=iVxy+2
 
 
 def print_matrix( matrix ):
@@ -232,9 +219,8 @@ def extrait_translation_matrix( matrix ):
 	ret = mathutils.Vector( (t[0],t[1],t[2]) )
 	return ret
 
-def write_vertice( filename, obj, mesh ):
-	f = open(filename, 'a+')
-
+def write_vertice( f, obj, mesh ):
+	
 	scale = obj.scale
 	location = obj.location
 	euler = obj.rotation_euler
@@ -255,45 +241,9 @@ def write_vertice( filename, obj, mesh ):
 	
 	l = obj.matrix_basis[0]
 
-
-	print( "*** Objet %s" % obj.name )
-	print( "Contraints %d" % len(obj.constraints) )
-
-	print_matrix( obj.matrix_basis )
-	print_matrix( obj.matrix_local )
-	print_matrix( obj.matrix_world )
-
-
-	'''
-	b = True
-	delta = mathutils.Vector( (0.0,0.0,0.0) )
-	Obj = obj
-	while(b):
-		if Obj.parent != None:
-			Obj = Obj.parent
-			delta -=  mathutils.Vector( Obj.location )
-		else:
-			b = False
-	'''
 	delta =  extrait_translation_matrix(obj.matrix_world) - extrait_translation_matrix(obj.matrix_basis)
 	delta =  extrait_translation_matrix(obj.matrix_world) - extrait_translation_matrix(obj.matrix_basis)
 	parent = extrait_translation_matrix(obj.matrix_local) - extrait_translation_matrix(obj.matrix_basis)
-	#parent = mathutils.Vector( (0.0,0.0,0.0) )
-
-	'''
-	print( "matrix %f %f %f %f" % ( obj.matrix_basis[0], obj.matrix_basis[1], obj.matrix_basis[2], obj.matrix_basis[3] )  )
-	print( "matrix %f %f %f %f" % ( matrix_basis[4], matrix_basis[5], matrix_basis[6], matrix_basis[7] )  )
-	print( "matrix %f %f %f %f" % ( matrix_basis[8], matrix_basis[9], matrix_basis[10], matrix_basis[11] )  )
-	print( "matrix %f %f %f %f" % ( matrix_basis[12], matrix_basis[13], matrix_basis[14], matrix_basis[15] )  )
-	print( "Delta location %s" % delta_location_string )
-	print( "Delta scale %s" % delta_scale_string )
-	print( "Delta euler %s" % delta_euler_string )
-	'''
-	print( "Location %s" % location_string )
-	'''
-	print( "Scale %s" % scale_string )
-	print( "Euler %s" % euler_string )
-	'''
 	
 	writeln_file( f, "numvert " + str(nbVertices) )
 	
@@ -312,15 +262,8 @@ def write_vertice( filename, obj, mesh ):
 
 		v	= mathutils.Vector(vec3_vert)
 		vec3_vert = mat_euler * v
-		'''
-		vec3_vert *= vec3_scale
-		don't work
 		
-		'''
-		vec3_resu = vec3_vert
-		#vec3_resu = vec3_vert + delta + extrait_translation_matrix(obj.matrix_local)
-		#vec3_resu = vec3_vert + delta
-		#vec3_resu = vec3_vert + extrait_translation_matrix(obj.matrix_local) - extrait_translation_matrix(obj.matrix_basis)
+		vec3_resu = vec3_vert + extrait_translation_matrix(obj.matrix_local) - extrait_translation_matrix(obj.matrix_basis)
 
 		str_x = significatif("%0.6f" % vec3_resu.x)
 		str_y = significatif("%0.6f" % vec3_resu.z)
@@ -328,43 +271,48 @@ def write_vertice( filename, obj, mesh ):
 		# write vertex into ac file
 		writeln_file( f, str_x +' '+ str_y +' '+ str_z )		
 		
-	f.close()
-
-
-
 
 
 def extrait_crease( obj, mesh ):
 	pi = 3.141592653589793238462643383279502884197
 	if len(obj.modifiers)!=0:
 		for mod in obj.modifiers:
-			if mod.type=='EDGE_SPLIT':
-				return mod.split_angle/pi*180.0
+			if ((mod.type=='EDGE_SPLIT') and (mod.use_edge_angle==True) ):
+				return (mod.split_angle/pi)*180.0
 	if mesh.use_auto_smooth:	
 		if mesh.auto_smooth_angle!=0.0:
-			return mesh.auto_smooth_angle/pi*180.0
+			return (mesh.auto_smooth_angle/pi)*180.0
 	else:
-		return -1.0
+		#return -1.0
+		return 179.0
 	
 	return 30.0
 		
 	
 
-def write_header_mesh( filename, obj, mesh ):
-	f = open(filename, 'a+')
-
+def write_header_mesh( f, obj, mesh ):
+	
+	tex_name = ""
+	texrepx = 1
+	texrepy = 1
+	
 	try:
 		#material = mesh.materials[0]
-		tex_name = mesh.uv_textures[0].data[0].image.filepath
-		#tex_name = mesh.uv_textures[0].data[0].image.name
-		print(mesh.uv_textures[0].data[0].image.filepath)
-		print(mesh.uv_textures[0].data[0].image.name)
-		#writeln_file( f, "Texture name : %s" % tex_name )
+		if mesh.materials[0].texture_slots[0].texture.type =='IMAGE':
+			tex_name = mesh.materials[0].texture_slots[0].texture.image.filepath
+			
+			texrepx = mesh.materials[0].texture_slots[0].texture.repeat_x
+			texrepy = mesh.materials[0].texture_slots[0].texture.repeat_y
 	except:
 		tex_name = ""
-		#print( "Impossible read image name nb mesh.materials = %d  nb uv_texture[0].data  = %d" % (len(mesh.materials),len(mesh.uv_textures[0].data)) )
-		pass
 		
+	try:
+		#material = mesh.materials[0]
+		tex_name = mesh.tessface_uv_textures[0].data[0].image.filepath
+		
+	except:
+		tex_name = ""
+			
 	if TEX_PATH==False:
 		tex_name = without_path(tex_name)
 	else:
@@ -383,75 +331,77 @@ def write_header_mesh( filename, obj, mesh ):
 	writeln_file( f, 'data %d'%len(obj.name) )
 	writeln_file( f, obj.name )
 	if tex_name != "":
-		relative_name_tex = bpy.path.relpath( tex_name, start=path_name).split('//')[1]
-		print( relative_name_tex )
+		relative_name_tex = tex_name
+		#print( relative_name_tex )
 		writeln_file( f, 'texture "%s"' % relative_name_tex )
+		writeln_file( f, 'texrep %0.6f %0.6f' % (texrepx,  texrepy) )
 		
-	writeln_file( f, 'texrep 1 1' )
 	cr = extrait_crease(obj,mesh)
 	if cr != -1.0:
 		writeln_file( f, 'crease %0.6f' % extrait_crease(obj,mesh) )
 
- 
-	f.close()
 
 
-
-def write_material( filename, sel_obj ):
+def write_material( f, sel_obj ):
 	global list_material
 
 	list_material = []
 	
-	f = open(filename, 'a+')
-	
+	writeln_file( f, 'MATERIAL "DefaultWhite" rgb 1 1 1  amb 1 1 1  emis 0 0 0  spec 0.5 0.5 0.5  shi 64  trans 0' )
 	
 	for obj in sel_obj:
 		if obj.type != 'MESH':
 			continue
+		
+		
 		if len(obj.data.materials)==0:
 			continue
 			
 		for material in obj.data.materials:
-			name = material.name
+			
+			if (( material !=None)  and  (material.name !='DefaultWhite') ):
+				name = material.name
 
-			try:
-				no = list_material.index(name)
-			except:
-				# first use material -> write into ac file
-				list_material += [name]
+				try:
+					no = list_material.index(name)
+				except:
+					# first use material -> write into ac file
+					list_material += [name]
 
-				write_file( f, 'MATERIAL "%s"' % str(name) )
-				# color
-				color = material.diffuse_color
-				str_color = significatif("%0.6f"%color[0]) +' '+ significatif("%0.6f"%color[1]) +' '+ significatif("%0.6f"%color[2])
-				write_file( f, " rgb %s" % str_color )
-				# amb
-				amb = significatif( "%0.6f"% material.ambient )
-				#print( str(name) + " Ambient = " + amb)
-				write_file( f, " amb %s %s %s"%(amb,amb,amb) )
-				# emit
-				emit = significatif( "%0.6f"%material.emit)
-				write_file( f, " emis %s %s %s"%(emit,emit,emit) )
-				# specular
-				spec = material.specular_color
-				str_spec = significatif( "%0.6f"%spec[0]) +' '+ significatif( "%0.6f"%spec[1]) +' '+ significatif( "%0.6f"%spec[2])
-				write_file( f, " spec %s" % str_spec )
-				# shininess
-				write_file( f, " shi %d" % material.specular_hardness )
-				# transparent
-				write_file( f, " trans %s" % significatif("%0.6f" % (1.0-material.alpha)) )
-	
-				writeln_file( f, "" )
-	f.close()
-
-
+					write_file( f, 'MATERIAL "%s"' % str(name) )
+					# color
+					color = material.diffuse_color
+					str_color = significatif("%0.6f"%color[0]) +' '+ significatif("%0.6f"%color[1]) +' '+ significatif("%0.6f"%color[2])
+					write_file( f, " rgb %s" % str_color )
+					# amb
+					amb = significatif( "%0.6f"% material.ambient )
+					#print( str(name) + " Ambient = " + amb)
+					write_file( f, " amb %s %s %s"%(amb,amb,amb) )
+					# emit
+					emit = significatif( "%0.6f"%material.emit)
+					write_file( f, " emis %s %s %s"%(emit,emit,emit) )
+					# specular
+					spec = material.specular_color
+					str_spec = significatif( "%0.6f"%spec[0]) +' '+ significatif( "%0.6f"%spec[1]) +' '+ significatif( "%0.6f"%spec[2])
+					write_file( f, " spec %s" % str_spec )
+					# shininess
+					#write_file( f, " shi %d" % material.specular_hardness )
+				
+					# shininess
+					#write_file( f, " shi %d" % material.specular_hardness )
+					write_file( f, " shi %d" % int( material.specular_intensity * 128 ) )
+					#shininess of materials is taken from the shader specularity value in Blender, 
+					#old mapped from [0.0, 2.0] to [0, 128]
+					#noting above 1.0 so mapped from [0.0, 1.0] to [0, 128]
+					
+					# transparent
+					write_file( f, " trans %s" % significatif("%0.6f" % (1.0-material.alpha)) )
+		
+					writeln_file( f, "" )
 
 
 def test_son( list_objects, obj,name_parent ):
 	if obj.parent!=None:
-		if obj.parent.type == 'ARMATURE':
-			name_parent == 'world'
-			return True
 		if obj.parent.name == name_parent:
 			return True
 	elif name_parent == 'world':
@@ -464,10 +414,6 @@ def count_son( list_objects, name_parent ):
 	nb = 0
 	for obj in list_objects:
 			if obj.parent!=None:
-				if obj.parent.type != 'MESH':
-					continue
-					#name_parent == 'world'
-					#nb += 1
 				if obj.parent.name == name_parent:
 					nb += 1
 			elif name_parent == 'world':
@@ -475,53 +421,49 @@ def count_son( list_objects, name_parent ):
 	return nb
 
 
-
-
-
-
-
-def recurs_son( filename, context, list_objects, obj ):
+def recurs_son( f, context, list_objects, obj ):
 	print( "Ecriture de %s" % obj.name )
 
 
 	if obj.type == 'MESH':
 		mesh = obj.to_mesh( context.scene, APPLY_MODIFIERS, 'PREVIEW' )
-		write_header_mesh( filename, obj, mesh )
-		write_vertice( filename, obj, mesh )
-		write_faces( filename, mesh )
+		write_header_mesh( f, obj, mesh )
+		write_vertice( f, obj, mesh )
+		write_faces( f, mesh )
 	elif obj.type == 'EMPTY':
-		writeln_some_data( filename, "OBJECT group" )
-		writeln_some_data( filename, 'name "' + obj.name + '"' )
-		vec3_locat	= mathutils.Vector(obj.location)
+		f.write("OBJECT group\n" )
+		f.write('name "' + obj.name + '"\n' )
+		vec3_locat   = mathutils.Vector(obj.location)
 		str_x = significatif("%0.6f" % vec3_locat.x)
 		str_y = significatif("%0.6f" % vec3_locat.z)
 		str_z = significatif("%0.6f" % -vec3_locat.y)
-		writeln_some_data( filename, "loc %s %s %s" % (str_x, str_y, str_z) )
-		
-		
+		f.write("loc %s %s %s\n" % (str_x, str_y, str_z) )
 
 
 	nb = count_son(list_objects, obj.name)
-	writeln_some_data( filename, "kids %d" % nb )
+	f.write("kids %d\n" % nb )
 	#print( "%d enfants" % nb )
 	
 	if nb != 0:
 		for obj_ in list_objects:
 			if test_son( list_objects, obj_, obj.name ):
-				recurs_son( filename, context, list_objects, obj_ )
+				recurs_son( f, context, list_objects, obj_ )
 	#print ( " fin enfant de %s" % obj.name )
-	
 
-def write_ac_file( context, filename, select_only, tex_path, apply_modifiers ):
+		
+# writes an ac file 
+def write_ac_file( context, filename, select_only, apply_modifiers ):
 	global	SELECT_ONLY, TEX_PATH, APPLY_MODIFIERS
 	
 	SELECT_ONLY		= select_only
-	TEX_PATH		= tex_path
-	APPLY_MODIFIERS = apply_modifiers
+	TEX_PATH			= False
+	APPLY_MODIFIERS 	= apply_modifiers
 
+	
 	extract_path( filename )
-	new_file( filename )
-	writeln_some_data( filename, "AC3Db" )
+	
+	f = open(filename, 'w')
+	f.write("%s\n" %  "AC3Db" )
 	
 	if SELECT_ONLY:
 		list_objects = context.selected_objects
@@ -539,17 +481,19 @@ def write_ac_file( context, filename, select_only, tex_path, apply_modifiers ):
 		list_objects_sort.append( dic_obj_meshs[name] )
 	
 	
-	# write materials	
-	write_material( filename, list_objects )
+	# write materials   
+	write_material( f, list_objects )
 	# Header
 	# object world
-	writeln_some_data( filename, "OBJECT world" )
-	writeln_some_data( filename, "kids %d" % count_son(list_objects, 'world' ) )
-	
+	f.write("%s\n" % "OBJECT world" )
+	string_to_write = "kids %d" % count_son(list_objects, 'world' ) 
+	f.write("%s\n" % string_to_write )
+
 	for obj in list_objects_sort:
-		print( "Object : %s" % obj.name )
 		if test_son(list_objects, obj, 'world' ):
-			recurs_son( filename, context, list_objects, obj )
+			recurs_son( f, context, list_objects, obj )
+
+	f.close()
 	
 	return
 

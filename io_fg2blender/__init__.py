@@ -76,7 +76,7 @@ from . import *
 class ImportFG(bpy.types.Operator, ImportHelper):
 	'''This appears in the tooltip of the operator and in the generated docs'''
 	bl_idname = "import.fg2blender"  # this is important since its how bpy.ops.export.some_data is constructed
-	bl_label = "Import .xml"
+	bl_label = "Import FlightGear"
 	bl_options = {'PRESET'}	
 
 	# ExportHelper mixin class uses this
@@ -94,7 +94,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 
 	include		= BoolProperty(name="Include file", description="Read file include", default=True)
 
-	mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=False)
+	mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=True)
 	mesh_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=1)
 	mesh_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=10)
 

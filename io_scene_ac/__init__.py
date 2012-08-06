@@ -1,5 +1,6 @@
+
 bl_info = {
-    "name": "AC3D Exporter",
+    "name": "AC3D Mr No",
     "description": "Import/Export meshs in .ac format.",
     "author": "Rene Negre",
     "version": (0,1),
@@ -13,6 +14,13 @@ bl_info = {
         "func=detail&aid=<number>",
     "category": "Import-Export"}
 
+if "bpy" in locals():
+    import imp
+    if "import_ac" in locals():
+        imp.reload(import_ac)
+    if "export_ac" in locals():
+        imp.reload(export_ac)
+
 
 import bpy
 
@@ -22,11 +30,10 @@ from bpy.props import FloatProperty, StringProperty, BoolProperty, EnumProperty
 
 
 
-
-
 class ImportAC(bpy.types.Operator, ImportHelper):
-	'''This appears in the tooltip of the operator and in the generated docs'''
-	bl_idname = "import.some_data"  # this is important since its how bpy.ops.export.some_data is constructed
+	#bl_idname = "import.some_data"  # this is important since its how bpy.ops.export.some_data is constructed
+	bl_idname = "import_scene.import_ac"  # this is important since its how bpy.ops.export.some_data is constructed
+	
 	bl_label = "Import .ac"
 	bl_options = {'PRESET'}	
 
@@ -40,16 +47,21 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 	#use_setting = BoolProperty(name="Example Boolean", description="Example Tooltip", default=True)
 	#filepath = bpy.props.StringProperty(name="File Path", maxlen=1024, default="")
 
-	smooth_all	= BoolProperty(name="Smooth all", description="Tools smooth", default=True)
-	edge_split	= BoolProperty(name="Edge split", description="Object modifiers", default=True)
-	split_angle	= FloatProperty(name="Split angle", description="Value of edge-spit", min=0.0, max=180.0, default=65.0 )
+	#smooth_all	= BoolProperty(name="Smooth all", description="Tools smooth", default=True)
+	edge_split	= BoolProperty(name="Edge Split", description="Object modifiers", default=False)
+	#split_angle	= FloatProperty(name="Split angle", description="Value of edge-spit", min=0.0, max=180.0, default=30.0 )
 
 
 	def execute(self, context):
 		from . import import_ac
-		if self.edge_split:
-			self.smooth_all=False
-		import_ac.read_ac( self.filepath, smooth_all=self.smooth_all, edge_split=self.edge_split, split_angle=self.split_angle, context=context )
+		#if self.edge_split:
+		#	self.smooth_all=False
+			
+		#import_ac.read_ac( self.filepath, smooth_all=self.smooth_all, edge_split=self.edge_split, split_angle=self.split_angle )
+		
+		#import_ac.read_ac( self.filepath )
+		import_ac.read_ac( self.filepath , context, self.edge_split)
+		
 		'''
 		if self.edge_split:
 			import_ac.edge_split( context, self.split_angle )
@@ -61,11 +73,8 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 
 
 
-
-
 class ExportAC(bpy.types.Operator, ExportHelper):
-	'''This appears in the tooltip of the operator and in the generated docs'''
-	bl_idname = "export.some_data"  # this is important since its how bpy.ops.export.some_data is constructed
+	bl_idname = "export_scene.export_ac"  # this is important since its how bpy.ops.export.some_data is constructed
 	bl_label = "Export .ac"
 	bl_options = {'PRESET'}	
 
@@ -80,11 +89,9 @@ class ExportAC(bpy.types.Operator, ExportHelper):
 	#filepath = bpy.props.StringProperty(name="File Path", maxlen=1024, default="")
 
 	select_only 		= BoolProperty(name="Selection only", description="Export selected objects only", default=True)
-	tex_path			= BoolProperty(name="Path in texture name", description="Path name in texture name", default=False)
-	apply_modifiers		= BoolProperty(name="Apply modifiers", description="Apply modifiers in meshes", default=True)
+	#tex_path			= BoolProperty(name="Path in texture name", description="Path name in texture name", default=False)
+	apply_modifiers		= BoolProperty(name="Apply modifiers", description="Apply modifiers in meshes", default=False)
 
-
-	
 		
 	@classmethod
 	def poll(cls, context):
@@ -92,24 +99,28 @@ class ExportAC(bpy.types.Operator, ExportHelper):
 
 	def execute(self, context):
 		from . import export_ac
-		export_ac.write_ac_file(context, self.filepath, select_only=self.select_only, tex_path=self.tex_path,apply_modifiers=self.apply_modifiers  )
+		#export_ac.write_ac_file(context, self.filepath, select_only=self.select_only, tex_path=self.tex_path,apply_modifiers=self.apply_modifiers  )
+		export_ac.write_ac_file(context, self.filepath, select_only=self.select_only, apply_modifiers=self.apply_modifiers  )
 		return {'FINISHED'}
 
 
 
+'''
+====================================================================================================================
 
 
 
-#====================================================================================================================
-#
-#
-#
-#				REGISTER
-#
-#
-#====================================================================================================================
+				REGISTER
 
 
+====================================================================================================================
+'''
+
+
+
+
+
+# Only needed if you want to add into a dynamic menu
 
 
 
@@ -122,17 +133,16 @@ def menu_func_export(self, context):
 
 
 def register():
-    bpy.utils.register_class(ImportAC)
-    bpy.utils.register_class(ExportAC)
-	#bpy.utils.register_class(PanelOne)
+    bpy.utils.register_module(__name__)
+    #bpy.utils.register_class(PanelOne)
+
     bpy.types.INFO_MT_file_import.append(menu_func_import)
     bpy.types.INFO_MT_file_export.append(menu_func_export)
 
 
 def unregister():
-    bpy.utils.unregister_class(ImportAC)
-    bpy.utils.unregister_class(ExportAC)
-	#bpy.utils.unregister_class(PanelOne)
+    bpy.utils.unregister_module(__name__)
+    #bpy.utils.unregister_class(PanelOne)
     bpy.types.INFO_MT_file_import.remove(menu_func_import)
     bpy.types.INFO_MT_file_export.remove(menu_func_export)
 
