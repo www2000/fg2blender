@@ -122,7 +122,7 @@ class FG_OT_exec(bpy.types.Operator):
 		import_xml( filename, ac_option, xml_option )
 		bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
 		bpy.ops.object.select_all(action='SELECT')
-		bpy.ops.view3d.edge_split()
+		#bpy.ops.view3d.edge_split()
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 #
