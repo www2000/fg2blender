@@ -48,9 +48,6 @@ xml_extra_position = None
 xml_extra_rotation = None
 
 
-SMOOTH_ALL = False
-EDGE_SPLIT = False
-SPLIT_ANGLE = 30.0
 CONTEXT = None
 
 DEBUG = False
@@ -62,9 +59,6 @@ DEBUG = False
 
 class AC_OPTION:
 	def __init__(self):
-		self.smooth_all		= True
-		self.edge_split		= True
-		self.split_angle	= 60.0
 		self.active_layer	= True
 		self.layer_beg		= 1
 		self.layer_end		= 20
@@ -241,7 +235,6 @@ class MESH:
 
 	def create_uv( self, mesh ):
 		global material_list
-		global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 
 		if self.uv!=[]:
 			mesh.uv_textures.new()
@@ -304,7 +297,6 @@ class MESH:
 
 	def assign_material( self, obj_new ):
 		global material_list
-		global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 
 		if self.uv!=[]:
 			texture = None
@@ -401,9 +393,15 @@ class MESH:
 
 	#----------------------------------------------------------------------------------------------------------------------------------
 
+	def edge_split( self, obj  ):
+		debug_info( "Edge split all % 0.2f" % self.crease )
+		modifier = obj.modifiers.new( "", 'EDGE_SPLIT' )
+		if self.crease != -1.0:
+			modifier.split_angle = radians( self.crease )
+	#----------------------------------------------------------------------------------------------------------------------------------
+
 	def create_mesh( self ):
 		global material_list
-		global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE, CONTEXT
 		global current_ac_file
 		global xml_extra_position
 		global xml_extra_rotation
@@ -435,34 +433,9 @@ class MESH:
 		obj_new = bpy.data.objects.new(obj_name,mesh)
 		current_ac_file.meshs.append( obj_new.name )
 		current_ac_file.dic_name_meshs[obj_name] = obj_new.name
-		obj_new.data.fg.name_ac = obj_name
-		#print( 'Dictionnaire "%s" -> "%s"' % (obj_name,obj_new.name) )
-		obj_new.location = self.location
-		#v =  Vector( (0.0,0.0,0.0) ) + self.location
-		#print( "Location : x=%0.4f y=%0.4f z=%0.4f" % (v.x,v.y,v.z) )
-		'''
-		if xml_extra_position:
-			obj_new.delta_location = xml_extra_position
-			#obj_new.location = self.location + xml_extra_position
-		if xml_extra_rotation:
-			e = xml_extra_rotation
-			#print( "Euler : x=%0.4f y=%0.4f z=%0.4f" % (e.x,e.y,e.z) )
-			eleur  = Euler( (e.x, e.y, e.z) )
 
-			mat4 = eleur.to_matrix().to_4x4()
-			w = Vector( (0.0,0.0,0.0) ) + self.location
-			pos = mat4 * w
-			tr = Vector( (0.0,0.0,0.0) ) + pos - w
-			w = Vector( (0.0,0.0,0.0) ) + tr
-			#print( "tr : x=%0.4f y=%0.4f z=%0.4f" % (w.x,w.y,w.z) )
-	
-			w = Vector( (0.0,0.0,0.0) ) + obj_new.delta_location
-			obj_new.delta_location = Vector( (0.0,0.0,0.0) ) + w  + tr
-			#w = Vector( (0.0,0.0,0.0) ) + obj_new.delta_location
-			#print( "extra_location : x=%0.4f y=%0.4f z=%0.4f" % (w.x,w.y,w.z) )
-		
-			obj_new.delta_rotation_euler = Euler( (xml_extra_rotation.x, xml_extra_rotation.y, xml_extra_rotation.z) )
-		'''
+		obj_new.data.fg.name_ac = obj_name
+		obj_new.location = self.location
 		
 		compute_extra_transforme( obj_new, xml_extra_position, xml_extra_rotation )
 			
@@ -487,6 +460,7 @@ class MESH:
 		mesh.update(calc_edges=True)
 
 		obj_new.data.fg.ac_file = "" + self.filename
+		self.edge_split( obj_new )
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def create_texture( self ):
@@ -495,9 +469,6 @@ class MESH:
 		#21 name 21 char max
 		img_name_clean = tronc_name( img_name )
 
-		#print( "create_texture()  img_name : %s" % img_name )
-		#print( "create_texture()  tex_name : %s" % self.tex_name )
-	
 		# null ???
 		if img_name == "":
 			return
@@ -507,7 +478,6 @@ class MESH:
 	
 		filenamepath = img_name
 	
-		#debug_info( "create_texture()  name_path : %s" % bpy.path.basename(name_path) )
 		debug_info( "create_texture()  name_path : %s" % (name_path) )
 	
 		for tex in bpy.data.textures:
@@ -586,52 +556,6 @@ def debug_info( aff):
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def edge_split( context, split_angle ):
-	bpy.ops.object.select_all(action='DESELECT')
-	list_objects = context.scene.objects
-	
-	print( "--------------" )
-	print( "Edge split all" )
-	print( "--------------" )
-	for obj in list_objects:
-		if obj.type == 'MESH':
-			obj_name = obj.name
-			print( "Edge-split %s" % obj.name )
-			try:
-				bpy.ops.object.select_name(name=obj_name)
-				bpy.ops.object.shade_smooth()
-				try:
-					bpy.ops.object.modifier_add( type='EDGE_SPLIT')	
-				except:
-					print( "Erreur modifier_add Edge-split" )
-					
-				try:
-					for mod in obj.modifiers:
-						if mod.type=='EDGE_SPLIT':
-							mod.split_angle = radians(split_angle)
-				except:
-					print( "Erreur Edge-split angle" )
-				
-			except:
-				print( "Erreur Edge-split" )
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def smooth_all( context ):
-	bpy.ops.object.select_all(action='DESELECT')
-	list_objects = context.scene.objects
-
-	print( "----------" )
-	print( "Smooth_all" )
-	print( "----------" )
-	
-	for obj in list_objects:
-		if obj.type == 'MESH':
-			obj_name = obj.name	
-			print( "Smooth %s" % obj.name )
-			bpy.ops.object.select_name(name=obj_name)
-			bpy.ops.object.shade_smooth()
-#----------------------------------------------------------------------------------------------------------------------------------
-
 def get_ac_file():
 	global current_ac_file
 	return current_ac_file
@@ -702,19 +626,15 @@ def clone_ac( ac_file, xml_extra_position ):
 		if obj_new.type != 'EMPTY':
 			mesh.validate()
 			mesh.update(calc_edges=True)
-			#print( "Configure fg.ac_file" )
-			#print( obj_new.name )
-			#print( obj_new.type )
+
 			obj_new.data.fg.ac_file = "" + ac_file.name
 			
 		obj_name_ac = find_key( obj_name, ac_file.dic_name_meshs )
-		#print( 'Dictionnaire "%s" -> "%s"' % (obj_name_ac,obj_new.name) )
 		current_ac_file.meshs.append( obj_new.name )
 		current_ac_file.dic_name_meshs[obj_name_ac] = obj_new.name
 		if obj_new.type == 'MESH':
 			obj_new.data.fg.name_ac = obj_name_ac
 
-	#new_ac_file.create_group_ac()
 	time_end = time.time()
 	print( "\tClone %s in %0.2f sec" % (os.path.basename(ac_file.name),(time_end-time_deb) ) )
 	return

@@ -49,9 +49,6 @@ from .ac_manager import AC_FILE
 #from .ac_manager import ac_file
 
 #material_list = []
-SMOOTH_ALL = False
-EDGE_SPLIT = False
-SPLIT_ANGLE = 30.0
 CONTEXT = None
 
 DEBUG = False
@@ -365,7 +362,6 @@ def display_texture():
 
 
 def read_ac(filename, ac_option, extra=None):
-	global SMOOTH_ALL, EDGE_SPLIT, SPLIT_ANGLE
 	global CONTEXT
 	#global material_list
 	
@@ -377,9 +373,6 @@ def read_ac(filename, ac_option, extra=None):
 	
 	time_deb = time.time()
 	CONTEXT		= ac_option.context
-	SMOOTH_ALL	= ac_option.smooth_all
-	EDGE_SPLIT	= ac_option.edge_split
-	SPLIT_ANGLE	= ac_option.split_angle
 
 	ac_file = AC_FILE()
 	ac_file.name = filename
