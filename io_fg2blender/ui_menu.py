@@ -64,8 +64,7 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
         layout.operator("view3d.time_0_5x",			text='Time x0.5' )
 
         layout.separator()
-        layout.operator("view3d.create_rotate",		text='Define Rotation' )
-        layout.operator("view3d.create_translate",	text='Define Translation' )
+        layout.menu( 'VIEW3D_FG_sub_menu_armature',	text='Armatures' )
         layout.separator()
         layout.menu( 'VIEW3D_FG_sub_menu_unwrap' )
         #layout.operator("view3d.unwrap_4_faces",	text='Unwrap 4 faces' )
@@ -80,6 +79,44 @@ class VIEW3D_FG_sub_menu_unwrap(bpy.types.Menu):
         layout.operator("view3d.unwrap_4_faces",	text='Along X' ).axis = 'X'
         layout.operator("view3d.unwrap_4_faces",	text='Along Y' ).axis = 'Y'
         layout.operator("view3d.unwrap_4_faces",	text='Along Z' ).axis = 'Z'
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
+    bl_label = "Armatures"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.menu('VIEW3D_FG_sub_menu_create_rotation' )
+        layout.operator("view3d.create_translate",	text='Create Translation' )
+        layout.separator()
+        layout.operator("view3d.select_armature_property",		text='Select Property' )
+        layout.operator("view3d.copy_xml_file",		text='Copy xml file' )
+        layout.operator("view3d.copy_property",		text='Copy property' )
+        layout.separator()
+        layout.operator("view3d.init_rotation_zero",text='Reset Rotate' )
+        layout.operator("view3d.init_rotation",		text='Init Rotate' )
+        layout.separator()
+        layout.operator("view3d.save_keyframe",		text='Save Keyframe and Reset' )
+        layout.operator("view3d.restore_keyframe",	text='Restore Keyframe ' )
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class VIEW3D_FG_sub_menu_create_rotation(bpy.types.Menu):
+    bl_label = 'Create Rotation'
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("view3d.create_rotate_yz",	text='Create Rotation X').axis = 'X'
+        layout.operator("view3d.create_rotate_yz",	text='Create Rotation Y').axis = 'Y'
+        layout.operator("view3d.create_rotate_yz",	text='Create Rotation Z').axis = 'Z'
+        layout.operator("view3d.create_rotate_yz",	text='Create Rotation -X').axis = 'x'
+        layout.operator("view3d.create_rotate_yz",	text='Create Rotation -Y').axis = 'y'
+        layout.operator("view3d.create_rotate_yz",	text='Create Rotation -Z').axis = 'z'
+        layout.operator("view3d.create_rotate_yz",	text='Create Rotation XY').axis = 'XY'
+        layout.operator("view3d.create_rotate_yz",	text='Create Rotation XZ').axis = 'XZ'
+        layout.operator("view3d.create_rotate_yz",	text='Create Rotation YZ').axis = 'YZ'
+        layout.operator("view3d.create_rotate_yz",	text='Create Rotation XYZ').axis = 'XYZ'
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-F       utilise pour le "debuggage"
 # Réouvre le dernier xml     contenu dans '/home/rene/tmp/blender/script-fg2bl'
@@ -137,10 +174,14 @@ def register():
     bpy.utils.register_class(FG_OT_exec)
     bpy.utils.register_class(VIEW3D_FG_root_menu)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_unwrap)
+    bpy.utils.register_class(VIEW3D_FG_sub_menu_armature)
+    bpy.utils.register_class(VIEW3D_FG_sub_menu_create_rotation)
 def unregister():
     bpy.utils.unregister_class(FG_OT_exec)
     bpy.utils.unregister_class(VIEW3D_FG_root_menu)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_unwrap)
+    bpy.utils.unregister_class(VIEW3D_FG_sub_menu_armature)
+    bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_rotation)
 
 
 

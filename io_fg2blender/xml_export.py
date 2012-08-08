@@ -89,10 +89,16 @@ def write_animation( context, node, obj ):
 		if t == 2:
 			y = (y) / armature.data.fg.factor
 		#print( 'ind=%0.2f dep=%0.2f' % (x, y) )
-
+		x = (x -1.0)/59.0
+		beg = armature.data.fg.range_beg
+		end = armature.data.fg.range_end
+		
+		coef = end - beg
+		x = ( x * coef ) + beg
+			
 		str_x = "%0.4f" % fabs(x)
 		str_y = "%0.4f" % fabs(y)
-		if str_x != "0.0000" or str_y!="0.0000":
+		if str_x != "0.0000" or str_y!=("%0.4f"%armature.data.fg.range_end):
 			return True
 			
 		keyframe = fcurve.keyframe_points[1]
@@ -104,6 +110,12 @@ def write_animation( context, node, obj ):
 		if t == 2:
 			y = (y) / armature.data.fg.factor
 		#print( 'ind=%0.2f dep=%0.2f' % (x, y) )
+		x = (x -1.0)/59.0
+		beg = armature.data.fg.range_beg
+		end = armature.data.fg.range_end
+		
+		coef = end - beg
+		x = ( x * coef ) + beg
 
 		str_x = "%0.4f" % x
 		str_y = "%0.4f" % y
@@ -116,8 +128,8 @@ def write_animation( context, node, obj ):
 	def append_interpolation( node_animation, armature, t ):
 		if armature.animation_data == None:
 			return True
-		if not test_need_interpolation(armature):
-			return
+		#if not test_need_interpolation(armature):
+		#	return
 		fcurve = armature.animation_data.action.fcurves[1]
 
 		interpolation = create_node('interpolation')
@@ -128,6 +140,12 @@ def write_animation( context, node, obj ):
 			y = keyframe.co.y
 			#print( 'x=%0.2f y=%0.2f' % (x, y) )
 			x = (x -1.0)/59.0
+			beg = armature.data.fg.range_beg
+			end = armature.data.fg.range_end
+			
+			coef = end - beg
+			x = ( x * coef ) + beg
+			
 			if t == 1:	#rotation
 				y = degrees(y) / armature.data.fg.factor
 			if t == 2:	#translation
@@ -192,9 +210,11 @@ def write_animation( context, node, obj ):
 		m = armature.matrix_basis
 		v = m * head
  		
-		x_value = create_node_value( 'x-m', '%0.4f' % (v.x) )
-		y_value = create_node_value( 'y-m', '%0.4f' % (v.y) )
-		z_value = create_node_value( 'z-m', '%0.4f' % (v.z) )
+		loc = armature.delta_location
+ 		
+		x_value = create_node_value( 'x-m', '%0.4f' % (v.x-loc.x) )
+		y_value = create_node_value( 'y-m', '%0.4f' % (v.y-loc.y) )
+		z_value = create_node_value( 'z-m', '%0.4f' % (v.z-loc.z) )
 		
 		center.appendChild( x_value )
 		center.appendChild( y_value )

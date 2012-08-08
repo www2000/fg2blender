@@ -34,6 +34,7 @@ from . import *
 
 from mathutils import Vector
 from mathutils import Matrix
+from mathutils import Euler
 
 from math import radians
 from math import degrees
@@ -46,6 +47,14 @@ from bpy.props import BoolProperty
 from bpy.props import EnumProperty
 from bpy.props import CollectionProperty
 
+STACK_SAVE_KEYFRAMES = []
+
+class SAVE_KEYFRAME:
+	def __init__(self):
+		self.armature_name			= ""
+		self.keyframe				= []
+
+#
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_translate(bpy.types.Operator):
@@ -191,6 +200,111 @@ class FG_OT_create_rotate(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_create_rotate_YZ(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.create_rotate_yz"
+	bl_label = "Create Rotate"
+	bl_options = {'REGISTER', 'UNDO'}
+	
+	axis = StringProperty(default="")
+
+	@classmethod
+	def poll(cls, context):
+		return True
+		return context.active_object != None
+
+	def execute(self, context):
+		import bpy
+		import mathutils
+		from math import radians
+		
+		def create_rotate( vec ):
+			print( "Create_rotate : " )
+			armature = bpy.ops.object.armature_add( view_align=False )
+			vec = vec / 10.0
+			#vec = Vector(( 0.0, 0.1, 0.0) )
+			head = Vector( (0.0,0.0,0.0) )
+			tail = Vector( (0.0,0.0,0.0) ) + vec
+		
+			bpy.ops.object.editmode_toggle()
+
+			bpy.context.object.data.edit_bones["Bone"].head = head #Vector( (0.0,0.0,0.0) ) #self.head
+			bpy.context.object.data.edit_bones["Bone"].tail = tail #self.vec /10.0
+
+			bpy.ops.object.editmode_toggle()
+		
+			armature = bpy.data.armatures[-1]
+			print( armature.name )
+			for obj in bpy.data.objects:
+				if obj.type != 'ARMATURE':
+					continue
+				if obj.data.name == armature.name:
+					break 
+			if obj.type == 'ARMATURE':
+				print( "\tSelecion de : %s" %(obj.name) )
+				#bpy.ops.object.select_pattern(pattern=obj.name)
+				context.scene.objects.active = obj
+
+				#bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+				print("\tActivation Pose Mode")
+				bpy.ops.object.posemode_toggle()
+
+				bpy.ops.pose.select_all( action='SELECT' )
+				print("\tAjout limite rotation")
+				bpy.ops.pose.constraint_add(type='LIMIT_ROTATION')
+
+				print("\tMatrice en mode EulerXYZ")
+				print("\tActivation des limites en local")
+				limit_rotation = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
+				limit_rotation.use_limit_x = True
+				limit_rotation.use_limit_y = False
+				limit_rotation.use_limit_z = True
+				limit_rotation.owner_space = 'LOCAL'
+
+				bpy.data.objects[obj.name].pose.bones[-1].rotation_mode = 'XYZ'
+				bpy.data.objects[obj.name].pose.bones[-1].lock_rotation = ( True, False, True )
+				bpy.ops.object.posemode_toggle()
+			
+				obj.lock_rotation = ( True, False, True )
+			
+				obj.data.fg.type_anim		= 1
+				obj.data.fg.xml_file		= ""
+				obj.data.fg.xml_file_no		= 0
+				obj.data.fg.familly			= "custom"
+				obj.data.fg.familly_value	= "error"
+				obj.data.fg.property_value	= ""
+				obj.data.fg.property_idx	= -1
+				obj.data.fg.time			= 2.5
+				obj.data.fg.range_beg		= 0.0
+				obj.data.fg.range_beg_ini	= 0.0
+				obj.data.fg.range_end		= 1.0
+				obj.data.fg.range_end_ini	= 1.0
+				obj.data.fg.factor			= 1.0
+				obj.data.fg.factor_ini		= 1.0
+				obj.data.fg.offset_deg		= 0.0
+
+				print("\tDesactivation Pose Mode")
+				
+		for ax in self.axis:
+			if ax =='X':
+				vec = Vector((1.0,0.0,0.0))
+			elif ax =='Y':
+				vec = Vector((0.0,1.0,0.0))
+			elif ax =='Z':
+				vec = Vector((0.0,0.0,1.0))
+			elif ax =='x':
+				vec = Vector((-1.0,0.0,0.0))
+			elif ax =='y':
+				vec = Vector((0.0,-1.0,0.0))
+			elif ax =='z':
+				vec = Vector((0.0,0.0,-1.0))
+				
+			create_rotate( vec )
+
+		print( self.axis )
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_create_anim(bpy.types.Operator):
 	'''Add armature type rotate '''
 	bl_idname = "view3d.create_anim"
@@ -204,6 +318,295 @@ class FG_OT_create_anim(bpy.types.Operator):
 	def execute(self, context):
 		from . import xml_manager
 		xml_manager.create_anims()
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_save_keyframe(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.save_keyframe"
+	bl_label = "Create Animation"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return context.scene.objects.active.type == 'ARMATURE'
+
+	def execute(self, context):
+		from . import xml_manager
+		global STACK_SAVE_KEYFRAMES
+
+		obj = context.scene.objects.active
+		
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				continue
+
+			for skf in STACK_SAVE_KEYFRAMES:
+				if skf.name == obj.name:
+					print( "Deja sauvegardé" )
+					continue
+		
+			save_keyframe = SAVE_KEYFRAME()
+			save_keyframe.name = obj.name
+		
+			armature = obj#obj.data
+			if armature.animation_data != None:
+				print( " Sauvegarde " )
+				for fcurve in armature.animation_data.action.fcurves:
+					print( ' Fcurve  ' )
+					for point in fcurve.keyframe_points:
+						x = 0.0 + point.co.x
+						y = 0.0 + point.co.y
+						co = ( x, y )
+						print( " Point %s" % str(co) )
+						save_keyframe.keyframe.append( co )
+						point.co.y = 0.0
+				
+		
+			STACK_SAVE_KEYFRAMES.append( save_keyframe )		
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_restore_keyframe(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.restore_keyframe"
+	bl_label = "Create Animation"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return context.scene.objects.active.type == 'ARMATURE'
+
+	def execute(self, context):
+		from . import xml_manager
+		global STACK_SAVE_KEYFRAMES
+
+		obj = context.scene.objects.active
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				continue
+			
+			save_keyframe = None		
+			for skf in STACK_SAVE_KEYFRAMES:
+				if skf.name == obj.name:
+					save_keyframe = skf
+				
+			if save_keyframe == None:
+				print( '"%s" non sauvegarde' % obj.name )
+				continue
+		
+			armature = obj
+			if armature.animation_data != None:
+				idx = 0
+				for fcurve in armature.animation_data.action.fcurves:
+					for point in fcurve.keyframe_points:
+						print( str(save_keyframe.keyframe[idx]) )
+						point.co.y = save_keyframe.keyframe[idx][1]
+						idx = idx + 1
+				
+		
+			STACK_SAVE_KEYFRAMES.remove( save_keyframe )		
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_copy_xml_file(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.copy_xml_file"
+	bl_label = "Copy xml file"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return context.scene.objects.active.type == 'ARMATURE'
+		#return True
+
+	def execute(self, context):
+		from . import xml_manager
+
+		active_obj = context.scene.objects.active
+		xml_file = active_obj.data.fg.xml_file
+		xml_file_no = active_obj.data.fg.xml_file_no
+		for obj in context.selected_objects:
+			if obj == active_obj:
+				continue
+			if obj.type != 'ARMATURE':
+				continue
+			obj.data.fg.xml_file = xml_file
+			obj.data.fg.xml_file_no = xml_file_no
+			
+			if active_obj.delta_location != obj.delta_location:
+				obj.location = obj.location - active_obj.delta_location
+				obj.delta_location = obj.delta_location + active_obj.delta_location
+			if active_obj.delta_rotation_euler != obj.delta_rotation_euler:
+				obj.rotation_euler = obj.rotation_euler - active_obj.delta_rotation_euler
+				obj.delta_rotation_euler = obj.delta_rotation_euler + active_obj.delta_rotation_euler
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_copy_property(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.copy_property"
+	bl_label = "Copy property"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return context.scene.objects.active.type == 'ARMATURE'
+		#return True
+
+	def execute(self, context):
+		from . import xml_manager
+
+		active_obj = context.scene.objects.active
+		print( "Copy de %s" % active_obj.data.fg.property_value )
+		familly			= active_obj.data.fg.familly
+		familly_value	= active_obj.data.fg.familly_value
+		property_value	= active_obj.data.fg.property_value
+		property_idx	= active_obj.data.fg.property_idx
+		factor			= active_obj.data.fg.factor
+		factor_ini		= active_obj.data.fg.factor_ini
+		range_beg		= active_obj.data.fg.range_beg
+		range_end		= active_obj.data.fg.range_end
+		range_beg_ini	= active_obj.data.fg.range_beg_ini
+		range_end_ini	= active_obj.data.fg.range_end_ini
+		time			= active_obj.data.fg.time
+		time_ini		= active_obj.data.fg.time_ini
+
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				continue
+			print( "Copy sur %s" % obj.name )
+			print( "	Copy de  %s" % str(property_value) )
+			obj.data.fg.familly			= familly
+			obj.data.fg.familly_value	= familly_value
+			obj.data.fg.property_value	= property_value
+			obj.data.fg.property_idx	= property_idx
+			obj.data.fg.factor			= factor
+			obj.data.fg.factor_ini		= factor_ini
+			obj.data.fg.range_beg		= range_beg
+			obj.data.fg.range_end		= range_end
+			obj.data.fg.range_beg_ini	= range_beg_ini
+			obj.data.fg.range_end_ini	= range_end_ini
+			obj.data.fg.time			= time
+			obj.data.fg.time_ini		= time_ini
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_init_rotation(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.init_rotation"
+	bl_label = "Copy property"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return context.scene.objects.active.type == 'ARMATURE'
+		#return True
+
+	def execute(self, context):
+		from . import xml_manager
+		
+		#-------------------------------------------------------------------------------------------
+		def insert_keyframe_rotation( obj_armature, frame, value ):
+			bpy.context.scene.objects.active = obj_armature
+			bpy.ops.object.posemode_toggle()
+	
+			bpy.context.scene.frame_current = frame
+			bpy.ops.pose.select_all( action='SELECT' )
+			obj_armature.pose.bones[-1].rotation_mode = 'XYZ'
+			obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(value), 0.0), 'XYZ' )
+	
+			try:
+				bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+			except:
+				bpy.ops.anim.keying_set_add()
+				bpy.ops.anim.keying_set_active_set()
+				bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+
+			bpy.ops.object.posemode_toggle()
+
+		#-------------------------------------------------------------------------------------------
+		save_active = bpy.context.scene.objects.active
+
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				continue
+
+			print( "Insert keyframe sur %s" % obj.name )
+			
+			if obj.data.fg.range_beg != -999.0:
+				insert_keyframe_rotation( obj, 1, obj.data.fg.range_beg * obj.data.fg.factor )
+			else:
+				insert_keyframe_rotation( obj, 1, 0.0 )
+
+			if obj.data.fg.range_end != -999.0:
+				insert_keyframe_rotation( obj, 60, obj.data.fg.range_end * obj.data.fg.factor )
+			else:
+				insert_keyframe_rotation( obj, 1, 0.0 )
+
+
+			for fcurve in obj.animation_data.action.fcurves:
+				for keyframe in fcurve.keyframe_points:
+					keyframe.interpolation = 'LINEAR'
+
+
+		bpy.context.scene.objects.active = save_active
+			
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_init_rotation_zero(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.init_rotation_zero"
+	bl_label = "Copy property"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return context.scene.objects.active.type == 'ARMATURE'
+		#return True
+
+	def execute(self, context):
+		from . import xml_manager
+		
+		#-------------------------------------------------------------------------------------------
+		def insert_keyframe_rotation( obj_armature, frame, value ):
+			bpy.context.scene.objects.active = obj_armature
+			bpy.ops.object.posemode_toggle()
+	
+			bpy.context.scene.frame_current = frame
+			bpy.ops.pose.select_all( action='SELECT' )
+			obj_armature.pose.bones[-1].rotation_mode = 'XYZ'
+			obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(value), 0.0), 'XYZ' )
+	
+			try:
+				bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+			except:
+				bpy.ops.anim.keying_set_add()
+				bpy.ops.anim.keying_set_active_set()
+				bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+
+			bpy.ops.object.posemode_toggle()
+
+		#-------------------------------------------------------------------------------------------
+		save_active = bpy.context.scene.objects.active
+
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				continue
+
+			print( "Insert keyframe sur %s" % obj.name )
+			
+			insert_keyframe_rotation( obj, 1, 0.0 )
+			insert_keyframe_rotation( obj, 60, 0.0 )
+
+			for fcurve in obj.animation_data.action.fcurves:
+				for keyframe in fcurve.keyframe_points:
+					keyframe.interpolation = 'LINEAR'
+
+
+		bpy.context.scene.objects.active = save_active
+			
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -322,6 +725,32 @@ class FG_OT_select_property(bpy.types.Operator):
 						
 						select_childs( o )
 						o.select = True
+				
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_select_armature_property(bpy.types.Operator):
+	bl_idname = "view3d.select_armature_property"
+	bl_label = "Select property"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return context.active_object.type == 'ARMATURE'
+
+	def execute(self, context):
+		import bpy
+		import mathutils
+		from math import radians
+
+		property_name =  context.active_object.data.fg.property_value
+		print( property_name )
+		
+		for obj in bpy.data.objects:
+			if obj.type != 'ARMATURE':
+				continue
+			if obj.data.fg.property_value == property_name:
+				obj.select = True
 				
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -569,10 +998,18 @@ class FG_OT_exemple(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def register():
+	bpy.utils.register_class( FG_OT_save_keyframe)
+	bpy.utils.register_class( FG_OT_restore_keyframe)
 	bpy.utils.register_class( FG_OT_edges_split)
 	bpy.utils.register_class( FG_OT_select_property)
+	bpy.utils.register_class( FG_OT_select_armature_property)
+	bpy.utils.register_class( FG_OT_copy_xml_file)
+	bpy.utils.register_class( FG_OT_copy_property)
+	bpy.utils.register_class( FG_OT_init_rotation_zero)
+	bpy.utils.register_class( FG_OT_init_rotation)
 	bpy.utils.register_class( FG_OT_create_anim)
 	bpy.utils.register_class( FG_OT_create_rotate)
+	bpy.utils.register_class( FG_OT_create_rotate_YZ)
 	bpy.utils.register_class( FG_OT_create_translate)
 	bpy.utils.register_class( FG_OT_exemple)
 	bpy.utils.register_class( FG_OT_select_file )
@@ -584,10 +1021,18 @@ def register():
 	bpy.utils.register_class( FG_OT_write_xml )
 
 def unregister():
+	bpy.utils.unregister_class( FG_OT_save_keyframe)
+	bpy.utils.unregister_class( FG_OT_restore_keyframe)
 	bpy.utils.unregister_class( FG_OT_edges_split)
 	bpy.utils.unregister_class( FG_OT_select_property)
+	bpy.utils.unregister_class( FG_OT_select_armature_property)
+	bpy.utils.unregister_class( FG_OT_copy_xml_file)
+	bpy.utils.unregister_class( FG_OT_copy_property)
+	bpy.utils.unregister_class( FG_OT_init_rotation_zero)
+	bpy.utils.unregister_class( FG_OT_init_rotation)
 	bpy.utils.unregister_class( FG_OT_create_anim)
 	bpy.utils.unregister_class( FG_OT_create_rotate)
+	bpy.utils.unregister_class( FG_OT_create_rotate_YZ)
 	bpy.utils.unregister_class( FG_OT_create_translate)
 	bpy.utils.unregister_class( FG_OT_exemple)
 	bpy.utils.unregister_class( FG_OT_select_file )

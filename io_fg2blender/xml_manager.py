@@ -432,6 +432,8 @@ class ANIM:
 					_max = ind
 				if ind < _min:
 					_min = ind
+			print( "Debut %0.2f" % obj_armature.data.fg.range_beg )
+			print( "Fin   %0.2f" % obj_armature.data.fg.range_end )
 			#if self.interpolation[0][1] > self.interpolation[-1][1]:
 			if obj_armature.data.fg.range_beg !=-999.0:
 				if obj_armature.data.fg.range_beg <_min:
