@@ -104,7 +104,7 @@ class FG_OT_create_translate(bpy.types.Operator):
 			limit_translate.use_min_z = True
 			limit_translate.use_max_z = True
 			limit_translate.owner_space = 'LOCAL'
-			obj.lock_location = ( True, False, True )
+			#obj.lock_location = ( True, False, True )
 			bpy.ops.object.posemode_toggle()
 
 
@@ -125,6 +125,110 @@ class FG_OT_create_translate(bpy.types.Operator):
 			obj.data.fg.offset_deg		= 0.0
 
 			print("\tDesactivation Pose Mode")
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_create_translate_axis(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.create_translate_axis"
+	bl_label = "Create Rotate"
+	bl_options = {'REGISTER', 'UNDO'}
+	
+	axis = StringProperty(default="")
+
+	@classmethod
+	def poll(cls, context):
+		return True
+		return context.active_object != None
+
+	def execute(self, context):
+		import bpy
+		import mathutils
+		from math import radians
+		
+		def create_rotate( vec ):
+			print( "Create_translate : " )
+			armature = bpy.ops.object.armature_add( view_align=False )
+			vec = vec / 10.0
+			#vec = Vector(( 0.0, 0.1, 0.0) )
+			head = Vector( (0.0,0.0,0.0) )
+			tail = Vector( (0.0,0.0,0.0) ) + vec
+		
+			bpy.ops.object.editmode_toggle()
+
+			bpy.context.object.data.edit_bones["Bone"].head = head #Vector( (0.0,0.0,0.0) ) #self.head
+			bpy.context.object.data.edit_bones["Bone"].tail = tail #self.vec /10.0
+
+			bpy.ops.object.editmode_toggle()
+		
+			armature = bpy.data.armatures[-1]
+			print( armature.name )
+			for obj in bpy.data.objects:
+				if obj.type != 'ARMATURE':
+					continue
+				if obj.data.name == armature.name:
+					break 
+			if obj.type == 'ARMATURE':
+				print( "\tSelecion de : %s" %(obj.name) )
+				#bpy.ops.object.select_pattern(pattern=obj.name)
+				context.scene.objects.active = obj
+
+				#bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+				print("\tActivation Pose Mode")
+				bpy.ops.object.posemode_toggle()
+
+				bpy.ops.pose.select_all( action='SELECT' )
+				print("\tAjout limite location")
+				bpy.ops.pose.constraint_add(type='LIMIT_LOCATION')
+
+				print("\tActivation des limites en local")
+				limit_translate = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
+				limit_translate.use_min_x = True
+				limit_translate.use_max_x = True
+				limit_translate.use_min_y = False
+				limit_translate.use_max_y = False
+				limit_translate.use_min_z = True
+				limit_translate.use_max_z = True
+				limit_translate.owner_space = 'LOCAL'
+				obj.pose.bones[-1].lock_location = ( True, False, True )
+				bpy.ops.object.posemode_toggle()
+			
+			
+				obj.data.fg.type_anim		= 1
+				obj.data.fg.xml_file		= ""
+				obj.data.fg.xml_file_no		= 0
+				obj.data.fg.familly			= "custom"
+				obj.data.fg.familly_value	= "error"
+				obj.data.fg.property_value	= ""
+				obj.data.fg.property_idx	= -1
+				obj.data.fg.time			= 2.5
+				obj.data.fg.range_beg		= 0.0
+				obj.data.fg.range_beg_ini	= 0.0
+				obj.data.fg.range_end		= 1.0
+				obj.data.fg.range_end_ini	= 1.0
+				obj.data.fg.factor			= 1.0
+				obj.data.fg.factor_ini		= 1.0
+				obj.data.fg.offset_deg		= 0.0
+
+				print("\tDesactivation Pose Mode")
+				
+		for ax in self.axis:
+			if ax =='X':
+				vec = Vector((1.0,0.0,0.0))
+			elif ax =='Y':
+				vec = Vector((0.0,1.0,0.0))
+			elif ax =='Z':
+				vec = Vector((0.0,0.0,1.0))
+			elif ax =='x':
+				vec = Vector((-1.0,0.0,0.0))
+			elif ax =='y':
+				vec = Vector((0.0,-1.0,0.0))
+			elif ax =='z':
+				vec = Vector((0.0,0.0,-1.0))
+				
+			create_rotate( vec )
+
+		print( self.axis )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -265,7 +369,8 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 				bpy.data.objects[obj.name].pose.bones[-1].lock_rotation = ( True, False, True )
 				bpy.ops.object.posemode_toggle()
 			
-				obj.lock_rotation = ( True, False, True )
+				#obj.pose.bones[-1].rotation_mode = lock_location = ( True, False, True )
+				#obj.lock_rotation = ( True, False, True )
 			
 				obj.data.fg.type_anim		= 1
 				obj.data.fg.xml_file		= ""
@@ -1025,6 +1130,7 @@ def register():
 	bpy.utils.register_class( FG_OT_create_rotate)
 	bpy.utils.register_class( FG_OT_create_rotate_axis)
 	bpy.utils.register_class( FG_OT_create_translate)
+	bpy.utils.register_class( FG_OT_create_translate_axis)
 	bpy.utils.register_class( FG_OT_exemple)
 	bpy.utils.register_class( FG_OT_select_file )
 	bpy.utils.register_class( FG_OT_show_animation )
@@ -1048,6 +1154,7 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_create_rotate)
 	bpy.utils.unregister_class( FG_OT_create_rotate_axis)
 	bpy.utils.unregister_class( FG_OT_create_translate)
+	bpy.utils.unregister_class( FG_OT_create_translate_axis)
 	bpy.utils.unregister_class( FG_OT_exemple)
 	bpy.utils.unregister_class( FG_OT_select_file )
 	bpy.utils.unregister_class( FG_OT_show_animation )

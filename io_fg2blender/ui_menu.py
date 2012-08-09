@@ -88,7 +88,8 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.menu('VIEW3D_FG_sub_menu_create_rotation' )
-        layout.operator("view3d.create_translate",	text='Create Translation' )
+        layout.menu('VIEW3D_FG_sub_menu_create_translate' )
+        #layout.operator("view3d.create_translate",	text='Create Translation' )
         layout.separator()
         layout.operator("view3d.select_armature_property",		text='Select Property' )
         layout.operator("view3d.copy_xml_file",		text='Copy xml file' )
@@ -117,6 +118,24 @@ class VIEW3D_FG_sub_menu_create_rotation(bpy.types.Menu):
         layout.operator("view3d.create_rotate_axis",	text='Create Rotation XZ').axis = 'XZ'
         layout.operator("view3d.create_rotate_axis",	text='Create Rotation YZ').axis = 'YZ'
         layout.operator("view3d.create_rotate_axis",	text='Create Rotation XYZ').axis = 'XYZ'
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class VIEW3D_FG_sub_menu_create_translate(bpy.types.Menu):
+    bl_label = 'Create Translate'
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("view3d.create_translate_axis",	text='Create Translation X').axis = 'X'
+        layout.operator("view3d.create_translate_axis",	text='Create Translation Y').axis = 'Y'
+        layout.operator("view3d.create_translate_axis",	text='Create Translation Z').axis = 'Z'
+        layout.operator("view3d.create_translate_axis",	text='Create Translation -X').axis = 'x'
+        layout.operator("view3d.create_translate_axis",	text='Create Translation -Y').axis = 'y'
+        layout.operator("view3d.create_translate_axis",	text='Create Translation -Z').axis = 'z'
+        layout.operator("view3d.create_translate_axis",	text='Create Translation XY').axis = 'XY'
+        layout.operator("view3d.create_translate_axis",	text='Create Translation XZ').axis = 'XZ'
+        layout.operator("view3d.create_translate_axis",	text='Create Translation YZ').axis = 'YZ'
+        layout.operator("view3d.create_translate_axis",	text='Create Translation XYZ').axis = 'XYZ'
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-F       utilise pour le "debuggage"
 # Réouvre le dernier xml     contenu dans '/home/rene/tmp/blender/script-fg2bl'
@@ -176,12 +195,14 @@ def register():
     bpy.utils.register_class(VIEW3D_FG_sub_menu_unwrap)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_armature)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_create_rotation)
+    bpy.utils.register_class(VIEW3D_FG_sub_menu_create_translate)
 def unregister():
     bpy.utils.unregister_class(FG_OT_exec)
     bpy.utils.unregister_class(VIEW3D_FG_root_menu)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_unwrap)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_armature)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_rotation)
+    bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_translate)
 
 
 
