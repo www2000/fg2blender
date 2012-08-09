@@ -107,16 +107,16 @@ class VIEW3D_FG_sub_menu_create_rotation(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("view3d.create_rotate_yz",	text='Create Rotation X').axis = 'X'
-        layout.operator("view3d.create_rotate_yz",	text='Create Rotation Y').axis = 'Y'
-        layout.operator("view3d.create_rotate_yz",	text='Create Rotation Z').axis = 'Z'
-        layout.operator("view3d.create_rotate_yz",	text='Create Rotation -X').axis = 'x'
-        layout.operator("view3d.create_rotate_yz",	text='Create Rotation -Y').axis = 'y'
-        layout.operator("view3d.create_rotate_yz",	text='Create Rotation -Z').axis = 'z'
-        layout.operator("view3d.create_rotate_yz",	text='Create Rotation XY').axis = 'XY'
-        layout.operator("view3d.create_rotate_yz",	text='Create Rotation XZ').axis = 'XZ'
-        layout.operator("view3d.create_rotate_yz",	text='Create Rotation YZ').axis = 'YZ'
-        layout.operator("view3d.create_rotate_yz",	text='Create Rotation XYZ').axis = 'XYZ'
+        layout.operator("view3d.create_rotate_axis",	text='Create Rotation X').axis = 'X'
+        layout.operator("view3d.create_rotate_axis",	text='Create Rotation Y').axis = 'Y'
+        layout.operator("view3d.create_rotate_axis",	text='Create Rotation Z').axis = 'Z'
+        layout.operator("view3d.create_rotate_axis",	text='Create Rotation -X').axis = 'x'
+        layout.operator("view3d.create_rotate_axis",	text='Create Rotation -Y').axis = 'y'
+        layout.operator("view3d.create_rotate_axis",	text='Create Rotation -Z').axis = 'z'
+        layout.operator("view3d.create_rotate_axis",	text='Create Rotation XY').axis = 'XY'
+        layout.operator("view3d.create_rotate_axis",	text='Create Rotation XZ').axis = 'XZ'
+        layout.operator("view3d.create_rotate_axis",	text='Create Rotation YZ').axis = 'YZ'
+        layout.operator("view3d.create_rotate_axis",	text='Create Rotation XYZ').axis = 'XYZ'
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-F       utilise pour le "debuggage"
 # Réouvre le dernier xml     contenu dans '/home/rene/tmp/blender/script-fg2bl'
