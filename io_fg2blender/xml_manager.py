@@ -458,7 +458,7 @@ class ANIM:
 					coef = 1.0
 				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
 				value = dep * self.factor
-				self.insert_keyframe_rotation(  frame, value )
+				self.insert_keyframe_rotation( int(round(frame)), value )
 		else:
 			self.insert_keyframe_rotation( 60, self.offset_deg + self.factor )
 			self.insert_keyframe_rotation(  1, self.offset_deg + 0.0 )
@@ -533,7 +533,8 @@ class ANIM:
 				coef = _max - _min
 				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
 				value = dep * self.factor
-				self.insert_keyframe_translation(  frame, value )
+				self.insert_keyframe_translation( int(round(frame)), value )
+				#self.insert_keyframe_translation(  frame, value )
 		else:
 			self.insert_keyframe_translation( 60, self.factor )
 			self.insert_keyframe_translation(  1, 0.0 )

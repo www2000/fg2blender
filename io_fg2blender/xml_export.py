@@ -138,7 +138,8 @@ def write_animation( context, node, obj ):
 			entry = create_node( 'entry' )
 			x = keyframe.co.x
 			y = keyframe.co.y
-			y = y * armature.scale.y
+			if armature.data.fg.type_anim == 1:
+				y = y * armature.scale.y
 			#print( 'x=%0.2f y=%0.2f' % (x, y) )
 			x = (x -1.0)/59.0
 			beg = armature.data.fg.range_beg
