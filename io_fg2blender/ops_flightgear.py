@@ -200,9 +200,9 @@ class FG_OT_create_rotate(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
-class FG_OT_create_rotate_YZ(bpy.types.Operator):
+class FG_OT_create_rotate_axis(bpy.types.Operator):
 	'''Add armature type rotate '''
-	bl_idname = "view3d.create_rotate_yz"
+	bl_idname = "view3d.create_rotate_axis"
 	bl_label = "Create Rotate"
 	bl_options = {'REGISTER', 'UNDO'}
 	
@@ -1009,7 +1009,7 @@ def register():
 	bpy.utils.register_class( FG_OT_init_rotation)
 	bpy.utils.register_class( FG_OT_create_anim)
 	bpy.utils.register_class( FG_OT_create_rotate)
-	bpy.utils.register_class( FG_OT_create_rotate_YZ)
+	bpy.utils.register_class( FG_OT_create_rotate_axis)
 	bpy.utils.register_class( FG_OT_create_translate)
 	bpy.utils.register_class( FG_OT_exemple)
 	bpy.utils.register_class( FG_OT_select_file )
@@ -1032,7 +1032,7 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_init_rotation)
 	bpy.utils.unregister_class( FG_OT_create_anim)
 	bpy.utils.unregister_class( FG_OT_create_rotate)
-	bpy.utils.unregister_class( FG_OT_create_rotate_YZ)
+	bpy.utils.unregister_class( FG_OT_create_rotate_axis)
 	bpy.utils.unregister_class( FG_OT_create_translate)
 	bpy.utils.unregister_class( FG_OT_exemple)
 	bpy.utils.unregister_class( FG_OT_select_file )
