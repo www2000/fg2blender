@@ -335,6 +335,7 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 		from . import xml_manager
 		global STACK_SAVE_KEYFRAMES
 
+		print( 'bpy.ops.view3d.save_keyframe()' )
 		obj = context.scene.objects.active
 		
 		for obj in context.selected_objects:
@@ -343,27 +344,27 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 
 			for skf in STACK_SAVE_KEYFRAMES:
 				if skf.name == obj.name:
-					print( "Deja sauvegardé" )
+					print( '\tSave exist on "%s"' % obj.name )
 					continue
 		
 			save_keyframe = SAVE_KEYFRAME()
 			save_keyframe.name = obj.name
 		
 			armature = obj#obj.data
+			nb_key = 0
 			if armature.animation_data != None:
-				print( " Sauvegarde " )
 				for fcurve in armature.animation_data.action.fcurves:
-					print( ' Fcurve  ' )
 					for point in fcurve.keyframe_points:
 						x = 0.0 + point.co.x
 						y = 0.0 + point.co.y
 						co = ( x, y )
-						print( " Point %s" % str(co) )
 						save_keyframe.keyframe.append( co )
+						nb_key = nb_key + 1
 						point.co.y = 0.0
 				
 		
 			STACK_SAVE_KEYFRAMES.append( save_keyframe )		
+			print( '\tSave for "%s" : %d keyframes' % ( obj.name, nb_key ) )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -381,6 +382,7 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 		from . import xml_manager
 		global STACK_SAVE_KEYFRAMES
 
+		print( 'bpy.ops.view3d.restore_keyframe()' )
 		obj = context.scene.objects.active
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
@@ -392,7 +394,7 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 					save_keyframe = skf
 				
 			if save_keyframe == None:
-				print( '"%s" non sauvegarde' % obj.name )
+				print( '\tRestore "%s" : had not save' % obj.name )
 				continue
 		
 			armature = obj
@@ -400,12 +402,12 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 				idx = 0
 				for fcurve in armature.animation_data.action.fcurves:
 					for point in fcurve.keyframe_points:
-						print( str(save_keyframe.keyframe[idx]) )
 						point.co.y = save_keyframe.keyframe[idx][1]
 						idx = idx + 1
 				
 		
 			STACK_SAVE_KEYFRAMES.remove( save_keyframe )		
+			print( '\tRestore "%s" : %d keyframes' % ( obj.name, idx ) )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -423,6 +425,7 @@ class FG_OT_copy_xml_file(bpy.types.Operator):
 	def execute(self, context):
 		from . import xml_manager
 
+		print( 'bpy.ops.view3d.copy_xml_file()' )
 		active_obj = context.scene.objects.active
 		xml_file = active_obj.data.fg.xml_file
 		xml_file_no = active_obj.data.fg.xml_file_no
@@ -433,13 +436,21 @@ class FG_OT_copy_xml_file(bpy.types.Operator):
 				continue
 			obj.data.fg.xml_file = xml_file
 			obj.data.fg.xml_file_no = xml_file_no
+			print( '\tObject "%s"' % obj.name )
 			
 			if active_obj.delta_location != obj.delta_location:
+				print( "\t\tChange delta_location" )
 				obj.location = obj.location - active_obj.delta_location
 				obj.delta_location = obj.delta_location + active_obj.delta_location
 			if active_obj.delta_rotation_euler != obj.delta_rotation_euler:
-				obj.rotation_euler = obj.rotation_euler - active_obj.delta_rotation_euler
-				obj.delta_rotation_euler = obj.delta_rotation_euler + active_obj.delta_rotation_euler
+				print( "\t\tChange delta_rotation_euler" )
+				eul_0 = obj.rotation_euler
+				eul_1 = active_obj.delta_rotation_euler
+				obj.rotation_euler = Euler( (eul_0.x-eul_1.x, eul_0.y-eul_1.y, eul_0.z-eul_1.z) )
+
+				eul_0 = obj.delta_rotation_euler
+				obj.delta_rotation_euler = Euler( (eul_0.x+eul_1.x, eul_0.y+eul_1.y, eul_0.z+eul_1.z) )
+				#obj.delta_rotation_euler = obj.delta_rotation_euler + active_obj.delta_rotation_euler
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -457,6 +468,8 @@ class FG_OT_copy_property(bpy.types.Operator):
 	def execute(self, context):
 		from . import xml_manager
 
+		print( 'bpy.ops.view3d.copy_property()' )
+
 		active_obj = context.scene.objects.active
 		print( "Copy de %s" % active_obj.data.fg.property_value )
 		familly			= active_obj.data.fg.familly
@@ -471,12 +484,13 @@ class FG_OT_copy_property(bpy.types.Operator):
 		range_end_ini	= active_obj.data.fg.range_end_ini
 		time			= active_obj.data.fg.time
 		time_ini		= active_obj.data.fg.time_ini
+		print( '\tActive object : "%s"' % active_obj.name )
+		print( '\tValue : "%s"' % str(property_value) )
 
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
 				continue
-			print( "Copy sur %s" % obj.name )
-			print( "	Copy de  %s" % str(property_value) )
+			print( '\t\tOn object "%s"' % obj.name )
 			obj.data.fg.familly			= familly
 			obj.data.fg.familly_value	= familly_value
 			obj.data.fg.property_value	= property_value
