@@ -1093,6 +1093,64 @@ class FG_OT_write_xml(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_insertion_keyframe_rotate(bpy.types.Operator):
+	'''Insert keyframe rotate with linear interpolation '''
+	bl_idname = "view3d.insert_keyframe_rotate"
+	bl_label = "Insert keyframe rotate"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if context.mode != 'POSE':
+			return False
+		if context.active_object == None:
+			return False
+		if context.active_object.type != 'ARMATURE':
+			return False
+		if context.active_object.data.fg.type_anim != 1:
+			return False
+		return True
+
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		active_obj = context.active_object
+		bpy.ops.anim.keyframe_insert_menu( type='Rotation', confirm_success=False, always_prompt=False )
+
+		for fcurve in active_obj.animation_data.action.fcurves:
+			for keyframe in fcurve.keyframe_points:
+				keyframe.interpolation = 'LINEAR'
+		
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_insertion_keyframe_translate(bpy.types.Operator):
+	'''Insert keyframe rotate with linear interpolation '''
+	bl_idname = "view3d.insert_keyframe_translate"
+	bl_label = "Insert keyframe rotate"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if context.mode != 'POSE':
+			return False
+		if context.active_object == None:
+			return False
+		if context.active_object.type != 'ARMATURE':
+			return False
+		if context.active_object.data.fg.type_anim != 2:
+			return False
+		return True
+
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		active_obj = context.active_object
+		bpy.ops.anim.keyframe_insert_menu( type='Location', confirm_success=False, always_prompt=False )
+
+		for fcurve in active_obj.animation_data.action.fcurves:
+			for keyframe in fcurve.keyframe_points:
+				keyframe.interpolation = 'LINEAR'
+		
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_exemple(bpy.types.Operator):
 	'''C'est un exemple d'operateur blender '''
 	bl_idname = "view3d.exemple"					# sera appelé par bpy.ops.view3d.exemple()
@@ -1139,6 +1197,8 @@ def register():
 	bpy.utils.register_class( FG_OT_time_0_5x )
 	bpy.utils.register_class( FG_OT_time_2x )
 	bpy.utils.register_class( FG_OT_write_xml )
+	bpy.utils.register_class( FG_OT_insertion_keyframe_rotate )
+	bpy.utils.register_class( FG_OT_insertion_keyframe_translate )
 
 def unregister():
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
@@ -1163,4 +1223,6 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_time_0_5x )
 	bpy.utils.unregister_class( FG_OT_time_2x )
 	bpy.utils.unregister_class( FG_OT_write_xml )
+	bpy.utils.unregister_class( FG_OT_insertion_keyframe_rotate )
+	bpy.utils.unregister_class( FG_OT_insertion_keyframe_translate )
 
