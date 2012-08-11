@@ -423,6 +423,7 @@ class FG_OT_create_anim(bpy.types.Operator):
 	def execute(self, context):
 		from . import xml_manager
 		xml_manager.create_anims()
+		xml_manager.create_texts()
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 

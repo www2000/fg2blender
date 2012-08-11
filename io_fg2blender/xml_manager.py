@@ -43,7 +43,7 @@ xml_current_no = 0
 
 no_debug = 0
 
-DEBUG = False
+DEBUG = True
 BIDOUILLE = True
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
@@ -77,15 +77,16 @@ class XML_OPTION:
 
 class XML_FILE:
 	def __init__(self):
-		self.name				= ""
-		self.no					= 0
+		self.name			= ""
+		self.no				= 0
 		self.ac_names			= []
 		self.ac_files			= []
-		self.offset				= Vector( (0.0, 0.0, 0.0) )
+		self.offset			= Vector( (0.0, 0.0, 0.0) )
 		self.eulerXYZ			= Vector( (0.0, 0.0, 0.0) )
 		self.parent_offset		= Vector( (0.0, 0.0, 0.0) )
-		self.parent_eulerXYZ	= Vector( (0.0, 0.0, 0.0) )
-		self.anims				= []
+		self.parent_eulerXYZ		= Vector( (0.0, 0.0, 0.0) )
+		self.anims			= []
+		self.texts			= []
 		self.file_offset		= ""
 
 		
@@ -1161,6 +1162,50 @@ class TEXT:
 			extract_text_property( node )
 		elif self.type == 3:
 			extract_text_number( node )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_text_literal( self ):
+		debug_info('############# WRITTING TEXT LITERAL ###########')
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_text_property( self ):
+		debug_info('############# WRITTING TEXT PROPERTY ###########')
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_text_number( self ):
+		debug_info('############# WRITTING TEXT NUMBER ###########')
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_text( self ):
+		if self.type == 1:
+			self.create_text_literal()
+		elif self.type == 2:
+			self.create_text_property()
+		elif self.type == 3:
+			self.create_text_number()
+	#---------------------------------------------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def create_texts():
+	global xml_files
+	debug_info( '------' )
+	# Save active layers
+	save_active_layers = [ b for b in bpy.context.scene.layers ]
+
+	#
+	#	Create Anim
+	#
+	for xml_file, no in xml_files:
+		set_current_xml( xml_file, no )
+		debug_info( '------' )
+		debug_info( xml_file.name )
+		for text in xml_file.texts:
+			debug_info( 'Text type = %d' % text.type )
+			text.create_text()
+
+#----------------------------------------------------------------------------------------------------------------------------------
+		
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #

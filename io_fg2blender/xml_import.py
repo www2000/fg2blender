@@ -812,7 +812,7 @@ def parse_node( node, file_name ):
 		elif node.nodeName == 'text':
 			text = TEXT()
 			text.extract_text( node )
-			#xml_manager.get_current_xml().anims.append( anim )
+			xml_manager.get_current_xml().texts.append( text )
 			print_text( node )
 
 	#Attribut nodeType =2
