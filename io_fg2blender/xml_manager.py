@@ -1166,6 +1166,10 @@ class TEXT:
 
 	def create_text_literal( self ):
 		debug_info('############# WRITTING TEXT LITERAL ###########')
+		'''bpy.ops.object.text_add()
+		textObject = bpy.data.objects[-1]
+		textObject.name= self.name
+		textObject.data.body= self.text'''
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_text_property( self ):
