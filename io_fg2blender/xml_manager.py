@@ -1175,8 +1175,12 @@ class TEXT:
 		bpy.ops.object.add(type="FONT")
 		textObject = bpy.data.objects["Text"]
 		textObject.data.body= self.text
+		textObject.data.align= "CENTER"
 		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
 		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
+
+		bpy.ops.transform.rotate(value=(-1.5708,), axis=(0, 0, -1))
+		bpy.ops.transform.rotate(value=(1.5708,), axis=(0, 1, 0))
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_text_property( self ):
@@ -1184,8 +1188,12 @@ class TEXT:
 		bpy.ops.object.add(type="FONT")
 		textObject = bpy.data.objects["Text"]
 		textObject.data.body= "#####"
+		textObject.data.align= "CENTER"
 		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
 		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
+
+		bpy.ops.transform.rotate(value=(-1.5708,), axis=(0, 0, -1))
+		bpy.ops.transform.rotate(value=(1.5708,), axis=(0, 1, 0))
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_text_number( self ):
@@ -1193,8 +1201,12 @@ class TEXT:
 		bpy.ops.object.add(type="FONT")
 		textObject = bpy.data.objects["Text"]
 		textObject.data.body= "#####"
+		textObject.data.align= "CENTER"		
 		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
 		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
+
+		bpy.ops.transform.rotate(value=(-1.5708,), axis=(0, 0, -1))
+		bpy.ops.transform.rotate(value=(1.5708,), axis=(0, 1, 0))
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_text( self ):
