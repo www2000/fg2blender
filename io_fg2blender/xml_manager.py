@@ -43,7 +43,7 @@ xml_current_no = 0
 
 no_debug = 0
 
-DEBUG = False
+DEBUG = True
 BIDOUILLE = True
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS XML_OPTION
@@ -77,15 +77,16 @@ class XML_OPTION:
 
 class XML_FILE:
 	def __init__(self):
-		self.name				= ""
-		self.no					= 0
+		self.name			= ""
+		self.no				= 0
 		self.ac_names			= []
 		self.ac_files			= []
-		self.offset				= Vector( (0.0, 0.0, 0.0) )
+		self.offset			= Vector( (0.0, 0.0, 0.0) )
 		self.eulerXYZ			= Vector( (0.0, 0.0, 0.0) )
 		self.parent_offset		= Vector( (0.0, 0.0, 0.0) )
-		self.parent_eulerXYZ	= Vector( (0.0, 0.0, 0.0) )
-		self.anims				= []
+		self.parent_eulerXYZ		= Vector( (0.0, 0.0, 0.0) )
+		self.anims			= []
+		self.texts			= []
 		self.file_offset		= ""
 
 		
@@ -971,6 +972,264 @@ class ANIM:
 #							END CLASS ANIM
 #
 #----------------------------------------------------------------------------------------------------------------------------------
+
+
+#----------------------------------------------------------------------------------------------------------------------------------
+#							CLASS TEXT
+#----------------------------------------------------------------------------------------------------------------------------------
+#	name				= "plane"						string	if transform name
+#	type				= 0							1:Rotate 2:translate 3: group objects 4:pick 
+#												5:light 6:shader 7: Spin
+#	xml_file			= ""							string : xml  file
+#	factor				= 0.0
+#	property			= ""							string : flightgear property of transform
+#	pos				= Vector( (0.0, 0.0, 0.0) )				bone location
+#	vec				= Vector( (0.0, 0.0, 0.0) )				bone vector
+#	objects				= []							objects list  ( name in xml file )
+#	group_objects			= []							list : group_objects[0] name of group
+#	layer				= 0							number of layer
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class TEXT:
+	def __init__(self):
+		self.name			= ""
+		self.type			= 0						# 1:literal 2:text-value 3:number-value
+		self.xml_file			= ""
+		self.xml_file_no		= 0
+		self.factor			= 1.0
+		self.property			= ""
+		self.pos			= Vector( (0.0, 0.0, 0.0) )
+		self.vec			= Vector( (0.0, 0.0, 0.0) )
+		self.objects			= []
+		self.group_objects		= []
+		self.ac_file			= ""
+		self.offset_deg			= 0.0
+		self.layer			= 0						
+		self.active_layer		= False
+
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_type( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('type')
+		if childs:
+			for child in childs:
+				if child.hasChildNodes():
+					value = ret_text_value(child)
+					if value == 'literal':
+						self.type = 1
+					elif value == 'text-value':
+						self.type = 2
+					elif value == 'number-value':
+						self.type = 4
+		else:
+			childs = node.getElementsByTagName('name')
+			if childs:
+				self.type = 3
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_name( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('name')
+		if childs:
+			self.name = ret_text_value(childs[0])
+			debug_info( "\t%sName %s" % (tabs(),self.name) )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_property( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('property')
+		if childs:
+			self.property = ret_text_value(childs[0])
+			debug_info( "\t%sProperty %s" % (tabs(),self.property) )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_text_value( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('text')
+		if childs:
+			self.text = ret_text_value(childs[0])
+			debug_info( "\t%sText %s" % (tabs(),self.text) )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_character_size( self, node ):
+		from .xml_import import ret_float_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('character-size')
+		if childs:
+			self.character_size = ret_float_value(childs[0])
+			debug_info( "\t%sCharacter-size %s" % (tabs(),self.character_size) )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_character_aspect_ratio( self, node ):
+		from .xml_import import ret_float_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('character-aspect-ratio')
+		if childs:
+			self.character_aspect_ratio = ret_float_value(childs[0])
+			debug_info( "\t%sCharacter-aspect-ratio %s" % (tabs(),self.character_aspect_ratio) )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_max_height( self, node ):
+		from .xml_import import ret_float_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('max-height')
+		if childs:
+			self.max_height = ret_float_value(childs[0])
+			debug_info( "\t%sMax-height %s" % (tabs(),self.max_height) )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_max_width( self, node ):
+		from .xml_import import ret_float_value
+		from .xml_import import tabs
+
+		childs = node.getElementsByTagName('max-width')
+		if childs:
+			self.max_width = ret_float_value(childs[0])
+			debug_info( "\t%sMax-width %s" % (tabs(),self.max_width) )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def extract_text( self, node ):
+
+		def extract_text_literal( node ):
+			global no_debug
+			from .xml_import import tabs
+
+			debug_info( "%sExtract Text literal : %00d" % (tabs(),no_debug) )
+			no_debug += 1
+			self.extract_name( node )
+			self.extract_text_value( node )
+			self.extract_character_size( node )
+			self.extract_character_aspect_ratio( node )
+			self.extract_max_height( node )
+			self.extract_max_width( node )
+		#---------------------------------------------------------------------------------------------------------------------
+
+		def extract_text_property( node ):
+			global no_debug
+			from .xml_import import tabs
+
+			debug_info( "%sExtract Text property : %00d" % (tabs(),no_debug) )
+			no_debug += 1
+			self.extract_name( node )
+			self.extract_property( node )
+			self.extract_character_size( node )
+			self.extract_character_aspect_ratio( node )
+			self.extract_max_height( node )
+			self.extract_max_width( node )
+		#---------------------------------------------------------------------------------------------------------------------
+
+		def extract_text_number( node ):
+			global no_debug
+			from .xml_import import tabs
+
+			debug_info( "%sExtract Text number : %00d" % (tabs(),no_debug) )
+			no_debug += 1
+			self.extract_name( node )
+			self.extract_property( node )
+			self.extract_character_size( node )
+			self.extract_character_aspect_ratio( node )
+			self.extract_max_height( node )
+			self.extract_max_width( node )
+		#---------------------------------------------------------------------------------------------------------------------
+
+		#---------------------------------------------------------------------------------------------------------------------
+		# pour recopier la valeur et non pas la référence
+		from . import xml_import
+		
+		self.xml_file		= "" + xml_current.name
+		self.xml_file_no	= 0 + xml_current.no
+		self.layer		= 0 + xml_import.arma_layer
+		self.active_layer	= xml_import.option_arma_rotate_layer
+
+		self.extract_type( node )
+		debug_info( '\tfg.data.xml_file = %d-"%s"' % (self.xml_file_no,self.xml_file) )
+		
+		if self.type == 1:
+			extract_text_literal( node )
+		elif self.type == 2:
+			extract_text_property( node )
+		elif self.type == 3:
+			extract_text_number( node )
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_text_literal( self ):
+		debug_info('############# WRITTING TEXT LITERAL ###########')
+		bpy.ops.object.add(type="FONT")
+		textObject = bpy.data.objects["Text"]
+		textObject.name= self.name
+		textObject.data.body= self.text
+		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
+		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_text_property( self ):
+		debug_info('############# WRITTING TEXT PROPERTY ###########')
+		bpy.ops.object.add(type="FONT")
+		textObject = bpy.data.objects["Text"]
+		textObject.name= self.name
+		textObject.data.body= "#####"
+		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
+		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_text_number( self ):
+		debug_info('############# WRITTING TEXT NUMBER ###########')
+		bpy.ops.object.add(type="FONT")
+		textObject = bpy.data.objects["Text"]
+		textObject.name= self.name
+		textObject.data.body= "#####"
+		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
+		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
+	#---------------------------------------------------------------------------------------------------------------------
+
+	def create_text( self ):
+		if self.type == 1:
+			self.create_text_literal()
+		elif self.type == 2:
+			self.create_text_property()
+		elif self.type == 3:
+			self.create_text_number()
+	#---------------------------------------------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def create_texts():
+	global xml_files
+	# Save active layers
+	save_active_layers = [ b for b in bpy.context.scene.layers ]
+
+	#
+	#	Create Anim
+	#
+	for xml_file, no in xml_files:
+		set_current_xml( xml_file, no )
+		debug_info( '------' )
+		debug_info( xml_file.name )
+		for text in xml_file.texts:
+			debug_info( 'Text type = %d' % text.type )
+			text.create_text()
+
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+
+#----------------------------------------------------------------------------------------------------------------------------------
+#
+#							END CLASS TEXT
+#
+#----------------------------------------------------------------------------------------------------------------------------------
+
 # because blender problem    bpy.ops.object.select_pattern( obj_name )
 def get_object( obj_name ):
 	for obj in bpy.data.objects:

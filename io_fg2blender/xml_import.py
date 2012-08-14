@@ -45,6 +45,7 @@ from .ac_manager import AC_FILE
 from .xml_manager import XML_OPTION
 from .xml_manager import XML_FILE
 from .xml_manager import ANIM
+from .xml_manager import TEXT
 #---------------------------------------------------------------------------------------------------------------------
 niv = 0
 path_model = ""
@@ -477,6 +478,84 @@ def print_light( node ):
 			value = read_color_vecteur(child)
 			print( "%sSpecular : %s" % (tabs(),value) )
 	niv -= 1
+
+#---------------------------------------------------------------------------------------------------------------------
+
+def print_text( node ):
+	global niv
+	niv += 1
+	childs = node.getElementsByTagName('type')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sType : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('name')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sName : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('axis-alignment')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sAxis-alignment : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('text')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sText : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('property')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sProperty : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('format')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sFormat : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('layout')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sLayout : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('character-size')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sCharacter-size : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('character-aspect-ratio')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sCharacter-aspect-ratio : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('max-height')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sMax-height : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('max-width')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sMax-width : %s" % (tabs(),value) )
+
+	childs = node.getElementsByTagName('alignment')
+	for child in childs:
+		if child.hasChildNodes():
+			value = ret_text(child.childNodes[0])
+			print( "%sAlignment : %s" % (tabs(),value) )
+	niv -= 1
 #---------------------------------------------------------------------------------------------------------------------
 
 def print_animation( node ):
@@ -729,6 +808,13 @@ def parse_node( node, file_name ):
 			anim.extract_anim( node )
 			xml_manager.get_current_xml().anims.append( anim )
 			print_animation( node )
+
+		elif node.nodeName == 'text':
+			text = TEXT()
+			text.extract_text( node )
+			xml_manager.get_current_xml().texts.append( text )
+			print_text( node )
+
 	#Attribut nodeType =2
 	elif node.nodeType == 2:
 		print( "%sATTR:%s = %s" % (tabs(),node.nodeName, node.nodeValue) )

@@ -31,7 +31,7 @@
 
 
  
-familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear', 'consumable']
+familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear', 'consumable','surface_positions']
  
  
  
@@ -146,7 +146,13 @@ gears = [                		('controls/gear/brake-left',0,1,False),
                                 ('gear/gear[%d]/rollspeed-ms',0,'x',False),
                                 ('gear/gear[%d]/rollspeed-ms',0,1,False)					]
  
- 
+surface_positions = [			('surface-positions/rudder-pos-norm',-1,1,False),
+								('surface-positions/elevator-pos-norm',-1,1,False),
+								('surface-positions/left-aileron-pos-norm',-1,1,False),
+								('surface-positions/right-aileron-pos-norm',-1,1,False),
+								('surface-positions/flap-pos-norm',-1,1,False),
+								('surface-positions/left-aileron-pos-norm',-1,1,False),
+                                ('surface-positions/left-aileron-pos-norm',-1,1,False)				]
 
 
 
