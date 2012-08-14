@@ -1061,42 +1061,42 @@ class TEXT:
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_character_size( self, node ):
-		from .xml_import import ret_text_value
+		from .xml_import import ret_float_value
 		from .xml_import import tabs
 
 		childs = node.getElementsByTagName('character-size')
 		if childs:
-			self.character_size = ret_text_value(childs[0])
+			self.character_size = ret_float_value(childs[0])
 			debug_info( "\t%sCharacter-size %s" % (tabs(),self.character_size) )
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_character_aspect_ratio( self, node ):
-		from .xml_import import ret_text_value
+		from .xml_import import ret_float_value
 		from .xml_import import tabs
 
 		childs = node.getElementsByTagName('character-aspect-ratio')
 		if childs:
-			self.character_aspect_ratio = ret_text_value(childs[0])
+			self.character_aspect_ratio = ret_float_value(childs[0])
 			debug_info( "\t%sCharacter-aspect-ratio %s" % (tabs(),self.character_aspect_ratio) )
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_max_height( self, node ):
-		from .xml_import import ret_text_value
+		from .xml_import import ret_float_value
 		from .xml_import import tabs
 
 		childs = node.getElementsByTagName('max-height')
 		if childs:
-			self.max_height = ret_text_value(childs[0])
+			self.max_height = ret_float_value(childs[0])
 			debug_info( "\t%sMax-height %s" % (tabs(),self.max_height) )
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_max_width( self, node ):
-		from .xml_import import ret_text_value
+		from .xml_import import ret_float_value
 		from .xml_import import tabs
 
 		childs = node.getElementsByTagName('max-width')
 		if childs:
-			self.max_width = ret_text_value(childs[0])
+			self.max_width = ret_float_value(childs[0])
 			debug_info( "\t%sMax-width %s" % (tabs(),self.max_width) )
 	#---------------------------------------------------------------------------------------------------------------------
 
@@ -1166,19 +1166,32 @@ class TEXT:
 
 	def create_text_literal( self ):
 		debug_info('############# WRITTING TEXT LITERAL ###########')
-		'''bpy.ops.object.add(type="FONT")
+		bpy.ops.object.add(type="FONT")
 		textObject = bpy.data.objects["Text"]
-		print(textObject.name)
 		textObject.name= self.name
-		textObject.data.body= self.text'''
+		textObject.data.body= self.text
+		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
+		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_text_property( self ):
 		debug_info('############# WRITTING TEXT PROPERTY ###########')
+		bpy.ops.object.add(type="FONT")
+		textObject = bpy.data.objects["Text"]
+		textObject.name= self.name
+		textObject.data.body= "#####"
+		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
+		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_text_number( self ):
 		debug_info('############# WRITTING TEXT NUMBER ###########')
+		bpy.ops.object.add(type="FONT")
+		textObject = bpy.data.objects["Text"]
+		textObject.name= self.name
+		textObject.data.body= "#####"
+		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
+		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_text( self ):
@@ -1194,7 +1207,6 @@ class TEXT:
 
 def create_texts():
 	global xml_files
-	debug_info( '------' )
 	# Save active layers
 	save_active_layers = [ b for b in bpy.context.scene.layers ]
 
