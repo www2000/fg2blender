@@ -434,6 +434,8 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if context.active_object == None:
+			return False
 		return context.scene.objects.active.type == 'ARMATURE'
 
 	def execute(self, context):
@@ -481,6 +483,8 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if context.active_object == None:
+			return False
 		return context.scene.objects.active.type == 'ARMATURE'
 
 	def execute(self, context):
@@ -524,6 +528,8 @@ class FG_OT_copy_xml_file(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if context.active_object == None:
+			return False
 		return context.scene.objects.active.type == 'ARMATURE'
 		#return True
 
@@ -567,6 +573,8 @@ class FG_OT_copy_property(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if context.active_object == None:
+			return False
 		return context.scene.objects.active.type == 'ARMATURE'
 		#return True
 
@@ -619,6 +627,8 @@ class FG_OT_init_rotation(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if context.active_object == None:
+			return False
 		return context.scene.objects.active.type == 'ARMATURE'
 		#return True
 
@@ -682,6 +692,8 @@ class FG_OT_init_rotation_zero(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if context.active_object == None:
+			return False
 		return context.scene.objects.active.type == 'ARMATURE'
 		#return True
 
@@ -737,6 +749,8 @@ class FG_OT_edges_split(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if context.active_object == None:
+			return False
 		bModifier = False
 		for obj in context.selected_objects:
 			if obj.type != 'MESH':
@@ -855,6 +869,8 @@ class FG_OT_select_armature_property(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
+		if context.active_object == None:
+			return False
 		return context.active_object.type == 'ARMATURE'
 
 	def execute(self, context):
