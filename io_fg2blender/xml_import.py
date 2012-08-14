@@ -675,6 +675,67 @@ def read_offset_path( node, xml_file ):
 		print( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
+def read_rotation_text( node, text ):
+	xml_file = xml_manager.get_current_xml()
+	text.xml_offset = xml_file.offset
+	text.xml_eulerXYZ = xml_file.eulerXYZ
+	text.xml_parent_offset = xml_file.parent_offset
+	text.xml_parent_eulerXYZ = xml_file.parent_eulerXYZ
+	
+	childs = node.getElementsByTagName('offsets')
+	
+	if childs:
+		#childs = node.getElementsByTagName('center')
+		for child in childs:
+			if child.hasChildNodes():
+				roll = child.getElementsByTagName('roll-deg')
+				if roll:
+					text.eulerXYZ.x = xml_file.eulerXYZ.x + read_float_roll_deg(child)
+				pitch = child.getElementsByTagName('pitch-deg')
+				if pitch:
+					text.eulerXYZ.y = xml_file.eulerXYZ.y + read_float_pitch_deg(child)
+				heading = child.getElementsByTagName('heading-deg')
+				if heading:
+					text.eulerXYZ.z = xml_file.eulerXYZ.z + read_float_heading_deg(child)
+	else:
+		print( "%sPas de rotation" % tabs() )
+#---------------------------------------------------------------------------------------------------------------------
+
+def read_offset_text( node, text ):
+	xml_parent = xml_manager.get_current_xml()
+	xml_file = xml_manager.get_current_xml()
+	text.xml_offset = xml_file.offset
+	text.xml_eulerXYZ = xml_file.eulerXYZ
+	text.xml_parent_offset = xml_file.parent_offset
+	text.xml_parent_eulerXYZ = xml_file.parent_eulerXYZ
+	
+	
+	childs = node.getElementsByTagName('offsets')
+	if childs:
+		for child in childs:
+			if child.hasChildNodes():
+				translations = child.getElementsByTagName('x-m')
+				if translations:
+					value = read_center(child)
+				text.offset = Vector( (0.0,0.0,0.0) )  + read_vector_center(child)
+					
+	else:
+		print( "%sPas d'offset" % tabs() )
+#---------------------------------------------------------------------------------------------------------------------
+
+def compute_offset_text( text ):
+	
+	e = text.xml_eulerXYZ
+	eleur  = Euler( (e.x, e.y, e.z) )
+
+	mat4 = eleur.to_matrix().to_4x4()
+	pos = mat4 * text.offset
+	
+	#tr = xml_file.offset - pos
+	text.offset = text.xml_offset + pos
+	text.eulerXYZ = text.eulerXYZ + text.xml_eulerXYZ
+#---------------------------------------------------------------------------------------------------------------------
+
 def compute_offset( xml_file ):
 	
 	e = xml_file.parent_eulerXYZ
@@ -812,6 +873,9 @@ def parse_node( node, file_name ):
 		elif node.nodeName == 'text':
 			text = TEXT()
 			text.extract_text( node )
+			read_offset_text(node, text)
+			read_rotation_text(node, text)
+			compute_offset_text( text )
 			xml_manager.get_current_xml().texts.append( text )
 			print_text( node )
 

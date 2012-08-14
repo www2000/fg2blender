@@ -998,7 +998,7 @@ class TEXT:
 		self.xml_file_no		= 0
 		self.factor			= 1.0
 		self.property			= ""
-		self.pos			= Vector( (0.0, 0.0, 0.0) )
+		self.pos	    		= Vector( (0.0, 0.0, 0.0) )
 		self.vec			= Vector( (0.0, 0.0, 0.0) )
 		self.objects			= []
 		self.group_objects		= []
@@ -1006,6 +1006,12 @@ class TEXT:
 		self.offset_deg			= 0.0
 		self.layer			= 0						
 		self.active_layer		= False
+		self.offset				= Vector( (0.0, 0.0, 0.0) )
+		self.eulerXYZ			= Vector( (0.0, 0.0, 0.0) )
+		self.xml_offset			= Vector( (0.0, 0.0, 0.0) )
+		self.xml_eulerXYZ		= Vector( (0.0, 0.0, 0.0) )
+		self.xml_parent_offset	= Vector( (0.0, 0.0, 0.0) )
+		self.xml_parent_eulerXYZ= Vector( (0.0, 0.0, 0.0) )
 
 	#---------------------------------------------------------------------------------------------------------------------
 
@@ -1150,7 +1156,7 @@ class TEXT:
 		
 		self.xml_file		= "" + xml_current.name
 		self.xml_file_no	= 0 + xml_current.no
-		self.layer		= 0 + xml_import.arma_layer
+		self.layer	    	= 0 + xml_import.arma_layer
 		self.active_layer	= xml_import.option_arma_rotate_layer
 
 		self.extract_type( node )
@@ -1168,7 +1174,6 @@ class TEXT:
 		debug_info('############# WRITTING TEXT LITERAL ###########')
 		bpy.ops.object.add(type="FONT")
 		textObject = bpy.data.objects["Text"]
-		textObject.name= self.name
 		textObject.data.body= self.text
 		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
 		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
@@ -1178,7 +1183,6 @@ class TEXT:
 		debug_info('############# WRITTING TEXT PROPERTY ###########')
 		bpy.ops.object.add(type="FONT")
 		textObject = bpy.data.objects["Text"]
-		textObject.name= self.name
 		textObject.data.body= "#####"
 		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
 		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
@@ -1188,7 +1192,6 @@ class TEXT:
 		debug_info('############# WRITTING TEXT NUMBER ###########')
 		bpy.ops.object.add(type="FONT")
 		textObject = bpy.data.objects["Text"]
-		textObject.name= self.name
 		textObject.data.body= "#####"
 		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
 		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
@@ -1201,6 +1204,11 @@ class TEXT:
 			self.create_text_property()
 		elif self.type == 3:
 			self.create_text_number()
+			
+		textObject = bpy.data.objects["Text"]
+		textObject.name= self.name
+		textObject.delta_location = self.offset
+		textObject.delta_rotation_euler = Euler( (self.eulerXYZ.x, self.eulerXYZ.y, self.eulerXYZ.z) )
 	#---------------------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1218,8 +1226,9 @@ def create_texts():
 		debug_info( '------' )
 		debug_info( xml_file.name )
 		for text in xml_file.texts:
-			debug_info( 'Text type = %d' % text.type )
-			text.create_text()
+			if text.type != 0:
+				debug_info( 'Text type = %d' % text.type )
+				text.create_text()
 
 #----------------------------------------------------------------------------------------------------------------------------------
 		
