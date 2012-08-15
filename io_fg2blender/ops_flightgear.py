@@ -190,7 +190,7 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 				bpy.ops.object.posemode_toggle()
 			
 			
-				obj.data.fg.type_anim		= 1
+				obj.data.fg.type_anim		= 2
 				obj.data.fg.xml_file		= ""
 				obj.data.fg.xml_file_no		= 0
 				obj.data.fg.familly			= "custom"
@@ -1160,6 +1160,24 @@ class FG_OT_insertion_keyframe_translate(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_copy_name_bl2ac(bpy.types.Operator):
+	'''C'est un exemple d'operateur blender '''
+	bl_idname = "view3d.copy_name_bl2ac"					# sera appelé par bpy.ops.view3d.exemple()
+	bl_label = "Copy blender name in ac name "
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		for obj in context.selected_objects:
+			if obj.type != 'MESH':
+				continue
+			obj.data.fg.name_ac = obj.name
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_exemple(bpy.types.Operator):
 	'''C'est un exemple d'operateur blender '''
 	bl_idname = "view3d.exemple"					# sera appelé par bpy.ops.view3d.exemple()
@@ -1208,7 +1226,8 @@ def register():
 	bpy.utils.register_class( FG_OT_write_xml )
 	bpy.utils.register_class( FG_OT_insertion_keyframe_rotate )
 	bpy.utils.register_class( FG_OT_insertion_keyframe_translate )
-
+	bpy.utils.register_class( FG_OT_copy_name_bl2ac )
+	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
 	bpy.utils.unregister_class( FG_OT_restore_keyframe)
@@ -1234,4 +1253,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_write_xml )
 	bpy.utils.unregister_class( FG_OT_insertion_keyframe_rotate )
 	bpy.utils.unregister_class( FG_OT_insertion_keyframe_translate )
+	bpy.utils.unregister_class( FG_OT_copy_name_bl2ac )
 

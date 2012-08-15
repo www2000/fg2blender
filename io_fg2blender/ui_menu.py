@@ -65,6 +65,7 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
         layout.operator("view3d.select_property",	text='Select property' )
         layout.operator("view3d.time_2x",			text='Time x2' )
         layout.operator("view3d.time_0_5x",			text='Time x0.5' )
+        layout.operator("view3d.copy_name_bl2ac",	text='Copy blender name to ac name' )
 
         layout.separator()
         layout.menu( 'VIEW3D_FG_sub_menu_armature',	text='Armatures' )
