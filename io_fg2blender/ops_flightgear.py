@@ -148,7 +148,7 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 		
 		def create_rotate( vec ):
 			print( "Create_translate : " )
-			armature = bpy.ops.object.armature_add( view_align=False )
+			bpy.ops.object.armature_add( view_align=False )
 			vec = vec / 10.0
 			#vec = Vector(( 0.0, 0.1, 0.0) )
 			head = Vector( (0.0,0.0,0.0) )
@@ -161,13 +161,9 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 
 			bpy.ops.object.editmode_toggle()
 		
-			armature = bpy.data.armatures[-1]
-			print( armature.name )
-			for obj in bpy.data.objects:
-				if obj.type != 'ARMATURE':
-					continue
-				if obj.data.name == armature.name:
-					break 
+			obj = context.active_object
+			print( obj.name )
+			
 			if obj.type == 'ARMATURE':
 				print( "\tSelecion de : %s" %(obj.name) )
 				#bpy.ops.object.select_pattern(pattern=obj.name)
@@ -324,7 +320,7 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 		
 		def create_rotate( vec ):
 			print( "Create_rotate : " )
-			armature = bpy.ops.object.armature_add( view_align=False )
+			bpy.ops.object.armature_add( view_align=False )
 			vec = vec / 10.0
 			#vec = Vector(( 0.0, 0.1, 0.0) )
 			head = Vector( (0.0,0.0,0.0) )
@@ -337,13 +333,9 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 
 			bpy.ops.object.editmode_toggle()
 		
-			armature = bpy.data.armatures[-1]
-			print( armature.name )
-			for obj in bpy.data.objects:
-				if obj.type != 'ARMATURE':
-					continue
-				if obj.data.name == armature.name:
-					break 
+			obj = context.active_object
+			print( obj.name )
+
 			if obj.type == 'ARMATURE':
 				print( "\tSelecion de : %s" %(obj.name) )
 				#bpy.ops.object.select_pattern(pattern=obj.name)
