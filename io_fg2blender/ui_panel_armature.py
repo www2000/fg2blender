@@ -153,7 +153,7 @@ def layout_armature_properties(self, obj, context):
 	box = layout.box()
 	row = box.row(align=True)
 	row.prop( obj.data.fg, "xml_file" )
-	row.operator( "object.file_select", icon='FILESEL' )
+	row.operator( "object.file_select_xml", icon='FILESEL' )
 
 	row = box.row()
 	row.operator( "view3d.write_xml" ).obj_name = obj.name#.data.fg.xml_file

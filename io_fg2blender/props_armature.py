@@ -290,16 +290,6 @@ def RNA_armature():
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time_ini',		type=FG_PROP_armature, name='time_ini', description="familly" )
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='offset_deg',		type=FG_PROP_armature, name='offset_deg', description="Initial deg" )
 #----------------------------------------------------------------------------------------------------------------------------------
-
-class FG_PROP_mesh(bpy.types.PropertyGroup):
-	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = 'ac File')
-	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = 'ac name')
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def RNA_mesh():
-	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="ac_file", type=FG_PROP_mesh, name="ac_file", description="File .ac")
-	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="name_ac", type=FG_PROP_mesh, name="name_ac", description="name in ac file")
-#----------------------------------------------------------------------------------------------------------------------------------
 #
 #
 #
@@ -308,19 +298,13 @@ def RNA_mesh():
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
-#def removeProjectRNA():
-	# complex classes, depending on basic classes
-#----------------------------------------------------------------------------------------------------------------------------------
-
 def register():
 	bpy.utils.register_class( FG_PROP_armature )
-	bpy.utils.register_class( FG_PROP_mesh )
 	RNA_armature()
-	RNA_mesh()
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
 	bpy.utils.unregister_class( FG_PROP_armature )
-	bpy.utils.unregister_class( FG_PROP_mesh )
-	#removeProjectRNA()
+
 #----------------------------------------------------------------------------------------------------------------------------------
 

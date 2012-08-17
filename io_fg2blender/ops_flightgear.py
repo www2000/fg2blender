@@ -29,6 +29,8 @@
 
 import bpy
 import xml.dom.minidom
+import os
+
 
 from . import *
 
@@ -558,6 +560,37 @@ class FG_OT_copy_xml_file(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_copy_ac_file(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.copy_ac_file"
+	bl_label = "Copy ac file"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if context.active_object == None:
+			return False
+		return context.scene.objects.active.type == 'MESH'
+		#return True
+
+	def execute(self, context):
+		from . import xml_manager
+
+		print( 'bpy.ops.view3d.copy_ac_file()' )
+		active_obj = context.scene.objects.active
+		ac_file = active_obj.data.fg.ac_file
+		for obj in context.selected_objects:
+			if obj == active_obj:
+				continue
+			if obj.type != 'MESH':
+				continue
+			obj.data.fg.ac_file = ac_file
+			print( '\tObject "%s"' % obj.name )
+			
+				#obj.delta_rotation_euler = obj.delta_rotation_euler + active_obj.delta_rotation_euler
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_copy_property(bpy.types.Operator):
 	'''Add armature type rotate '''
 	bl_idname = "view3d.copy_property"
@@ -923,8 +956,8 @@ class FG_OT_show_all(bpy.types.Operator):
 		bpy.ops.object.select_all(action='INVERT')
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
-class FG_OT_select_file(bpy.types.Operator):
-	bl_idname = "object.file_select"
+class FG_OT_select_file_xml(bpy.types.Operator):
+	bl_idname = "object.file_select_xml"
 	bl_label = ""
 
 	#filepath = bpy.props.StringProperty(subtype="FILE_PATH")
@@ -937,6 +970,30 @@ class FG_OT_select_file(bpy.types.Operator):
 
 		if obj.type == 'ARMATURE':
 			obj.data.fg.xml_file = self.filepath
+		
+		#context.window_manager.fileselect_add(self)
+		return {'FINISHED'}
+
+	def invoke(self, context, event):
+		context.window_manager.fileselect_add(self)
+		#print( self.filepath )
+		#return {'FINISHED'}
+		return {'RUNNING_MODAL'}
+#----------------------------------------------------------------------------------------------------------------------------------
+class FG_OT_select_file_ac(bpy.types.Operator):
+	bl_idname = "object.file_select_ac"
+	bl_label = ""
+
+	#filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+	filepath = bpy.props.StringProperty()
+	filter_glob = StringProperty(default="*.ac", options={'HIDDEN'})
+	
+
+	def execute(self, context):
+		obj = context.active_object
+
+		if obj.type == 'MESH':
+			obj.data.fg.ac_file = self.filepath
 		
 		#context.window_manager.fileselect_add(self)
 		return {'FINISHED'}
@@ -1178,6 +1235,72 @@ class FG_OT_copy_name_bl2ac(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_save_ac_file(bpy.types.Operator):
+	'''C'est un exemple d'operateur blender '''
+	bl_idname = "view3d.save_ac_file"					# sera appelé par bpy.ops.view3d.exemple()
+	bl_label = "Save ac file "
+	bl_options = {'REGISTER', 'UNDO'}
+
+	object_name = bpy.props.StringProperty()
+
+	@classmethod
+	def poll(cls, context):
+		return True
+
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		from . import ac_export
+		#-----------------------------------------------------------------------------------------------------
+		def set_ac_file( ac_filename ):
+			filename = os.path.basename(ac_filename)
+			for obj in bpy.data.objects:
+				if obj.type != 'MESH':
+					continue
+				for group in obj.users_group:
+					if group.name == filename:
+						if obj.data.fg.ac_file == '':
+							obj.data.fg.ac_file = "" + group.name
+			
+		#-----------------------------------------------------------------------------------------------------
+		active_object = bpy.data.objects[self.object_name]
+		
+		group_name = ''		
+		for group in bpy.data.objects[self.object_name].users_group:
+			print( str(group) )
+			if group.name.find('.ac') != -1:
+				group_name = group.name
+			print( group_name )
+			set_ac_file( group_name )
+		
+		#if active_object.data.fg.ac_file == "":
+		if group_name == "":
+			return {'FINISHED'}
+		else:
+			if group_name == active_object.data.fg.ac_file:
+				filename = bpy.path.abspath('//') + group_name
+			else:
+				filename = active_object.data.fg.ac_file
+				
+			
+			
+			
+		#print( bpy.data.objects[self.object_name].data.fg.ac_file )
+		#print( bpy.path.abspath('//') )
+		print( 'Group name "%s"' % group_name )
+		print( 'Filename "%s"' % filename )
+		
+		list_objects = []
+		for obj in bpy.data.objects:
+			for group in obj.users_group:
+				if group.name == group_name:
+					list_objects.append(obj)
+
+		for obj in list_objects:
+			print( obj.name )
+		
+		ac_export.write_ac_file( context, filename, list_objects, True, False, True )
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_exemple(bpy.types.Operator):
 	'''C'est un exemple d'operateur blender '''
 	bl_idname = "view3d.exemple"					# sera appelé par bpy.ops.view3d.exemple()
@@ -1208,6 +1331,7 @@ def register():
 	bpy.utils.register_class( FG_OT_select_property)
 	bpy.utils.register_class( FG_OT_select_armature_property)
 	bpy.utils.register_class( FG_OT_copy_xml_file)
+	bpy.utils.register_class( FG_OT_copy_ac_file)
 	bpy.utils.register_class( FG_OT_copy_property)
 	bpy.utils.register_class( FG_OT_init_rotation_zero)
 	bpy.utils.register_class( FG_OT_init_rotation)
@@ -1217,7 +1341,8 @@ def register():
 	bpy.utils.register_class( FG_OT_create_translate)
 	bpy.utils.register_class( FG_OT_create_translate_axis)
 	bpy.utils.register_class( FG_OT_exemple)
-	bpy.utils.register_class( FG_OT_select_file )
+	bpy.utils.register_class( FG_OT_select_file_xml )
+	bpy.utils.register_class( FG_OT_select_file_ac )
 	bpy.utils.register_class( FG_OT_show_animation )
 	bpy.utils.register_class( FG_OT_show_all )
 	bpy.utils.register_class( FG_OT_only_render )
@@ -1227,6 +1352,7 @@ def register():
 	bpy.utils.register_class( FG_OT_insertion_keyframe_rotate )
 	bpy.utils.register_class( FG_OT_insertion_keyframe_translate )
 	bpy.utils.register_class( FG_OT_copy_name_bl2ac )
+	bpy.utils.register_class( FG_OT_save_ac_file )
 	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
@@ -1235,6 +1361,7 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_select_property)
 	bpy.utils.unregister_class( FG_OT_select_armature_property)
 	bpy.utils.unregister_class( FG_OT_copy_xml_file)
+	bpy.utils.unregister_class( FG_OT_copy_ac_file)
 	bpy.utils.unregister_class( FG_OT_copy_property)
 	bpy.utils.unregister_class( FG_OT_init_rotation_zero)
 	bpy.utils.unregister_class( FG_OT_init_rotation)
@@ -1244,7 +1371,8 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_create_translate)
 	bpy.utils.unregister_class( FG_OT_create_translate_axis)
 	bpy.utils.unregister_class( FG_OT_exemple)
-	bpy.utils.unregister_class( FG_OT_select_file )
+	bpy.utils.unregister_class( FG_OT_select_file_xml )
+	bpy.utils.unregister_class( FG_OT_select_file_ac )
 	bpy.utils.unregister_class( FG_OT_show_animation )
 	bpy.utils.unregister_class( FG_OT_show_all )
 	bpy.utils.unregister_class( FG_OT_only_render )
@@ -1254,4 +1382,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_insertion_keyframe_rotate )
 	bpy.utils.unregister_class( FG_OT_insertion_keyframe_translate )
 	bpy.utils.unregister_class( FG_OT_copy_name_bl2ac )
+	bpy.utils.unregister_class( FG_OT_save_ac_file )
 

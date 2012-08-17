@@ -86,20 +86,39 @@ def layout_object(self, obj, context):
 	layout = self.layout
 	xml_files = xml_manager.xml_files
 
-	boxTitre = layout.column()
-	boxTitre.label( text='Name in .ac file' )
+	row = layout.row()
+	row.label( text='AC3D file' )
 	box = layout.box()
-	col = box.column()
-	col.prop( obj.data.fg, "name_ac" )
+	boxTitre = box.column()
 
-	boxTitre = layout.column()
-	boxTitre.label( text='AC3D file' )
-	box = layout.box()
 	col = box.column()
 
-	if obj.type != 'EMPTY':
-		col.prop( obj.data.fg, "ac_file" )
+	if obj.type == 'MESH':
+		col.prop( obj.data.fg, "name_ac" )
+
+	'''
+	#----------------------------------------------------
+	boxTitre = layout.column()
+	boxTitre.label( text='xml file:' )
+	box = layout.box()
+	row = box.row(align=True)
+	row.prop( obj.data.fg, "xml_file" )
+	row.operator( "object.file_select", icon='FILESEL' )
+	'''
 	
+	
+	
+	
+	row = box.row()
+
+	if obj.type == 'MESH':
+		row = box.row(align=True)
+		row.prop( obj.data.fg, "ac_file" )
+		row.operator( "object.file_select_ac", icon='FILESEL' )
+	
+	row = box.row()
+	row.operator( "view3d.save_ac_file" ).object_name=obj.name
+
 	if obj.parent:
 		boxTitre = layout.column()
 		boxTitre.label( text='Parent' )

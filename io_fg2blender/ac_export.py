@@ -165,7 +165,8 @@ def write_edges( f, mesh ):
 def write_faces( filename, mesh ):
 	f = open(filename, 'a+')
 	
-	nbFaces = len(mesh.faces)
+	nbFaces = len(mesh.tessfaces)
+	print( 'Nombre de face "%d"' % nbFaces )
 	# if O face    mesh = edge
 	if nbFaces == 0 :
 		write_edges( f, mesh )
@@ -189,22 +190,38 @@ def write_faces( filename, mesh ):
 		except:
 			no = 0
 	
+	j = 0
 	# for each face
 	for i in range(nbFaces):
-		face = mesh.faces[i]
-		try :
-			uv_tex = mesh.uv_textures[0].data[i].uv
-			uv = []
-			for ct in uv_tex:
-				uv += ct
-		except:
+		face = mesh.tessfaces[i]
+		'''
+		meshUvLoop = mesh.uv_layers.active
+		print( 'Indice  "%d"' % i )
+		print( 'Nb UV "%d"' % len(meshUvLoop.data) )
+		'''
+
+		uv = []
+		
+		meshUvLoop = mesh.uv_layers.active
+		if meshUvLoop != None:
+			print( '\tNb points  "%d"' %  len(mesh.tessfaces[i].vertices) )
+			print( '\tIndice  "%d"' % i )
+			print( '\tNb UV "%d"' % len(meshUvLoop.data) )
+			for idx in mesh.tessfaces[i].vertices:
+				print( '\t\t UV "%s"' % str(meshUvLoop.data[idx].uv) )
+				print( '\tIndice  "%d"' % j )
+				uv.append( meshUvLoop.data[j].uv[0] )
+				uv.append( meshUvLoop.data[j].uv[1] )
+				j = j + 1
+				#print( str(uv) )
+		else:
 			uv =[]
 			for j in range(8):
 				uv += [0.0]
-			
+				
 
 		if len(mesh.materials) != 0:
-			no = mesh.faces[i].material_index
+			no = mesh.tessfaces[i].material_index
 			matName = mesh.materials[no].name
 			no = list_material.index(matName)
 			#print( "Face no %d material %s no %d" % (i,matName,no) )
@@ -233,10 +250,13 @@ def write_faces( filename, mesh ):
 
 
 
-def print_matrix( matrix ):
-	l = matrix[3]
-	#for l in matrix:
-	print( "matrix %f %f %f %f" % (l[0],l[1],l[2],l[3]) )
+def print_matrix( matrix, name ):
+	print( 'Matrix "%s"'  % name )
+	for i in range(4):
+		#print( 'Ligne no %d' % i )
+		l = matrix[i]
+		print( "\t%f\t%f\t%f\t%f" % (l[0],l[1],l[2],l[3]) )
+		#print( "matrix %f %f %f %f" % (l[0],l[1],l[2],l[3]) )
 
 
 
@@ -272,9 +292,9 @@ def write_vertice( filename, obj, mesh ):
 	print( "*** Objet %s" % obj.name )
 	print( "Contraints %d" % len(obj.constraints) )
 
-	print_matrix( obj.matrix_basis )
-	print_matrix( obj.matrix_local )
-	print_matrix( obj.matrix_world )
+	#print_matrix( obj.matrix_basis, 'matrix_basis' )
+	#print_matrix( obj.matrix_local, 'matrix_local' )
+	#print_matrix( obj.matrix_world, 'matrix_world' )
 
 
 	'''
@@ -324,13 +344,22 @@ def write_vertice( filename, obj, mesh ):
 		vec3_vert.z *= vec3_scale.z
 
 		v	= mathutils.Vector(vec3_vert)
-		vec3_vert = mat_euler * v
-		'''
-		vec3_vert *= vec3_scale
-		don't work
+		v_loc = mathutils.Vector( (obj.matrix_local[0][3],-obj.matrix_local[1][3],obj.matrix_local[2][3]) )
+		v_wor = mathutils.Vector( (obj.matrix_world[0][3],-obj.matrix_world[1][3],obj.matrix_world[2][3]) )
+		v_bas = mathutils.Vector( (obj.matrix_basis[0][3],-obj.matrix_basis[1][3],obj.matrix_basis[2][3]) )
 		
-		'''
+		#vec3_vert -= - v_wor + v_bas + v_bas
+		#v -= - v_wor + v_bas + v_bas
+
+		vec3_vert = mat_euler * v
+
+		vec3_vert.x -= - v_wor.x + v_bas.x
+		#vec3_vert = obj.matrix_world * v
+
+
 		vec3_resu = vec3_vert
+		
+		#vec3_resu = obj.matrix_local * vec3_vert
 		#vec3_resu = vec3_vert + delta + extrait_translation_matrix(obj.matrix_local)
 		#vec3_resu = vec3_vert + delta
 		#vec3_resu = vec3_vert + extrait_translation_matrix(obj.matrix_local) - extrait_translation_matrix(obj.matrix_basis)
@@ -370,19 +399,20 @@ def write_header_mesh( filename, obj, mesh ):
 		#material = mesh.materials[0]
 		tex_name = mesh.uv_textures[0].data[0].image.filepath
 		#tex_name = mesh.uv_textures[0].data[0].image.name
-		print(mesh.uv_textures[0].data[0].image.filepath)
-		print(mesh.uv_textures[0].data[0].image.name)
+		print( 'Chemin texture "%s"' % mesh.uv_textures[0].data[0].image.filepath)
+		print( 'Texture "%s"' % mesh.uv_textures[0].data[0].image.name)
 		#writeln_file( f, "Texture name : %s" % tex_name )
 	except:
 		tex_name = ""
 		#print( "Impossible read image name nb mesh.materials = %d  nb uv_texture[0].data  = %d" % (len(mesh.materials),len(mesh.uv_textures[0].data)) )
 		pass
-		
+	'''
 	if TEX_PATH==False:
 		tex_name = without_path(tex_name)
 	else:
 		tex_name = tex_name[2:]
 		print(tex_name)
+	'''
 	
 	#mesh location
 	vec3_locat	= mathutils.Vector(obj.location) + parent
@@ -396,8 +426,9 @@ def write_header_mesh( filename, obj, mesh ):
 	writeln_file( f, 'data %d'%len(obj.name) )
 	writeln_file( f, obj.name )
 	if tex_name != "":
-		relative_name_tex = bpy.path.relpath( tex_name, start=path_name).split('//')[1]
-		print( relative_name_tex )
+		#relative_name_tex = bpy.path.relpath( tex_name, start=path_name).split('//')[1]
+		relative_name_tex = bpy.path.relpath( tex_name ).split('//')[1]
+		print( 'Chemin relatif "%s" ' % relative_name_tex )
 		writeln_file( f, 'texture "%s"' % relative_name_tex )
 		
 	writeln_file( f, 'texrep 1 1' )
@@ -425,6 +456,8 @@ def write_material( filename, sel_obj ):
 			continue
 			
 		for material in obj.data.materials:
+			if material == None:
+				continue
 			name = material.name
 
 			try:
@@ -477,6 +510,9 @@ def count_son( list_objects, name_parent ):
 	nb = 0
 	for obj in list_objects:
 			if obj.parent!=None:
+				if obj.parent.type == 'ARMATURE' and name_parent == 'world':
+					nb += 1
+					continue
 				if obj.parent.type != 'MESH':
 					continue
 					#name_parent == 'world'
@@ -485,6 +521,8 @@ def count_son( list_objects, name_parent ):
 					nb += 1
 			elif name_parent == 'world':
 				nb += 1
+				
+	print( '"%s"  %d childs' % (name_parent, nb) )
 	return nb
 
 
@@ -525,7 +563,7 @@ def recurs_son( filename, context, list_objects, obj ):
 	#print ( " fin enfant de %s" % obj.name )
 	
 
-def write_ac_file( context, filename, select_only, tex_path, apply_modifiers ):
+def write_ac_file( context, filename, object_list, select_only, tex_path, apply_modifiers ):
 	global	SELECT_ONLY, TEX_PATH, APPLY_MODIFIERS
 	
 	SELECT_ONLY		= select_only
@@ -536,10 +574,17 @@ def write_ac_file( context, filename, select_only, tex_path, apply_modifiers ):
 	new_file( filename )
 	writeln_some_data( filename, "AC3Db" )
 	
+	'''
+	list_objects = []
 	if SELECT_ONLY:
-		list_objects = context.selected_objects
+		for obj in context.selected_objects:
+			if obj.type != 'MESH':
+				continue
+			list_objects.append( obj )
 	else:
 		list_objects = context.scene.objects
+	'''	
+	list_objects = object_list
 	
 	# create dictionnary for mesh order
 	dic_obj_meshs = {}

@@ -269,7 +269,7 @@ class ExportFG(bpy.types.Operator, ExportHelper):
 # Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):
     self.layout.operator(ImportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
-#    self.layout.operator(ImportAC.bl_idname, text="Flightgear (.ac)")		# text=Title in the menu
+    self.layout.operator(ImportAC.bl_idname, text="Flightgear (.ac)")		# text=Title in the menu
 
 #def menu_func_export(self, context):
 #    self.layout.operator(ExportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
@@ -279,6 +279,7 @@ def register():
 	from . import ops_flightgear
 	from . import ops_unwrap
 	from . import props_armature
+	from . import props_meshes
 	from . import ui_menu
 	from . import ui_panel_armature
 	from . import ui_panel_object
@@ -292,6 +293,7 @@ def register():
 	ops_flightgear.register()
 	ops_unwrap.register()
 	props_armature.register()
+	props_meshes.register()
 	ui_menu.register()
 	ui_panel_armature.register()
 	ui_panel_object.register()
@@ -310,6 +312,7 @@ def unregister():
 	from . import ops_flightgear
 	from . import ops_unwrap
 	from . import props_armature
+	from . import props_meshes
 	from . import ui_menu
 	from . import ui_panel_armature
 	from . import ui_panel_object
@@ -323,6 +326,7 @@ def unregister():
 	ops_flightgear.unregister()
 	ops_unwrap.unregister()
 	props_armature.unregister()
+	props_meshes.unregister()
 	ui_menu.unregister()
 	ui_panel_armature.unregister()
 	ui_panel_object.unregister()

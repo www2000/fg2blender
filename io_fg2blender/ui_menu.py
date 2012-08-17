@@ -66,6 +66,7 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
         layout.operator("view3d.time_2x",			text='Time x2' )
         layout.operator("view3d.time_0_5x",			text='Time x0.5' )
         layout.operator("view3d.copy_name_bl2ac",	text='Copy blender name to ac name' )
+        layout.operator("view3d.copy_ac_file",		text='Copy ac file (active->selects)' )
 
         layout.separator()
         layout.menu( 'VIEW3D_FG_sub_menu_armature',	text='Armatures' )
@@ -96,8 +97,8 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
         #layout.operator("view3d.create_translate",	text='Create Translation' )
         layout.separator()
         layout.operator("view3d.select_armature_property",		text='Select Property' )
-        layout.operator("view3d.copy_xml_file",		text='Copy xml file' )
-        layout.operator("view3d.copy_property",		text='Copy property' )
+        layout.operator("view3d.copy_xml_file",		text='Copy xml file (active->selects)' )
+        layout.operator("view3d.copy_property",		text='Copy property (active->selects)' )
         layout.separator()
         layout.operator("view3d.init_rotation_zero",text='Reset Rotate' )
         layout.operator("view3d.init_rotation",		text='Init Rotate' )
