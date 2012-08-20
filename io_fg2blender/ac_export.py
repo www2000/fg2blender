@@ -37,11 +37,21 @@ SELECT_ONLY		= True
 
 list_material = []
 
-
 parent = mathutils.Vector()
 
-
 path_name = ""
+DEBUG = True
+DEBUG_VERTICE = False
+
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def debug_info( aff):
+	global DEBUG
+	if DEBUG:
+		print( aff )
+#----------------------------------------------------------------------------------------------------------------------------------
+
 def extract_path(name_path):
 	global path_name
 	"""
@@ -54,12 +64,8 @@ def extract_path(name_path):
 	path_name = name
 	"""
 	path_name = os.path.dirname(os.path.normpath(name_path))
-	#print( "extract_path() : %s " % path_name )
-
-
-
-
-
+	#debug_info( "extract_path() : %s " % path_name )
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def without_path(name_path):
 	name = ""
@@ -69,31 +75,33 @@ def without_path(name_path):
 		else:
 			break
 	return name
-
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_some_data(filepath, s):
 	f = open(filepath, 'a+')
 	f.write("%s" % s)
 	f.close()
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def writeln_some_data(filepath, s):
 	f = open(filepath, 'a+')
 	f.write("%s\n" % s)
 	f.close()
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_file(fi, s):
 	fi.write("%s" % s)
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def writeln_file(fi, s):
 	fi.write("%s\n" % s)
+#----------------------------------------------------------------------------------------------------------------------------------
 
 
 def new_file(filepath):
 	f = open(filepath, 'w')
 	f.close()
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def significatif( st ):
 	new_str = ""
@@ -122,10 +130,9 @@ def significatif( st ):
 	if new_str == '-':
 		new_str = '0'
 		
-	#print( "nombre %s %s   resultat %s" % (entier,mantisse,new_str) )
+	#debug_info( "nombre %s %s   resultat %s" % (entier,mantisse,new_str) )
 	return new_str
-		
-		
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_edges( f, mesh ):
 	nbEdges = len(mesh.edges)
@@ -159,14 +166,13 @@ def write_edges( f, mesh ):
 		#writeln_file( f, "%d 0 0" % (edge.vertices[1]) )
 		
 	#writeln_file( f, "kids 0" )
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_faces( filename, mesh ):
 	f = open(filename, 'a+')
 	
 	nbFaces = len(mesh.tessfaces)
-	print( 'Nombre de face "%d"' % nbFaces )
+	debug_info( 'Nombre de face "%d"' % nbFaces )
 	# if O face    mesh = edge
 	if nbFaces == 0 :
 		write_edges( f, mesh )
@@ -194,26 +200,22 @@ def write_faces( filename, mesh ):
 	# for each face
 	for i in range(nbFaces):
 		face = mesh.tessfaces[i]
-		'''
-		meshUvLoop = mesh.uv_layers.active
-		print( 'Indice  "%d"' % i )
-		print( 'Nb UV "%d"' % len(meshUvLoop.data) )
-		'''
 
 		uv = []
 		
 		meshUvLoop = mesh.uv_layers.active
 		if meshUvLoop != None:
-			print( '\tNb points  "%d"' %  len(mesh.tessfaces[i].vertices) )
-			print( '\tIndice  "%d"' % i )
-			print( '\tNb UV "%d"' % len(meshUvLoop.data) )
+			if DEBUG_VERTICE:
+				debug_info( '\tNb points  "%d"' %  len(mesh.tessfaces[i].vertices) )
+				debug_info( '\tIndice  "%d"' % i )
+				debug_info( '\tNb UV "%d"' % len(meshUvLoop.data) )
 			for idx in mesh.tessfaces[i].vertices:
-				print( '\t\t UV "%s"' % str(meshUvLoop.data[idx].uv) )
-				print( '\tIndice  "%d"' % j )
+				if DEBUG_VERTICE:
+					debug_info( '\t\t UV "%s"' % str(meshUvLoop.data[idx].uv) )
+					debug_info( '\tIndice  "%d"' % j )
 				uv.append( meshUvLoop.data[j].uv[0] )
 				uv.append( meshUvLoop.data[j].uv[1] )
 				j = j + 1
-				#print( str(uv) )
 		else:
 			uv =[]
 			for j in range(8):
@@ -224,7 +226,7 @@ def write_faces( filename, mesh ):
 			no = mesh.tessfaces[i].material_index
 			matName = mesh.materials[no].name
 			no = list_material.index(matName)
-			#print( "Face no %d material %s no %d" % (i,matName,no) )
+			#debug_info( "Face no %d material %s no %d" % (i,matName,no) )
 	
 
 
@@ -246,24 +248,22 @@ def write_faces( filename, mesh ):
 	
 	#writeln_file( f, "kids 0" )
 	f.close()
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def print_matrix( matrix, name ):
-	print( 'Matrix "%s"'  % name )
+	debug_info( 'Matrix "%s"'  % name )
 	for i in range(4):
-		#print( 'Ligne no %d' % i )
+		#debug_info( 'Ligne no %d' % i )
 		l = matrix[i]
-		print( "\t%f\t%f\t%f\t%f" % (l[0],l[1],l[2],l[3]) )
-		#print( "matrix %f %f %f %f" % (l[0],l[1],l[2],l[3]) )
-
-
+		debug_info( "\t%f\t%f\t%f\t%f" % (l[0],l[1],l[2],l[3]) )
+		#debug_info( "matrix %f %f %f %f" % (l[0],l[1],l[2],l[3]) )
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def extrait_translation_matrix( matrix ):
 	t = matrix[3]
 	ret = mathutils.Vector( (t[0],t[1],t[2]) )
 	return ret
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_vertice( filename, obj, mesh ):
 	f = open(filename, 'a+')
@@ -289,12 +289,12 @@ def write_vertice( filename, obj, mesh ):
 	l = obj.matrix_basis[0]
 
 
-	print( "*** Objet %s" % obj.name )
-	print( "Contraints %d" % len(obj.constraints) )
+	debug_info( "*** Objet %s" % obj.name )
+	debug_info( "Contraints %d" % len(obj.constraints) )
 
-	#print_matrix( obj.matrix_basis, 'matrix_basis' )
-	#print_matrix( obj.matrix_local, 'matrix_local' )
-	#print_matrix( obj.matrix_world, 'matrix_world' )
+	print_matrix( obj.matrix_basis, 'matrix_basis' )
+	print_matrix( obj.matrix_local, 'matrix_local' )
+	print_matrix( obj.matrix_world, 'matrix_world' )
 
 
 	'''
@@ -314,18 +314,18 @@ def write_vertice( filename, obj, mesh ):
 	#parent = mathutils.Vector( (0.0,0.0,0.0) )
 
 	'''
-	print( "matrix %f %f %f %f" % ( obj.matrix_basis[0], obj.matrix_basis[1], obj.matrix_basis[2], obj.matrix_basis[3] )  )
-	print( "matrix %f %f %f %f" % ( matrix_basis[4], matrix_basis[5], matrix_basis[6], matrix_basis[7] )  )
-	print( "matrix %f %f %f %f" % ( matrix_basis[8], matrix_basis[9], matrix_basis[10], matrix_basis[11] )  )
-	print( "matrix %f %f %f %f" % ( matrix_basis[12], matrix_basis[13], matrix_basis[14], matrix_basis[15] )  )
-	print( "Delta location %s" % delta_location_string )
-	print( "Delta scale %s" % delta_scale_string )
-	print( "Delta euler %s" % delta_euler_string )
+	debug_info( "matrix %f %f %f %f" % ( obj.matrix_basis[0], obj.matrix_basis[1], obj.matrix_basis[2], obj.matrix_basis[3] )  )
+	debug_info( "matrix %f %f %f %f" % ( matrix_basis[4], matrix_basis[5], matrix_basis[6], matrix_basis[7] )  )
+	debug_info( "matrix %f %f %f %f" % ( matrix_basis[8], matrix_basis[9], matrix_basis[10], matrix_basis[11] )  )
+	debug_info( "matrix %f %f %f %f" % ( matrix_basis[12], matrix_basis[13], matrix_basis[14], matrix_basis[15] )  )
+	debug_info( "Delta location %s" % delta_location_string )
+	debug_info( "Delta scale %s" % delta_scale_string )
+	debug_info( "Delta euler %s" % delta_euler_string )
 	'''
-	print( "Location %s" % location_string )
+	debug_info( "Location %s" % location_string )
 	'''
-	print( "Scale %s" % scale_string )
-	print( "Euler %s" % euler_string )
+	debug_info( "Scale %s" % scale_string )
+	debug_info( "Euler %s" % euler_string )
 	'''
 	
 	writeln_file( f, "numvert " + str(nbVertices) )
@@ -371,10 +371,7 @@ def write_vertice( filename, obj, mesh ):
 		writeln_file( f, str_x +' '+ str_y +' '+ str_z )		
 		
 	f.close()
-
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def extrait_crease( obj, mesh ):
 	pi = 3.141592653589793238462643383279502884197
@@ -389,32 +386,20 @@ def extrait_crease( obj, mesh ):
 		return -1.0
 	
 	return 30.0
-		
-	
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_header_mesh( filename, obj, mesh ):
+	global path_name
 	f = open(filename, 'a+')
 
 	try:
-		#material = mesh.materials[0]
-		tex_name = mesh.uv_textures[0].data[0].image.filepath
-		#tex_name = mesh.uv_textures[0].data[0].image.name
-		print( 'Chemin texture "%s"' % mesh.uv_textures[0].data[0].image.filepath)
-		print( 'Texture "%s"' % mesh.uv_textures[0].data[0].image.name)
-		#writeln_file( f, "Texture name : %s" % tex_name )
+		n = mesh.tessfaces[0].material_index
+		tex_name = mesh.materials[n].texture_slots[0].texture.image.filepath
 	except:
-		tex_name = ""
-		#print( "Impossible read image name nb mesh.materials = %d  nb uv_texture[0].data  = %d" % (len(mesh.materials),len(mesh.uv_textures[0].data)) )
+		print( '****** Error: Unload Texture name ********' )
+		tex_name = ''
 		pass
-	'''
-	if TEX_PATH==False:
-		tex_name = without_path(tex_name)
-	else:
-		tex_name = tex_name[2:]
-		print(tex_name)
-	'''
-	
-	#mesh location
+
 	vec3_locat	= mathutils.Vector(obj.location) + parent
 		
 	writeln_file( f, "OBJECT poly" )
@@ -426,9 +411,16 @@ def write_header_mesh( filename, obj, mesh ):
 	writeln_file( f, 'data %d'%len(obj.name) )
 	writeln_file( f, obj.name )
 	if tex_name != "":
-		#relative_name_tex = bpy.path.relpath( tex_name, start=path_name).split('//')[1]
-		relative_name_tex = bpy.path.relpath( tex_name ).split('//')[1]
-		print( 'Chemin relatif "%s" ' % relative_name_tex )
+		path = os.path.dirname( bpy.path.abspath(tex_name) )
+		relpath = os.path.relpath( path, path_name )
+		debug_info( 'Texture name (tex_name) "%s"' % tex_name )
+		debug_info( 'Path  (tex_name) "%s"' % path )
+		debug_info( 'RelPath  (tex_name) "%s"' % relpath )
+		if relpath == '.':
+			relative_name_tex = os.path.basename( tex_name )
+		else:
+			relative_name_tex = relpath + os.sep + os.path.basename( tex_name )
+		debug_info( 'Chemin relatif "%s" ' % relative_name_tex )
 		writeln_file( f, 'texture "%s"' % relative_name_tex )
 		
 	writeln_file( f, 'texrep 1 1' )
@@ -438,8 +430,7 @@ def write_header_mesh( filename, obj, mesh ):
 
  
 	f.close()
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_material( filename, sel_obj ):
 	global list_material
@@ -473,7 +464,7 @@ def write_material( filename, sel_obj ):
 				write_file( f, " rgb %s" % str_color )
 				# amb
 				amb = significatif( "%0.6f"% material.ambient )
-				#print( str(name) + " Ambient = " + amb)
+				#debug_info( str(name) + " Ambient = " + amb)
 				write_file( f, " amb %s %s %s"%(amb,amb,amb) )
 				# emit
 				emit = significatif( "%0.6f"%material.emit)
@@ -489,9 +480,7 @@ def write_material( filename, sel_obj ):
 	
 				writeln_file( f, "" )
 	f.close()
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def test_son( list_objects, obj,name_parent ):
 	if obj.parent!=None:
@@ -504,7 +493,7 @@ def test_son( list_objects, obj,name_parent ):
 		return True
 
 	return False
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def count_son( list_objects, name_parent ):
 	nb = 0
@@ -522,18 +511,12 @@ def count_son( list_objects, name_parent ):
 			elif name_parent == 'world':
 				nb += 1
 				
-	print( '"%s"  %d childs' % (name_parent, nb) )
+	debug_info( '"%s"  %d childs' % (name_parent, nb) )
 	return nb
-
-
-
-
-
-
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def recurs_son( filename, context, list_objects, obj ):
-	print( "Ecriture de %s" % obj.name )
-
+	debug_info( "Ecriture de %s" % obj.name )
 
 	if obj.type == 'MESH':
 		mesh = obj.to_mesh( context.scene, APPLY_MODIFIERS, 'PREVIEW' )
@@ -554,14 +537,14 @@ def recurs_son( filename, context, list_objects, obj ):
 
 	nb = count_son(list_objects, obj.name)
 	writeln_some_data( filename, "kids %d" % nb )
-	#print( "%d enfants" % nb )
+	#debug_info( "%d enfants" % nb )
 	
 	if nb != 0:
 		for obj_ in list_objects:
 			if test_son( list_objects, obj_, obj.name ):
 				recurs_son( filename, context, list_objects, obj_ )
-	#print ( " fin enfant de %s" % obj.name )
-	
+	#debug_info ( " fin enfant de %s" % obj.name )
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def write_ac_file( context, filename, object_list, select_only, tex_path, apply_modifiers ):
 	global	SELECT_ONLY, TEX_PATH, APPLY_MODIFIERS
@@ -605,7 +588,7 @@ def write_ac_file( context, filename, object_list, select_only, tex_path, apply_
 	writeln_some_data( filename, "kids %d" % count_son(list_objects, 'world' ) )
 	
 	for obj in list_objects_sort:
-		print( "Object : %s" % obj.name )
+		debug_info( "Object : %s" % obj.name )
 		if test_son(list_objects, obj, 'world' ):
 			recurs_son( filename, context, list_objects, obj )
 	

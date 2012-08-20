@@ -1105,28 +1105,42 @@ class FG_OT_write_xml(bpy.types.Operator):
 
 		#if len(xml_manager.xml_files)<1:
 		#	return
-			
+		print( 'charge_xml "%ss"' % filename )
 		name = os.path.basename( filename )
-		script_name = name +'.script'
+		#script_name = name +'.script'
+		script_name = name
 		
 		if self.exist_in_text_editor( script_name ):
 			bpy.data.texts[script_name].clear()
 		else:
 			#bpy.ops.text.new( name )
 			bpy.data.texts.new( script_name )
-
-		node = xml_import.charge_xml( filename )
+	
+		node = None
+		obj = bpy.data.objects[self.obj_name]
+		if obj.data.fg.bIncDiskFile:
+			node = xml_import.charge_xml( filename )
 
 		if node == None:
 			node = xml.dom.minidom.Document()
 			prop_list = node.createElement( 'PropertyList' )
 			node.appendChild( prop_list )
-			print( name )
-			print( script_name )
-			#return
-		xml_export.write_animation_all( context, node, name, no )
+
+		xml_export.write_animation_all( context, node, filename, no )
 		bpy.data.texts[script_name].use_tabs_as_spaces = True
+		bpy.data.texts[script_name].filepath = filename
 		bpy.data.texts[script_name].write( node.toprettyxml() )
+		
+		print( 'Filename "%s"' % filename )
+		from . import props_armature
+		f = open(filename, 'w')
+		obj = bpy.data.objects[self.obj_name]
+		if obj.data.fg.bWriteDisc:
+			for line in bpy.data.texts[script_name].lines:
+				print( line.body )
+				f.write( line.body )
+				f.write( props_armature.endline() + '\n' )
+		f.close()
 		#bpy.data.texts[name].write( node.toxml() )
 	#---------------------------------------------------------------------------
 	def execute( self, context ):
@@ -1138,18 +1152,19 @@ class FG_OT_write_xml(bpy.types.Operator):
 	#---------------------------------------------------------------------------
 
 	def invoke(self, context, event):
-		print( self.obj_name )
+		print( 'Save xml_file "%s"' % self.obj_name )
 		obj = bpy.data.objects[self.obj_name]
 		filename = obj.data.fg.xml_file
 		no		 = obj.data.fg.xml_file_no
-		print( filename )
+		print( ' file = "%s"' % filename )
 		#filename = self.filename
 		if filename == "":
 			filename = xml_manager.xml_files[0][0].name
 		
 		if filename.find('Aircraft')!=-1:
-			right_name = filename.partition('Aircraft')[2]
-			name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + right_name
+			#right_name = filename.partition('Aircraft')[2]
+			#name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft/' + right_name
+			name_path = filename
 		else:
 			if not xml_manager.exist_xml_file( filename, no ):
 				self.creer_xml( filename )
@@ -1301,6 +1316,40 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_transforme_to_rotate(bpy.types.Operator):
+	'''C'est un exemple d'operateur blender '''
+	bl_idname = "view3d.transform_to_rotate"					# sera appelé par bpy.ops.view3d.exemple()
+	bl_label = "Exemple d'operateur"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if not context.active_object:
+			return False
+		return context.active_object.type == 'ARMATURE'
+
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		context.active_object.data.fg.type_anim = 1
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_transforme_to_translate(bpy.types.Operator):
+	'''C'est un exemple d'operateur blender '''
+	bl_idname = "view3d.transform_to_translate"					# sera appelé par bpy.ops.view3d.exemple()
+	bl_label = "Exemple d'operateur"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if not context.active_object:
+			return False
+		return context.active_object.type == 'ARMATURE'
+
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		context.active_object.data.fg.type_anim = 2
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_exemple(bpy.types.Operator):
 	'''C'est un exemple d'operateur blender '''
 	bl_idname = "view3d.exemple"					# sera appelé par bpy.ops.view3d.exemple()
@@ -1353,6 +1402,8 @@ def register():
 	bpy.utils.register_class( FG_OT_insertion_keyframe_translate )
 	bpy.utils.register_class( FG_OT_copy_name_bl2ac )
 	bpy.utils.register_class( FG_OT_save_ac_file )
+	bpy.utils.register_class( FG_OT_transforme_to_rotate )
+	bpy.utils.register_class( FG_OT_transforme_to_translate )
 	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
@@ -1383,4 +1434,6 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_insertion_keyframe_translate )
 	bpy.utils.unregister_class( FG_OT_copy_name_bl2ac )
 	bpy.utils.unregister_class( FG_OT_save_ac_file )
+	bpy.utils.unregister_class( FG_OT_transforme_to_rotate )
+	bpy.utils.unregister_class( FG_OT_transforme_to_translate )
 

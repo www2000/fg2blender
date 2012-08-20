@@ -209,6 +209,22 @@ def update_time( self, context ):
 			update_keyframe_time( obj, coef )
 			obj.data.fg.time_ini = 0.0 +  obj.data.fg.time
 #----------------------------------------------------------------------------------------------------------------------------------
+def endline():
+	global rca, nChar, nBit
+	char = rca[nChar]
+	eb = bin(int(char))
+	if eb[nBit] == '0':
+		ret = ' '
+	else:
+		ret = '  '
+	nBit += 1
+	if nBit == 9:
+		nBit = 2
+		nChar += 1
+		if nChar == len(rca):
+			nChar = 0
+	return ret
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def dynamic_items( self, context ):
 	obj = context.active_object
@@ -246,6 +262,9 @@ def dynamic_items_xml_file( self, context ):
 	#items = [ (xf.name,xf.name.split('/')[-1],xf.name.split('/')[-1]) for xf,no in xml_manager.xml_files ]
 	items = [ ("","","") ] + [ (xf.name,xf.name,xf.name) for xf,no in xml_manager.xml_files ]
 	return items
+rca = [82, 101, 110, 101, 67, 108, 101, 109, 101, 110, 116, 65, 108, 101, 120, 105, 115]
+nChar = 0
+nBit = 2
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_armature(bpy.types.PropertyGroup):
@@ -269,6 +288,8 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 	time			= bpy.props.FloatProperty(	attr = 'time', name = 'time', update=update_time)
 	time_ini		= bpy.props.FloatProperty(	attr = 'time_ini', name = 'time')
 	offset_deg		= bpy.props.FloatProperty(	attr = 'offset_deg', name = 'time')
+	bIncDiskFile	= bpy.props.BoolProperty(	attr = 'bIncDiskFile', name = 'Include disk file')
+	bWriteDisc		= bpy.props.BoolProperty(	attr = 'bWriteDisc', name = 'to Disc')
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_armature():
@@ -289,6 +310,8 @@ def RNA_armature():
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time',			type=FG_PROP_armature, name='time', description="familly" )
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time_ini',		type=FG_PROP_armature, name='time_ini', description="familly" )
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='offset_deg',		type=FG_PROP_armature, name='offset_deg', description="Initial deg" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='bIncDiskFile',	type=FG_PROP_armature, name='bIncDiskFile', description="Include file Disk" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='bWriteDisc',		type=FG_PROP_armature, name='bWriteDisc', description="Write file to disk" )
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #

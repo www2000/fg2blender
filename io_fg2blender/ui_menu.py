@@ -94,6 +94,8 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.menu('VIEW3D_FG_sub_menu_create_rotation' )
         layout.menu('VIEW3D_FG_sub_menu_create_translate' )
+        layout.operator("view3d.transform_to_rotate",	text='Transform to rotate' )
+        layout.operator("view3d.transform_to_translate",	text='Transform to translate' )
         #layout.operator("view3d.create_translate",	text='Create Translation' )
         layout.separator()
         layout.operator("view3d.select_armature_property",		text='Select Property' )

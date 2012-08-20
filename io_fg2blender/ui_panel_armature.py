@@ -28,16 +28,19 @@
 #----------------------------------------------------------------------------------------------------------------------------------
 
 import bpy
+from bpy.props import BoolProperty
 
 
 #--------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PT_armature_properties(bpy.types.Panel):
 	'''Flight Object Panel'''
-	bl_label		= "FLightgear"
+	bl_label		= "Flightgear Animation"
 	bl_space_type	= "PROPERTIES"
 	bl_region_type	= "WINDOW"
 	bl_context = "object"
+
+	bIncludeFileDisc = bpy.props.BoolProperty()
 
 	@classmethod
 	def poll(self,context):
@@ -58,7 +61,7 @@ class FG_PT_armature_properties(bpy.types.Panel):
 
 class FG_PT_armature_tool(bpy.types.Panel):
 	'''Flight Object Panel'''
-	bl_label		= "FLightgear"
+	bl_label		= "Flightgear tools"
 	bl_space_type	= 'VIEW_3D'
 	bl_region_type	= 'TOOLS'
 
@@ -151,6 +154,9 @@ def layout_armature_properties(self, obj, context):
 	boxTitre = layout.column()
 	boxTitre.label( text='xml file:' )
 	box = layout.box()
+	row = box.row()
+	row.prop( obj.data.fg, "bIncDiskFile" )
+	row.prop( obj.data.fg, "bWriteDisc" )
 	row = box.row(align=True)
 	row.prop( obj.data.fg, "xml_file" )
 	row.operator( "object.file_select_xml", icon='FILESEL' )

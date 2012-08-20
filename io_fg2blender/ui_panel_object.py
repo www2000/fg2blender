@@ -35,7 +35,7 @@ import os
 
 class FG_PT_object_properties(bpy.types.Panel):
 	'''Flight Object Panel'''
-	bl_label = "FLightgear"
+	bl_label = "Flightgear Object"
 	bl_space_type = "PROPERTIES"
 	bl_region_type = "WINDOW"
 	#bl_space_type = 'VIEW_3D'
