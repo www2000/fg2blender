@@ -1,0 +1,325 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+#
+#
+# Script copyright (C) René Nègre
+# Contributors: 
+#
+
+#----------------------------------------------------------------------------------------------------------------------------------
+#
+#									XML_EXPORT.PY
+#
+#----------------------------------------------------------------------------------------------------------------------------------
+import sys
+import os
+import time
+import bpy
+import xml.dom.minidom
+import codecs
+
+from math import degrees
+from math import fabs
+
+from mathutils import Vector
+from mathutils import Euler
+
+#---------------------------------------------------------------------------------------------------------------------
+
+DEBUG_INFO = False
+
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def debug_info( aff):
+	global DEBUG_INFO
+	if DEBUG_INFO:
+		print( aff )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def append_cg( node_doc, obj ):
+	node_mass_balance = node_doc.getElementsByTagName('mass_balance')
+	if node_mass_balance:
+		node_location = node_mass_balance[0].getElementsByTagName('location')
+		if node_location:
+			x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
+			x.nodeValue = '%0.4f' % obj.location.x
+			y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
+			y.nodeValue = '%0.4f' % obj.location.y
+			z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
+			z.nodeValue = '%0.4f' % obj.location.z
+			#print( node_location[0].toxml() )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def append_left_gear( node_doc, obj ):
+	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
+	if node_ground_reactions:
+		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
+		if node_contacts:
+			for node in node_contacts:
+				if node.attributes['type'].value == 'BOGEY' and node.attributes['name'].value == 'LEFT_MAIN':
+					#print( str(node.attributes['type'].value) )
+					#print( str(node.attributes['name'].value) )
+			
+					node_location = node.getElementsByTagName('location')
+					if node_location:
+						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
+						x.nodeValue = '%0.4f' % obj.location.x
+						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
+						y.nodeValue = '%0.4f' % obj.location.y
+						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
+						z.nodeValue = '%0.4f' % obj.location.z
+						#print( node.toxml() )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def append_right_gear( node_doc, obj ):
+	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
+	if node_ground_reactions:
+		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
+		if node_contacts:
+			for node in node_contacts:
+				if node.attributes['type'].value == 'BOGEY' and node.attributes['name'].value == 'RIGHT_MAIN':
+					#print( str(node.attributes['type'].value) )
+					#print( str(node.attributes['name'].value) )
+			
+					node_location = node.getElementsByTagName('location')
+					if node_location:
+						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
+						x.nodeValue = '%0.4f' % obj.location.x
+						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
+						y.nodeValue = '%0.4f' % obj.location.y
+						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
+						z.nodeValue = '%0.4f' % obj.location.z
+						#print( node.toxml() )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def append_tail_gear( node_doc, obj ):
+	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
+	if node_ground_reactions:
+		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
+		if node_contacts:
+			for node in node_contacts:
+				if node.attributes['type'].value == 'BOGEY' and node.attributes['name'].value == 'TAIL':
+					#print( str(node.attributes['type'].value) )
+					#print( str(node.attributes['name'].value) )
+			
+					node_location = node.getElementsByTagName('location')
+					if node_location:
+						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
+						x.nodeValue = '%0.4f' % obj.location.x
+						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
+						y.nodeValue = '%0.4f' % obj.location.y
+						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
+						z.nodeValue = '%0.4f' % obj.location.z
+						#print( node.toxml() )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def append_left_wing( node_doc, obj ):
+	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
+	if node_ground_reactions:
+		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
+		if node_contacts:
+			for node in node_contacts:
+				if node.attributes['type'].value == 'STRUCTURE' and node.attributes['name'].value == 'LEFT_WING':
+					#print( str(node.attributes['type'].value) )
+					#print( str(node.attributes['name'].value) )
+			
+					node_location = node.getElementsByTagName('location')
+					if node_location:
+						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
+						x.nodeValue = '%0.4f' % obj.location.x
+						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
+						y.nodeValue = '%0.4f' % obj.location.y
+						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
+						z.nodeValue = '%0.4f' % obj.location.z
+						#print( node.toxml() )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def append_right_wing( node_doc, obj ):
+	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
+	if node_ground_reactions:
+		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
+		if node_contacts:
+			for node in node_contacts:
+				if node.attributes['type'].value == 'STRUCTURE' and node.attributes['name'].value == 'RIGHT_WING':
+					#print( str(node.attributes['type'].value) )
+					#print( str(node.attributes['name'].value) )
+			
+					node_location = node.getElementsByTagName('location')
+					if node_location:
+						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
+						x.nodeValue = '%0.4f' % obj.location.x
+						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
+						y.nodeValue = '%0.4f' % obj.location.y
+						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
+						z.nodeValue = '%0.4f' % obj.location.z
+						#print( node.toxml() )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def append_tail_wing( node_doc, obj ):
+	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
+	if node_ground_reactions:
+		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
+		if node_contacts:
+			for node in node_contacts:
+				if node.attributes['type'].value == 'STRUCTURE' and node.attributes['name'].value == 'TAIL':
+					##print( str(node.attributes['type'].value) )
+					##print( str(node.attributes['name'].value) )
+			
+					node_location = node.getElementsByTagName('location')
+					if node_location:
+						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
+						x.nodeValue = '%0.4f' % obj.location.x
+						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
+						y.nodeValue = '%0.4f' % obj.location.y
+						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
+						z.nodeValue = '%0.4f' % obj.location.z
+						#print( node.toxml() )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def append_cone_wing( node_doc, obj ):
+	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
+	if node_ground_reactions:
+		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
+		if node_contacts:
+			for node in node_contacts:
+				if node.attributes['type'].value == 'STRUCTURE' and node.attributes['name'].value == 'PROP_CONE':
+					##print( str(node.attributes['type'].value) )
+					##print( str(node.attributes['name'].value) )
+			
+					node_location = node.getElementsByTagName('location')
+					if node_location:
+						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
+						x.nodeValue = '%0.4f' % obj.location.x
+						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
+						y.nodeValue = '%0.4f' % obj.location.y
+						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
+						z.nodeValue = '%0.4f' % obj.location.z
+						#print( node.toxml() )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def append_aerorp( node_doc, obj ):
+	node_metrics = node_doc.getElementsByTagName('metrics')
+	if node_metrics:
+		node_locations = node_metrics[0].getElementsByTagName('location')
+		if node_locations:
+			for node in node_locations:
+				if node.attributes['name'].value == 'AERORP':
+					##print( str(node.attributes['name'].value) )
+					if node:
+						x = node.getElementsByTagName( 'x' )[0].childNodes[0]
+						x.nodeValue = '%0.4f' % obj.location.x
+						y = node.getElementsByTagName( 'y' )[0].childNodes[0]
+						y.nodeValue = '%0.4f' % obj.location.y
+						z = node.getElementsByTagName( 'z' )[0].childNodes[0]
+						z.nodeValue = '%0.4f' % obj.location.z
+						##print( node.toxml() )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+def append_propulsion( node_doc, obj ):
+	node_propulsions = node_doc.getElementsByTagName('propulsion')
+	if node_propulsions:
+		node_locations = node_propulsions[0].getElementsByTagName('location')
+		if node_locations:
+			for node in node_locations:
+				if node:
+					x = node.getElementsByTagName( 'x' )[0].childNodes[0]
+					x.nodeValue = '%0.4f' % obj.location.x
+					y = node.getElementsByTagName( 'y' )[0].childNodes[0]
+					y.nodeValue = '%0.4f' % obj.location.y
+					z = node.getElementsByTagName( 'z' )[0].childNodes[0]
+					z.nodeValue = '%0.4f' % obj.location.z
+					##print( node.toxml() )
+#----------------------------------------------------------------------------------------------------------------------------------
+		
+		
+def write_jsbsim( context, filename  ):
+ 	
+	filename = '/home/rene/programmes/opengl/blender/paf/fgdata_paf/Aircraft/Cap10B/fw190-jsbsim.xml'
+	debug_info( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % filename )
+
+	basename = os.path.basename( filename )
+	
+	fsock = open(filename)
+	try:
+		xmldoc = xml.dom.minidom.parse(fsock)
+	except:
+		fsock.close()                 
+		fsock = codecs.open(filename, 'r+', 'iso-8859-1' )
+		print( " **********************************************************************************" )
+		print( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
+		print( " **********************************************************************************" )
+		print( " ***************  Changement de Codec ; Ah les messieurs iso-8859-1 ***************" )
+		print( " **********************************************************************************" )
+		xmldoc = xml.dom.minidom.parse(fsock)
+
+	fsock.close()                 
+	doc = xmldoc.documentElement
+	
+
+	for obj in bpy.data.objects:
+		if obj.type == 'EMPTY':
+			if obj.name.lower().find( 'cg') != -1:
+				print( '--- Tranformation cg' )
+				append_cg( doc, obj )
+			elif obj.name.lower().find( 'gear') != -1 and obj.name.lower().find( 'left') != -1:
+				print( '--- Tranformation left gear' )
+				append_left_gear( doc, obj )
+			elif obj.name.lower().find( 'gear') != -1 and obj.name.lower().find( 'right') != -1:
+				print( '--- Tranformation right gear' )
+				append_right_gear( doc, obj )
+			elif obj.name.lower().find( 'gear') != -1 and obj.name.lower().find( 'tail') != -1:
+				print( '--- Tranformation right gear' )
+				append_tail_gear( doc, obj )
+			elif obj.name.lower().find( 'wing') != -1 and obj.name.lower().find( 'left') != -1:
+				print( '--- Tranformation left wing' )
+				append_left_wing( doc, obj )
+			elif obj.name.lower().find( 'wing') != -1 and obj.name.lower().find( 'right') != -1:
+				print( '--- Tranformation right wing' )
+				append_right_wing( doc, obj )
+			elif obj.name.lower().find( 'wing') != -1 and obj.name.lower().find( 'tail') != -1:
+				print( '--- Tranformation tail wing' )
+				append_tail_wing( doc, obj )
+			elif obj.name.lower().find( 'prop') != -1 and obj.name.lower().find( 'cone') != -1:
+				print( '--- Tranformation prop cone' )
+				append_cone_wing( doc, obj )
+			elif obj.name.lower().find( 'aerorp') != -1:
+				print( '--- Tranformation aerorp' )
+				append_aerorp( doc, obj )
+			elif obj.name.lower().find( 'propulsion') != -1:
+				print( '--- Tranformation propulsion' )
+				append_propulsion( doc, obj )
+
+	#---------------------------------------------------------------------------
+	def exist_in_text_editor(name ):
+		for text in bpy.data.texts:
+			if text.name == name:
+				return True
+		return False
+	#---------------------------------------------------------------------------
+	if exist_in_text_editor( basename ):
+		bpy.data.texts[basename].clear()
+	else:
+		bpy.data.texts.new( basename )
+
+
+	bpy.data.texts[basename].use_tabs_as_spaces = True
+	bpy.data.texts[basename].filepath = filename
+	bpy.data.texts[basename].write( doc.toxml() )
+
+	

@@ -297,17 +297,7 @@ def write_vertice( filename, obj, mesh ):
 	print_matrix( obj.matrix_world, 'matrix_world' )
 
 
-	'''
-	b = True
-	delta = mathutils.Vector( (0.0,0.0,0.0) )
-	Obj = obj
-	while(b):
-		if Obj.parent != None:
-			Obj = Obj.parent
-			delta -=  mathutils.Vector( Obj.location )
-		else:
-			b = False
-	'''
+
 	delta =  extrait_translation_matrix(obj.matrix_world) - extrait_translation_matrix(obj.matrix_basis)
 	delta =  extrait_translation_matrix(obj.matrix_world) - extrait_translation_matrix(obj.matrix_basis)
 	parent = extrait_translation_matrix(obj.matrix_local) - extrait_translation_matrix(obj.matrix_basis)
@@ -404,12 +394,15 @@ def write_header_mesh( filename, obj, mesh ):
 		
 	writeln_file( f, "OBJECT poly" )
 	writeln_file( f, 'name "' + obj.name + '"' )
+	
 	str_x = significatif("%0.6f" % vec3_locat.x)
 	str_y = significatif("%0.6f" % vec3_locat.z)
 	str_z = significatif("%0.6f" % -vec3_locat.y)
+	
 	writeln_file( f, "loc %s %s %s" % (str_x, str_y, str_z) )
 	writeln_file( f, 'data %d'%len(obj.name) )
 	writeln_file( f, obj.name )
+	
 	if tex_name != "":
 		path = os.path.dirname( bpy.path.abspath(tex_name) )
 		relpath = os.path.relpath( path, path_name )

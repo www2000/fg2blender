@@ -56,6 +56,13 @@ class SAVE_KEYFRAME:
 		self.armature_name			= ""
 		self.keyframe				= []
 
+STACK_SAVE_PARENT = []
+
+class SAVE_PARENT:
+	def __init__(self):
+		self.object_name			= ""
+		self.parent_name			= ""
+
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -512,6 +519,103 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 		
 			STACK_SAVE_KEYFRAMES.remove( save_keyframe )		
 			print( '\tRestore "%s" : %d keyframes' % ( obj.name, idx ) )
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_save_parent(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.save_parent"
+	bl_label = "Create Animation"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if context.active_object == None:
+			return False
+		return context.scene.objects.active.type in ('MESH','ARMATURE','EMPTY')
+
+	def execute(self, context):
+		from . import xml_manager
+		global STACK_SAVE_PARENT
+
+		print( 'bpy.ops.view3d.save_parent()' )
+		obj = context.scene.objects.active
+		
+		list_objects = context.selected_objects
+		for obj in list_objects:
+			obj.select = False
+		
+		
+		for obj in list_objects:
+			if not obj.type in ('MESH','ARMATURE','EMPTY'):
+				continue
+
+			for sp in STACK_SAVE_PARENT:
+				if sp.object_name == obj.name:
+					print( '\tSave exist on "%s"' % obj.name )
+					continue
+		
+			save_parent = SAVE_PARENT()
+			save_parent.object_name = obj.name
+			if obj.parent != None:
+				save_parent.parent_name = obj.parent.name
+			else:
+				save_parent.parent_name = ''
+				
+			obj.select = True
+			context.scene.objects.active = obj
+			#bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
+			bpy.ops.object.parent_clear(type='CLEAR')
+			obj.select = False
+			#obj.parent = None
+		
+			STACK_SAVE_PARENT.append( save_parent )		
+			print( '\tSave for "%s" parent "%s"' % ( obj.name, save_parent.parent_name ) )
+
+		for obj in list_objects:
+			obj.select = True
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_restore_parent(bpy.types.Operator):
+	'''Add armature type rotate '''
+	bl_idname = "view3d.restore_parent"
+	bl_label = "Create Animation"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if context.active_object == None:
+			return False
+		return context.scene.objects.active.type in ('MESH','ARMATURE','EMPTY')
+
+	def execute(self, context):
+		from . import xml_manager
+		global STACK_SAVE_PARENT
+
+		print( 'bpy.ops.view3d.restore_parent()' )
+		obj = context.scene.objects.active
+		for obj in context.selected_objects:
+			if not obj.type in ('MESH','ARMATURE','EMPTY'):
+				continue
+			
+			save_parent = None		
+			for sp in STACK_SAVE_PARENT:
+				if sp.object_name == obj.name:
+					save_parent = sp
+				
+			if save_parent == None:
+				print( '\tRestore "%s" : had not save' % obj.name )
+				continue
+
+			if save_parent.parent_name != '':
+				obj.parent = bpy.data.objects[save_parent.parent_name]
+				if obj.parent.type == 'ARMATURE':
+					obj.parent_bone = 'Bone'
+					obj.parent_type = 'BONE'
+		
+			print( '\tRestore "%s" parent "%s"' % ( obj.name, save_parent.parent_name ) )
+			STACK_SAVE_PARENT.remove( save_parent )		
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1265,6 +1369,7 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
 		from . import ac_export
 		#-----------------------------------------------------------------------------------------------------
+
 		def set_ac_file( ac_filename ):
 			filename = os.path.basename(ac_filename)
 			for obj in bpy.data.objects:
@@ -1274,8 +1379,24 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 					if group.name == filename:
 						if obj.data.fg.ac_file == '':
 							obj.data.fg.ac_file = "" + group.name
-			
 		#-----------------------------------------------------------------------------------------------------
+
+		def clear_parent( list_objects ):
+			for obj in bpy.data.objects:
+				obj.select = False
+			for obj in list_objects:
+				obj.select = True
+			bpy.ops.view3d.save_parent()
+		#-----------------------------------------------------------------------------------------------------
+
+		def restore_parent( list_objects ):
+			for obj in bpy.data.objects:
+				obj.select = False
+			for obj in list_objects:
+				obj.select = True
+			bpy.ops.view3d.restore_parent()
+		#-----------------------------------------------------------------------------------------------------
+
 		active_object = bpy.data.objects[self.object_name]
 		
 		group_name = ''		
@@ -1311,8 +1432,10 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 
 		for obj in list_objects:
 			print( obj.name )
-		
+			
+		#clear_parent( list_objects )
 		ac_export.write_ac_file( context, filename, list_objects, True, False, True )
+		#restore_parent( list_objects )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1376,6 +1499,8 @@ class FG_OT_exemple(bpy.types.Operator):
 def register():
 	bpy.utils.register_class( FG_OT_save_keyframe)
 	bpy.utils.register_class( FG_OT_restore_keyframe)
+	bpy.utils.register_class( FG_OT_save_parent)
+	bpy.utils.register_class( FG_OT_restore_parent)
 	bpy.utils.register_class( FG_OT_edges_split)
 	bpy.utils.register_class( FG_OT_select_property)
 	bpy.utils.register_class( FG_OT_select_armature_property)
@@ -1408,6 +1533,8 @@ def register():
 def unregister():
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
 	bpy.utils.unregister_class( FG_OT_restore_keyframe)
+	bpy.utils.unregister_class( FG_OT_save_parent)
+	bpy.utils.unregister_class( FG_OT_restore_parent)
 	bpy.utils.unregister_class( FG_OT_edges_split)
 	bpy.utils.unregister_class( FG_OT_select_property)
 	bpy.utils.unregister_class( FG_OT_select_armature_property)

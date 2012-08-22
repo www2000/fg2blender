@@ -107,6 +107,8 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
         layout.separator()
         layout.operator("view3d.save_keyframe",		text='Save Keyframe and Reset' )
         layout.operator("view3d.restore_keyframe",	text='Restore Keyframe ' )
+        layout.operator("view3d.save_parent",		text='Save Parent and Reset' )
+        layout.operator("view3d.restore_parent",	text='Restore Parent ' )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_create_rotation(bpy.types.Menu):
@@ -182,9 +184,14 @@ class FG_OT_exec(bpy.types.Operator):
 			print( "Bidouille OK" )
 			return {'FINISHED'}
 
-		import_xml( filename, ac_option, xml_option )
-		bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
-		bpy.ops.object.select_all(action='SELECT')
+		#import_xml( filename, ac_option, xml_option )
+		
+		from . import xml_jsbsim
+
+		xml_jsbsim.write_jsbsim( context, '' )
+		
+		#bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+		#bpy.ops.object.select_all(action='SELECT')
 		#bpy.ops.view3d.edge_split()
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
