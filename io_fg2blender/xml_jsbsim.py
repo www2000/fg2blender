@@ -23,7 +23,7 @@
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #
-#									XML_EXPORT.PY
+#									XML_JSBSIM.PY
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 import sys
@@ -42,6 +42,7 @@ from mathutils import Euler
 #---------------------------------------------------------------------------------------------------------------------
 
 DEBUG_INFO = False
+CG = Vector( (0.0,0.0,0.0) )
 
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -53,20 +54,22 @@ def debug_info( aff):
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_cg( node_doc, obj ):
+	global CG
 	node_mass_balance = node_doc.getElementsByTagName('mass_balance')
 	if node_mass_balance:
 		node_location = node_mass_balance[0].getElementsByTagName('location')
 		if node_location:
 			x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
-			x.nodeValue = '%0.4f' % obj.location.x
+			x.nodeValue = '%0.4f' % (obj.location.x-CG.x)
 			y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
-			y.nodeValue = '%0.4f' % obj.location.y
+			y.nodeValue = '%0.4f' % (obj.location.y-CG.y)
 			z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
-			z.nodeValue = '%0.4f' % obj.location.z
+			z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 			#print( node_location[0].toxml() )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_left_gear( node_doc, obj ):
+	global CG
 	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
 	if node_ground_reactions:
 		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
@@ -79,15 +82,16 @@ def append_left_gear( node_doc, obj ):
 					node_location = node.getElementsByTagName('location')
 					if node_location:
 						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
-						x.nodeValue = '%0.4f' % obj.location.x
+						x.nodeValue = '%0.4f' % (obj.location.x-CG.x)
 						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
-						y.nodeValue = '%0.4f' % obj.location.y
+						y.nodeValue = '%0.4f' % (obj.location.y-CG.y)
 						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
-						z.nodeValue = '%0.4f' % obj.location.z
+						z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 						#print( node.toxml() )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_right_gear( node_doc, obj ):
+	global CG
 	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
 	if node_ground_reactions:
 		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
@@ -100,15 +104,16 @@ def append_right_gear( node_doc, obj ):
 					node_location = node.getElementsByTagName('location')
 					if node_location:
 						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
-						x.nodeValue = '%0.4f' % obj.location.x
+						x.nodeValue = '%0.4f' % (obj.location.x-CG.x)
 						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
-						y.nodeValue = '%0.4f' % obj.location.y
+						y.nodeValue = '%0.4f' % (obj.location.y-CG.y)
 						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
-						z.nodeValue = '%0.4f' % obj.location.z
+						z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 						#print( node.toxml() )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_tail_gear( node_doc, obj ):
+	global CG
 	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
 	if node_ground_reactions:
 		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
@@ -121,15 +126,16 @@ def append_tail_gear( node_doc, obj ):
 					node_location = node.getElementsByTagName('location')
 					if node_location:
 						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
-						x.nodeValue = '%0.4f' % obj.location.x
+						x.nodeValue = '%0.4f' % (obj.location.x-CG.x)
 						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
-						y.nodeValue = '%0.4f' % obj.location.y
+						y.nodeValue = '%0.4f' % (obj.location.y-CG.y)
 						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
-						z.nodeValue = '%0.4f' % obj.location.z
+						z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 						#print( node.toxml() )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_left_wing( node_doc, obj ):
+	global CG
 	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
 	if node_ground_reactions:
 		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
@@ -142,15 +148,16 @@ def append_left_wing( node_doc, obj ):
 					node_location = node.getElementsByTagName('location')
 					if node_location:
 						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
-						x.nodeValue = '%0.4f' % obj.location.x
+						x.nodeValue = '%0.4f' % (obj.location.x-CG.x)
 						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
-						y.nodeValue = '%0.4f' % obj.location.y
+						y.nodeValue = '%0.4f' % (obj.location.y-CG.y)
 						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
-						z.nodeValue = '%0.4f' % obj.location.z
+						z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 						#print( node.toxml() )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_right_wing( node_doc, obj ):
+	global CG
 	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
 	if node_ground_reactions:
 		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
@@ -163,15 +170,16 @@ def append_right_wing( node_doc, obj ):
 					node_location = node.getElementsByTagName('location')
 					if node_location:
 						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
-						x.nodeValue = '%0.4f' % obj.location.x
+						x.nodeValue = '%0.4f' % (obj.location.x-CG.x)
 						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
-						y.nodeValue = '%0.4f' % obj.location.y
+						y.nodeValue = '%0.4f' % (obj.location.y-CG.y)
 						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
-						z.nodeValue = '%0.4f' % obj.location.z
+						z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 						#print( node.toxml() )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_tail_wing( node_doc, obj ):
+	global CG
 	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
 	if node_ground_reactions:
 		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
@@ -184,15 +192,16 @@ def append_tail_wing( node_doc, obj ):
 					node_location = node.getElementsByTagName('location')
 					if node_location:
 						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
-						x.nodeValue = '%0.4f' % obj.location.x
+						x.nodeValue = '%0.4f' % (obj.location.x-CG.x)
 						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
-						y.nodeValue = '%0.4f' % obj.location.y
+						y.nodeValue = '%0.4f' % (obj.location.y-CG.y)
 						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
-						z.nodeValue = '%0.4f' % obj.location.z
+						z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 						#print( node.toxml() )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_cone_wing( node_doc, obj ):
+	global CG
 	node_ground_reactions = node_doc.getElementsByTagName('ground_reactions')
 	if node_ground_reactions:
 		node_contacts = node_ground_reactions[0].getElementsByTagName('contact')
@@ -205,15 +214,16 @@ def append_cone_wing( node_doc, obj ):
 					node_location = node.getElementsByTagName('location')
 					if node_location:
 						x = node_location[0].getElementsByTagName( 'x' )[0].childNodes[0]
-						x.nodeValue = '%0.4f' % obj.location.x
+						x.nodeValue = '%0.4f' % (obj.location.x-CG.x)
 						y = node_location[0].getElementsByTagName( 'y' )[0].childNodes[0]
-						y.nodeValue = '%0.4f' % obj.location.y
+						y.nodeValue = '%0.4f' % (obj.location.y-CG.y)
 						z = node_location[0].getElementsByTagName( 'z' )[0].childNodes[0]
-						z.nodeValue = '%0.4f' % obj.location.z
+						z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 						#print( node.toxml() )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_aerorp( node_doc, obj ):
+	global CG
 	node_metrics = node_doc.getElementsByTagName('metrics')
 	if node_metrics:
 		node_locations = node_metrics[0].getElementsByTagName('location')
@@ -223,15 +233,16 @@ def append_aerorp( node_doc, obj ):
 					##print( str(node.attributes['name'].value) )
 					if node:
 						x = node.getElementsByTagName( 'x' )[0].childNodes[0]
-						x.nodeValue = '%0.4f' % obj.location.x
+						x.nodeValue = '%0.4f' % (obj.location.x-CG.x)
 						y = node.getElementsByTagName( 'y' )[0].childNodes[0]
-						y.nodeValue = '%0.4f' % obj.location.y
+						y.nodeValue = '%0.4f' % (obj.location.y-CG.y)
 						z = node.getElementsByTagName( 'z' )[0].childNodes[0]
-						z.nodeValue = '%0.4f' % obj.location.z
+						z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 						##print( node.toxml() )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_propulsion( node_doc, obj ):
+	global CG
 	node_propulsions = node_doc.getElementsByTagName('propulsion')
 	if node_propulsions:
 		node_locations = node_propulsions[0].getElementsByTagName('location')
@@ -239,69 +250,64 @@ def append_propulsion( node_doc, obj ):
 			for node in node_locations:
 				if node:
 					x = node.getElementsByTagName( 'x' )[0].childNodes[0]
-					x.nodeValue = '%0.4f' % obj.location.x
+					x.nodeValue = '%0.4f' % (obj.location.x-CG.x)
 					y = node.getElementsByTagName( 'y' )[0].childNodes[0]
-					y.nodeValue = '%0.4f' % obj.location.y
+					y.nodeValue = '%0.4f' % (obj.location.y-CG.y)
 					z = node.getElementsByTagName( 'z' )[0].childNodes[0]
-					z.nodeValue = '%0.4f' % obj.location.z
+					z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 					##print( node.toxml() )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
-		
 def write_jsbsim( context, filename  ):
+	from . import xml_manager
+	from . import xml_import
+	global CG
+	
+	CG = Vector( (0.0,0.0,0.0) )
+	#search CG point
+	for obj in bpy.data.objects:
+		if obj.type != 'EMPTY':
+			continue
+		if obj.fg.jsb_attr != 'CG':
+			continue
+		CG = obj.location
  	
-	filename = '/home/rene/programmes/opengl/blender/paf/fgdata_paf/Aircraft/Cap10B/fw190-jsbsim.xml'
-	debug_info( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % filename )
+ 	
+	template = xml_manager.addon_path + os.sep + 'io_fg2blender' + os.sep + 'jsbsim_template.xml'
+	print( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % filename )
 
-	basename = os.path.basename( filename )
-	
-	fsock = open(filename)
-	try:
-		xmldoc = xml.dom.minidom.parse(fsock)
-	except:
-		fsock.close()                 
-		fsock = codecs.open(filename, 'r+', 'iso-8859-1' )
-		print( " **********************************************************************************" )
-		print( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
-		print( " **********************************************************************************" )
-		print( " ***************  Changement de Codec ; Ah les messieurs iso-8859-1 ***************" )
-		print( " **********************************************************************************" )
-		xmldoc = xml.dom.minidom.parse(fsock)
-
-	fsock.close()                 
-	doc = xmldoc.documentElement
-	
+	doc = xml_import.charge_xml( template )
 
 	for obj in bpy.data.objects:
 		if obj.type == 'EMPTY':
-			if obj.name.lower().find( 'cg') != -1:
+			if obj.fg.jsb_attr == 'CG':
 				print( '--- Tranformation cg' )
 				append_cg( doc, obj )
-			elif obj.name.lower().find( 'gear') != -1 and obj.name.lower().find( 'left') != -1:
+			elif obj.fg.jsb_attr == 'LEFT_GEAR':
 				print( '--- Tranformation left gear' )
 				append_left_gear( doc, obj )
-			elif obj.name.lower().find( 'gear') != -1 and obj.name.lower().find( 'right') != -1:
+			elif obj.fg.jsb_attr == 'RIGHT_GEAR':
 				print( '--- Tranformation right gear' )
 				append_right_gear( doc, obj )
-			elif obj.name.lower().find( 'gear') != -1 and obj.name.lower().find( 'tail') != -1:
+			elif obj.fg.jsb_attr == 'TAIL_GEAR':
 				print( '--- Tranformation right gear' )
 				append_tail_gear( doc, obj )
-			elif obj.name.lower().find( 'wing') != -1 and obj.name.lower().find( 'left') != -1:
+			elif obj.fg.jsb_attr == 'LEFT_CONTACT':
 				print( '--- Tranformation left wing' )
 				append_left_wing( doc, obj )
-			elif obj.name.lower().find( 'wing') != -1 and obj.name.lower().find( 'right') != -1:
+			elif obj.fg.jsb_attr == 'RIGHT_CONTACT':
 				print( '--- Tranformation right wing' )
 				append_right_wing( doc, obj )
-			elif obj.name.lower().find( 'wing') != -1 and obj.name.lower().find( 'tail') != -1:
+			elif obj.fg.jsb_attr == 'TAIL_CONTACT':
 				print( '--- Tranformation tail wing' )
 				append_tail_wing( doc, obj )
-			elif obj.name.lower().find( 'prop') != -1 and obj.name.lower().find( 'cone') != -1:
+			elif obj.fg.jsb_attr == 'NOSE_CONTACT':
 				print( '--- Tranformation prop cone' )
 				append_cone_wing( doc, obj )
-			elif obj.name.lower().find( 'aerorp') != -1:
+			elif obj.fg.jsb_attr == 'AERO_CENTER':
 				print( '--- Tranformation aerorp' )
 				append_aerorp( doc, obj )
-			elif obj.name.lower().find( 'propulsion') != -1:
+			elif obj.fg.jsb_attr == 'ENGINE':
 				print( '--- Tranformation propulsion' )
 				append_propulsion( doc, obj )
 
@@ -312,6 +318,8 @@ def write_jsbsim( context, filename  ):
 				return True
 		return False
 	#---------------------------------------------------------------------------
+	basename = os.path.basename( filename )
+
 	if exist_in_text_editor( basename ):
 		bpy.data.texts[basename].clear()
 	else:

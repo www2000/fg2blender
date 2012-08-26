@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<!--
+
+	***********************************************************
+	***********************************************************
+		Part of this file was generating by a blender script
+
+		Script fg2blender v0.1 alpha  (c)paf
+		download: http://gitorious.org/paf/fg2blender
+		contacts: http://equipe-flightgear.forumactif.com
+		doc:      http://
+	***********************************************************
+	***********************************************************
+
+-->
+
+<PropertyList>
+	<view n="0">
+		<internal archive="y">true</internal>
+		<config>
+			<x-offset-m archive="y">  -0.24 </x-offset-m>
+			<y-offset-m archive="y">  0.43 </y-offset-m>
+			<z-offset-m archive="y"> 0.27 </z-offset-m>
+			<default-field-of-view-deg>60</default-field-of-view-deg>
+			<pitch-offset-deg>-15</pitch-offset-deg>
+			<roll-offset-deg>-15</roll-offset-deg>
+			<heading-offset-deg>-15</heading-offset-deg>
+		</config>
+	</view>
+</PropertyList>
+

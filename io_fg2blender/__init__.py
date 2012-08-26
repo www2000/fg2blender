@@ -94,13 +94,13 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 
 	include		= BoolProperty(name="Include file", description="Read file include", default=True)
 
-	mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=True)
+	mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=False)
 	mesh_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=1)
-	mesh_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=10)
+	mesh_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=9)
 
 	armature_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=False)
 	armature_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=11)
-	armature_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=20)
+	armature_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=19)
 
 	def draw(self, context):
 		scn = context.scene
@@ -280,9 +280,13 @@ def register():
 	from . import ops_unwrap
 	from . import props_armature
 	from . import props_meshes
+	from . import props_empty
+	from . import props_camera
 	from . import ui_menu
 	from . import ui_panel_armature
 	from . import ui_panel_object
+	from . import ui_panel_empty
+	from . import ui_panel_camera
 	from . import ui_shortcut
 	from . import ui_button
 
@@ -294,28 +298,36 @@ def register():
 	ops_unwrap.register()
 	props_armature.register()
 	props_meshes.register()
+	props_empty.register()
+	props_camera.register()
 	ui_menu.register()
 	ui_panel_armature.register()
 	ui_panel_object.register()
+	ui_panel_empty.register()
+	ui_panel_camera.register()
 	ui_shortcut.register()
 	ui_button.register()
 
 	if not os.path.isfile('/home/rene/tmp/script-fg2bl'):
-		print( "N'existe pas" )
+		#print( "N'existe pas" )
 		xml_manager.BIDOUILLE = False
 	else:
-		print( "Existe" )
+		print( "Bidouille OK" )
+		xml_manager.BIDOUILLE = True
 
-	
 	
 def unregister():
 	from . import ops_flightgear
 	from . import ops_unwrap
 	from . import props_armature
 	from . import props_meshes
+	from . import props_empty
+	from . import props_camera
 	from . import ui_menu
 	from . import ui_panel_armature
 	from . import ui_panel_object
+	from . import ui_panel_empty
+	from . import ui_panel_camera
 	from . import ui_shortcut
 	from . import ui_button
 
@@ -327,13 +339,16 @@ def unregister():
 	ops_unwrap.unregister()
 	props_armature.unregister()
 	props_meshes.unregister()
+	props_empty.unregister()
+	props_camera.unregister()
 	ui_menu.unregister()
 	ui_panel_armature.unregister()
 	ui_panel_object.unregister()
+	ui_panel_empty.unregister()
+	ui_panel_camera.unregister()
 	ui_shortcut.unregister()
 	ui_button.unregister()
 
-	
 	
 if __name__ == "__main__":
 	try:
@@ -341,4 +356,4 @@ if __name__ == "__main__":
 	except:
 		pass
 	register()
-	
+

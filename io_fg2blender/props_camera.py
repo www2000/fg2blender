@@ -18,28 +18,41 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: Alexis Laillé
+# Contributors:
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #
-#									PROPS_MESHES.PY
+#									PROPS_CAMERA.PY
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
 
 import bpy
 
+
+camera_items = [	('None',			'None', ''),
+					('COCKPIT_VIEW',	'COCKPIT_VIEW', '')
+			]
 #----------------------------------------------------------------------------------------------------------------------------------
 
-class FG_PROP_mesh(bpy.types.PropertyGroup):
-	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = 'Filename')
-	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = 'Mesh Name')
+class FG_PROP_camera(bpy.types.PropertyGroup):
+	#----------------------------------------------------------------------------------------------------------------------------------
+
+	def update_type_view( self, context ):
+		obj = context.active_object
+		print( obj.name )
+		obj.name = "" + obj.data.fg.type_view
+		obj.show_name = True
+		return None	
+	#----------------------------------------------------------------------------------------------------------------------------------
+	xml_file	= bpy.props.StringProperty(	attr = 'xml_file', name = 'Filename' )
+	type_view	= bpy.props.EnumProperty(	attr = 'type_view', name = 'Attribute', items = camera_items, default = 'None', update = update_type_view )
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def RNA_mesh():
-	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="ac_file", type=FG_PROP_mesh, name="ac_file", description="File .ac")
-	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="name_ac", type=FG_PROP_mesh, name="name_ac", description="name in ac file")
+def RNA_camera():
+	bpy.types.Camera.fg = bpy.props.PointerProperty(	attr="xml_file", type=FG_PROP_camera, name="xml_file", description="File .xml")
+	bpy.types.Camera.fg = bpy.props.PointerProperty(	attr="type_view", type=FG_PROP_camera, name="type_view", description="Name of view")
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
@@ -54,11 +67,11 @@ def RNA_mesh():
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def register():
-	bpy.utils.register_class( FG_PROP_mesh )
-	RNA_mesh()
+	bpy.utils.register_class( FG_PROP_camera )
+	RNA_camera()
 
 def unregister():
-	bpy.utils.unregister_class( FG_PROP_mesh )
+	bpy.utils.unregister_class( FG_PROP_camera )
 	#removeProjectRNA()
 #----------------------------------------------------------------------------------------------------------------------------------
 

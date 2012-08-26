@@ -1074,6 +1074,8 @@ class FG_OT_select_file_xml(bpy.types.Operator):
 
 		if obj.type == 'ARMATURE':
 			obj.data.fg.xml_file = self.filepath
+		if obj.type == 'CAMERA':
+			obj.data.fg.xml_file = self.filepath
 		
 		#context.window_manager.fileselect_add(self)
 		return {'FINISHED'}
@@ -1100,6 +1102,29 @@ class FG_OT_select_file_ac(bpy.types.Operator):
 			obj.data.fg.ac_file = self.filepath
 		
 		#context.window_manager.fileselect_add(self)
+		return {'FINISHED'}
+
+	def invoke(self, context, event):
+		context.window_manager.fileselect_add(self)
+		#print( self.filepath )
+		#return {'FINISHED'}
+		return {'RUNNING_MODAL'}
+#----------------------------------------------------------------------------------------------------------------------------------
+class FG_OT_select_file_jsb(bpy.types.Operator):
+	bl_idname = "object.file_select_jsb"
+	bl_label = ""
+
+	#filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+	filepath = bpy.props.StringProperty()
+	filter_glob = StringProperty(default="*.xml", options={'HIDDEN'})
+	
+
+	def execute(self, context):
+		obj = context.active_object
+
+		if obj.type == 'EMPTY':
+			obj.fg.jsb_xml_file = self.filepath
+		
 		return {'FINISHED'}
 
 	def invoke(self, context, event):
@@ -1169,9 +1194,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 	bl_idname = "view3d.write_xml"
 	bl_label = "Write File"
 	
-	#filename = bpy.props.StringProperty()
 	obj_name = bpy.props.StringProperty()
-	#objet = None
 	
 	#---------------------------------------------------------------------------
 	def exist_in_text_editor(self, name ):
@@ -1207,17 +1230,13 @@ class FG_OT_write_xml(bpy.types.Operator):
 		from . import xml_export
 		from . import xml_import
 
-		#if len(xml_manager.xml_files)<1:
-		#	return
-		print( 'charge_xml "%ss"' % filename )
+		print( 'charge_xml "%s"' % filename )
 		name = os.path.basename( filename )
-		#script_name = name +'.script'
 		script_name = name
 		
 		if self.exist_in_text_editor( script_name ):
 			bpy.data.texts[script_name].clear()
 		else:
-			#bpy.ops.text.new( name )
 			bpy.data.texts.new( script_name )
 	
 		node = None
@@ -1237,14 +1256,14 @@ class FG_OT_write_xml(bpy.types.Operator):
 		
 		print( 'Filename "%s"' % filename )
 		from . import props_armature
-		f = open(filename, 'w')
-		obj = bpy.data.objects[self.obj_name]
 		if obj.data.fg.bWriteDisc:
+			obj = bpy.data.objects[self.obj_name]
+			f = open(filename, 'w')
 			for line in bpy.data.texts[script_name].lines:
-				print( line.body )
+				#print( line.body )
 				f.write( line.body )
 				f.write( props_armature.endline() + '\n' )
-		f.close()
+			f.close()
 		#bpy.data.texts[name].write( node.toxml() )
 	#---------------------------------------------------------------------------
 	def execute( self, context ):
@@ -1258,6 +1277,12 @@ class FG_OT_write_xml(bpy.types.Operator):
 	def invoke(self, context, event):
 		print( 'Save xml_file "%s"' % self.obj_name )
 		obj = bpy.data.objects[self.obj_name]
+		if obj.type == 'CAMERA':
+			from . import xml_camera
+			xml_camera.write_camera( context, obj.data.fg.xml_file )
+			return {'FINISHED'}
+		
+		
 		filename = obj.data.fg.xml_file
 		no		 = obj.data.fg.xml_file_no
 		print( ' file = "%s"' % filename )
@@ -1275,6 +1300,31 @@ class FG_OT_write_xml(bpy.types.Operator):
 			name_path	= filename 
 			no			= obj.data.fg.xml_file_no
 		self.charge_xml( context, name_path, no )
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_write_jsb(bpy.types.Operator):
+	bl_idname = "view3d.write_jsb"
+	bl_label = "Write File"
+	
+	#filename = bpy.props.StringProperty()
+	obj_name = bpy.props.StringProperty()
+	#objet = None
+	
+	#---------------------------------------------------------------------------
+	def execute( self, context ):
+		if self.filename != "":
+			print( self.filename )
+			self.charge_xml( self.filename )
+		return {'FINISHED'}
+
+	#---------------------------------------------------------------------------
+
+	def invoke(self, context, event):
+		filename = bpy.data.objects[self.obj_name].fg.jsb_xml_file 
+		print( 'Save JSBsim "%s"' % filename )
+		from . import xml_jsbsim
+		xml_jsbsim.write_jsbsim( context, filename )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1517,12 +1567,14 @@ def register():
 	bpy.utils.register_class( FG_OT_exemple)
 	bpy.utils.register_class( FG_OT_select_file_xml )
 	bpy.utils.register_class( FG_OT_select_file_ac )
+	bpy.utils.register_class( FG_OT_select_file_jsb )
 	bpy.utils.register_class( FG_OT_show_animation )
 	bpy.utils.register_class( FG_OT_show_all )
 	bpy.utils.register_class( FG_OT_only_render )
 	bpy.utils.register_class( FG_OT_time_0_5x )
 	bpy.utils.register_class( FG_OT_time_2x )
 	bpy.utils.register_class( FG_OT_write_xml )
+	bpy.utils.register_class( FG_OT_write_jsb )
 	bpy.utils.register_class( FG_OT_insertion_keyframe_rotate )
 	bpy.utils.register_class( FG_OT_insertion_keyframe_translate )
 	bpy.utils.register_class( FG_OT_copy_name_bl2ac )
@@ -1551,12 +1603,14 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_exemple)
 	bpy.utils.unregister_class( FG_OT_select_file_xml )
 	bpy.utils.unregister_class( FG_OT_select_file_ac )
+	bpy.utils.unregister_class( FG_OT_select_file_jsb )
 	bpy.utils.unregister_class( FG_OT_show_animation )
 	bpy.utils.unregister_class( FG_OT_show_all )
 	bpy.utils.unregister_class( FG_OT_only_render )
 	bpy.utils.unregister_class( FG_OT_time_0_5x )
 	bpy.utils.unregister_class( FG_OT_time_2x )
 	bpy.utils.unregister_class( FG_OT_write_xml )
+	bpy.utils.unregister_class( FG_OT_write_jsb )
 	bpy.utils.unregister_class( FG_OT_insertion_keyframe_rotate )
 	bpy.utils.unregister_class( FG_OT_insertion_keyframe_translate )
 	bpy.utils.unregister_class( FG_OT_copy_name_bl2ac )

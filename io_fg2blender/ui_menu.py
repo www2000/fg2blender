@@ -188,6 +188,8 @@ class FG_OT_exec(bpy.types.Operator):
 		
 		from . import xml_jsbsim
 
+		#bpy.ops.object.file_select_jsb()
+
 		xml_jsbsim.write_jsbsim( context, '' )
 		
 		#bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]

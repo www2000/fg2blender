@@ -21,6 +21,12 @@
 # Contributors: 
 #
 
+#----------------------------------------------------------------------------------------------------------------------------------
+#
+#									AC_EXPORT.PY
+#
+#----------------------------------------------------------------------------------------------------------------------------------
+
 import os
 import bpy
 import mathutils
@@ -38,6 +44,7 @@ SELECT_ONLY		= True
 list_material = []
 
 parent = mathutils.Vector()
+CG = mathutils.Vector( (0.0,0.0,0.0,0.0) )
 
 path_name = ""
 DEBUG = True
@@ -266,93 +273,23 @@ def extrait_translation_matrix( matrix ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def write_vertice( filename, obj, mesh ):
+	global parent, CG
+	
 	f = open(filename, 'a+')
 
-	scale = obj.scale
 	location = obj.location
-	euler = obj.rotation_euler
-
-	delta_scale = obj.delta_scale
-	delta_location = obj.delta_location
-	delta_euler = obj.delta_rotation_euler
-
-	euler_string = "x=%0.6f y=%0.6f z=%0.6f" % (euler[0],euler[1],euler[2])
-	scale_string = "x=%0.6f y=%0.6f z=%0.6f" % (scale[0],scale[1],scale[2])
-	location_string = "x=%0.6f y=%0.6f z=%0.6f" % (location[0],location[1],location[2])
-
-	delta_location_string = "x=%0.6f y=%0.6f z=%0.6f" % (delta_location[0],delta_location[1],delta_location[2])
-	delta_scale_string = "x=%0.6f y=%0.6f z=%0.6f" % (delta_scale[0],delta_scale[1],delta_scale[2])
-	delta_euler_string = "x=%0.6f y=%0.6f z=%0.6f" % (delta_euler[0],delta_euler[1],delta_euler[2])
-
-	nbVertices = len(mesh.vertices)
 	
-	l = obj.matrix_basis[0]
-
-
-	debug_info( "*** Objet %s" % obj.name )
-	debug_info( "Contraints %d" % len(obj.constraints) )
-
-	print_matrix( obj.matrix_basis, 'matrix_basis' )
-	print_matrix( obj.matrix_local, 'matrix_local' )
-	print_matrix( obj.matrix_world, 'matrix_world' )
-
-
-
-	delta =  extrait_translation_matrix(obj.matrix_world) - extrait_translation_matrix(obj.matrix_basis)
-	delta =  extrait_translation_matrix(obj.matrix_world) - extrait_translation_matrix(obj.matrix_basis)
-	parent = extrait_translation_matrix(obj.matrix_local) - extrait_translation_matrix(obj.matrix_basis)
-	#parent = mathutils.Vector( (0.0,0.0,0.0) )
-
-	'''
-	debug_info( "matrix %f %f %f %f" % ( obj.matrix_basis[0], obj.matrix_basis[1], obj.matrix_basis[2], obj.matrix_basis[3] )  )
-	debug_info( "matrix %f %f %f %f" % ( matrix_basis[4], matrix_basis[5], matrix_basis[6], matrix_basis[7] )  )
-	debug_info( "matrix %f %f %f %f" % ( matrix_basis[8], matrix_basis[9], matrix_basis[10], matrix_basis[11] )  )
-	debug_info( "matrix %f %f %f %f" % ( matrix_basis[12], matrix_basis[13], matrix_basis[14], matrix_basis[15] )  )
-	debug_info( "Delta location %s" % delta_location_string )
-	debug_info( "Delta scale %s" % delta_scale_string )
-	debug_info( "Delta euler %s" % delta_euler_string )
-	'''
-	debug_info( "Location %s" % location_string )
-	'''
-	debug_info( "Scale %s" % scale_string )
-	debug_info( "Euler %s" % euler_string )
-	'''
-	
+	nbVertices = len( mesh.vertices )
 	writeln_file( f, "numvert " + str(nbVertices) )
 	
-	vec3_locat	= mathutils.Vector(location)
-	vec3_scale	= mathutils.Vector(scale)
-	euler_euler	= mathutils.Euler(euler)
-	mat_euler	= euler_euler.to_matrix()
+	m = obj.matrix_world
 	# for each vertex
 	for v in mesh.vertices:
 		vec3_vert = mathutils.Vector(v.co)
 		vec3_resu = mathutils.Vector()
 
-		vec3_vert.x *= vec3_scale.x
-		vec3_vert.y *= vec3_scale.y
-		vec3_vert.z *= vec3_scale.z
-
-		v	= mathutils.Vector(vec3_vert)
-		v_loc = mathutils.Vector( (obj.matrix_local[0][3],-obj.matrix_local[1][3],obj.matrix_local[2][3]) )
-		v_wor = mathutils.Vector( (obj.matrix_world[0][3],-obj.matrix_world[1][3],obj.matrix_world[2][3]) )
-		v_bas = mathutils.Vector( (obj.matrix_basis[0][3],-obj.matrix_basis[1][3],obj.matrix_basis[2][3]) )
-		
-		#vec3_vert -= - v_wor + v_bas + v_bas
-		#v -= - v_wor + v_bas + v_bas
-
-		vec3_vert = mat_euler * v
-
-		vec3_vert.x -= - v_wor.x + v_bas.x
-		#vec3_vert = obj.matrix_world * v
-
-
-		vec3_resu = vec3_vert
-		
-		#vec3_resu = obj.matrix_local * vec3_vert
-		#vec3_resu = vec3_vert + delta + extrait_translation_matrix(obj.matrix_local)
-		#vec3_resu = vec3_vert + delta
-		#vec3_resu = vec3_vert + extrait_translation_matrix(obj.matrix_local) - extrait_translation_matrix(obj.matrix_basis)
+		vec3_resu = m * vec3_vert
+		vec3_resu = vec3_resu - (mathutils.Vector(obj.location) + parent)
 
 		str_x = significatif("%0.6f" % vec3_resu.x)
 		str_y = significatif("%0.6f" % vec3_resu.z)
@@ -380,6 +317,7 @@ def extrait_crease( obj, mesh ):
 
 def write_header_mesh( filename, obj, mesh ):
 	global path_name
+	global CG
 	f = open(filename, 'a+')
 
 	try:
@@ -390,7 +328,7 @@ def write_header_mesh( filename, obj, mesh ):
 		tex_name = ''
 		pass
 
-	vec3_locat	= mathutils.Vector(obj.location) + parent
+	vec3_locat	= mathutils.Vector(obj.location) + parent - CG
 		
 	writeln_file( f, "OBJECT poly" )
 	writeln_file( f, 'name "' + obj.name + '"' )
@@ -541,6 +479,7 @@ def recurs_son( filename, context, list_objects, obj ):
 
 def write_ac_file( context, filename, object_list, select_only, tex_path, apply_modifiers ):
 	global	SELECT_ONLY, TEX_PATH, APPLY_MODIFIERS
+	global CG
 	
 	SELECT_ONLY		= select_only
 	TEX_PATH		= tex_path
@@ -550,16 +489,6 @@ def write_ac_file( context, filename, object_list, select_only, tex_path, apply_
 	new_file( filename )
 	writeln_some_data( filename, "AC3Db" )
 	
-	'''
-	list_objects = []
-	if SELECT_ONLY:
-		for obj in context.selected_objects:
-			if obj.type != 'MESH':
-				continue
-			list_objects.append( obj )
-	else:
-		list_objects = context.scene.objects
-	'''	
 	list_objects = object_list
 	
 	# create dictionnary for mesh order
@@ -580,10 +509,20 @@ def write_ac_file( context, filename, object_list, select_only, tex_path, apply_
 	writeln_some_data( filename, "OBJECT world" )
 	writeln_some_data( filename, "kids %d" % count_son(list_objects, 'world' ) )
 	
+	CG = mathutils.Vector( (0.0,0.0,0.0) )
+	#search CG point
+	for obj in bpy.data.objects:
+		if obj.type != 'EMPTY':
+			continue
+		if obj.fg.jsb_attr != 'CG':
+			continue
+		CG = obj.location
+	
 	for obj in list_objects_sort:
 		debug_info( "Object : %s" % obj.name )
 		if test_son(list_objects, obj, 'world' ):
 			recurs_son( filename, context, list_objects, obj )
 	
+	print( 'Gravity center "%s"' % str(CG) )
 	return
 

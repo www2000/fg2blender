@@ -42,6 +42,7 @@ from mathutils import Euler
 #---------------------------------------------------------------------------------------------------------------------
 
 DEBUG = False
+CG = Vector( (0.0,0.0,0.0) )
 
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -54,8 +55,6 @@ def debug_info( aff):
 
 def build_property_name( armature ):
 	prop_name = armature.data.fg.familly_value
-	if prop_name[0]=="/":
-		prop_name = prop_name[1:]
 	if prop_name.find('%d')!=-1:
 		idx = armature.data.fg.property_idx
 		left  = prop_name.partition('[')[0]
@@ -268,6 +267,7 @@ def write_animation( context, node, obj ):
 	#---------------------------------------------------------------------------
 
 	def append_center( node_animation, armature ):
+		global CG
 		center = create_node( 'center' )
 		node_animation.appendChild( center )
 		head = armature.data.bones["Bone"].head
@@ -275,6 +275,7 @@ def write_animation( context, node, obj ):
 		#m = armature.matrix_basis
 		m = armature.matrix_world
 		v = m * head
+		v = v - CG
  		
 		loc = armature.delta_location
  		
@@ -306,6 +307,9 @@ def write_animation( context, node, obj ):
 		if value != "error" and value != '':
 			if value.find('%d')!=-1:
 				value = build_property_name( armature )
+				print( value)
+			if value[0]=="/":
+				value = value[1:]
 			prop = create_node_value( 'property', value )
 			node_animation.appendChild( prop )
 		bpy.context.scene.objects.active = obj_ctx
@@ -406,8 +410,26 @@ def appendPath( nodeDoc, node, filename, no ):
 					path.appendChild( txt )
 					node.appendChild( path )
 					return
+#---------------------------------------------------------------------------
+ 
+def cleanNode(currentNode,indent,newl):
+	filter=indent+newl
+	if currentNode.hasChildNodes:
+	    for node in currentNode.childNodes:
+	        if node.nodeType == 3:
+	            node.nodeValue = node.nodeValue.lstrip(' ').lstrip(filter).strip(filter).rstrip(' ')
+	            #node.nodeValue = node.nodeValue.lstrip(' ').lstrip(filter).strip(filter).rstrip(' ').strip('--')
+	            #node.nodeValue = node.nodeValue.lstrip(filter).strip(filter)
+	            if node.nodeValue == "":
+	                currentNode.removeChild(node)
+	    for node in currentNode.childNodes:
+	        cleanNode(node,indent,newl)
+#---------------------------------------------------------------------------
+
+def cleanDoc(document,indent="",newl=""):
+	node=document.documentElement
+	cleanNode(node,indent,newl)
 #----------------------------------------------------------------------------------------------------------------------------------
-		
 		
 def write_animation_all( context, node, filename, no ):
 	#---------------------------------------------------------------------------
@@ -427,25 +449,15 @@ def write_animation_all( context, node, filename, no ):
 					node.appendChild( txt )
 					node.removeChild( child )
 	#---------------------------------------------------------------------------
-	 
-	def cleanNode(currentNode,indent,newl):
-		filter=indent+newl
-		if currentNode.hasChildNodes:
-		    for node in currentNode.childNodes:
-		        if node.nodeType == 3:
-		            node.nodeValue = node.nodeValue.lstrip(' ').lstrip(filter).strip(filter).rstrip(' ')
-		            #node.nodeValue = node.nodeValue.lstrip(' ').lstrip(filter).strip(filter).rstrip(' ').strip('--')
-		            #node.nodeValue = node.nodeValue.lstrip(filter).strip(filter)
-		            if node.nodeValue == "":
-		                currentNode.removeChild(node)
-		    for node in currentNode.childNodes:
-		        cleanNode(node,indent,newl)
-	#---------------------------------------------------------------------------
-
-	def cleanDoc(document,indent="",newl=""):
-		node=document.documentElement
-		cleanNode(node,indent,newl)
-	#---------------------------------------------------------------------------
+	global CG
+	CG = Vector( (0.0,0.0,0.0) )
+	#search CG point
+	for obj in bpy.data.objects:
+		if obj.type != 'EMPTY':
+			continue
+		if obj.fg.jsb_attr != 'CG':
+			continue
+		CG = obj.location
  	
 	debug_info( 'xml_export.write_animation_all() Recherche xml_file "%s"' % filename )
 	cleanDoc(node,"\t","\n\r")

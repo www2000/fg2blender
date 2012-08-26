@@ -23,7 +23,7 @@
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #
-#									UI_PANEL_ARMATURE.PY
+#									UI_PANEL_OBJECT.PY
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -47,7 +47,8 @@ class FG_PT_object_properties(bpy.types.Panel):
 		obj = context.object
 
 		if obj:      
-			if obj.type in ('MESH','EMPTY'):
+			#if obj.type in ('MESH','EMPTY'):
+			if obj.type in ('MESH'):
 				return True
 		return False
 
