@@ -285,6 +285,9 @@ def write_vertice( filename, obj, mesh ):
 	writeln_file( f, "numvert " + str(nbVertices) )
 	
 	m = obj.matrix_world
+	# delta_location and delta euler use for offset xml
+	# compute the invert matrix for euler
+	# and subtract delta_location
 	e = obj.delta_rotation_euler
 	mat_euler = e.to_matrix()
 	#print( 'Determinant %02f' % mat_euler.determinant() )
@@ -334,6 +337,8 @@ def write_header_mesh( filename, obj, mesh ):
 	try:
 		n = mesh.tessfaces[0].material_index
 		tex_name = mesh.materials[n].texture_slots[0].texture.image.filepath
+		if tex_name.find('glass_shader') != -1:
+			tex_name = ""
 	except:
 		print( '****** Error: Unload Texture name ********' )
 		tex_name = ''
