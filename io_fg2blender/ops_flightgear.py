@@ -1279,7 +1279,9 @@ class FG_OT_write_xml(bpy.types.Operator):
 		obj = bpy.data.objects[self.obj_name]
 		if obj.type == 'CAMERA':
 			from . import xml_camera
-			xml_camera.write_camera( context, obj.data.fg.xml_file )
+			filename = obj.data.fg.xml_file
+			filename = bpy.path.abspath( filename )
+			xml_camera.write_camera( context, filename )
 			return {'FINISHED'}
 		
 		
@@ -1322,6 +1324,7 @@ class FG_OT_write_jsb(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		filename = bpy.data.objects[self.obj_name].fg.jsb_xml_file 
+		filename = bpy.path.abspath( filename )
 		print( 'Save JSBsim "%s"' % filename )
 		from . import xml_jsbsim
 		xml_jsbsim.write_jsbsim( context, filename )

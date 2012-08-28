@@ -34,6 +34,8 @@ import bpy
 camera_items = [	('None',			'None', ''),
 					('COCKPIT_VIEW',	'COCKPIT_VIEW', '')
 			]
+			
+bLock_update = False
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_camera(bpy.types.PropertyGroup):
@@ -46,7 +48,32 @@ class FG_PROP_camera(bpy.types.PropertyGroup):
 		obj.show_name = True
 		return None	
 	#----------------------------------------------------------------------------------------------------------------------------------
-	xml_file	= bpy.props.StringProperty(	attr = 'xml_file', name = 'Filename' )
+
+	def update_xml_file( self, context ):
+		global bLock_update
+		obj = context.active_object
+		print( 'update_xml_file "%s"  %s' % (obj.name, str(bLock_update))  )
+		if bLock_update == True:
+			return None
+			
+		bLock_update = True
+
+		active_object = context.active_object
+		xml_file = "" + active_object.data.fg.xml_file
+		xml_file = bpy.path.relpath( xml_file )
+		active_object.data.fg.xml_file = xml_file
+		for obj in context.selected_objects:
+			if obj.name == active_object.name:
+				continue
+			if obj.type != 'CAMERA':
+				continue
+			print( "\t%s" % obj.name )
+			obj.data.fg.xml_file = "" + xml_file
+			
+		bLock_update = False
+		return None	
+	#----------------------------------------------------------------------------------------------------------------------------------
+	xml_file	= bpy.props.StringProperty(	attr = 'xml_file', name = 'Filename', update=update_xml_file )
 	type_view	= bpy.props.EnumProperty(	attr = 'type_view', name = 'Attribute', items = camera_items, default = 'None', update = update_type_view )
 #----------------------------------------------------------------------------------------------------------------------------------
 

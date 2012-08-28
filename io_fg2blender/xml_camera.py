@@ -109,7 +109,7 @@ def write_camera( context, filename  ):
 	print( 'xml_camera.write_camera() Write xml_file "%s"' % filename )
 	basename = os.path.basename( filename )
 	template = xml_manager.addon_path + os.sep + 'io_fg2blender' + os.sep + 'view_template.xml'
-	print( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % template )
+	#print( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % template )
 
 	doc = xml_import.charge_xml( template )
 	xml_export.cleanDoc(doc,"\t","\n\r")

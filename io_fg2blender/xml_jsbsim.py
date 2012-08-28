@@ -274,7 +274,7 @@ def write_jsbsim( context, filename  ):
  	
  	
 	template = xml_manager.addon_path + os.sep + 'io_fg2blender' + os.sep + 'jsbsim_template.xml'
-	print( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % filename )
+	#print( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % template )
 
 	doc = xml_import.charge_xml( template )
 

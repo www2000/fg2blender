@@ -69,6 +69,8 @@ class FG_PROP_empty(bpy.types.PropertyGroup):
 
 		active_object = context.active_object
 		xml_file = "" + active_object.fg.jsb_xml_file
+		xml_file = bpy.path.relpath( xml_file )
+		active_object.fg.jsb_xml_file = xml_file
 		for obj in context.selected_objects:
 			if obj.name == active_object.name:
 				continue

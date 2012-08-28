@@ -30,6 +30,8 @@
 import os
 import bpy
 import mathutils
+from mathutils import Vector
+from mathutils import Euler
 
 
 
@@ -283,12 +285,22 @@ def write_vertice( filename, obj, mesh ):
 	writeln_file( f, "numvert " + str(nbVertices) )
 	
 	m = obj.matrix_world
+	e = obj.delta_rotation_euler
+	delta_euler = Euler( (e.x, e.y, e.z) )
+	mat_euler = delta_euler.to_matrix()
+	#print( 'Determinant %02f' % mat_euler.determinant() )
+	i_delta = mat_euler.inverted()
+	m_delta = i_delta.to_4x4()
+	l_delta =  obj.delta_location
 	# for each vertex
 	for v in mesh.vertices:
 		vec3_vert = mathutils.Vector(v.co)
 		vec3_resu = mathutils.Vector()
 
 		vec3_resu = m * vec3_vert
+		vec3_vert = vec3_resu - l_delta
+		vec3_resu = m_delta * vec3_vert
+		
 		vec3_resu = vec3_resu - (mathutils.Vector(obj.location) + parent)
 
 		str_x = significatif("%0.6f" % vec3_resu.x)
