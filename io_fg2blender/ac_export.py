@@ -286,8 +286,7 @@ def write_vertice( filename, obj, mesh ):
 	
 	m = obj.matrix_world
 	e = obj.delta_rotation_euler
-	delta_euler = Euler( (e.x, e.y, e.z) )
-	mat_euler = delta_euler.to_matrix()
+	mat_euler = e.to_matrix()
 	#print( 'Determinant %02f' % mat_euler.determinant() )
 	i_delta = mat_euler.inverted()
 	m_delta = i_delta.to_4x4()

@@ -1487,7 +1487,8 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 			print( obj.name )
 			
 		#clear_parent( list_objects )
-		ac_export.write_ac_file( context, filename, list_objects, True, False, True )
+		from . import xml_import
+		ac_export.write_ac_file( context, xml_import.conversion(filename), list_objects, True, False, True )
 		#restore_parent( list_objects )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------

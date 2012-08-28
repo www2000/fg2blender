@@ -249,10 +249,21 @@ def write_animation( context, node, obj ):
 		head = armature.data.bones["Bone"].head
 		tail = armature.data.bones["Bone"].tail
 		
-		#m = armature.matrix_basis
 		m = armature.matrix_world
+		e = armature.delta_rotation_euler
+		m_euler = e.to_matrix()
+		i_delta = m_euler.inverted()
+		m_delta = i_delta.to_4x4()
+		l_delta =  armature.delta_location
+		
 		ht = m * head
+		ht0 = ht - l_delta
+		ht = m_delta * ht0
+		
 		tt = m * tail
+		tt0 = tt - l_delta
+		tt = m_delta * tt0
+
 		v = tt - ht
 		v.normalize()
 
@@ -272,16 +283,25 @@ def write_animation( context, node, obj ):
 		node_animation.appendChild( center )
 		head = armature.data.bones["Bone"].head
 
-		#m = armature.matrix_basis
 		m = armature.matrix_world
+		e = armature.delta_rotation_euler
+		m_euler = e.to_matrix()
+		i_delta = m_euler.inverted()
+		m_delta = i_delta.to_4x4()
+		l_delta =  armature.delta_location
+		
+		loc = armature.delta_location
 		v = m * head
+		#v = v + loc
+		v0 = v - l_delta
+		v = m_delta * v0
 		v = v - CG
  		
 		loc = armature.delta_location
  		
-		x_value = create_node_value( 'x-m', '%0.4f' % (v.x-loc.x) )
-		y_value = create_node_value( 'y-m', '%0.4f' % (v.y-loc.y) )
-		z_value = create_node_value( 'z-m', '%0.4f' % (v.z-loc.z) )
+		x_value = create_node_value( 'x-m', '%0.4f' % (v.x) )
+		y_value = create_node_value( 'y-m', '%0.4f' % (v.y) )
+		z_value = create_node_value( 'z-m', '%0.4f' % (v.z) )
 		
 		center.appendChild( x_value )
 		center.appendChild( y_value )
