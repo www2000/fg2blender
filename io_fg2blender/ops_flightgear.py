@@ -1286,6 +1286,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 		
 		
 		filename = obj.data.fg.xml_file
+		filename = bpy.path.abspath(filename)
 		no		 = obj.data.fg.xml_file_no
 		print( ' file = "%s"' % filename )
 		#filename = self.filename
@@ -1468,6 +1469,7 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 				filename = bpy.path.abspath('//') + group_name
 			else:
 				filename = active_object.data.fg.ac_file
+				filename = bpy.path.abspath(filename)
 				
 			
 			
@@ -1506,7 +1508,10 @@ class FG_OT_transforme_to_rotate(bpy.types.Operator):
 		return context.active_object.type == 'ARMATURE'
 
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
-		context.active_object.data.fg.type_anim = 1
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				continue
+			obj.data.fg.type_anim = 1
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1523,7 +1528,10 @@ class FG_OT_transforme_to_translate(bpy.types.Operator):
 		return context.active_object.type == 'ARMATURE'
 
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
-		context.active_object.data.fg.type_anim = 2
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				continue
+			obj.data.fg.type_anim = 2
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 

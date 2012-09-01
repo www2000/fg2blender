@@ -29,11 +29,38 @@
 
 
 import bpy
+bLock_update = False
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_mesh(bpy.types.PropertyGroup):
-	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = 'Filename')
+	#----------------------------------------------------------------------------------------------------------------------------------
+
+	def update_ac_file( self, context ):
+		global bLock_update
+		obj = context.active_object
+		print( 'update_ac_file "%s"  %s' % (obj.name, str(bLock_update))  )
+		if bLock_update == True:
+			return None
+			
+		bLock_update = True
+
+		active_object = context.active_object
+		ac_file = "" + active_object.data.fg.ac_file
+		ac_file = bpy.path.relpath( ac_file )
+		active_object.data.fg.ac_file = ac_file
+		for obj in context.selected_objects:
+			if obj.name == active_object.name:
+				continue
+			if obj.type != 'MESH':
+				continue
+			print( "\t%s" % obj.name )
+			obj.data.fg.ac_file = "" + ac_file
+			
+		bLock_update = False
+		return None	
+
+	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = 'Filename', update=update_ac_file)
 	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = 'Mesh Name')
 #----------------------------------------------------------------------------------------------------------------------------------
 

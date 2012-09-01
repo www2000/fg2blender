@@ -50,7 +50,7 @@ xml_extra_rotation = None
 
 CONTEXT = None
 
-DEBUG = False
+DEBUG = True
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS AC_OPTION
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -336,6 +336,8 @@ class MESH:
 
 				if ac_mat.trans != 0.0:
 					obj_new.show_transparent = True
+				else:
+					obj_new.show_transparent = False
 					
 				material_list[no] = ( ml[0],ml[1],self.tex_name_bl, ml[3], True )
 				#material_list[self.mat_no][4] = True
@@ -352,6 +354,8 @@ class MESH:
 
 				if ac_mat.trans != 0.0:
 					obj_new.show_transparent = True
+				else:
+					obj_new.show_transparent = False
 
 			elif find_material_use_with_diff( self.mat_no, tronc_name(self.tex_name_bl) ) != -1:
 				ml = material_list[no]
@@ -373,6 +377,8 @@ class MESH:
 					bl_mat.use_transparency = True
 					bl_mat.alpha			= 1.0-ac_mat.trans
 					obj_new.show_transparent = True
+				else:
+					obj_new.show_transparent = False
 
 				if self.tex_name != "":
 					bl_mat.use_transparency = True

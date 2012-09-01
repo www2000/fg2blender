@@ -267,7 +267,73 @@ nChar = 0
 nBit = 2
 #----------------------------------------------------------------------------------------------------------------------------------
 
+
+bLock_update = False
+
 class FG_PROP_armature(bpy.types.PropertyGroup):
+
+	#---------------------------------------------------------------------------
+	def exist_in_text_editor(self, name ):
+		for text in bpy.data.texts:
+			if text.name == name:
+				return True
+		return False
+	#---------------------------------------------------------------------------
+
+	def creer_xml(self, filename, obj):
+		new_filename = ""
+		new_no = 0
+		for xml_file, no in xml_manager.xml_files:
+			if xml_file.name == filename:
+				new_filename = filename
+				new_no		 = no
+				break;
+		
+		if new_filename == "":
+			no = len(xml_manager.xml_files)
+			xml_file = xml_manager.XML_FILE()
+			xml_file.name	= filename
+			xml_file.no		= no
+			xml_manager.add_xml_file( xml_file, new_no )
+			#new_filename = filename
+			#new_no		 = no
+			#xml_manager.add_xml_file( new_filename, new_no )
+
+		obj.data.fg.xml_file	= new_filename
+		obj.data.fg.xml_file_no	= new_no
+	#---------------------------------------------------------------------------
+
+	def update_xml_file( self, context ):
+		global bLock_update
+		obj = context.active_object
+		print( 'update_xml_file "%s"  %s' % (obj.name, str(bLock_update))  )
+		if bLock_update == True:
+			return None
+			
+		bLock_update = True
+
+		active_object = context.active_object
+		xml_file = "" + active_object.data.fg.xml_file
+		xml_file = bpy.path.relpath( xml_file )
+		active_object.data.fg.xml_file = xml_file
+		
+		self.creer_xml( xml_file, obj )
+		no_xml_file = obj.data.fg.xml_file_no
+		print( 'no xml_file  = %d' % no_xml_file )
+		
+		for obj in context.selected_objects:
+			if obj.name == active_object.name:
+				continue
+			if obj.type != 'ARMATURE':
+				continue
+			print( "\t%s" % obj.name )
+			obj.data.fg.xml_file = "" + xml_file
+			obj.data.fg.xml_file_no = no_xml_file
+			
+		bLock_update = False
+		return None	
+	#----------------------------------------------------------------------------------------------------------------------------------
+
 	familly			= bpy.props.EnumProperty(	attr='familly', name='Familly', description="familly of properties", default='custom',
 						                        items = [ ('custom','custom','custom') ]
 						                        	+	[ (famille,famille,famille) for famille in familles ]    )
@@ -277,7 +343,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 	property_idx	= bpy.props.IntProperty(	attr = 'value', name = '%d ', min=0)
 	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
 	factor_ini		= bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
-	xml_file		= bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File')
+	xml_file		= bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File', update=update_xml_file)
 	xml_file_no		= bpy.props.IntProperty(	attr = 'xml_file_no', name = 'No xml File')
 	xml_present		= bpy.props.EnumProperty(	attr = 'xml_present', name='xml Present', description="familly animation", items = dynamic_items_xml_file )
 	type_anim		= bpy.props.IntProperty(	attr = 'type_anim', name = 'Type')

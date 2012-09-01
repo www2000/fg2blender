@@ -480,6 +480,7 @@ def write_animation_all( context, node, filename, no ):
 		CG = obj.location
  	
 	debug_info( 'xml_export.write_animation_all() Recherche xml_file "%s"' % filename )
+	print( 'xml_export.write_animation_all() Recherche xml_file "%s"' % filename )
 	cleanDoc(node,"\t","\n\r")
 	#return
 	nodePropertyList = node.getElementsByTagName( 'PropertyList' )
@@ -501,7 +502,7 @@ def write_animation_all( context, node, filename, no ):
 		if obj.parent != None:
 			if obj.parent.type != 'EMPTY':
 				continue
-		if obj.data.fg.xml_file.find( filename ) != -1 and obj.data.fg.xml_file_no == no:
+		if bpy.path.abspath(obj.data.fg.xml_file).find( filename ) != -1 and obj.data.fg.xml_file_no == no:
 			debug_info( obj.name )
 			write_animation_recurs( context, node, obj )
 		

@@ -397,6 +397,8 @@ def write_material( filename, sel_obj ):
 			if material == None:
 				continue
 			name = material.name
+			if name == 'Material_Pick':
+				continue 
 
 			try:
 				no = list_material.index(name)
@@ -423,7 +425,14 @@ def write_material( filename, sel_obj ):
 				# shininess
 				write_file( f, " shi %d" % material.specular_hardness )
 				# transparent
-				write_file( f, " trans %s" % significatif("%0.6f" % (1.0-material.alpha)) )
+				value = material.alpha
+				if len(material.texture_slots)>=1:
+					if material.texture_slots[0] != None:
+						if material.texture_slots[0].use_map_alpha and obj.show_transparent == False:
+							value = 1.0
+							#write_file( f, " trans %s" % significatif("%0.6f" % (0.0) ) )
+
+				write_file( f, " trans %s" % significatif("%0.6f" % (1.0-value)) )
 	
 				writeln_file( f, "" )
 	f.close()
