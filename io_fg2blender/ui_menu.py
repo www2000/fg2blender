@@ -54,24 +54,25 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.separator()
-        layout.operator("view3d.insert_keyframe_rotate", 	text='Insert Keyframe Rotate' )
-        layout.operator("view3d.insert_keyframe_translate", text='Insert Keyframe Translate' )
+        layout.operator("view3d.insert_keyframe_rotate",	text='Insert Keyframe Rotate' )
+        layout.operator("view3d.insert_keyframe_translate", 	text='Insert Keyframe Translate' )
         layout.separator()
         layout.operator("import.fg2blender",			text='Import (.xml)' )
         layout.separator()
-        layout.operator("view3d.create_anim",		text='Creation animations' )
+        layout.operator("view3d.create_anim",			text='Creation animations' )
         layout.separator()
-        layout.operator("view3d.edge_split",		text='Edge-split' )
-        layout.operator("view3d.select_property",	text='Select property' )
+        layout.operator("view3d.edge_split",			text='Edge-split' )
+        layout.operator("view3d.select_property",		text='Select property' )
         layout.operator("view3d.time_2x",			text='Time x2' )
         layout.operator("view3d.time_0_5x",			text='Time x0.5' )
-        layout.operator("view3d.copy_name_bl2ac",	text='Copy blender name to ac name' )
-        layout.operator("view3d.copy_ac_file",		text='Copy ac file (active->selects)' )
-
+        layout.operator("view3d.copy_name_bl2ac",		text='Copy blender name to ac name' )
+        layout.operator("view3d.copy_ac_file",			text='Copy ac file (active->selects)' )
         layout.separator()
-        layout.menu( 'VIEW3D_FG_sub_menu_armature',	text='Armatures' )
+        layout.menu( 'VIEW3D_FG_sub_menu_armature',		text='Armatures' )
         layout.separator()
         layout.menu( 'VIEW3D_FG_sub_menu_unwrap' )
+        layout.separator()
+        layout.operator("wm.url_open", text='Manual').url="http://wiki.flightgear.org/Fr/fg2blender"
         #layout.operator("view3d.unwrap_4_faces",	text='Unwrap 4 faces' )
 #----------------------------------------------------------------------------------------------------------------------------------
 
