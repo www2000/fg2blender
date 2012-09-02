@@ -412,15 +412,16 @@ def appendPath( nodeDoc, node, filename, no ):
 		if obj.parent != None:
 			if obj.parent.type == 'ARMATURE':
 				obj_armature = obj.parent
-				if obj_armature.data.fg.xml_file.find( filename ) != -1 and obj_armature.data.fg.xml_file_no == no:
+				if bpy.path.abspath(obj_armature.data.fg.xml_file).find( filename ) != -1 and obj_armature.data.fg.xml_file_no == no:
 					debug_info( obj_armature.name )
 					path = nodeDoc.createElement( 'path' )
 					basename		= os.path.basename( obj.data.fg.ac_file )
 					directory_xml	= os.path.dirname( filename  )
-					directory_ac	= os.path.dirname( obj.data.fg.ac_file )
+					directory_ac	= os.path.dirname( bpy.path.abspath(obj.data.fg.ac_file) )
 					relpath			= os.path.relpath( directory_ac, directory_xml )
-					debug_info( 'filename = "%s"' % filename )
-					debug_info( 'directory = "%s"' % directory_xml )
+					debug_info( 'filename      = "%s"' % filename )
+					debug_info( 'directory xml = "%s"' % directory_xml )
+					debug_info( 'directory ac = "%s"' % directory_ac )
 					debug_info( 'relpath = "%s"' % relpath )
 					if relpath == '.':
 						ac_file = basename
@@ -502,6 +503,8 @@ def write_animation_all( context, node, filename, no ):
 		if obj.parent != None:
 			if obj.parent.type != 'EMPTY':
 				continue
+		obj_filename = bpy.path.abspath(obj.data.fg.xml_file)
+		#print( 'Obj "%s"  filename "%s"' % ( obj.name, obj_filename) )
 		if bpy.path.abspath(obj.data.fg.xml_file).find( filename ) != -1 and obj.data.fg.xml_file_no == no:
 			debug_info( obj.name )
 			write_animation_recurs( context, node, obj )
