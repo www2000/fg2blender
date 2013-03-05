@@ -50,7 +50,7 @@ xml_extra_rotation = None
 
 CONTEXT = None
 
-DEBUG = True
+DEBUG = False
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS AC_OPTION
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -504,7 +504,8 @@ class MESH:
 		self.img_name_bl = img.name
 		tex = bpy.data.textures.new( img_name_clean, 'IMAGE')
 		tex.image = img
-		tex.use_alpha = True
+		if bpy.app.version[0]==2 and bpy.app.version[1]<66:
+			tex.use_alpha = True
 		self.set_tex_name( img_name_clean )
 		self.tex_name_bl = tex.name
 		self.img_name_bl = img.name

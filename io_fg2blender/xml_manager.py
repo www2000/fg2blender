@@ -869,7 +869,8 @@ class ANIM:
 	
 		tex = bpy.data.textures.new( img_name, 'IMAGE')
 		tex.image = img
-		tex.use_alpha = True
+		if bpy.app.version[0]==2 and bpy.app.version[1]<66:
+			tex.use_alpha = True
 		debug_info( '    Creation de la texture img="%s"  name="%s"' % (img_name, tex.name) )
 		return tex
 	#---------------------------------------------------------------------------------------------------------------------
@@ -997,10 +998,10 @@ class ANIM:
 #	xml_file			= ""							string : xml  file
 #	factor				= 0.0
 #	property			= ""							string : flightgear property of transform
-#	pos				= Vector( (0.0, 0.0, 0.0) )				bone location
-#	vec				= Vector( (0.0, 0.0, 0.0) )				bone vector
+#	pos					= Vector( (0.0, 0.0, 0.0) )				bone location
+#	vec					= Vector( (0.0, 0.0, 0.0) )				bone vector
 #	objects				= []							objects list  ( name in xml file )
-#	group_objects			= []							list : group_objects[0] name of group
+#	group_objects		= []							list : group_objects[0] name of group
 #	layer				= 0							number of layer
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1193,8 +1194,8 @@ class TEXT:
 		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
 		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
 
-		bpy.ops.transform.rotate(value=(-1.5708,), axis=(0, 0, -1))
-		bpy.ops.transform.rotate(value=(1.5708,), axis=(0, 1, 0))
+		bpy.ops.transform.rotate(value=-1.5708, axis=(0, 0, -1))
+		bpy.ops.transform.rotate(value=1.5708, axis=(0, 1, 0))
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_text_property( self ):
@@ -1206,8 +1207,8 @@ class TEXT:
 		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
 		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
 
-		bpy.ops.transform.rotate(value=(-1.5708,), axis=(0, 0, -1))
-		bpy.ops.transform.rotate(value=(1.5708,), axis=(0, 1, 0))
+		bpy.ops.transform.rotate(value=-1.5708, axis=(0, 0, -1))
+		bpy.ops.transform.rotate(value=1.5708, axis=(0, 1, 0))
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_text_number( self ):
@@ -1219,8 +1220,8 @@ class TEXT:
 		bpy.ops.transform.resize(value=(self.character_size*0.45, self.character_size*0.45, self.character_size*0.45))
 		bpy.ops.transform.resize(value=(1, 1, self.character_aspect_ratio))
 
-		bpy.ops.transform.rotate(value=(-1.5708,), axis=(0, 0, -1))
-		bpy.ops.transform.rotate(value=(1.5708,), axis=(0, 1, 0))
+		bpy.ops.transform.rotate(value=-1.5708, axis=(0, 0, -1))
+		bpy.ops.transform.rotate(value=1.5708, axis=(0, 1, 0))
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_text( self ):

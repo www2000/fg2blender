@@ -39,6 +39,8 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 	def update_ac_file( self, context ):
 		global bLock_update
 		obj = context.active_object
+		if obj  == None:
+			return None
 		print( 'update_ac_file "%s"  %s' % (obj.name, str(bLock_update))  )
 		if bLock_update == True:
 			return None

@@ -31,7 +31,7 @@
 
 
  
-familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear', 'consumable','surface_positions']
+familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear', 'consumable','surface_position']
  
  
  
@@ -253,6 +253,8 @@ def dynamic_items( self, context ):
 	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge, _min, _max, b in gears ]
 	elif obj.data.fg.familly == 'consumable':
 	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge, _min, _max, b in consumables ]
+	elif obj.data.fg.familly == 'surface_position':
+	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge, _min, _max, b in surface_positions ]
 	else:
 		items = [  ('error','error','error') ]
 	return items

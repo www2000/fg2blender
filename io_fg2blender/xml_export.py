@@ -41,7 +41,7 @@ from mathutils import Euler
 
 #---------------------------------------------------------------------------------------------------------------------
 
-DEBUG = False
+DEBUG = True
 CG = Vector( (0.0,0.0,0.0) )
 
 
@@ -267,10 +267,10 @@ def write_animation( context, node, obj ):
 		v = tt - ht
 		v.normalize()
 
-
 		x_value = create_node_value( 'x', '%0.4f' % (v.x) )
 		y_value = create_node_value( 'y', '%0.4f' % (v.y) )
 		z_value = create_node_value( 'z', '%0.4f' % (v.z) )
+		debug_info(  'Append_axis %0.2f %0.2f %0.2f' % (v.x, v.y, v.z) )
 		
 		axis.appendChild( x_value )
 		axis.appendChild( y_value )
@@ -302,6 +302,7 @@ def write_animation( context, node, obj ):
 		x_value = create_node_value( 'x-m', '%0.4f' % (v.x) )
 		y_value = create_node_value( 'y-m', '%0.4f' % (v.y) )
 		z_value = create_node_value( 'z-m', '%0.4f' % (v.z) )
+		debug_info(  'Append_center %0.2f %0.2f %0.2f' % (v.x, v.y, v.z) )
 		
 		center.appendChild( x_value )
 		center.appendChild( y_value )
@@ -487,7 +488,7 @@ def write_animation_all( context, node, filename, no ):
 	nodePropertyList = node.getElementsByTagName( 'PropertyList' )
 
 	
-	txt = node.createComment( "\n\n\t***********************************************************\n\t***********************************************************\n\t\tPart of this file was generating by a blender script\n\n\t\tScript fg2blender v0.1 alpha  (c)paf\n\t\tdownload: http://gitorious.org/paf/fg2blender\n\t\tcontacts: http://equipe-flightgear.forumactif.com\n\t\tdoc:      http://\n\t***********************************************************\n\t***********************************************************\n\n\t") 
+	txt = node.createComment( "\n\n\t***********************************************************\n\t***********************************************************\n\t\tPart of this file was generating by a blender script\n\n\t\tScript fg2blender v0.1 alpha  (c)paf\n\t\tdownload: http://gitorious.org/paf/fg2blender\n\t\tcontacts: http://equipe-flightgear.forumactif.com\n\t\tdoc:      http://wiki.flightgear.org/Fr/fg2blender\n\t***********************************************************\n\t***********************************************************\n\n\t") 
 	nodePropertyList[0].appendChild( txt )
 	
 	appendPath( node, nodePropertyList[0], filename, no )
