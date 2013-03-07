@@ -307,30 +307,35 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 	def update_xml_file( self, context ):
 		global bLock_update
-		obj = context.active_object
-		print( 'update_xml_file "%s"  %s' % (obj.name, str(bLock_update))  )
+		active_object = context.active_object
 		if bLock_update == True:
 			return None
+
+		print( 'update_xml_file "%s"  %s' % (active_object.name, str(bLock_update))  )
 			
 		bLock_update = True
 
-		active_object = context.active_object
+		#active_object = context.active_object
 		xml_file = "" + active_object.data.fg.xml_file
 		xml_file = bpy.path.relpath( xml_file )
-		active_object.data.fg.xml_file = xml_file
+
+		if active_object.data.fg.xml_file == xml_file:
+			print("Don't change!!!")
+		else:
+			active_object.data.fg.xml_file = xml_file
 		
-		self.creer_xml( xml_file, obj )
-		no_xml_file = obj.data.fg.xml_file_no
-		print( 'no xml_file  = %d' % no_xml_file )
+			self.creer_xml( xml_file, active_object )
+			no_xml_file = active_object.data.fg.xml_file_no
+			print( 'no xml_file  = %d' % no_xml_file )
 		
-		for obj in context.selected_objects:
-			if obj.name == active_object.name:
-				continue
-			if obj.type != 'ARMATURE':
-				continue
-			print( "\t%s" % obj.name )
-			obj.data.fg.xml_file = "" + xml_file
-			obj.data.fg.xml_file_no = no_xml_file
+			for obj in context.selected_objects:
+				#if obj.name == active_object.name:
+				#	continue
+				if obj.type != 'ARMATURE':
+					continue
+				print( "\t%s" % obj.name )
+				obj.data.fg.xml_file = "" + xml_file
+				obj.data.fg.xml_file_no = no_xml_file
 			
 		bLock_update = False
 		return None	

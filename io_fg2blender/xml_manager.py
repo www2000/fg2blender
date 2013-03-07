@@ -1428,7 +1428,7 @@ def create_anims():
 			if obj:
 				debug_info( 'Modif xml_file="%s" obj="%s"' % (xml_file.name,obj.name) )
 				debug_info( xml_file.name )
-				obj.data.fg.xml_file = "" + xml_file.name
+				obj.data.fg.xml_file = "//../" + xml_file.name
 				obj.data.fg.xml_file_no = 0 + no
 				#Assign group ac_file to armature
 				if len(xml_file.ac_files)>0:
