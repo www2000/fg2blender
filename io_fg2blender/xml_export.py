@@ -507,7 +507,9 @@ def write_animation_all( context, node, filename, no ):
 		obj_filename = bpy.path.abspath(obj.data.fg.xml_file)
 		#print( 'Obj "%s"  filename "%s"' % ( obj.name, obj_filename) )
 		if bpy.path.abspath(obj.data.fg.xml_file).find( filename ) != -1 and obj.data.fg.xml_file_no == no:
+			print("ICI")
 			debug_info( obj.name )
 			write_animation_recurs( context, node, obj )
-		
+		else:
+			print("AILLEURS")
 	

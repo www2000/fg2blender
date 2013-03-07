@@ -1,0 +1,185 @@
+*****************************************************************************************
+            AC_OPTION : 
+          ===============
+  Ancienne classe pour enregistrer les options de l'import ac
+
+  Utilisé pour enregistrer les options de l'import de fichier ac
+
+AC_OPTION.active_layer : boolean - Le chargement du fichier .ac se fera dans le layer blender actif si true
+AC_OPTION.layer_beg    : int [1,20] -  numero de layer tournant. Le premier fichier ac se chargera dans ce layer. Le second fichier ac 
+                         se chargera dans le layer numero +1. Ainsi de suite. Jusqu'a layer_end. Ou l'on rebouclera sur layer_beg
+AC_OPTION.layer_end    : int [1,20] - numero de layer 
+AC_OPTION.smooth_all   : boolean - Applique le modifers edge-split sur tous les objets
+                         pas utilisé
+AC_OPTION.edge_split   : boolean - Utilise le modifier edge-split
+                         pas utilise
+AC_OPTION.split_angle  : numeric - 
+                         pas utilise (voir crease de MESH)
+
+
+
+TODO :    Certainement à supprimer car remplacer dans XML_OPTION
+------
+
+
+
+
+
+*****************************************************************************************
+           AC_FILE :
+          ===========
+
+Classe contenant des informations sur le fichier .ac lu par le script
+
+Description :
+-------------
+AC_FILE.name                 : Nom du fichier .ac. Le nom du fichier contient sa position dans l'arborescence en absolu  
+AC_FILE.meshs                : liste de String - Liste contenant le nom des objets créés dans blender. Ce nom est le nom blender
+AC_FILE.dic_name_meshs       : dictionnaires convertissant le nom des objets. Lors de la lecture de plusieurs fichiers .ac, certains
+                               objets peuvent avoir des noms identiques. Blender ne le permet pas et rajoutera un indice au nom dans
+                               ce cas. Pour retrouver la correspondance des noms, ce dictionnaire est crée. La clé est le nom blender
+
+
+Utilisation :
+------------
+Lors de la lecture des fichiers xml, une variable globale, pointera sur une instance représentant le fichier .ac courant
+current_ac_file
+
+
+Durée de vie :
+--------------
+Tout au long du programme, car une référence est sauvegardé dans l'objet XML_FILE
+
+
+
+
+
+
+
+*****************************************************************************************
+            MESH :
+          =========
+
+Classe contenant des informations d'un objet
+Cet objet contient les sommmets, les faces, la texture, etc.. 
+
+Description :
+-------------
+MESH.crease        ; numeric - Donne la valeur de split_angle du modifier edge_split
+
+
+Utilisation :
+-------------
+C'est un objet intermédiaire, qui est initialisé lors de la lecture ligne après ligne du fichier .ac
+Lorsque le mot clé 'kids' est trouvée dans le fichier .ac, l'objet blender est créé.
+
+Durée de vie :
+---------------
+L'objet créé lors de lecture sera certainement détruit par le ramasse-miette de python, car sa référence n'est pas
+sauvegardé à la fin de l'import .ac
+
+
+
+
+
+*****************************************************************************************
+             MATERIAL :
+          ==============
+
+Classe contenant des informations d'un material au sens .ac
+Cet objet contient les couleurs diffuse, speculaire, etc...
+
+
+Durée de vie :
+---------------
+Tout au long du programme, car une référence est sauvegardé dans la liste global 
+ac_anager.material_list (pas d'intéret surtout si il y a une modification lors de l'édition dans blender)
+
+
+
+
+*****************************************************************************************
+             XML_OPTION :
+          =================
+
+Classe contenant les options d'import dans l'oglet blender
+
+Description :
+-------------
+XML_OPTION.include              : boolean - Lit les fichier xml inclus ( lecture recursive )
+XML_OPTION.mesh_active_layer	: boolean - Creer les objets dans le layer actif
+                                  sinon
+XML_OPTION.mesh_layer_beg       : numerique - Borne mini du layer des objets du fichier xml
+XML_OPTION.mesh_layer_end		: numerique - Borne max du layer des objets du fichier xml
+
+XML_OPTION.arma_active_layer    : boolean - Creer les armatures dans le lauer acrif
+                                  sinon
+XML_OPTION.arma_layer_beg       : numerique - Borne mini du layer des armatures du fichier xml
+XML_OPTION.arma_layer_end       : numerique - Borne max du layer des objets du fichier xml
+
+
+Utilisation :
+-------------
+Layer tournant. A chaque fichier xml, un layer est utilisée pour les objets, un autre layer pour les armatures. Par defaut les objets
+seront sur les layers 1-10 et les armatures sur 11-20. Dans cette configuration le premier fichier xml chargera les objet dans le 
+layer 1, et les armatures dans le layer 11. Au fichier xml suivant se sera le layer 2 pour les objets, et 12 pour les armatures.
+
+
+Durée de vie :
+---------------
+Supprime par le garbage collector, il n'y a pas de référence sur cet objet.
+
+
+
+
+
+
+*****************************************************************************************
+             XML_FILE :
+          ================
+
+Classe contenant les informations necessaire au script sur le fichier xml en cours de lecture
+
+Description :
+-------------
+XML_FILE.name               : string - Nom du fichier (en absolu)
+XML_FILE.no                 : numerique - Numero du fichier xml. Le premier fichier =0 ainsi de suite
+XML_FILE.ac_names           : list - Nom des fichier .ac  utilisé par le fichier xml
+XML_FILE.ac_files           : list - liste de class AC_FILE
+XML_FILE.offset             : vector - Coordonnées de translation des éléments du fichier
+XML_FILE.eulerXYZ           : vector - valeur des rotations (x,y,z) des élements du fichier
+XML_FILE.parent_offset      : vector - translation, utilisé dans le cas d'inclusion multiple avec des translations
+XML_FILE.parent_eulerXYZ    : vector - idem que precedement mais pour les rotations
+XML_FILE.anims              : list - Liste d'objet ANIM
+XML_FILE.texts              : list - Liste d'objet TEXT
+XML_FILE.file_offset		: string .... je ne me rappelle plus 
+
+
+Utilisation :
+-------------
+La variable globale xml_current pointe sur l'objet associé au fichier en cours de lecture.
+Le parser met à jour ses données. Puis lancera la création des objets correspondant
+dans blender. Un certain nombre de paramètres seront aussi sauvegardé dans les propriétés blender des objets. Par exemple:
+bpy.armature["Armature.001"].data.fg.xml_file
+Voir la description des nouvelles propriétés d'objet de blender créées par le script.
+Les propriétés parent_offset et parent_eulerXYZ, sont mise à jour pour le prochain fichier xml. Lorsque le script rencontre un 
+déplacement de l'ensemble du fichier, il met à jour les objets en modifiant le paramètre extra_location et extra_rotation de blender 
+pour effectuer ces transformations. Mais en plus, créer le prochain objet XML_FILE en initialisant parent_offset et parent_eulerXYZ. 
+De cette manière lors de la lecture du prochain fichier xml, le script sait que ce fichier doit subir une transforamtion du à son
+inclusion.
+Flightgear permetant d'inclure plusieurs fois un fichier xml, à des offset et/ou rotation differentes, c'est la raison de la numerotation
+des fichiers xml (XML_FILE.no). On peut retrouver plusieurs objet XML_FILE ayant le meme nom mais il n'auront pas le meme numero. Et 
+certainement des offsets différents
+
+Durée de vie :
+---------------
+La variable global xml_files est une liste de tuple, contenant l'ensemble des fichiers xml lus. Cette objet est associé a son numero de
+lecture pour former le tuple par exemple :
+xml_files = ( (objet_sur_dc3-set.xml , 0 ) , (objet_dc3_model.xml, 1 )   )
+
+
+
+
+
+
+
