@@ -49,6 +49,7 @@ from .xml_manager import TEXT
 #---------------------------------------------------------------------------------------------------------------------
 niv = 0
 path_model = ""
+abs_path_model = ""
 option_include = False
 option_print_include = False
 option_rotation = False
@@ -758,7 +759,8 @@ def absolute_path( filename ):
 	global path_model
 	
 	if filename.find( path_model ) == -1:
-		filename = path_model + filename
+		#filename = path_model + filename
+		filename = abs_path_model + path_model + filename
 	return filename
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -902,6 +904,7 @@ def parse_node( node, file_name ):
 def parse_file( filename, no_inc ):
 	global niv 
 	global path_model
+	global abs_path_model
 	global option_include
 	global no_include
 	global mesh_layer
@@ -946,7 +949,7 @@ def parse_file( filename, no_inc ):
 		if not xml_file:
 			xml_file = XML_FILE()
 
-	xml_file.name = filename
+	xml_file.name = abs_path_model + filename
 	#print( "******** Nom de fichier  : %s" % xml_file.name )
 	xml_file.no = no_inc
 	if no_inc == -1:
@@ -988,6 +991,7 @@ def parse_file( filename, no_inc ):
 
 def read_file_xml( name ):
 	global path_model
+	global abs_path_model
 	global option_include
 	global option_print_include
 	global option_rotation
@@ -1011,17 +1015,19 @@ def read_file_xml( name ):
 
 	if dir_name.find( 'Aircraft' )!=-1:
 		right_path = dir_name.partition( 'Aircraft'+slach )[2]
+		left_path = dir_name.partition( 'Aircraft'+slach )[0]
 
 		if right_path != "":
 			if len(right_path.split(slach)) >= 1:
 				path_model = 'Aircraft' + slach + right_path.split(slach)[0] + slach
 			else :
 				path_model = 'Aircraft' + slach + right_path + slach
-
+			abs_path_model = left_path
 			file_name = name
 			#print( base_name )
-			print( path_model )
-			print( file_name )
+			print( "path_model : %s" % path_model )
+			print( "abs_path_model : %s" % abs_path_model )
+			print( "filename : %s" % file_name )
 			#print( "Lit fichier : %s" %( file_name) )			
 			os.chdir( dir_name.partition('Aircraft')[0] )
 			#print( "Lecture du fichier : %s " % file_name )

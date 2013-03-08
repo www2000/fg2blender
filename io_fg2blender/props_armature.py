@@ -317,7 +317,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 		#active_object = context.active_object
 		xml_file = "" + active_object.data.fg.xml_file
-		xml_file = bpy.path.relpath( xml_file )
+		#xml_file = bpy.path.relpath( xml_file )
 
 		if active_object.data.fg.xml_file == xml_file:
 			print("Don't change!!!")

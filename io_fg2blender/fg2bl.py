@@ -36,19 +36,23 @@ class PATH:
 	def print_filename(self, filename ):
 		self.debug_info( filename )
 	
-	'''
 	def rel_from( self, filepath="", frompath="" ):
 		self.test_blender_filename()
+		from_pathname = os.path.dirname( frompath )
 		
-		if bSaveBlend:
+		if not self.bSaveBlend:
 			pathname = os.path.dirname( filepath )
 			filename = os.path.basename( filepath )
-			rel_path = os.path.relpath( pathname, frompath )
-			rel_path_normalized = os.path.normpath( rel_path )
-			return rel_path_normalized + os.sep + filename
 
-		return rel_path_normalize + os.sep + filename
-	'''		
+			rel_path = os.path.relpath( pathname, from_pathname )
+			rel_path_normalized = os.path.normpath( rel_path )
+
+			return rel_path_normalized + os.sep + filename
+		else:
+			print( "TODO")
+			
+		return filename
+
 	def get_blender_filename( self ):
 		return bpy.data.filepath
 		

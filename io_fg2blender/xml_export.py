@@ -414,21 +414,10 @@ def appendPath( nodeDoc, node, filename, no ):
 			if obj.parent.type == 'ARMATURE':
 				obj_armature = obj.parent
 				if bpy.path.abspath(obj_armature.data.fg.xml_file).find( filename ) != -1 and obj_armature.data.fg.xml_file_no == no:
-					debug_info( obj_armature.name )
+					from . import fg2bl 
+					ac_file = "" + fg2bl.path.rel_from( obj.data.fg.ac_file, filename  )
 					path = nodeDoc.createElement( 'path' )
-					basename		= os.path.basename( obj.data.fg.ac_file )
-					directory_xml	= os.path.dirname( filename  )
-					directory_ac	= os.path.dirname( bpy.path.abspath(obj.data.fg.ac_file) )
-					relpath			= os.path.relpath( directory_ac, directory_xml )
-					debug_info( 'filename      = "%s"' % filename )
-					debug_info( 'directory xml = "%s"' % directory_xml )
-					debug_info( 'directory ac = "%s"' % directory_ac )
-					debug_info( 'relpath = "%s"' % relpath )
-					if relpath == '.':
-						ac_file = basename
-					else:
-						ac_file = relpath + '/' + basename
-					txt = nodeDoc.createTextNode( ac_file ) 
+					txt  = nodeDoc.createTextNode( ac_file )
 					path.appendChild( txt )
 					node.appendChild( path )
 					return
@@ -492,6 +481,7 @@ def write_animation_all( context, node, filename, no ):
 	nodePropertyList[0].appendChild( txt )
 	
 	appendPath( node, nodePropertyList[0], filename, no )
+	#print ( "AppendPath : %s" % filename )
 	filename = os.path.basename( filename )
 
 	#remove_animation( nodePropertyList[0], node )
