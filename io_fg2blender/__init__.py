@@ -146,7 +146,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 			xml_option.arma_layer_end		= self.armature_rotate_layer_1
 		
 			if xml_manager.BIDOUILLE :
-				f = open('/home/rene/tmp/script-fg2bl', mode='w')
+				f = open('/tmp/script-fg2bl', mode='w')
 				f.write( filename )
 				f.close()
 				#xml_option = XML_OPTION()
@@ -210,7 +210,7 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 			ac_option.context		= context
 			
 			if xml_manager.BIDOUILLE:
-				f = open('/home/rene/tmp/script-fg2bl', mode='w')
+				f = open('/tmp/script-fg2bl', mode='w')
 				f.write( filename )
 				f.close()
 			
@@ -308,7 +308,7 @@ def register():
 	ui_shortcut.register()
 	ui_button.register()
 
-	if not os.path.isfile('/home/rene/tmp/script-fg2bl'):
+	if not os.path.isfile('/tmp/script-fg2bl'):
 		#print( "N'existe pas" )
 		xml_manager.BIDOUILLE = False
 	else:

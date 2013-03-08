@@ -33,6 +33,7 @@ from mathutils import Vector
 from mathutils import Euler
 
 from . import *
+from . import fg2bl
 
 from .ac_manager import AC_FILE
 
@@ -447,8 +448,8 @@ class ANIM:
 					_max = ind
 				if ind < _min:
 					_min = ind
-			print( "Debut %0.2f" % obj_armature.data.fg.range_beg )
-			print( "Fin   %0.2f" % obj_armature.data.fg.range_end )
+			debug_info( "Debut %0.2f" % obj_armature.data.fg.range_beg )
+			debug_info( "Fin   %0.2f" % obj_armature.data.fg.range_end )
 			#if self.interpolation[0][1] > self.interpolation[-1][1]:
 			if obj_armature.data.fg.range_beg !=-999.0:
 				if obj_armature.data.fg.range_beg <_min:
@@ -462,9 +463,9 @@ class ANIM:
 			else:
 				obj_armature.data.fg.range_end = obj_armature.data.fg.range_end_ini = _max
 					
-			print( obj_armature.name )
-			print( obj_armature.data.fg.property_value )
-			print( 'min=%0.2f max=%0.2f' % (_min,_max) )
+			debug_info( obj_armature.name )
+			debug_info( obj_armature.data.fg.property_value )
+			debug_info( 'min=%0.2f max=%0.2f' % (_min,_max) )
 				
 			self.interpolation.reverse()
 			for ind, dep in self.interpolation:
@@ -564,7 +565,8 @@ class ANIM:
 	#---------------------------------------------------------------------------------------------------------------------
 	
 	def insert_keyframe_all( self ):
-		print( "self.insert_keyframe_all()" )
+		print( "self.insert_keyframe_all()  for %s" % self.name )
+		debug_info( "self.insert_keyframe_all()" )
 		if self.type == 1:
 			bpy.context.scene.objects.active = bpy.data.objects[self.name]
 			self.insert_keyframe_rotation_all()
@@ -627,7 +629,7 @@ class ANIM:
 
 		if obj.data.fg.property_value[0] != '/':
 			obj.data.fg.property_value = '/' + obj.data.fg.property_value
-		print( ' Recherche  property "%s"' % obj.data.fg.property_value )
+		#print( ' Recherche  property "%s"' % obj.data.fg.property_value )
 		left = obj.data.fg.property_value
 		right = ''
 		if obj.data.fg.property_value.find('[') != -1:
@@ -904,7 +906,7 @@ class ANIM:
 	def create_armature( self ):
 		if self.active_layer:
 			bpy.context.scene.layers = layer( self.layer-2 )
-			print( "create_armature in layer %s" % str(self.layer-2) )
+			#print( "create_armature in layer %s" % str(self.layer-2) )
 				
 		if self.type == 1:
 			self.create_armature_rotation()
@@ -1428,8 +1430,11 @@ def create_anims():
 			if obj:
 				debug_info( 'Modif xml_file="%s" obj="%s"' % (xml_file.name,obj.name) )
 				debug_info( xml_file.name )
-				obj.data.fg.xml_file = "//../" + xml_file.name
+				#obj.data.fg.xml_file = "//../" + xml_file.name
+				obj.data.fg.xml_file = "" + xml_file.name
+				#print( "FILENAME %s" % fg2bl.path.rel_from(obj.data.fg.xml_file, "" ) )
 				obj.data.fg.xml_file_no = 0 + no
+				#fg2bl.path.print_filename( obj.data.fg.xml_file )
 				#Assign group ac_file to armature
 				if len(xml_file.ac_files)>0:
 					ac_file = xml_file.ac_files[0]
@@ -1437,7 +1442,7 @@ def create_anims():
 						ac_name = os.path.basename( ac_file.name )
 						if ac_name in bpy.data.groups:
 							bpy.ops.object.group_link( group = ac_name)
-							print( 'Assign group group : "%s"' % ac_name )
+							debug_info( 'Assign group group : "%s"' % ac_name )
 	#
 	#	Assign objct to anim
 	#

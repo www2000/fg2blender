@@ -311,7 +311,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 		if bLock_update == True:
 			return None
 
-		print( 'update_xml_file "%s"  %s' % (active_object.name, str(bLock_update))  )
+		#print( 'update_xml_file "%s"  %s' % (active_object.name, str(bLock_update))  )
 			
 		bLock_update = True
 
@@ -326,7 +326,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 		
 			self.creer_xml( xml_file, active_object )
 			no_xml_file = active_object.data.fg.xml_file_no
-			print( 'no xml_file  = %d' % no_xml_file )
+			#print( 'no xml_file  = %d' % no_xml_file )
 		
 			for obj in context.selected_objects:
 				#if obj.name == active_object.name:

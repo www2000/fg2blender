@@ -49,7 +49,7 @@ parent = mathutils.Vector()
 CG = mathutils.Vector( (0.0,0.0,0.0,0.0) )
 
 path_name = ""
-DEBUG = True
+DEBUG = False
 DEBUG_VERTICE = False
 
 

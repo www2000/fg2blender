@@ -630,7 +630,8 @@ def print_offset_path( node ):
 				if heading:
 					print( "%sheading-deg : %s" % (tabs(),ret_text_value(heading[0])) )
 	else:
-		print( "%sPas d'offset" % tabs() )
+		if DEBUG_INFO:
+			print( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_rotation_path( node, xml_file ):
@@ -654,7 +655,8 @@ def read_rotation_path( node, xml_file ):
 				if heading:
 					xml_file.eulerXYZ.z = xml_file.eulerXYZ.z + read_float_heading_deg(child)
 	else:
-		print( "%sPas de rotation" % tabs() )
+		if DEBUG_INFO:
+			print( "%sPas de rotation" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_offset_path( node, xml_file ):
@@ -672,7 +674,8 @@ def read_offset_path( node, xml_file ):
 					xml_file.offset = Vector( (0.0,0.0,0.0) )  + read_vector_center(child)
 					
 	else:
-		print( "%sPas d'offset" % tabs() )
+		if DEBUG_INFO:
+			print( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_rotation_text( node, text ):
@@ -698,7 +701,8 @@ def read_rotation_text( node, text ):
 				if heading:
 					text.eulerXYZ.z = xml_file.eulerXYZ.z + read_float_heading_deg(child)
 	else:
-		print( "%sPas de rotation" % tabs() )
+		if DEBUG_INFO:
+			print( "%sPas de rotation" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_offset_text( node, text ):
@@ -720,7 +724,8 @@ def read_offset_text( node, text ):
 				text.offset = Vector( (0.0,0.0,0.0) )  + read_vector_center(child)
 					
 	else:
-		print( "%sPas d'offset" % tabs() )
+		if DEBUG_INFO:
+			print( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def compute_offset_text( text ):
@@ -915,7 +920,9 @@ def parse_file( filename, no_inc ):
 			mesh_layer = option_mesh_rotate_beg
 		if mesh_layer > option_mesh_rotate_end:
 			mesh_layer = option_mesh_rotate_beg
-		print ( 'mesh_layer %d' % mesh_layer )	
+		if DEBUG_INFO:
+			print ( 'mesh_layer %d' % mesh_layer )	
+			
 		bpy.context.scene.layers = xml_manager.layer( mesh_layer-1 )
 			
 	if option_arma_rotate_layer:
@@ -924,7 +931,9 @@ def parse_file( filename, no_inc ):
 			arma_layer = option_arma_rotate_beg
 		if arma_layer > option_arma_rotate_end:
 			arma_layer = option_arma_rotate_beg
-		print ( 'arma_layer %d' % arma_layer )	
+
+		if DEBUG_INFO:
+			print ( 'arma_layer %d' % arma_layer )	
 		#bpy.context.scene.layers = xml_manager.layer( mesh_layer-1 )
 			
 	
@@ -938,6 +947,7 @@ def parse_file( filename, no_inc ):
 			xml_file = XML_FILE()
 
 	xml_file.name = filename
+	#print( "******** Nom de fichier  : %s" % xml_file.name )
 	xml_file.no = no_inc
 	if no_inc == -1:
 		xml_manager.add_xml_file( xml_file, no_include )

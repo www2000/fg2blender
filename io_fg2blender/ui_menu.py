@@ -148,7 +148,7 @@ class VIEW3D_FG_sub_menu_create_translate(bpy.types.Menu):
         layout.operator("view3d.create_translate_axis",	text='Create Translation XYZ').axis = 'XYZ'
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-F       utilise pour le "debuggage"
-# Réouvre le dernier xml     contenu dans '/home/rene/tmp/blender/script-fg2bl'
+# Réouvre le dernier xml     contenu dans '/tmp/script-fg2bl'
 # Cela évite la manipulation de la souris
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -178,24 +178,84 @@ class FG_OT_exec(bpy.types.Operator):
 		
 
 		if xml_manager.BIDOUILLE:
-			f = open('/home/rene/tmp/script-fg2bl', mode='r')
+			f = open('/tmp/script-fg2bl', mode='r')
 			filename = f.readline()
 			f.close()
 		else:
 			print( "Bidouille OK" )
 			return {'FINISHED'}
 
-		#import_xml( filename, ac_option, xml_option )
+		import_xml( filename, ac_option, xml_option )
 		
-		from . import xml_jsbsim
+		#from . import xml_jsbsim
 
 		#bpy.ops.object.file_select_jsb()
 
-		xml_jsbsim.write_jsbsim( context, '' )
+		#xml_jsbsim.write_jsbsim( context, '' )
 		
-		#bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
+		bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
 		#bpy.ops.object.select_all(action='SELECT')
 		#bpy.ops.view3d.edge_split()
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+# Pour le raccourci CTRL-X       utilise pour le "debuggage"
+# AFFICHAGE d'information sur la liste xml_manager.xml_files
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_exec2(bpy.types.Operator):
+	bl_idname = "fg.exec2"
+	bl_label = "fg.exec2"
+
+	def print_ac_file( self, ac_file, f ):
+		f.write( "     ac_file.name  = %s\n" % ac_file.name )
+		f.write( "     ac_file.meshs = List de mesh\n" )
+		for mesh in ac_file.meshs:
+			f.write( "        mesh = %s\n" % mesh )
+		f.write( "     ac_file.dic_name_meshs = Dictionnary\n" )
+		for key in ac_file.dic_name_meshs.keys():
+			f.write( "        dic = %s <-> %s\n" % (key,ac_file.dic_name_meshs[key]) )
+		
+	def print_mesh( self, obj, f ):
+		f.write( "    fg.name_ac : %s\n" % obj.data.fg.name_ac )
+		f.write( "    fg.ac_file : %s\n" % obj.data.fg.ac_file )
+		
+	def print_armature( self, obj, f ):
+		f.write( "    fg.familly : %s\n" % obj.data.fg.familly )
+		f.write( "    fg.familly_value : %s\n" % obj.data.fg.familly_value )
+		f.write( "    fg.xml_file : %s\n" % obj.data.fg.xml_file )
+		f.write( "    fg.xml_file_no : %s\n" % obj.data.fg.xml_file_no )
+		f.write( "    fg.type_anim : %d\n" % obj.data.fg.type_anim )
+		
+	def execute(self, context ):
+		from . import xml_manager
+
+		f = open("/tmp/debug_script.txt", "w")
+
+		f.write ( "---------------------------------\n")		
+		f.write ( "\n")		
+		f.write ( "    Donnees interne du script    \n")		
+		f.write ( "\n")		
+		f.write ( "---------------------------------\n")		
+
+		for xml_file, no in xml_manager.xml_files:
+			f.write ( "xml_file.name    = %s\n" % xml_file.name )		
+			f.write ( "xml_file.no      = %d\n" % xml_file.no )		
+			for ac_file in xml_file.ac_files:
+				self.print_ac_file( ac_file, f )
+				
+		f.write ( "---------------------------------\n")		
+		f.write ( "\n")		
+		f.write ( "    Donnees Blender    \n")		
+		f.write ( "\n")		
+		f.write ( "---------------------------------\n")		
+		for obj in bpy.data.objects:
+			f.write( "object name : %s\n" % obj.name )
+			if  obj.type == 'MESH':
+				self.print_mesh(obj, f)
+			elif  obj.type == 'ARMATURE':
+				self.print_armature(obj, f)
+
+		f.close()
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 #
@@ -208,6 +268,7 @@ class FG_OT_exec(bpy.types.Operator):
 
 def register():
     bpy.utils.register_class(FG_OT_exec)
+    bpy.utils.register_class(FG_OT_exec2)
     bpy.utils.register_class(VIEW3D_FG_root_menu)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_unwrap)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_armature)
@@ -215,6 +276,7 @@ def register():
     bpy.utils.register_class(VIEW3D_FG_sub_menu_create_translate)
 def unregister():
     bpy.utils.unregister_class(FG_OT_exec)
+    bpy.utils.unregister_class(FG_OT_exec2)
     bpy.utils.unregister_class(VIEW3D_FG_root_menu)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_unwrap)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_armature)

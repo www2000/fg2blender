@@ -35,6 +35,7 @@ def register_shortcut():
     kc = bpy.context.window_manager.keyconfigs.addon
     km = kc.keymaps.new(name="3D View", space_type="VIEW_3D")
     kmi = km.keymap_items.new('fg.exec', 'F', 'PRESS', ctrl=True)
+    kmi = km.keymap_items.new('fg.exec2', 'X', 'PRESS', ctrl=True)
     kmi = km.keymap_items.new('wm.call_menu', 'F', 'PRESS')
     kmi.properties.name = 'VIEW3D_FG_root_menu' 
     #kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS')
@@ -47,6 +48,8 @@ def unregister_shortcut():
     km = kc.keymaps["3D View"]
     for kmi in km.keymap_items:
         if kmi.idname == 'fg.exec':
+            km.keymap_items.remove(kmi)
+        if kmi.idname == 'fg.exec2':
             km.keymap_items.remove(kmi)
         if kmi.idname == 'wm.call_menu':
             km.keymap_items.remove(kmi)
