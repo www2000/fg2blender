@@ -425,13 +425,17 @@ class FG_OT_create_anim(bpy.types.Operator):
 		from . import xml_manager
 		xml_manager.create_anims()
 		xml_manager.create_texts()
+		# change orgin for all objects
+		bpy.ops.object.select_all(action='SELECT')
+		bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY',center='MEDIAN')
+		bpy.ops.object.select_all(action='DESELECT')
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_save_keyframe(bpy.types.Operator):
 	'''Add armature type rotate '''
 	bl_idname = "view3d.save_keyframe"
-	bl_label = "Create Animation"
+	bl_label = "Save animation keyframe"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -480,7 +484,7 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 class FG_OT_restore_keyframe(bpy.types.Operator):
 	'''Add armature type rotate '''
 	bl_idname = "view3d.restore_keyframe"
-	bl_label = "Create Animation"
+	bl_label = "Restore animation keyframe"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
