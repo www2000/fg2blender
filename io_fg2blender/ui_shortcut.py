@@ -36,6 +36,7 @@ def register_shortcut():
     km = kc.keymaps.new(name="3D View", space_type="VIEW_3D")
     kmi = km.keymap_items.new('fg.exec', 'F', 'PRESS', ctrl=True)
     kmi = km.keymap_items.new('fg.exec2', 'X', 'PRESS', ctrl=True)
+    kmi = km.keymap_items.new('view3d.create_anim', 'C', 'PRESS', alt=True)
     kmi = km.keymap_items.new('wm.call_menu', 'F', 'PRESS')
     kmi.properties.name = 'VIEW3D_FG_root_menu' 
     #kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS')

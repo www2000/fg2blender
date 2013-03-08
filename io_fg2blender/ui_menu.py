@@ -220,14 +220,38 @@ class FG_OT_exec2(bpy.types.Operator):
 		f.write( "    fg.ac_file : %s\n" % obj.data.fg.ac_file )
 		
 	def print_armature( self, obj, f ):
-		f.write( "    fg.familly : %s\n" % obj.data.fg.familly )
-		f.write( "    fg.familly_value : %s\n" % obj.data.fg.familly_value )
 		f.write( "    fg.xml_file : %s\n" % obj.data.fg.xml_file )
 		f.write( "    fg.xml_file_no : %s\n" % obj.data.fg.xml_file_no )
+		f.write( "    fg.xml_present : %s\n" % obj.data.fg.xml_present )
+		f.write( "    fg.familly : %s\n" % obj.data.fg.familly )
+		f.write( "    fg.familly_value : %s\n" % obj.data.fg.familly_value )
+		f.write( "    fg.propety_value : %s\n" % obj.data.fg.property_value )
+		f.write( "    fg.propety_idx : %d\n" % obj.data.fg.property_idx )
 		f.write( "    fg.type_anim : %d\n" % obj.data.fg.type_anim )
+		f.write( "    fg.factor : %f\n" % obj.data.fg.factor )
+		f.write( "    fg.factor : %.2f\n" % obj.data.fg.factor )
+		f.write( "    fg.factor_ini : %.2f\n" % obj.data.fg.factor_ini )
+		f.write( "    fg.range_beg : %.2f\n" % obj.data.fg.range_beg )
+		f.write( "    fg.range_end : %.2f\n" % obj.data.fg.range_end )
+		f.write( "    fg.range_beg_ini : %.2f\n" % obj.data.fg.range_beg_ini )
+		f.write( "    fg.range_end_ini : %.2f\n" % obj.data.fg.range_end_ini )
+		f.write( "    fg.time : %.2f\n" % obj.data.fg.time )
+		f.write( "    fg.time_ini : %.2f\n" % obj.data.fg.time_ini )
+		f.write( "    fg.offset_deg : %.2f\n" % obj.data.fg.offset_deg )
+		f.write( "    fg.bIncDickFile : %s\n" % obj.data.fg.bIncDiskFile )
+		f.write( "    fg.bWriteDisc : %s\n" % obj.data.fg.bWriteDisc )
+
+	def print_camera( self, obj, f ):
+		f.write( "    fg.xml_file : %s\n" % obj.data.fg.xml_file )
+		f.write( "    fg.type_view : %s\n" % obj.data.fg.type_view )
+		
+	def print_empty( self, obj, f ):
+		f.write( "    fg.jsb_xml_file : %s\n" % obj.fg.jsb_xml_file )
+		f.write( "    fg.jsb_attr : %s\n" % obj.fg.jsb_attr )
 		
 	def execute(self, context ):
 		from . import xml_manager
+		from . import fg2bl
 
 		f = open("/tmp/debug_script.txt", "w")
 
@@ -247,6 +271,8 @@ class FG_OT_exec2(bpy.types.Operator):
 		f.write ( "\n")		
 		f.write ( "    Donnees Blender    \n")		
 		f.write ( "\n")		
+		f.write ( "---------------------------------\n")
+		f.write ( "Blender filename : %s\n" % fg2bl.path.get_blender_filename() )
 		f.write ( "---------------------------------\n")		
 		for obj in bpy.data.objects:
 			f.write( "object name : %s\n" % obj.name )
@@ -254,6 +280,10 @@ class FG_OT_exec2(bpy.types.Operator):
 				self.print_mesh(obj, f)
 			elif  obj.type == 'ARMATURE':
 				self.print_armature(obj, f)
+			elif  obj.type == 'CAMERA':
+				self.print_camera(obj, f)
+			elif  obj.type == 'EMPTY':
+				self.print_empty(obj, f)
 
 		f.close()
 		return {'FINISHED'}

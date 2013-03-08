@@ -20,13 +20,14 @@
 # Script copyright (C) René Nègre
 # Contributors: 
 #
-
+import bpy
 import os
 
 class PATH:
 	def __init__(self):
 		self.DEBUG = True
 		self.dir_name_plane = ""
+		self.bSaveBlend = False
 	
 	def debug_info(self, aff):
 		if self.DEBUG:
@@ -35,12 +36,28 @@ class PATH:
 	def print_filename(self, filename ):
 		self.debug_info( filename )
 	
+	'''
 	def rel_from( self, filepath="", frompath="" ):
-		pathname = os.path.dirname( filepath )
-		filename = os.path.basename( filepath )
-		rel_path = os.path.relpath( pathname, frompath )
-		rel_path_normalize = os.path.normpath( rel_path )
+		self.test_blender_filename()
+		
+		if bSaveBlend:
+			pathname = os.path.dirname( filepath )
+			filename = os.path.basename( filepath )
+			rel_path = os.path.relpath( pathname, frompath )
+			rel_path_normalized = os.path.normpath( rel_path )
+			return rel_path_normalized + os.sep + filename
+
 		return rel_path_normalize + os.sep + filename
+	'''		
+	def get_blender_filename( self ):
+		return bpy.data.filepath
+		
+	def test_blender_filename( self ):
+		print( "Name blend : %s"  % bpy.data.filepath )
+		if bpy.data.filepath == "":
+			self.bSaveBlend = False
+		else:
+			self.bSaveBlend = True
 		
 path = PATH()
 
