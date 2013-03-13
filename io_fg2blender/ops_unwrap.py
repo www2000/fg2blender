@@ -76,7 +76,7 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 			for i in indices:
 				v = vertices[i].co
 				w = m * v
-				print( '(%0.2f,%0.2f,%0.2f) (%0.2f,%0.2f)' % (w.x,w.y,w.z ,  (w.x-b.x) , (w.y-b.y) ) )
+				debug_info( '(%0.2f,%0.2f,%0.2f) (%0.2f,%0.2f)' % (w.x,w.y,w.z ,  (w.x-b.x) , (w.y-b.y) ) )
 				u = (w.x-b.x)/coef
 				v = (w.y-b.y)/coef
 				if v >decal:
@@ -162,26 +162,26 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 
 		mesh = obj.data
 		uvtex = mesh.uv_layers.active
-		print( 'uv_textures.active "%s"' % (mesh.uv_textures.active) )
+		debug_info( 'uv_textures.active "%s"' % (mesh.uv_textures.active) )
 		if uvtex != None:
-			print( 'uv_textures.active.active "%s"' % str(mesh.uv_textures.active.active) )
-			print( 'uv_textures.active.active_clone "%s"' % str(mesh.uv_textures.active.active_clone) )
-			print( 'uv_textures.active.active_render "%s"' % str(mesh.uv_textures.active.active_render) )
+			debug_info( 'uv_textures.active.active "%s"' % str(mesh.uv_textures.active.active) )
+			debug_info( 'uv_textures.active.active_clone "%s"' % str(mesh.uv_textures.active.active_clone) )
+			debug_info( 'uv_textures.active.active_render "%s"' % str(mesh.uv_textures.active.active_render) )
 		if uvtex == None:
 			uv = mesh.uv_textures.new()
-			print( 'Creation uv text Name "%s"' % uv.name )
+			debug_info( 'Creation uv text Name "%s"' % uv.name )
 			uvtex = mesh.uv_layers.active
 
-		print( ' uvtext = "%s"' % str(uvtex) )
-		print( ' nb = %s' % len(uvtex.data) )
+		debug_info( ' uvtext = "%s"' % str(uvtex) )
+		debug_info( ' nb = %s' % len(uvtex.data) )
 		n_uvtex = mesh.uv_layers.active_index
-		print( 'Name "%s"' % mesh.uv_textures[n_uvtex].name )
+		debug_info( 'Name "%s"' % mesh.uv_textures[n_uvtex].name )
 
 		bbb = obj.bound_box
 		for i in range(8):
 			v = Vector( (bbb[i][0],bbb[i][1],bbb[i][2]) )
 			w = m * v
-			print( 'BB (%0.2f,%0.2f,%0.2f)' % (w.x,w.y,w.z) )
+			debug_info( 'BB (%0.2f,%0.2f,%0.2f)' % (w.x,w.y,w.z) )
 
 		bbmin = Vector( (bbb[0][0],bbb[0][1],bbb[0][2]) )
 		bbmax = Vector( (bbb[6][0],bbb[6][1],bbb[6][2]) )
@@ -189,12 +189,12 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 		#bb = m * b
 		dim = obj.dimensions
 
-		print( str(context.selected_objects) )
+		debug_info( str(context.selected_objects) )
 		if len(context.selected_objects) == 2:
 			for bbox in context.selected_objects:
 				if bbox != obj:
 					break
-			print( bbox.name )
+			debug_info( bbox.name )
 			dim = bbox.dimensions
 
 
@@ -216,7 +216,7 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 		
 		#coef = coef
 
-		print( 'Coef %0.2f' %  coef )
+		debug_info( 'Coef %0.2f' %  coef )
 
 
 		idx = 0
@@ -245,8 +245,8 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 				n = Vector( (0.0,0.0,0.0) ) + polygon.normal
 				v = m3 * n
 				angle =  degrees( front.angle(v, 999) )
-				print( "Normal x=%0.2f y=%0.2f z=%0.2f" % (v.x,v.y,v.z) )
-				print( "     dot=%0.2f" % angle )
+				debug_info( "Normal x=%0.2f y=%0.2f z=%0.2f" % (v.x,v.y,v.z) )
+				debug_info( "     dot=%0.2f" % angle )
 				if angle == 999:
 					idx = idx + len(polygon.vertices)
 					continue
@@ -255,10 +255,10 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 					continue
 				else:
 					decal = compute_uv_left( polygon.vertices, mesh.vertices, uvtex, idx, m, bbmin, bbmax, dim, coef,  _max, decal )
-					#print( "dot=%0.2f" % angle )
+					debug_info( "dot=%0.2f" % angle )
 			idx = idx + len(polygon.vertices)
 
-		print( 'Decal Left %0.2f' % decal )
+		debug_info( 'Decal Left %0.2f' % decal )
 
 
 		_max = _max + decal + 0.03
@@ -282,13 +282,13 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 			
 			#uv = Vector( (0.0,0.0) )
 			if (360-45)<angle or angle < 45:# or angle >= 360-45:
-				#print( "------------------------------------" )
+				debug_info( "------------------------------------" )
 				decal = compute_uv_up( polygon.vertices, mesh.vertices, uvtex, idx, m, bbmin, bbmax, dim, coef,  _max, decal )
-				#print( 'Up decal %0.2f' % decal )
+				debug_info( 'Up decal %0.2f' % decal )
 			idx = idx + len(polygon.vertices)
 
 
-		print( 'Decal Up %0.2f' % decal )
+		debug_info( 'Decal Up %0.2f' % decal )
 
 		_max = _max + decal + 0.03
 		idx = 0
@@ -324,11 +324,11 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 				#if 0 <angle and angle < 180:
 				if angle < 90:
 					decal = compute_uv_right( polygon.vertices, mesh.vertices, uvtex, idx, m, bbmin, bbmax, dim, coef,  _max, decal )
-					#print( "dot=%0.2f" % angle )
-					#print( 'Right' )
+					debug_info( "dot=%0.2f" % angle )
+					debug_info( 'Right' )
 			idx = idx + len(polygon.vertices)
 		
-		print( 'Decal Right %0.2f' % decal )
+		debug_info( 'Decal Right %0.2f' % decal )
 
 				
 		_max = _max + decal + 0.03
@@ -351,14 +351,14 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 				idx = idx + len(polygon.vertices)
 				continue
 			elif 135 < angle and angle < 225 :
-				#print( "------------------------------------" )
-				#print( "Normal x=%0.2f y=%0.2f z=%0.2f" % (v.x,v.y,v.z) )
-				#print( "dot=%0.2f" % angle )
+				debug_info( "------------------------------------" )
+				debug_info( "Normal x=%0.2f y=%0.2f z=%0.2f" % (v.x,v.y,v.z) )
+				debug_info( "dot=%0.2f" % angle )
 				decal = compute_uv_down( polygon.vertices, mesh.vertices, uvtex, idx, m, bbmin, bbmax, dim, coef,  _max, decal )
-				#print( 'Down decal %0.2f' % decal )
+				debug_info( 'Down decal %0.2f' % decal )
 			idx = idx + len(polygon.vertices)
 
-		print( 'Decal Down %0.2f' % decal )
+		debug_info( 'Decal Down %0.2f' % decal )
 		
 		#bpy.data.objects['Cube'].data.polygons[1].normal
 		return {'FINISHED'}

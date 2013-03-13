@@ -88,7 +88,7 @@ class AC_FILE:
 			obj.select = False
 		if not group_name in bpy.data.groups:
 			bpy.data.groups.new( group_name )
-			print( 'Create group : "%s"' % group_name )
+			debug_info( 'Create group : "%s"' % group_name )
 		for mesh_name in self.meshs:
 			obj = bpy.data.objects[mesh_name]
 			obj.select = True
@@ -245,7 +245,7 @@ class MESH:
 					img = bpy.data.images[self.img_name_bl]
 				except:
 					img = None
-					print( '     Erreur recherche img "%s"'%self.img_name_bl )
+					debug_info( '     Erreur recherche img "%s"'%self.img_name_bl )
 			else:
 				img = None
 
@@ -259,7 +259,7 @@ class MESH:
 			#uvtex.data.add(len(self.uv))
 			#uvtex.data.foreach_set( "uv", unpack_face_list(self.uv) )
 			#for i in range(len(self.faces)):
-			#	print( str(self.uv[i]) )
+			#	debug_info( str(self.uv[i]) )
 			#	for j in range(len(self.uv[i])):
 			#		debug_info( "uv[%d]  %0.4f,%0.4f" % (i,self.uv[i][j][0],self.uv[i][j][1]) )
 				
@@ -270,11 +270,11 @@ class MESH:
 				debug_info( "Nb uv : %d  nb self.uv : %d      idx : %d" % (len(uvtex.data), len(self.uv[i]), idx ) )
 				debug_info( "uvtext = %s" % str( uvtex.data )    )
 				#for uvloop in uvtex.data:
-				#	print( str(uvloop.uv) )
+				#	debug_info( str(uvloop.uv) )
 				# triangle or  quad or edge
 				if nb >= 2:
 					j = self.faces[i][0]
-					#debug_info( "indice j  : %d" % (j) )
+					debug_info( "indice j  : %d" % (j) )
 					k = self.faces[i][1]
 					#uvtex.data[idx+0].uv = self.uv[j]
 					#uvtex.data[idx+1].uv = self.uv[k]
@@ -306,9 +306,9 @@ class MESH:
 			mesh = obj_new.data	
 
 			no = self.mat_no
-			#debug_info( obj_new.name )
-			#debug_info( self.tex_name_bl )
-			#debug_info( "%d %s %s" % (no, material_list[no][0].name, material_list[no][2]) )
+			debug_info( obj_new.name )
+			debug_info( self.tex_name_bl )
+			debug_info( "%d %s %s" % (no, material_list[no][0].name, material_list[no][2]) )
 			if texture:
 				debug_info( 'Texture trouve : "%s"' % (texture.name) )
 
@@ -362,7 +362,7 @@ class MESH:
 				ac_mat = ml[3]
 				bl_mat = bpy.data.materials.new(ac_mat.name_ac)
 
-				#debug_info( '    Create material %s with texture "%s"' % (bl_mat.name,self.tex_name_bl) )
+				debug_info( '    Create material %s with texture "%s"' % (bl_mat.name,self.tex_name_bl) )
 				ac_mat.name_bl			= bl_mat.name
 
 				bl_mat.diffuse_color	= ac_mat.rgb
@@ -395,7 +395,7 @@ class MESH:
 				
 				debug_info( "Creation de material   %d-%s %d %s" % (nb, ml[0].name, ml[1], ml[2]) )
 			else:
-				print( "*****Cas non résolu******" );
+				debug_info( "*****Cas non résolu******" );
 
 	#----------------------------------------------------------------------------------------------------------------------------------
 
@@ -497,7 +497,7 @@ class MESH:
 		try:
 			img = bpy.data.images.load( name_path )
 		except:
-			print( '*** erreur **** %s introuvale' % (name_path) )
+			debug_info( '*** erreur **** %s introuvale' % (name_path) )
 			img = bpy.data.images.new(name='void', width=1024, height=1024, alpha=True, float_buffer=True)
 			return ""
 	
@@ -545,7 +545,7 @@ def get_number_material_use( mat_no, tex_name ):
 
 def find_material_not_use( mat_no, tex_name ):
 	for material_bl, material_no, material_tex, material_ac_mat, material_use in material_list:
-		#print( 'recherche material no %d text "%s"   dans %s %d "%s" %s' % ( mat_no, tex_name, material_bl.name, material_no, material_tex, str(material_use)) )
+		debug_info( 'recherche material no %d text "%s"   dans %s %d "%s" %s' % ( mat_no, tex_name, material_bl.name, material_no, material_tex, str(material_use)) )
 		if not material_use:
 			if material_no==mat_no:
 				return material_no
@@ -560,7 +560,7 @@ def tronc_name(name_path):
 def debug_info( aff):
 	global DEBUG
 	if DEBUG:
-		print( aff )
+		debug_info( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def get_ac_file():
@@ -600,7 +600,7 @@ def find_key( name, dic ):
 
 def clone_ac( ac_file, xml_extra_position ):
 	time_deb = time.time()
-	print( "\tac_manager:clone_ac() %s" % ac_file.name.partition( 'Aircraft'+os.sep )[2] )
+	debug_info( "\tac_manager:clone_ac() %s" % ac_file.name.partition( 'Aircraft'+os.sep )[2] )
 
 	new_ac_file = AC_FILE()
 	new_ac_file.name = ac_file.name
@@ -611,7 +611,7 @@ def clone_ac( ac_file, xml_extra_position ):
 	for obj_name in ac_file.meshs:
 		obj = bpy.data.objects[obj_name]
 		location = obj.location
-		#print( "CLONE object %s" % obj_name )
+		debug_info( "CLONE object %s" % obj_name )
 		if obj.type == 'EMPTY':
 			obj_new = bpy.data.objects.new(obj_name, None)
 		else:
@@ -643,7 +643,7 @@ def clone_ac( ac_file, xml_extra_position ):
 			obj_new.data.fg.name_ac = obj_name_ac
 
 	time_end = time.time()
-	print( "\tClone %s in %0.2f sec" % (os.path.basename(ac_file.name),(time_end-time_deb) ) )
+	debug_info( "\tClone %s in %0.2f sec" % (os.path.basename(ac_file.name),(time_end-time_deb) ) )
 	return
 
 

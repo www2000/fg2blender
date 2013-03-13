@@ -111,15 +111,15 @@ def write_animation( context, node, obj ):
 
 		str_x = "%0.4f" % x
 		str_y = "%0.4f" % y
-		#debug_info( '\tRange	deb="%s" fin="%s"' % ("%0.4f"%armature.data.fg.range_beg, "%0.4f"%armature.data.fg.range_end) )
-		#debug_info( '\tTest interpolation ind="%s" dep="%s"' % (str_x, str_y) )
+		debug_info( '\tRange	deb="%s" fin="%s"' % ("%0.4f"%armature.data.fg.range_beg, "%0.4f"%armature.data.fg.range_end) )
+		debug_info( '\tTest interpolation ind="%s" dep="%s"' % (str_x, str_y) )
 
 		if str_x == "-0.0000":
 			str_x = "0.0000"
 		if str_y == "-0.0000":
 			str_y = "0.0000"
 
-		#debug_info( '\tValue 	str_x="%s" str_y="%s"' % (str_x, str_y) )
+		debug_info( '\tValue 	str_x="%s" str_y="%s"' % (str_x, str_y) )
 
 		bDeb = False
 		if str_x == "0.0000" and str_y==("%0.4f"%armature.data.fg.range_beg):
@@ -147,13 +147,13 @@ def write_animation( context, node, obj ):
 
 		str_x = "%0.4f" % x
 		str_y = "%0.4f" % y
-		#debug_info( '\tTest interpolation ind="%s" dep="%s"' % (str_x, str_y) )
+		debug_info( '\tTest interpolation ind="%s" dep="%s"' % (str_x, str_y) )
 
 		bFin = False
 		if str_x == "1.0000" and str_y==("%0.4f"%armature.data.fg.range_end):
 			bFin = True
 
-		#debug_info( 'ind=%0.2f dep=%0.2f' % (x, y) )
+		debug_info( 'ind=%0.2f dep=%0.2f' % (x, y) )
 		#x = (x -1.0)/59.0
 		beg = armature.data.fg.range_beg
 		end = armature.data.fg.range_end
@@ -183,7 +183,7 @@ def write_animation( context, node, obj ):
 			search_string = 'location'
 		
 		for fcurve in armature.animation_data.action.fcurves:
-			#debug_info( fcurve.data_path )
+			debug_info( fcurve.data_path )
 			if fcurve.data_path.find( search_string ) != -1:
 				n = n + 1
 			if n == 2:
@@ -191,13 +191,13 @@ def write_animation( context, node, obj ):
 		#fcurve = armature.animation_data.action.fcurves[1]
 
 		interpolation = create_node('interpolation')
-		#debug_info( fcurve.data_path )
+		debug_info( fcurve.data_path )
 		for keyframe in fcurve.keyframe_points:
 			entry = create_node( 'entry' )
 			x = keyframe.co.x
 			y = keyframe.co.y
 			y = y * armature.scale.y
-			#debug_info( 'x=%0.2f y=%0.2f' % (x, y) )
+			debug_info( 'x=%0.2f y=%0.2f' % (x, y) )
 			x = (x -1.0)/59.0
 			beg = armature.data.fg.range_beg
 			end = armature.data.fg.range_end
@@ -206,8 +206,8 @@ def write_animation( context, node, obj ):
 				coef = end - beg
 				x = ( x * coef ) + beg
 
-			#debug_info( 'Factor "%0.2f"' % armature.data.fg.factor )
-			#debug_info( '      x="%0.2f", y="%0.2f"' % (x,y) )
+			debug_info( 'Factor "%0.2f"' % armature.data.fg.factor )
+			debug_info( '      x="%0.2f", y="%0.2f"' % (x,y) )
 			
 			if t == 1:	#rotation
 				y = degrees(y) / armature.data.fg.factor
@@ -223,22 +223,22 @@ def write_animation( context, node, obj ):
 	#---------------------------------------------------------------------------
 
 	def append_objects( node_animation, armature ):
-		#debug_info( 'Append_object pour "%s"' % armature.name )
+		debug_info( 'Append_object pour "%s"' % armature.name )
 		for obj in bpy.data.objects:
 			if 	obj.parent:
 				if obj.parent.name == armature.name:
-					#debug_info( 'child object pour "%s"' % obj.name )
+					debug_info( 'child object pour "%s"' % obj.name )
 					if obj.type == 'MESH':
 						name = obj.data.fg.name_ac
 						if name == "":
 							name = obj.name
 					elif obj.type in [ 'EMPTY', 'ARMATURE' ]:
-						#debug_info( '-Append_object recursion sur "%s"' % obj.name )
+						debug_info( '-Append_object recursion sur "%s"' % obj.name )
 						append_objects( node_animation, obj )
 						continue
 					else:
 						name = obj.name
-					#debug_info( 'Append_object "%s" pour "%s"' % (name,armature.name) )
+					debug_info( 'Append_object "%s" pour "%s"' % (name,armature.name) )
 					o = create_node_value( 'object-name', name )
 					node_animation.appendChild( o )
 	#---------------------------------------------------------------------------
@@ -314,10 +314,10 @@ def write_animation( context, node, obj ):
 		bpy.context.scene.objects.active = armature
 
 		value = armature.data.fg.familly
-		#debug_info( 'objet "%s"' % obj.name )
-		#debug_info( 'Familly "%s"' % obj.data.fg.familly )
-		#debug_info( 'Familly_value "%s"' % obj.data.fg.familly_value )
-		#debug_info( 'Property_value "%s"' % obj.data.fg.property_value )
+		debug_info( 'objet "%s"' % obj.name )
+		debug_info( 'Familly "%s"' % obj.data.fg.familly )
+		debug_info( 'Familly_value "%s"' % obj.data.fg.familly_value )
+		debug_info( 'Property_value "%s"' % obj.data.fg.property_value )
 		if value == "custom":
 			value = armature.data.fg.property_value
 		else:
@@ -328,7 +328,7 @@ def write_animation( context, node, obj ):
 		if value != "error" and value != '':
 			if value.find('%d')!=-1:
 				value = build_property_name( armature )
-				print( value)
+				debug_info( value)
 			if value[0]=="/":
 				value = value[1:]
 			prop = create_node_value( 'property', value )
@@ -338,9 +338,9 @@ def write_animation( context, node, obj ):
 	if obj.data.fg.factor == 0.0:
 		return
 	
-	print( 'Write Armature "%s"' % obj.name )
+	debug_info( 'Write Armature "%s"' % obj.name )
 	nodePropertyList = node.getElementsByTagName( 'PropertyList' )
-	#debug_info( obj.name )
+	debug_info( obj.name )
 	txt = node.createComment( obj.name ) 
 	nodePropertyList[0].appendChild( txt )
 
@@ -408,8 +408,8 @@ def appendPath( nodeDoc, node, filename, no ):
 	for obj in bpy.data.objects:
 		if obj.type != 'MESH':
 			continue
-		#debug_info( obj.name )
-		#debug_info( obj.parent.name )
+		debug_info( obj.name )
+		debug_info( obj.parent.name )
 		if obj.parent != None:
 			if obj.parent.type == 'ARMATURE':
 				obj_armature = obj.parent
@@ -471,7 +471,7 @@ def write_animation_all( context, node, filename, no ):
 		CG = obj.location
  	
 	debug_info( 'xml_export.write_animation_all() Recherche xml_file "%s"' % filename )
-	print( 'xml_export.write_animation_all() Recherche xml_file "%s"' % filename )
+	debug_info( 'xml_export.write_animation_all() Recherche xml_file "%s"' % filename )
 	cleanDoc(node,"\t","\n\r")
 	#return
 	nodePropertyList = node.getElementsByTagName( 'PropertyList' )
@@ -489,17 +489,17 @@ def write_animation_all( context, node, filename, no ):
 	for obj in bpy.data.objects:
 		if obj.type != 'ARMATURE':
 			continue
-		#debug_info( obj.name )
-		#debug_info( obj.parent.name )
+		debug_info( obj.name )
+		debug_info( obj.parent.name )
 		if obj.parent != None:
 			if obj.parent.type != 'EMPTY':
 				continue
 		obj_filename = bpy.path.abspath(obj.data.fg.xml_file)
-		#print( 'Obj "%s"  filename "%s"' % ( obj.name, obj_filename) )
+		debug_info( 'Obj "%s"  filename "%s"' % ( obj.name, obj_filename) )
 		if bpy.path.abspath(obj.data.fg.xml_file).find( filename ) != -1 and obj.data.fg.xml_file_no == no:
-			print("ICI")
+			debug_info("ICI")
 			debug_info( obj.name )
 			write_animation_recurs( context, node, obj )
 		else:
-			print("AILLEURS")
+			debug_info("AILLEURS")
 	

@@ -30,6 +30,16 @@
 import bpy
 from bpy.props import BoolProperty
 
+DEBUG = False
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def debug_info( aff):
+	global DEBUG
+	if DEBUG:
+		print( aff )
+#----------------------------------------------------------------------------------------------------------------------------------
+
 
 #--------------------------------------------------------------------------------------------------------------------------------
 
@@ -44,7 +54,7 @@ class FG_PT_armature_properties(bpy.types.Panel):
 
 	@classmethod
 	def poll(self,context):
-		#print( context.mode )
+		debug_info( context.mode )
 		obj = context.object
 
 		if obj:      
@@ -67,7 +77,7 @@ class FG_PT_armature_tool(bpy.types.Panel):
 
 	@classmethod
 	def poll(self,context):
-		#print( context.mode )
+		debug_info( context.mode )
 		obj = context.object
 
 		if obj:      

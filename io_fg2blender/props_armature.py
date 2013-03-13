@@ -171,7 +171,7 @@ def update_keyframe( obj, coef ):
 			for keyframe in fcurve.keyframe_points:
 				#keyframe.interpolation = 'LINEAR'
 				keyframe.co.y = keyframe.co.y * coef
-				#print( keyframe.co )
+				debug_info( keyframe.co )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def update_keyframe_time( obj, coef ):
@@ -182,7 +182,7 @@ def update_keyframe_time( obj, coef ):
 			for keyframe in fcurve.keyframe_points:
 				#keyframe.interpolation = 'LINEAR'
 				keyframe.co.x = ((keyframe.co.x-1) * coef ) +1
-				#print( keyframe.co )
+				debug_info( keyframe.co )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def update_factor( self, context ):
@@ -311,7 +311,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 		if bLock_update == True:
 			return None
 
-		#print( 'update_xml_file "%s"  %s' % (active_object.name, str(bLock_update))  )
+		debug_info( 'update_xml_file "%s"  %s' % (active_object.name, str(bLock_update))  )
 			
 		bLock_update = True
 
@@ -320,20 +320,20 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 		#xml_file = bpy.path.relpath( xml_file )
 
 		if active_object.data.fg.xml_file == xml_file:
-			print("Don't change!!!")
+			debug_info("Don't change!!!")
 		else:
 			active_object.data.fg.xml_file = xml_file
 		
 			self.creer_xml( xml_file, active_object )
 			no_xml_file = active_object.data.fg.xml_file_no
-			#print( 'no xml_file  = %d' % no_xml_file )
+			debug_info( 'no xml_file  = %d' % no_xml_file )
 		
 			for obj in context.selected_objects:
 				#if obj.name == active_object.name:
 				#	continue
 				if obj.type != 'ARMATURE':
 					continue
-				print( "\t%s" % obj.name )
+				debug_info( "\t%s" % obj.name )
 				obj.data.fg.xml_file = "" + xml_file
 				obj.data.fg.xml_file_no = no_xml_file
 			

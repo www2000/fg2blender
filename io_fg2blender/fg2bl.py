@@ -25,7 +25,7 @@ import os
 
 class PATH:
 	def __init__(self):
-		self.DEBUG = True
+		self.DEBUG = False
 		self.dir_name_plane = ""
 		self.bSaveBlend = False
 	
@@ -49,7 +49,7 @@ class PATH:
 
 			return rel_path_normalized + os.sep + filename
 		else:
-			print( "TODO")
+			self.debug_info( "TODO")
 			
 		return filename
 
@@ -57,7 +57,7 @@ class PATH:
 		return bpy.data.filepath
 		
 	def test_blender_filename( self ):
-		print( "Name blend : %s"  % bpy.data.filepath )
+		self.debug_info( "Name blend : %s"  % bpy.data.filepath )
 		if bpy.data.filepath == "":
 			self.bSaveBlend = False
 		else:

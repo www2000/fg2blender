@@ -182,7 +182,7 @@ class FG_OT_exec(bpy.types.Operator):
 			filename = f.readline()
 			f.close()
 		else:
-			print( "Bidouille OK" )
+			debug_info( "Bidouille OK" )
 			return {'FINISHED'}
 
 		import_xml( filename, ac_option, xml_option )

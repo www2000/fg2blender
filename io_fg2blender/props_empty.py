@@ -52,7 +52,7 @@ class FG_PROP_empty(bpy.types.PropertyGroup):
 
 	def update_jsb_attr( self, context ):
 		obj = context.active_object
-		print( 'update_jsb_attr "%s"' % obj.name )
+		debug_info( 'update_jsb_attr "%s"' % obj.name )
 		obj.name = "" + obj.fg.jsb_attr
 		obj.show_name = True
 		return None	
@@ -61,7 +61,7 @@ class FG_PROP_empty(bpy.types.PropertyGroup):
 	def update_xml_file( self, context ):
 		global bLock_update
 		obj = context.active_object
-		print( 'update_xml_file "%s"  %s' % (obj.name, str(bLock_update))  )
+		debug_info( 'update_xml_file "%s"  %s' % (obj.name, str(bLock_update))  )
 		if bLock_update == True:
 			return None
 			
@@ -76,7 +76,7 @@ class FG_PROP_empty(bpy.types.PropertyGroup):
 				continue
 			if obj.type != 'EMPTY':
 				continue
-			print( "\t%s" % obj.name )
+			debug_info( "\t%s" % obj.name )
 			obj.fg.jsb_xml_file = "" + xml_file
 			
 		bLock_update = False

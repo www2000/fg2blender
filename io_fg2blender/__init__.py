@@ -66,6 +66,15 @@ from .xml_manager import XML_OPTION
 from . import *
 
 
+DEBUG = False
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def debug_info( aff):
+	global DEBUG
+	if DEBUG:
+		print( aff )
+#----------------------------------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #
@@ -133,7 +142,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 			
 		from .xml_import import import_xml
 		for filename in paths:
-			print( filename )
+			debug_info( filename )
 			ac_option = AC_OPTION()
 		
 			xml_option = XML_OPTION()
@@ -205,7 +214,7 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 			
 		from .ac_import import read_ac
 		for filename in paths:
-			#print( filename )
+			debug_info( filename )
 			ac_option = AC_OPTION()
 			ac_option.context		= context
 			
@@ -309,10 +318,10 @@ def register():
 	ui_button.register()
 
 	if not os.path.isfile('/tmp/script-fg2bl'):
-		#print( "N'existe pas" )
+		debug_info( "N'existe pas" )
 		xml_manager.BIDOUILLE = False
 	else:
-		print( "Bidouille OK" )
+		debug_info( "Bidouille OK" )
 		xml_manager.BIDOUILLE = True
 
 	

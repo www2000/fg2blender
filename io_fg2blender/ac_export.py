@@ -58,7 +58,7 @@ DEBUG_VERTICE = False
 def debug_info( aff):
 	global DEBUG
 	if DEBUG:
-		print( aff )
+		debug_info( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def extract_path(name_path):
@@ -73,7 +73,7 @@ def extract_path(name_path):
 	path_name = name
 	"""
 	path_name = os.path.dirname(os.path.normpath(name_path))
-	#debug_info( "extract_path() : %s " % path_name )
+	debug_info( "extract_path() : %s " % path_name )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def without_path(name_path):
@@ -139,7 +139,7 @@ def significatif( st ):
 	if new_str == '-':
 		new_str = '0'
 		
-	#debug_info( "nombre %s %s   resultat %s" % (entier,mantisse,new_str) )
+	debug_info( "nombre %s %s   resultat %s" % (entier,mantisse,new_str) )
 	return new_str
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -235,7 +235,7 @@ def write_faces( filename, mesh ):
 			no = mesh.tessfaces[i].material_index
 			matName = mesh.materials[no].name
 			no = list_material.index(matName)
-			#debug_info( "Face no %d material %s no %d" % (i,matName,no) )
+			debug_info( "Face no %d material %s no %d" % (i,matName,no) )
 	
 
 
@@ -262,10 +262,10 @@ def write_faces( filename, mesh ):
 def print_matrix( matrix, name ):
 	debug_info( 'Matrix "%s"'  % name )
 	for i in range(4):
-		#debug_info( 'Ligne no %d' % i )
+		debug_info( 'Ligne no %d' % i )
 		l = matrix[i]
 		debug_info( "\t%f\t%f\t%f\t%f" % (l[0],l[1],l[2],l[3]) )
-		#debug_info( "matrix %f %f %f %f" % (l[0],l[1],l[2],l[3]) )
+		debug_info( "matrix %f %f %f %f" % (l[0],l[1],l[2],l[3]) )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def extrait_translation_matrix( matrix ):
@@ -290,7 +290,7 @@ def write_vertice( filename, obj, mesh ):
 	# and subtract delta_location
 	e = obj.delta_rotation_euler
 	mat_euler = e.to_matrix()
-	#print( 'Determinant %02f' % mat_euler.determinant() )
+	debug_info( 'Determinant %02f' % mat_euler.determinant() )
 	i_delta = mat_euler.inverted()
 	m_delta = i_delta.to_4x4()
 	l_delta =  obj.delta_location
@@ -340,7 +340,7 @@ def write_header_mesh( filename, obj, mesh ):
 		if tex_name.find('glass_shader') != -1:
 			tex_name = ""
 	except:
-		print( '****** Error: Unload Texture name ********' )
+		debug_info( '****** Error: Unload Texture name ********' )
 		tex_name = ''
 		pass
 
@@ -413,7 +413,7 @@ def write_material( filename, sel_obj ):
 				write_file( f, " rgb %s" % str_color )
 				# amb
 				amb = significatif( "%0.6f"% material.ambient )
-				#debug_info( str(name) + " Ambient = " + amb)
+				debug_info( str(name) + " Ambient = " + amb)
 				write_file( f, " amb %s %s %s"%(amb,amb,amb) )
 				# emit
 				emit = significatif( "%0.6f"%material.emit)
@@ -493,13 +493,13 @@ def recurs_son( filename, context, list_objects, obj ):
 
 	nb = count_son(list_objects, obj.name)
 	writeln_some_data( filename, "kids %d" % nb )
-	#debug_info( "%d enfants" % nb )
+	debug_info( "%d enfants" % nb )
 	
 	if nb != 0:
 		for obj_ in list_objects:
 			if test_son( list_objects, obj_, obj.name ):
 				recurs_son( filename, context, list_objects, obj_ )
-	#debug_info ( " fin enfant de %s" % obj.name )
+	debug_info ( " fin enfant de %s" % obj.name )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def write_ac_file( context, filename, object_list, select_only, tex_path, apply_modifiers ):
@@ -548,6 +548,6 @@ def write_ac_file( context, filename, object_list, select_only, tex_path, apply_
 		if test_son(list_objects, obj, 'world' ):
 			recurs_son( filename, context, list_objects, obj )
 	
-	print( 'Gravity center "%s"' % str(CG) )
+	debug_info( 'Gravity center "%s"' % str(CG) )
 	return
 

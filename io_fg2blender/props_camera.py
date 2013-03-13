@@ -43,7 +43,7 @@ class FG_PROP_camera(bpy.types.PropertyGroup):
 
 	def update_type_view( self, context ):
 		obj = context.active_object
-		print( obj.name )
+		debug_info( obj.name )
 		obj.name = "" + obj.data.fg.type_view
 		obj.show_name = True
 		return None	
@@ -52,7 +52,7 @@ class FG_PROP_camera(bpy.types.PropertyGroup):
 	def update_xml_file( self, context ):
 		global bLock_update
 		obj = context.active_object
-		print( 'update_xml_file "%s"  %s' % (obj.name, str(bLock_update))  )
+		debug_info( 'update_xml_file "%s"  %s' % (obj.name, str(bLock_update))  )
 		if bLock_update == True:
 			return None
 			
@@ -67,7 +67,7 @@ class FG_PROP_camera(bpy.types.PropertyGroup):
 				continue
 			if obj.type != 'CAMERA':
 				continue
-			print( "\t%s" % obj.name )
+			debug_info( "\t%s" % obj.name )
 			obj.data.fg.xml_file = "" + xml_file
 			
 		bLock_update = False

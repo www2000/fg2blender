@@ -73,7 +73,7 @@ DEBUG_INFO = False
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def conversion(name_path):
-	#print( "conversion de %s" % name_path )
+	debug_info( "conversion de %s" % name_path )
 	name = ""
 	if os.sep == '\\':
 		dirs = name_path.split("/")
@@ -92,7 +92,7 @@ def conversion(name_path):
 				else:
 					name = name + os.sep + dir_item
 
-	#print( "reslutat %s" % name )
+	debug_info( "reslutat %s" % name )
 
 	return name
 #---------------------------------------------------------------------------------------------------------------------
@@ -350,14 +350,14 @@ def ret_float_value( node ):
 #---------------------------------------------------------------------------------------------------------------------
 
 def print_element_to_xml( node ):
-	print( node.toxml() )
+	debug_info( node.toxml() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def print_element( node, extra ):
 	if extra!= "":
-		print( "%s<%s>%s" % (tabs(),node.nodeName,extra) )
+		debug_info( "%s<%s>%s" % (tabs(),node.nodeName,extra) )
 	else:
-		print( "%s<%s>" % (tabs(),node.nodeName) )
+		debug_info( "%s<%s>" % (tabs(),node.nodeName) )
 #---------------------------------------------------------------------------------------------------------------------
 
 def print_rotate( node ):
@@ -368,33 +368,33 @@ def print_rotate( node ):
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sProperty : %s" % (tabs(),value) )
+			debug_info( "%sProperty : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('object-name')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sObject : %s" % (tabs(),value) )
+			debug_info( "%sObject : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('axis')
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
 			value = read_axis(child)
-			print( "%sAxe : %s" % (tabs(),value) )
+			debug_info( "%sAxe : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('center')
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
 			value = read_center(child)
-			print( "%sCenter : %s" % (tabs(),value) )
+			debug_info( "%sCenter : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('factor')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sFactor : %s" % (tabs(),value) )
+			debug_info( "%sFactor : %s" % (tabs(),value) )
 	niv -= 1
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -405,27 +405,27 @@ def print_translate( node ):
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sProperty : %s" % (tabs(),value) )
+			debug_info( "%sProperty : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('object-name')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sObject : %s" % (tabs(),value) )
+			debug_info( "%sObject : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('axis')
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
 			value = read_axis(child)
-			print( "%sAxe : %s" % (tabs(),value) )
+			debug_info( "%sAxe : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('center')
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
 			value = read_center(child)
-			print( "%sCenter : %s" % (tabs(),value) )
+			debug_info( "%sCenter : %s" % (tabs(),value) )
 	niv -= 1
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -436,48 +436,48 @@ def print_light( node ):
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sLight type : %s" % (tabs(),value) )
+			debug_info( "%sLight type : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('object-name')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sObject : %s" % (tabs(),value) )
+			debug_info( "%sObject : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('position')
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
 			value = read_vector_axis_vecteur(child)
-			print( "%sPosition : %s" % (tabs(),value) )
+			debug_info( "%sPosition : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('direction')
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
 			value = read_vector_axis_vecteur(child)
-			print( "%sDirection : %s" % (tabs(),value) )
+			debug_info( "%sDirection : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('ambient')
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
 			value = read_color_vecteur(child)
-			print( "%sAmbiente : %s" % (tabs(),value) )
+			debug_info( "%sAmbiente : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('diffuse')
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
 			value = read_color_vecteur(child)
-			print( "%sDiffuse : %s" % (tabs(),value) )
+			debug_info( "%sDiffuse : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('specular')
 	for child in childs:
 		if child.hasChildNodes():
 			#print_element_to_xml(child)
 			value = read_color_vecteur(child)
-			print( "%sSpecular : %s" % (tabs(),value) )
+			debug_info( "%sSpecular : %s" % (tabs(),value) )
 	niv -= 1
 
 #---------------------------------------------------------------------------------------------------------------------
@@ -489,73 +489,73 @@ def print_text( node ):
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sType : %s" % (tabs(),value) )
+			debug_info( "%sType : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('name')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sName : %s" % (tabs(),value) )
+			debug_info( "%sName : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('axis-alignment')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sAxis-alignment : %s" % (tabs(),value) )
+			debug_info( "%sAxis-alignment : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('text')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sText : %s" % (tabs(),value) )
+			debug_info( "%sText : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('property')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sProperty : %s" % (tabs(),value) )
+			debug_info( "%sProperty : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('format')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sFormat : %s" % (tabs(),value) )
+			debug_info( "%sFormat : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('layout')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sLayout : %s" % (tabs(),value) )
+			debug_info( "%sLayout : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('character-size')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sCharacter-size : %s" % (tabs(),value) )
+			debug_info( "%sCharacter-size : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('character-aspect-ratio')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sCharacter-aspect-ratio : %s" % (tabs(),value) )
+			debug_info( "%sCharacter-aspect-ratio : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('max-height')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sMax-height : %s" % (tabs(),value) )
+			debug_info( "%sMax-height : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('max-width')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sMax-width : %s" % (tabs(),value) )
+			debug_info( "%sMax-width : %s" % (tabs(),value) )
 
 	childs = node.getElementsByTagName('alignment')
 	for child in childs:
 		if child.hasChildNodes():
 			value = ret_text(child.childNodes[0])
-			print( "%sAlignment : %s" % (tabs(),value) )
+			debug_info( "%sAlignment : %s" % (tabs(),value) )
 	niv -= 1
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -574,39 +574,39 @@ def print_animation( node ):
 				if value == 'rotate':
 					#bpy.ops.view3d.create_rotate()
 					if option_rotation:
-						print( "%sAnimation rotate : %s" % (tabs(),value) )
-						#print( node.toxml() )
+						debug_info( "%sAnimation rotate : %s" % (tabs(),value) )
+						debug_info( node.toxml() )
 						print_rotate( node )
 				elif value == 'translate':
 					if option_translation:
-						print( "%sAnimation translate : %s" % (tabs(),value) )
-						#print( node.toxml() )
+						debug_info( "%sAnimation translate : %s" % (tabs(),value) )
+						debug_info( node.toxml() )
 						print_translate( node )
 				elif value == 'light':
 					if option_light:
-						print( "%sAnimation light : %s" % (tabs(),value) )
-						#print( node.toxml() )
+						debug_info( "%sAnimation light : %s" % (tabs(),value) )
+						debug_info( node.toxml() )
 						print_light( node )
 				else:
 					if option_animation:
-						print( "%sAnimation type : %s" % (tabs(),value) )
+						debug_info( "%sAnimation type : %s" % (tabs(),value) )
 	else:
 		name = node.getElementsByTagName('name')
 		if name:
 			if option_animation:
-				print( "%sAnimation name" % tabs() )
+				debug_info( "%sAnimation name" % tabs() )
 				niv += 1
 				value = ret_text_value(name[0])
-				print( "%sname : %s" % (tabs(),value) )
+				debug_info( "%sname : %s" % (tabs(),value) )
 
 				childs = node.getElementsByTagName('object-name')
 				for child in childs:
 					value = ret_text_value(child)
-					print( "%sobject-name : %s" % (tabs(),value) )
+					debug_info( "%sobject-name : %s" % (tabs(),value) )
 				niv -= 1
 			
 		elif option_animation:
-			print( "%sAnimation sans type" % tabs() )
+			debug_info( "%sAnimation sans type" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def print_offset_path( node ):
@@ -619,20 +619,20 @@ def print_offset_path( node ):
 				translations = child.getElementsByTagName('x-m')
 				if translations:
 					value = read_center(child)
-					print( "%sOffset : %s" % (tabs(),value) )
+					debug_info( "%sOffset : %s" % (tabs(),value) )
 					#xml_manager.xml_current.offset = read_center(child)
 				roll = child.getElementsByTagName('roll-deg')
 				if roll:
-					print( "%sroll-deg : %s" % (tabs(),ret_text_value(roll[0])) )
+					debug_info( "%sroll-deg : %s" % (tabs(),ret_text_value(roll[0])) )
 				pitch = child.getElementsByTagName('pitch-deg')
 				if pitch:
-					print( "%spitch-deg : %s" % (tabs(),ret_text_value(pitch[0])) )
+					debug_info( "%spitch-deg : %s" % (tabs(),ret_text_value(pitch[0])) )
 				heading = child.getElementsByTagName('heading-deg')
 				if heading:
-					print( "%sheading-deg : %s" % (tabs(),ret_text_value(heading[0])) )
+					debug_info( "%sheading-deg : %s" % (tabs(),ret_text_value(heading[0])) )
 	else:
 		if DEBUG_INFO:
-			print( "%sPas d'offset" % tabs() )
+			debug_info( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_rotation_path( node, xml_file ):
@@ -657,7 +657,7 @@ def read_rotation_path( node, xml_file ):
 					xml_file.eulerXYZ.z = xml_file.eulerXYZ.z + read_float_heading_deg(child)
 	else:
 		if DEBUG_INFO:
-			print( "%sPas de rotation" % tabs() )
+			debug_info( "%sPas de rotation" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_offset_path( node, xml_file ):
@@ -676,7 +676,7 @@ def read_offset_path( node, xml_file ):
 					
 	else:
 		if DEBUG_INFO:
-			print( "%sPas d'offset" % tabs() )
+			debug_info( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_rotation_text( node, text ):
@@ -703,7 +703,7 @@ def read_rotation_text( node, text ):
 					text.eulerXYZ.z = xml_file.eulerXYZ.z + read_float_heading_deg(child)
 	else:
 		if DEBUG_INFO:
-			print( "%sPas de rotation" % tabs() )
+			debug_info( "%sPas de rotation" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_offset_text( node, text ):
@@ -726,7 +726,7 @@ def read_offset_text( node, text ):
 					
 	else:
 		if DEBUG_INFO:
-			print( "%sPas d'offset" % tabs() )
+			debug_info( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def compute_offset_text( text ):
@@ -792,7 +792,7 @@ def parse_node( node, file_name ):
 					ret_list +=  [ (filename, no_include)  ]
 					no_include += 1
 					if option_print_include:
-						print( "%s%s include=%s" %(tabs(),node.nodeName,filename) )
+						debug_info( "%s%s include=%s" %(tabs(),node.nodeName,filename) )
 
 
 		if node.nodeName == 'path':
@@ -802,7 +802,7 @@ def parse_node( node, file_name ):
 					no_include +=1
 					niv -= 1
 					if option_print_include:
-						print( "%sinclude : %s" % ( tabs(),ret_text(node.childNodes[0]) ) )
+						debug_info( "%sinclude : %s" % ( tabs(),ret_text(node.childNodes[0]) ) )
 					niv += 1
 					if node.parentNode:
 						if node.parentNode.nodeName == 'model':
@@ -855,7 +855,7 @@ def parse_node( node, file_name ):
 								ac_file = ac_manager.get_ac_file()
 								xml_manager.xml_current.add_ac_file( ac_file )
 							else:
-								print( "xml_import:parse_node() Fichier introuvable : %s" % file_ac  )
+								debug_info( "xml_import:parse_node() Fichier introuvable : %s" % file_ac  )
 						if node.parentNode:
 							if node.parentNode.nodeName == 'model':
 								xml_file = XML_FILE()
@@ -888,10 +888,10 @@ def parse_node( node, file_name ):
 
 	#Attribut nodeType =2
 	elif node.nodeType == 2:
-		print( "%sATTR:%s = %s" % (tabs(),node.nodeName, node.nodeValue) )
+		debug_info( "%sATTR:%s = %s" % (tabs(),node.nodeName, node.nodeValue) )
 	# ni texte ni commentaire    nodeType=3 ou nodeType=8
 	elif node.nodeType != 3 and node.nodeType != 8:
-		print( "%sIndefini %d" % (tabs(), node.nodeType) )
+		debug_info( "%sIndefini %d" % (tabs(), node.nodeType) )
 		
 		
 	niv += 1
@@ -950,7 +950,7 @@ def parse_file( filename, no_inc ):
 			xml_file = XML_FILE()
 
 	xml_file.name = abs_path_model + filename
-	#print( "******** Nom de fichier  : %s" % xml_file.name )
+	debug_info( "******** Nom de fichier  : %s" % xml_file.name )
 	xml_file.no = no_inc
 	if no_inc == -1:
 		xml_manager.add_xml_file( xml_file, no_include )
@@ -958,7 +958,7 @@ def parse_file( filename, no_inc ):
 	
 	file_includes = []
 	niv = 0
-	print( "xml_import:parse_file()  %s " % filename )
+	debug_info( "xml_import:parse_file()  %s " % filename )
 	if os.path.isfile(filename):
 		fsock = open(filename)
 		try:
@@ -966,11 +966,11 @@ def parse_file( filename, no_inc ):
 		except:
 			fsock.close()                 
 			fsock = codecs.open(filename, 'r+', 'iso-8859-1' )
-			print( " **********************************************************************************" )
-			print( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
-			print( " **********************************************************************************" )
-			print( " ***************  Changement de Codec ; Ah les messieurs iso-8859-1 ***************" )
-			print( " **********************************************************************************" )
+			debug_info( " **********************************************************************************" )
+			debug_info( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
+			debug_info( " **********************************************************************************" )
+			debug_info( " ***************  Changement de Codec ; Ah les messieurs iso-8859-1 ***************" )
+			debug_info( " **********************************************************************************" )
 			xmldoc = xml.dom.minidom.parse(fsock)
 
 		fsock.close()                 
@@ -978,13 +978,13 @@ def parse_file( filename, no_inc ):
 
 		file_includes = parse_node( node, filename )
 	else:
-		print( "xml_import:parse_file() Fichier introuvable : %s" % filename  )
+		debug_info( "xml_import:parse_file() Fichier introuvable : %s" % filename  )
 	
 	if option_include:
-		#print( "files_includes %s" % str(file_includes)  )
+		debug_info( "files_includes %s" % str(file_includes)  )
 		for file_include, no in file_includes:
-			#print(  file_include )
-			#print( path_model )
+			debug_info(  file_include )
+			debug_info( path_model )
 			file_include = absolute_path( conversion(file_include) )
 			parse_file( conversion(file_include), no )
 #---------------------------------------------------------------------------------------------------------------------
@@ -1008,10 +1008,10 @@ def read_file_xml( name ):
 	base_name = os.path.basename( name )
 	dir_name  = os.path.normpath( os.path.dirname(  name ) )
 
-	print( "Name : %s" % name )
-	print( "current_path : %s" % current_path )
-	print( "BaseName : %s" % base_name )
-	print( "DirName  : %s" % dir_name )
+	debug_info( "Name : %s" % name )
+	debug_info( "current_path : %s" % current_path )
+	debug_info( "BaseName : %s" % base_name )
+	debug_info( "DirName  : %s" % dir_name )
 
 	if dir_name.find( 'Aircraft' )!=-1:
 		right_path = dir_name.partition( 'Aircraft'+slach )[2]
@@ -1024,19 +1024,19 @@ def read_file_xml( name ):
 				path_model = 'Aircraft' + slach + right_path + slach
 			abs_path_model = left_path
 			file_name = name
-			#print( base_name )
-			print( "path_model : %s" % path_model )
-			print( "abs_path_model : %s" % abs_path_model )
-			print( "filename : %s" % file_name )
-			#print( "Lit fichier : %s" %( file_name) )			
+			debug_info( base_name )
+			debug_info( "path_model : %s" % path_model )
+			debug_info( "abs_path_model : %s" % abs_path_model )
+			debug_info( "filename : %s" % file_name )
+			debug_info( "Lit fichier : %s" %( file_name) )			
 			os.chdir( dir_name.partition('Aircraft')[0] )
-			#print( "Lecture du fichier : %s " % file_name )
+			debug_info( "Lecture du fichier : %s " % file_name )
 			parse_file( conversion(file_name), -1 )			
 	
 		else:
-			print( "Erreur : fichier 	 n'appartient pas a un avion " )
+			debug_info( "Erreur : fichier 	 n'appartient pas a un avion " )
 	else:
-		print( "Erreur : fichier 	 n'appartient pas a un avion " )
+		debug_info( "Erreur : fichier 	 n'appartient pas a un avion " )
 
 	os.chdir( current_path )
 #---------------------------------------------------------------------------------------------------------------------
@@ -1068,7 +1068,7 @@ def charge_xml( filename ):
 	option_mesh_rotate_end = 10
 	
 	xmldoc = None
-	print( "xml_import:charge_xml()  %s " % filename )
+	debug_info( "xml_import:charge_xml()  %s " % filename )
 	if os.path.isfile(filename):
 		fsock = open(filename)
 		try:
@@ -1076,17 +1076,17 @@ def charge_xml( filename ):
 		except:
 			fsock.close()                 
 			fsock = codecs.open(filename, 'r+', 'iso-8859-1' )
-			print( " **********************************************************************************" )
-			print( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
-			print( " **********************************************************************************" )
-			print( " ***************  Changement de Codec ; Ah les messieurs iso-8859-1 ***************" )
-			print( " **********************************************************************************" )
+			debug_info( " **********************************************************************************" )
+			debug_info( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
+			debug_info( " **********************************************************************************" )
+			debug_info( " ***************  Changement de Codec ; Ah les messieurs iso-8859-1 ***************" )
+			debug_info( " **********************************************************************************" )
 			xmldoc = xml.dom.minidom.parse(fsock)
 
 		fsock.close()                 
 		#node = xmldoc.documentElement
 	else:
-		print( "*** xml_import.charge_xml( filename ) Erreur: Fichier inconnu ***" )
+		debug_info( "*** xml_import.charge_xml( filename ) Erreur: Fichier inconnu ***" )
 	return xmldoc
 #---------------------------------------------------------------------------------------------------------------------
 #
@@ -1146,7 +1146,7 @@ def import_xml(filename, ac_option, xml_option):
 	bpy.context.scene.layers = save_active_layers
 
 	time_end = time.time()
-	print( "Import %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
+	debug_info( "Import %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
 	nb_rotate = 0
 	nb_translate = 0
 	nb_pick = 0
@@ -1169,12 +1169,12 @@ def import_xml(filename, ac_option, xml_option):
 			elif anim.type == 7:
 				nb_spin = nb_spin + 1
 		nb_xml = nb_xml + 1
-	print( "\tNb xml file   : %d" % nb_xml )
-	print( "\tNb rotate     : %d" % nb_rotate )
-	print( "\tNb translate  : %d" % nb_translate )
-	print( "\tNb pick       : %d" % nb_pick )
-	print( "\tNb light      : %d" % nb_light )
-	print( "\tNb shader     : %d" % nb_shader )
-	print( "\tNb spin       : %d" % nb_spin )
+	debug_info( "\tNb xml file   : %d" % nb_xml )
+	debug_info( "\tNb rotate     : %d" % nb_rotate )
+	debug_info( "\tNb translate  : %d" % nb_translate )
+	debug_info( "\tNb pick       : %d" % nb_pick )
+	debug_info( "\tNb light      : %d" % nb_light )
+	debug_info( "\tNb shader     : %d" % nb_shader )
+	debug_info( "\tNb spin       : %d" % nb_spin )
 	
 

@@ -49,13 +49,21 @@ no_debug = 0
 DEBUG = False
 BIDOUILLE = True
 
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def debug_info( aff):
+	global DEBUG
+	if DEBUG:
+		print( aff )
+#----------------------------------------------------------------------------------------------------------------------------------
+
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #		At loading
 #----------------------------------------------------------------------------------------------------------------------------------
 blender_path = os.getcwd()
 addon_path = os.getcwd() + os.sep + str(bpy.app.version[0]) + '.' + str(bpy.app.version[1]) + os.sep + 'scripts' + os.sep + 'addons'
-print( 'Installation path ="%s"' % addon_path )
+debug_info( 'Installation path ="%s"' % addon_path )
 
 #----------------------------------------------------------------------------------------------------------------------------------
 	
@@ -165,7 +173,7 @@ class ANIM:
 					elif value == 'shader':
 						self.type = 6
 					elif value == 'spin':
-						print( 'Spin animation' )
+						debug_info( 'Spin animation' )
 						self.type = 7
 		else:
 			childs = node.getElementsByTagName('name')
@@ -257,13 +265,13 @@ class ANIM:
 		for child in childs:
 			if child.hasChildNodes():
 				self.vec = read_vector_axis(child)
-				#print( "%sAxe : %s" % (tabs(),str(self.vec)) )
+				debug_info( "%sAxe : %s" % (tabs(),str(self.vec)) )
 
 		childs = node.getElementsByTagName('center')
 		for child in childs:
 			if child.hasChildNodes():
 				self.pos = read_vector_center(child)
-				#print( "%sCenter : %s" % (tabs(),str(self.pos)) )
+				debug_info( "%sCenter : %s" % (tabs(),str(self.pos)) )
 		childs = node.getElementsByTagName('x1-m')
 		if childs:
 			self.vec = read_vector_axis_points(node)
@@ -485,12 +493,12 @@ class ANIM:
 		obj_armature = bpy.context.scene.objects.active
 
 		'''
-		print( obj_armature.name )
+		debug_info( obj_armature.name )
 		anim_data = obj_armature.animation_data_create()
 		#anim_data = obj_armature.data.animation_data_create()
-		print( anim_data.action )
+		debug_info( anim_data.action )
 		if anim_data:
-			print( anim_data.action )
+			debug_info( anim_data.action )
 			anim_data.action = bpy.data.actions.new(obj_armature.name+'Action')
 			#anim_data.action.fcurves.new('rotation_euler_x', action_group='Bone')
 			#anim_data.action.fcurves.new('rotation_euler_y', action_group='Bone')
@@ -506,7 +514,7 @@ class ANIM:
 		'''
 
 		for fcurve in obj_armature.animation_data.action.fcurves:
-			#print( fcurve.data_path )
+			debug_info( fcurve.data_path )
 			for keyframe in fcurve.keyframe_points:
 				keyframe.interpolation = 'LINEAR'
 		#obj_armature.animation_data.action.fcurves.new('pose.bones["Bone"].rotation_euler')
@@ -565,7 +573,7 @@ class ANIM:
 	#---------------------------------------------------------------------------------------------------------------------
 	
 	def insert_keyframe_all( self ):
-		print( "self.insert_keyframe_all()  for %s" % self.name )
+		debug_info( "self.insert_keyframe_all()  for %s" % self.name )
 		debug_info( "self.insert_keyframe_all()" )
 		if self.type == 1:
 			bpy.context.scene.objects.active = bpy.data.objects[self.name]
@@ -591,7 +599,7 @@ class ANIM:
 					right_prop = prop[0].partition(']')[2]
 			
 				if left_prop == left and right_prop == right:
-					print( ' Bingo "%s"' , prop )
+					debug_info( ' Bingo "%s"' , prop )
 					obj.data.fg.familly = name
 					obj.data.fg.familly_value = prop[0]
 					if obj.data.fg.property_value.find('[') != -1:
@@ -629,7 +637,7 @@ class ANIM:
 
 		if obj.data.fg.property_value[0] != '/':
 			obj.data.fg.property_value = '/' + obj.data.fg.property_value
-		#print( ' Recherche  property "%s"' % obj.data.fg.property_value )
+		debug_info( ' Recherche  property "%s"' % obj.data.fg.property_value )
 		left = obj.data.fg.property_value
 		right = ''
 		if obj.data.fg.property_value.find('[') != -1:
@@ -645,7 +653,7 @@ class ANIM:
 		#bpy.ops.object.move_to_layer( layers = layer(10) )
 		
 		armature = bpy.data.armatures[-1]
-		print( 'Create armature rotate : "%s"' % (armature.name) )
+		debug_info( 'Create armature rotate : "%s"' % (armature.name) )
 		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
 		debug_info( '\t\t   no   xml: %d' % self.xml_file_no )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
@@ -729,7 +737,7 @@ class ANIM:
 		#bpy.ops.object.move_to_layer( layers = layer(10) )
 
 		armature = bpy.data.armatures[-1]
-		print( 'Create armature translate : "%s"' % (armature.name) )
+		debug_info( 'Create armature translate : "%s"' % (armature.name) )
 		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
 		debug_info( '\t\t       no  : %d' % self.xml_file_no )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
@@ -818,15 +826,15 @@ class ANIM:
 				if group_objects:
 					debug_info( '\tgroup : "%s"' % str(self.group_objects)  )
 					for obj_name_bl in group_objects[1:]:
-						print( 'Create light : "%s"' % obj_name_bl )
+						debug_info( 'Create light : "%s"' % obj_name_bl )
 						bpy.data.objects[obj_name_bl].draw_type = 'WIRE'
 						#self.assign_pick( obj_name_bl )
 				else:
-					print( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
+					debug_info( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
 					continue
 			else:
 				obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
-				print( 'Create light : "%s"' % obj_name_bl )
+				debug_info( 'Create light : "%s"' % obj_name_bl )
 				bpy.data.objects[obj_name_bl].draw_type = 'WIRE'
 				#self.assign_pick( obj_name_bl )
 	#----------------------------------------------------------------------------------------------------------------------------------
@@ -837,9 +845,9 @@ class ANIM:
 		if img_name == "":
 			return
 		
-		#print( 'Creation de la texture "%s"' % img_name )
-		#print( '              pathname "%s"' % self.texture )
-		#print( '    repertoire courant "%s"' % os.getcwd() )
+		debug_info( 'Creation de la texture "%s"' % img_name )
+		debug_info( '              pathname "%s"' % self.texture )
+		debug_info( '    repertoire courant "%s"' % os.getcwd() )
  		
 		name_path = self.texture
 	
@@ -857,14 +865,14 @@ class ANIM:
 			
 			
 		except:
-			print( '*** erreur **** %s introuvale' % (name_path) )
+			debug_info( '*** erreur **** %s introuvale' % (name_path) )
 			right_name = name_path.partition('Aircraft')[2]
 			name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft' + right_name
 			name_path = xml_import.conversion( name_path )
 			img = bpy.data.images.load( name_path )
-			print( '*** bidouillle **** %s introuvale' % (name_path) )
+			debug_info( '*** bidouillle **** %s introuvale' % (name_path) )
 			if BIDOUILLE:
-				print( "Bonjour" )
+				debug_info( "Bonjour" )
 				#img = bpy.data.images.new(name='void', width=1024, height=1024, alpha=True, float_buffer=True)
 			else:
 				return None
@@ -892,21 +900,21 @@ class ANIM:
 					if group_objects:
 						debug_info( '\tgroup : "%s"' % str(self.group_objects)  )
 						for obj_name_bl in group_objects[1:]:
-							print( 'Create Pick : "%s"' % obj_name_bl )
+							debug_info( 'Create Pick : "%s"' % obj_name_bl )
 							self.assign_pick( obj_name_bl )
 					else:
-						print( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
+						debug_info( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
 						continue
 				else:
 					obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
-					print( 'Create Pick : "%s"' % obj_name_bl )
+					debug_info( 'Create Pick : "%s"' % obj_name_bl )
 					self.assign_pick( obj_name_bl )
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature( self ):
 		if self.active_layer:
 			bpy.context.scene.layers = layer( self.layer-2 )
-			#print( "create_armature in layer %s" % str(self.layer-2) )
+			debug_info( "create_armature in layer %s" % str(self.layer-2) )
 				
 		if self.type == 1:
 			self.create_armature_rotation()
@@ -938,7 +946,7 @@ class ANIM:
 		if self.ac_file == "":
 			return
 		
-		#print( str(self.objects) )
+		debug_info( str(self.objects) )
 		for obj_name in self.objects:
 			if obj_name in self.ac_file.dic_name_meshs:
 				obj_name_bl = self.ac_file.dic_name_meshs[obj_name]
@@ -1272,7 +1280,7 @@ def create_texts():
 def get_object( obj_name ):
 	for obj in bpy.data.objects:
 		if obj.name == obj_name:
-			#print( 'pick "%s" == "%s"' % (obj.name, obj_name) )
+			debug_info( 'pick "%s" == "%s"' % (obj.name, obj_name) )
 			return obj
 	return None
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1287,7 +1295,7 @@ def is_exist_matrial_pick( obj ):
 def debug_info( aff):
 	global DEBUG
 	if DEBUG:
-		print( aff )
+		debug_info( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 # xml_files  = tule ( xml_file, no_include )
 def add_xml_file( xml_file, no ):
@@ -1342,7 +1350,7 @@ def get_xml_file( filename, no_include ):
 	if no_include == -1:
 		no_include = 0
 	for xml_file, no in xml_files:
-		#print( xml_file.name )
+		debug_info( xml_file.name )
 		#print ( no )
 		if xml_file.name == filename and no_include == no:
 			return xml_file
@@ -1432,7 +1440,7 @@ def create_anims():
 				debug_info( xml_file.name )
 				#obj.data.fg.xml_file = "//../" + xml_file.name
 				obj.data.fg.xml_file = "" + xml_file.name
-				#print( "FILENAME %s" % fg2bl.path.rel_from(obj.data.fg.xml_file, "" ) )
+				debug_info( "FILENAME %s" % fg2bl.path.rel_from(obj.data.fg.xml_file, "" ) )
 				obj.data.fg.xml_file_no = 0 + no
 				#fg2bl.path.print_filename( obj.data.fg.xml_file )
 				#Assign group ac_file to armature
@@ -1486,8 +1494,8 @@ def assign_obj_to_anim():
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
 		debug_info( '-----------------------------------' )
-		print( 'assign_obj_to_anim()  in "%s"' % os.path.basename(xml_file.name) )
-		#print( xml_file.name )
+		debug_info( 'assign_obj_to_anim()  in "%s"' % os.path.basename(xml_file.name) )
+		debug_info( xml_file.name )
 		debug_info( 'assign_to_anim() make dictionnary' )
 		dic_name = {}
 		for ac_file in xml_file.ac_files:
@@ -1518,14 +1526,14 @@ def assign_obj_to_anim():
 				#obj = bpy.data.objects[obj_name]
 				if not obj_name in dic_name:
 					assign_group_obj_to_anim( xml_file, obj_name, anim, dic_name )
-					#print( "**** Erreur objet %s inconnu ***" % obj_name )
+					debug_info( "**** Erreur objet %s inconnu ***" % obj_name )
 					#continue
 				else:
 					obj_name_bl = dic_name[obj_name]
 					#obj = bpy.data.objects[obj_name_bl]
 					#obj = find_object(obj_name_bl)
 					obj = bpy.data.objects[obj_name_bl]
-					#debug_info( "\tObj name %s" % obj.name )
+					debug_info( "\tObj name %s" % obj.name )
 					obj_armature = bpy.data.objects[anim.name]
 					parent_set( obj, obj_armature )
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1548,8 +1556,8 @@ def find_obj_in_empty_animation( obj_name ):
 		for ac_file in xml_file.ac_files:
 			for objet in ac_file.meshs:
 				if objet == obj_name:
-					print( 'Find obj="%s" in "%s"' % (obj_name , os.path.basename(xml_file.name)) )
-					print( 'Find obj="%s" in "%s"' % (obj_name , os.path.basename(ac_file.name)) )
+					debug_info( 'Find obj="%s" in "%s"' % (obj_name , os.path.basename(xml_file.name)) )
+					debug_info( 'Find obj="%s" in "%s"' % (obj_name , os.path.basename(ac_file.name)) )
 					obj_name_bl = ac_file.dic_name_meshs[obj_name]
 					return obj_name_bl
 	return None
@@ -1570,7 +1578,7 @@ def assign_group_obj_to_anim( xml_file, group_name, anim, dic_name ):
 					obj_armature = bpy.data.objects[anim.name]
 					parent_set( obj, obj_armature )
 				else:
-					print( '**** Erreur objet "%s" inconnu ***' % obj_name )
+					debug_info( '**** Erreur objet "%s" inconnu ***' % obj_name )
 				continue
 			else:
 				obj_name_bl = dic_name[obj_name]
@@ -1585,13 +1593,13 @@ def assign_group_obj_to_anim( xml_file, group_name, anim, dic_name ):
 		obj_armature = bpy.data.objects[anim.name]
 		parent_set( obj, obj_armature )
 	else:
-		print( '**** xm file "%s"  ***' % xml_file.name )
-		print( '**** Erreur objet "%s" inconnu ***' % group_name )
+		debug_info( '**** xm file "%s"  ***' % xml_file.name )
+		debug_info( '**** Erreur objet "%s" inconnu ***' % group_name )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def is_obj_link_armature( obj ):
 	objet = bpy.data.objects[obj.name]
-	#debug_info( "\tObj name %s" % objet.name )
+	debug_info( "\tObj name %s" % objet.name )
 	if objet.parent!= None:
 		#while( objet.parent != None ):
 		objet = objet.parent
@@ -1614,7 +1622,7 @@ def is_obj_link_armature( obj ):
 
 def is_obj_link_empty( obj ):
 	objet = bpy.data.objects[obj.name]
-	#debug_info( "\tObj name %s" % objet.name )
+	debug_info( "\tObj name %s" % objet.name )
 	if objet.parent!= None:
 		objet = objet.parent
 		if objet.type == 'EMPTY':

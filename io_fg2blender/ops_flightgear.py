@@ -82,29 +82,29 @@ class FG_OT_create_translate(bpy.types.Operator):
 		import mathutils
 		from math import radians
 
-		print( "Create_translate : " )
+		debug_info( "Create_translate : " )
 		armature = bpy.ops.object.armature_add( view_align=True )
 		armature = bpy.data.armatures[-1]
-		print( armature.name )
+		debug_info( armature.name )
 		for obj in bpy.data.objects:
 			if obj.type != 'ARMATURE':
 				continue
 			if obj.data.name == armature.name:
 				break 
 		if obj.type == 'ARMATURE':
-			print( "\tSelecion de : %s" %(obj.name) )
+			debug_info( "\tSelecion de : %s" %(obj.name) )
 			#bpy.ops.object.select_pattern(pattern=obj.name)
 			context.scene.objects.active = obj
 
 			bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
 
-			print("\tActivation Pose Mode")
+			debug_info("\tActivation Pose Mode")
 			bpy.ops.object.posemode_toggle()
 			bpy.ops.pose.select_all( action='SELECT' )
-			print("\tAjout limite location")
+			debug_info("\tAjout limite location")
 			bpy.ops.pose.constraint_add(type='LIMIT_LOCATION')
 
-			print("\tActivation des limites en local")
+			debug_info("\tActivation des limites en local")
 			limit_translate = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
 			limit_translate.use_min_x = True
 			limit_translate.use_max_x = True
@@ -133,7 +133,7 @@ class FG_OT_create_translate(bpy.types.Operator):
 			obj.data.fg.factor_ini		= 1.0
 			obj.data.fg.offset_deg		= 0.0
 
-			print("\tDesactivation Pose Mode")
+			debug_info("\tDesactivation Pose Mode")
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -156,7 +156,7 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 		from math import radians
 		
 		def create_rotate( vec ):
-			print( "Create_translate : " )
+			debug_info( "Create_translate : " )
 			bpy.ops.object.armature_add( view_align=False )
 			vec = vec / 10.0
 			#vec = Vector(( 0.0, 0.1, 0.0) )
@@ -171,22 +171,22 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 			bpy.ops.object.editmode_toggle()
 		
 			obj = context.active_object
-			print( obj.name )
+			debug_info( obj.name )
 			
 			if obj.type == 'ARMATURE':
-				print( "\tSelecion de : %s" %(obj.name) )
+				debug_info( "\tSelecion de : %s" %(obj.name) )
 				#bpy.ops.object.select_pattern(pattern=obj.name)
 				context.scene.objects.active = obj
 
 				#bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-				print("\tActivation Pose Mode")
+				debug_info("\tActivation Pose Mode")
 				bpy.ops.object.posemode_toggle()
 
 				bpy.ops.pose.select_all( action='SELECT' )
-				print("\tAjout limite location")
+				debug_info("\tAjout limite location")
 				bpy.ops.pose.constraint_add(type='LIMIT_LOCATION')
 
-				print("\tActivation des limites en local")
+				debug_info("\tActivation des limites en local")
 				limit_translate = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
 				limit_translate.use_min_x = True
 				limit_translate.use_max_x = True
@@ -215,7 +215,7 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 				obj.data.fg.factor_ini		= 1.0
 				obj.data.fg.offset_deg		= 0.0
 
-				print("\tDesactivation Pose Mode")
+				debug_info("\tDesactivation Pose Mode")
 				
 		for ax in self.axis:
 			if ax =='X':
@@ -233,7 +233,7 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 				
 			create_rotate( vec )
 
-		print( self.axis )
+		debug_info( self.axis )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -253,30 +253,30 @@ class FG_OT_create_rotate(bpy.types.Operator):
 		import mathutils
 		from math import radians
 
-		print( "Create_rotate : " )
+		debug_info( "Create_rotate : " )
 		armature = bpy.ops.object.armature_add( view_align=True )
 		armature = bpy.data.armatures[-1]
-		print( armature.name )
+		debug_info( armature.name )
 		for obj in bpy.data.objects:
 			if obj.type != 'ARMATURE':
 				continue
 			if obj.data.name == armature.name:
 				break 
 		if obj.type == 'ARMATURE':
-			print( "\tSelecion de : %s" %(obj.name) )
+			debug_info( "\tSelecion de : %s" %(obj.name) )
 			#bpy.ops.object.select_pattern(pattern=obj.name)
 			context.scene.objects.active = obj
 
 			#bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-			print("\tActivation Pose Mode")
+			debug_info("\tActivation Pose Mode")
 			bpy.ops.object.posemode_toggle()
 
 			bpy.ops.pose.select_all( action='SELECT' )
-			print("\tAjout limite rotation")
+			debug_info("\tAjout limite rotation")
 			bpy.ops.pose.constraint_add(type='LIMIT_ROTATION')
 
-			print("\tMatrice en mode EulerXYZ")
-			print("\tActivation des limites en local")
+			debug_info("\tMatrice en mode EulerXYZ")
+			debug_info("\tActivation des limites en local")
 			limit_rotation = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
 			limit_rotation.use_limit_x = True
 			limit_rotation.use_limit_y = False
@@ -305,7 +305,7 @@ class FG_OT_create_rotate(bpy.types.Operator):
 			obj.data.fg.factor_ini		= 1.0
 			obj.data.fg.offset_deg		= 0.0
 
-			print("\tDesactivation Pose Mode")
+			debug_info("\tDesactivation Pose Mode")
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -328,7 +328,7 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 		from math import radians
 		
 		def create_rotate( vec ):
-			print( "Create_rotate : " )
+			debug_info( "Create_rotate : " )
 			bpy.ops.object.armature_add( view_align=False )
 			vec = vec / 10.0
 			#vec = Vector(( 0.0, 0.1, 0.0) )
@@ -343,23 +343,23 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 			bpy.ops.object.editmode_toggle()
 		
 			obj = context.active_object
-			print( obj.name )
+			debug_info( obj.name )
 
 			if obj.type == 'ARMATURE':
-				print( "\tSelecion de : %s" %(obj.name) )
+				debug_info( "\tSelecion de : %s" %(obj.name) )
 				#bpy.ops.object.select_pattern(pattern=obj.name)
 				context.scene.objects.active = obj
 
 				#bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-				print("\tActivation Pose Mode")
+				debug_info("\tActivation Pose Mode")
 				bpy.ops.object.posemode_toggle()
 
 				bpy.ops.pose.select_all( action='SELECT' )
-				print("\tAjout limite rotation")
+				debug_info("\tAjout limite rotation")
 				bpy.ops.pose.constraint_add(type='LIMIT_ROTATION')
 
-				print("\tMatrice en mode EulerXYZ")
-				print("\tActivation des limites en local")
+				debug_info("\tMatrice en mode EulerXYZ")
+				debug_info("\tActivation des limites en local")
 				limit_rotation = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
 				limit_rotation.use_limit_x = True
 				limit_rotation.use_limit_y = False
@@ -389,7 +389,7 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 				obj.data.fg.factor_ini		= 1.0
 				obj.data.fg.offset_deg		= 0.0
 
-				print("\tDesactivation Pose Mode")
+				debug_info("\tDesactivation Pose Mode")
 				
 		for ax in self.axis:
 			if ax =='X':
@@ -407,7 +407,7 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 				
 			create_rotate( vec )
 
-		print( self.axis )
+		debug_info( self.axis )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -448,7 +448,7 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 		from . import xml_manager
 		global STACK_SAVE_KEYFRAMES
 
-		print( 'bpy.ops.view3d.save_keyframe()' )
+		debug_info( 'bpy.ops.view3d.save_keyframe()' )
 		obj = context.scene.objects.active
 		
 		for obj in context.selected_objects:
@@ -457,7 +457,7 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 
 			for skf in STACK_SAVE_KEYFRAMES:
 				if skf.name == obj.name:
-					print( '\tSave exist on "%s"' % obj.name )
+					debug_info( '\tSave exist on "%s"' % obj.name )
 					continue
 		
 			save_keyframe = SAVE_KEYFRAME()
@@ -477,7 +477,7 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 				
 		
 			STACK_SAVE_KEYFRAMES.append( save_keyframe )		
-			print( '\tSave for "%s" : %d keyframes' % ( obj.name, nb_key ) )
+			debug_info( '\tSave for "%s" : %d keyframes' % ( obj.name, nb_key ) )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -497,7 +497,7 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 		from . import xml_manager
 		global STACK_SAVE_KEYFRAMES
 
-		print( 'bpy.ops.view3d.restore_keyframe()' )
+		debug_info( 'bpy.ops.view3d.restore_keyframe()' )
 		obj = context.scene.objects.active
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
@@ -509,7 +509,7 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 					save_keyframe = skf
 				
 			if save_keyframe == None:
-				print( '\tRestore "%s" : had not save' % obj.name )
+				debug_info( '\tRestore "%s" : had not save' % obj.name )
 				continue
 		
 			armature = obj
@@ -522,7 +522,7 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 				
 		
 			STACK_SAVE_KEYFRAMES.remove( save_keyframe )		
-			print( '\tRestore "%s" : %d keyframes' % ( obj.name, idx ) )
+			debug_info( '\tRestore "%s" : %d keyframes' % ( obj.name, idx ) )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -542,7 +542,7 @@ class FG_OT_save_parent(bpy.types.Operator):
 		from . import xml_manager
 		global STACK_SAVE_PARENT
 
-		print( 'bpy.ops.view3d.save_parent()' )
+		debug_info( 'bpy.ops.view3d.save_parent()' )
 		obj = context.scene.objects.active
 		
 		list_objects = context.selected_objects
@@ -556,7 +556,7 @@ class FG_OT_save_parent(bpy.types.Operator):
 
 			for sp in STACK_SAVE_PARENT:
 				if sp.object_name == obj.name:
-					print( '\tSave exist on "%s"' % obj.name )
+					debug_info( '\tSave exist on "%s"' % obj.name )
 					continue
 		
 			save_parent = SAVE_PARENT()
@@ -574,7 +574,7 @@ class FG_OT_save_parent(bpy.types.Operator):
 			#obj.parent = None
 		
 			STACK_SAVE_PARENT.append( save_parent )		
-			print( '\tSave for "%s" parent "%s"' % ( obj.name, save_parent.parent_name ) )
+			debug_info( '\tSave for "%s" parent "%s"' % ( obj.name, save_parent.parent_name ) )
 
 		for obj in list_objects:
 			obj.select = True
@@ -597,7 +597,7 @@ class FG_OT_restore_parent(bpy.types.Operator):
 		from . import xml_manager
 		global STACK_SAVE_PARENT
 
-		print( 'bpy.ops.view3d.restore_parent()' )
+		debug_info( 'bpy.ops.view3d.restore_parent()' )
 		obj = context.scene.objects.active
 		for obj in context.selected_objects:
 			if not obj.type in ('MESH','ARMATURE','EMPTY'):
@@ -609,7 +609,7 @@ class FG_OT_restore_parent(bpy.types.Operator):
 					save_parent = sp
 				
 			if save_parent == None:
-				print( '\tRestore "%s" : had not save' % obj.name )
+				debug_info( '\tRestore "%s" : had not save' % obj.name )
 				continue
 
 			if save_parent.parent_name != '':
@@ -618,7 +618,7 @@ class FG_OT_restore_parent(bpy.types.Operator):
 					obj.parent_bone = 'Bone'
 					obj.parent_type = 'BONE'
 		
-			print( '\tRestore "%s" parent "%s"' % ( obj.name, save_parent.parent_name ) )
+			debug_info( '\tRestore "%s" parent "%s"' % ( obj.name, save_parent.parent_name ) )
 			STACK_SAVE_PARENT.remove( save_parent )		
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -639,7 +639,7 @@ class FG_OT_copy_xml_file(bpy.types.Operator):
 	def execute(self, context):
 		from . import xml_manager
 
-		print( 'bpy.ops.view3d.copy_xml_file()' )
+		debug_info( 'bpy.ops.view3d.copy_xml_file()' )
 		active_obj = context.scene.objects.active
 		xml_file = active_obj.data.fg.xml_file
 		xml_file_no = active_obj.data.fg.xml_file_no
@@ -650,14 +650,14 @@ class FG_OT_copy_xml_file(bpy.types.Operator):
 				continue
 			obj.data.fg.xml_file = xml_file
 			obj.data.fg.xml_file_no = xml_file_no
-			print( '\tObject "%s"' % obj.name )
+			debug_info( '\tObject "%s"' % obj.name )
 			
 			if active_obj.delta_location != obj.delta_location:
-				print( "\t\tChange delta_location" )
+				debug_info( "\t\tChange delta_location" )
 				obj.location = obj.location - active_obj.delta_location
 				obj.delta_location = obj.delta_location + active_obj.delta_location
 			if active_obj.delta_rotation_euler != obj.delta_rotation_euler:
-				print( "\t\tChange delta_rotation_euler" )
+				debug_info( "\t\tChange delta_rotation_euler" )
 				eul_0 = obj.rotation_euler
 				eul_1 = active_obj.delta_rotation_euler
 				obj.rotation_euler = Euler( (eul_0.x-eul_1.x, eul_0.y-eul_1.y, eul_0.z-eul_1.z) )
@@ -684,7 +684,7 @@ class FG_OT_copy_ac_file(bpy.types.Operator):
 	def execute(self, context):
 		from . import xml_manager
 
-		print( 'bpy.ops.view3d.copy_ac_file()' )
+		debug_info( 'bpy.ops.view3d.copy_ac_file()' )
 		active_obj = context.scene.objects.active
 		ac_file = active_obj.data.fg.ac_file
 		for obj in context.selected_objects:
@@ -693,7 +693,7 @@ class FG_OT_copy_ac_file(bpy.types.Operator):
 			if obj.type != 'MESH':
 				continue
 			obj.data.fg.ac_file = ac_file
-			print( '\tObject "%s"' % obj.name )
+			debug_info( '\tObject "%s"' % obj.name )
 			
 				#obj.delta_rotation_euler = obj.delta_rotation_euler + active_obj.delta_rotation_euler
 		return {'FINISHED'}
@@ -715,10 +715,10 @@ class FG_OT_copy_property(bpy.types.Operator):
 	def execute(self, context):
 		from . import xml_manager
 
-		print( 'bpy.ops.view3d.copy_property()' )
+		debug_info( 'bpy.ops.view3d.copy_property()' )
 
 		active_obj = context.scene.objects.active
-		print( "Copy de %s" % active_obj.data.fg.property_value )
+		debug_info( "Copy de %s" % active_obj.data.fg.property_value )
 		familly			= active_obj.data.fg.familly
 		familly_value	= active_obj.data.fg.familly_value
 		property_value	= active_obj.data.fg.property_value
@@ -731,13 +731,13 @@ class FG_OT_copy_property(bpy.types.Operator):
 		range_end_ini	= active_obj.data.fg.range_end_ini
 		time			= active_obj.data.fg.time
 		time_ini		= active_obj.data.fg.time_ini
-		print( '\tActive object : "%s"' % active_obj.name )
-		print( '\tValue : "%s"' % str(property_value) )
+		debug_info( '\tActive object : "%s"' % active_obj.name )
+		debug_info( '\tValue : "%s"' % str(property_value) )
 
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
 				continue
-			print( '\t\tOn object "%s"' % obj.name )
+			debug_info( '\t\tOn object "%s"' % obj.name )
 			obj.data.fg.familly			= familly
 			obj.data.fg.familly_value	= familly_value
 			obj.data.fg.property_value	= property_value
@@ -795,7 +795,7 @@ class FG_OT_init_rotation(bpy.types.Operator):
 			if obj.type != 'ARMATURE':
 				continue
 
-			print( "Insert keyframe sur %s" % obj.name )
+			debug_info( "Insert keyframe sur %s" % obj.name )
 			
 			if obj.data.fg.range_beg != -999.0:
 				insert_keyframe_rotation( obj, 1, obj.data.fg.range_beg * obj.data.fg.factor )
@@ -860,7 +860,7 @@ class FG_OT_init_rotation_zero(bpy.types.Operator):
 			if obj.type != 'ARMATURE':
 				continue
 
-			print( "Insert keyframe sur %s" % obj.name )
+			debug_info( "Insert keyframe sur %s" % obj.name )
 			
 			insert_keyframe_rotation( obj, 1, 0.0 )
 			insert_keyframe_rotation( obj, 60, 0.0 )
@@ -906,7 +906,7 @@ class FG_OT_edges_split(bpy.types.Operator):
 		import mathutils
 		from math import radians
 
-		print( "Smooth Object : " )
+		debug_info( "Smooth Object : " )
 		list_objects = context.selected_objects
 		active_object =	context.scene.objects.active
 		for obj in bpy.data.objects:
@@ -923,7 +923,7 @@ class FG_OT_edges_split(bpy.types.Operator):
 					obj.select = True
 					context.scene.objects.active = obj
 					angle = obj.data.auto_smooth_angle
-					print( "\tObject : %s    angle=%0.2f" % (obj.name,degrees(angle)) )
+					debug_info( "\tObject : %s    angle=%0.2f" % (obj.name,degrees(angle)) )
 
 					try:
 						bpy.ops.object.modifier_add( type='EDGE_SPLIT')	
@@ -931,7 +931,7 @@ class FG_OT_edges_split(bpy.types.Operator):
 							if mod.type=='EDGE_SPLIT':
 								mod.split_angle = angle
 					except:
-						print( "Erreur modifier_add Edge-split" )
+						debug_info( "Erreur modifier_add Edge-split" )
 
 					obj.select = False
 
@@ -976,7 +976,7 @@ class FG_OT_select_property(bpy.types.Operator):
 				o = o.parent
 			return None
 		#-------------------------------------------------------------------
-		print( '--- Select property  ---' )
+		debug_info( '--- Select property  ---' )
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
 				obj = find_armature( obj )
@@ -985,7 +985,7 @@ class FG_OT_select_property(bpy.types.Operator):
 			if obj.type != 'ARMATURE':
 				continue
 			property_name =  obj.data.fg.property_value
-			print( property_name )
+			debug_info( property_name )
 			for o in bpy.data.objects:
 				if o.type == 'ARMATURE':
 					if o.data.fg.property_value == property_name:
@@ -1013,7 +1013,7 @@ class FG_OT_select_armature_property(bpy.types.Operator):
 		from math import radians
 
 		property_name =  context.active_object.data.fg.property_value
-		print( property_name )
+		debug_info( property_name )
 		
 		for obj in bpy.data.objects:
 			if obj.type != 'ARMATURE':
@@ -1086,7 +1086,7 @@ class FG_OT_select_file_xml(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		context.window_manager.fileselect_add(self)
-		#print( self.filepath )
+		debug_info( self.filepath )
 		#return {'FINISHED'}
 		return {'RUNNING_MODAL'}
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1110,7 +1110,7 @@ class FG_OT_select_file_ac(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		context.window_manager.fileselect_add(self)
-		#print( self.filepath )
+		debug_info( self.filepath )
 		#return {'FINISHED'}
 		return {'RUNNING_MODAL'}
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1133,7 +1133,7 @@ class FG_OT_select_file_jsb(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		context.window_manager.fileselect_add(self)
-		#print( self.filepath )
+		debug_info( self.filepath )
 		#return {'FINISHED'}
 		return {'RUNNING_MODAL'}
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1143,11 +1143,11 @@ class FG_OT_only_render(bpy.types.Operator):
 	bl_label = ""
 
 	def execute(self, context):
-		#print( self.filepath)
+		debug_info( self.filepath)
 		return {'FINISHED'}
 
 	def invoke(self, context, event):
-		#print( context.space_data.type )
+		debug_info( context.space_data.type )
 		if context.space_data.type=='VIEW_3D':
 			context.space_data.show_only_render = not  context.space_data.show_only_render
 		#return {'FINISHED'}
@@ -1234,7 +1234,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 		from . import xml_export
 		from . import xml_import
 
-		print( 'charge_xml "%s"' % filename )
+		debug_info( 'charge_xml "%s"' % filename )
 		name = os.path.basename( filename )
 		script_name = name
 		
@@ -1258,13 +1258,13 @@ class FG_OT_write_xml(bpy.types.Operator):
 		bpy.data.texts[script_name].filepath = filename
 		bpy.data.texts[script_name].write( node.toprettyxml() )
 		
-		print( 'Filename "%s"' % filename )
+		debug_info( 'Filename "%s"' % filename )
 		from . import props_armature
 		if obj.data.fg.bWriteDisc:
 			obj = bpy.data.objects[self.obj_name]
 			f = open(filename, 'w')
 			for line in bpy.data.texts[script_name].lines:
-				#print( line.body )
+				debug_info( line.body )
 				f.write( line.body )
 				f.write( props_armature.endline() + '\n' )
 			f.close()
@@ -1272,14 +1272,14 @@ class FG_OT_write_xml(bpy.types.Operator):
 	#---------------------------------------------------------------------------
 	def execute( self, context ):
 		if self.filename != "":
-			print( self.filename )
+			debug_info( self.filename )
 			self.charge_xml( self.filename )
 		return {'FINISHED'}
 
 	#---------------------------------------------------------------------------
 
 	def invoke(self, context, event):
-		print( 'Save xml_file "%s"' % self.obj_name )
+		debug_info( 'Save xml_file "%s"' % self.obj_name )
 		obj = bpy.data.objects[self.obj_name]
 		if obj.type == 'CAMERA':
 			from . import xml_camera
@@ -1292,7 +1292,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 		filename = obj.data.fg.xml_file
 		filename = bpy.path.abspath(filename)
 		no		 = obj.data.fg.xml_file_no
-		print( ' file = "%s"' % filename )
+		debug_info( ' file = "%s"' % filename )
 		#filename = self.filename
 		if filename == "":
 			filename = xml_manager.xml_files[0][0].name
@@ -1321,7 +1321,7 @@ class FG_OT_write_jsb(bpy.types.Operator):
 	#---------------------------------------------------------------------------
 	def execute( self, context ):
 		if self.filename != "":
-			print( self.filename )
+			debug_info( self.filename )
 			self.charge_xml( self.filename )
 		return {'FINISHED'}
 
@@ -1330,7 +1330,7 @@ class FG_OT_write_jsb(bpy.types.Operator):
 	def invoke(self, context, event):
 		filename = bpy.data.objects[self.obj_name].fg.jsb_xml_file 
 		filename = bpy.path.abspath( filename )
-		print( 'Save JSBsim "%s"' % filename )
+		debug_info( 'Save JSBsim "%s"' % filename )
 		from . import xml_jsbsim
 		xml_jsbsim.write_jsbsim( context, filename )
 		return {'FINISHED'}
@@ -1459,10 +1459,10 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 		
 		group_name = ''		
 		for group in bpy.data.objects[self.object_name].users_group:
-			print( str(group) )
+			debug_info( str(group) )
 			if group.name.find('.ac') != -1:
 				group_name = group.name
-			print( group_name )
+			debug_info( group_name )
 			set_ac_file( group_name )
 		
 		#if active_object.data.fg.ac_file == "":
@@ -1478,10 +1478,10 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 			
 			
 			
-		#print( bpy.data.objects[self.object_name].data.fg.ac_file )
-		#print( bpy.path.abspath('//') )
-		print( 'Group name "%s"' % group_name )
-		print( 'Filename "%s"' % filename )
+		debug_info( bpy.data.objects[self.object_name].data.fg.ac_file )
+		debug_info( bpy.path.abspath('//') )
+		debug_info( 'Group name "%s"' % group_name )
+		debug_info( 'Filename "%s"' % filename )
 		
 		list_objects = []
 		for obj in bpy.data.objects:
@@ -1490,7 +1490,7 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 					list_objects.append(obj)
 
 		for obj in list_objects:
-			print( obj.name )
+			debug_info( obj.name )
 			
 		#clear_parent( list_objects )
 		from . import xml_import
@@ -1551,7 +1551,7 @@ class FG_OT_exemple(bpy.types.Operator):
 	'''
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
 		# ce que l'on veut faire
-		print( "HelloWord" )
+		debug_info( "HelloWord" )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 #

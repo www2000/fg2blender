@@ -31,6 +31,16 @@
 import bpy
 bLock_update = False
 
+DEBUG = False
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def debug_info( aff):
+	global DEBUG
+	if DEBUG:
+		print( aff )
+#----------------------------------------------------------------------------------------------------------------------------------
+
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_mesh(bpy.types.PropertyGroup):
@@ -44,7 +54,7 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 		if bLock_update == True:
 			return None
 
-		print( 'update_ac_file "%s"  %s' % (obj.name, str(bLock_update))  )
+		debug_info( 'update_ac_file "%s"  %s' % (obj.name, str(bLock_update))  )
 			
 		bLock_update = True
 
@@ -57,7 +67,7 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 				continue
 			if obj.type != 'MESH':
 				continue
-			print( "\t%s" % obj.name )
+			debug_info( "\t%s" % obj.name )
 			obj.data.fg.ac_file = "" + ac_file
 			
 		bLock_update = False

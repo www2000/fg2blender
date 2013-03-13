@@ -92,7 +92,7 @@ def tronc_name(name_path):
 def debug_info( aff):
 	global DEBUG
 	if DEBUG:
-		print( aff )
+		debug_info( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------------------------------------------------------------------------------------
 #
@@ -106,7 +106,7 @@ def debug_info( aff):
 
 def read_vertice( f, line, local_mesh ):
 	nb = int(line.split()[1])
-	#print( line )
+	debug_info( line )
 
 	for i in range(nb):
 		#pour les lignes vides
@@ -114,13 +114,13 @@ def read_vertice( f, line, local_mesh ):
 		while nb == 1:
 			line = f.readline()
 			nb = len(line)
-		#print( " ligne no %d : %s" % (i,line) )
+		debug_info( " ligne no %d : %s" % (i,line) )
 		reel = line.split()
 		#v = local_mesh.location
 		vec3 = mathutils.Vector( (float(reel[0]), -float(reel[2]), float(reel[1]) ) )
 
 		local_mesh.add_vertices( vec3 )
-		#print( "No de vertex %d " % i )
+		debug_info( "No de vertex %d " % i )
 #----------------------------------------------------------------------------------------------------------------------------------
 	
 def read_face( fi, local_mesh):
@@ -132,18 +132,18 @@ def read_face( fi, local_mesh):
 		line = fi.readline()
 
 	nb = int(line.split()[1])
-	#debug_info( "read_face()  nb = %d " % nb )
-	#print( "read_face()  nb = %d " % nb )
+	debug_info( "read_face()  nb = %d " % nb )
+	debug_info( "read_face()  nb = %d " % nb )
 
 	f = []
 	uv = []
 	
 	#if nb > len(local_mesh.uv):
 	#	local_mesh.uv = [] * nb
-	#debug_info( "Longeur uv %d " % len(local_mesh.uv) )
+	debug_info( "Longeur uv %d " % len(local_mesh.uv) )
 	
-	#print( "texrep  %0.4f,%0.4f" % (local_mesh.texrep[0],local_mesh.texrep[1]) )
-	#print( "texoff  %0.4f,%0.4f" % (local_mesh.texoff[0],local_mesh.texoff[1]) )
+	debug_info( "texrep  %0.4f,%0.4f" % (local_mesh.texrep[0],local_mesh.texrep[1]) )
+	debug_info( "texoff  %0.4f,%0.4f" % (local_mesh.texoff[0],local_mesh.texoff[1]) )
 	
 	for i in range(nb):
 		#pour les lignes vides
@@ -160,14 +160,14 @@ def read_face( fi, local_mesh):
 		u = float(idx[1])
 		v = float(idx[2])
 		
-		#print( "Avant u,v   %0.4f,%0.4f" % (u,v) )
+		debug_info( "Avant u,v   %0.4f,%0.4f" % (u,v) )
 		u = u * local_mesh.texrep[0] + (local_mesh.texoff[0])
 		v = v * local_mesh.texrep[1] + (local_mesh.texoff[1])
 		if local_mesh.bDDS:
 			uv.append( [ u, -(v-0.5) +0.5]  )
 		else:
 			uv.append( [ u, v ]  )
-		#print( "Apres u,v   %0.4f,%0.4f" % (u,v) )
+		debug_info( "Apres u,v   %0.4f,%0.4f" % (u,v) )
 
 	# for quads	
 	if nb == 4:
@@ -194,7 +194,7 @@ def read_face( fi, local_mesh):
 	'''
 	#for other more than 4 vetex per faces.  Split in triangles
 	if nb > 4:
-		#print( "refs = %d" % nb )
+		debug_info( "refs = %d" % nb )
 		for i in range(nb-2):
 			new_face = [ (f[0], f[1+i], f[2+i]) ]
 			new_edge = [ (f[0],f[1+i]) , (f[1+i],f[2+i]) , (f[2+i],f[0]) ]
@@ -203,9 +203,9 @@ def read_face( fi, local_mesh):
 		
 		for i in range(nb-2):
 			local_mesh.uv.append( (uv[0],uv[i+1],uv[i+2]) )
-	#debug_info( "Longeur uv %d " % len(local_mesh.uv) )
-	#print( "Nb face  %d " % len(local_mesh.faces) )
-	#print( "Nb uv    %d " % len(local_mesh.uv) )
+	debug_info( "Longeur uv %d " % len(local_mesh.uv) )
+	debug_info( "Nb face  %d " % len(local_mesh.faces) )
+	debug_info( "Nb uv    %d " % len(local_mesh.uv) )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def read_texture( fi, line, local_mesh):
@@ -220,13 +220,13 @@ def read_texture( fi, line, local_mesh):
 
 def read_texoff( fi, line, local_mesh):
 	mot = line.split()
-	#print( "Read texoff" )
+	debug_info( "Read texoff" )
 	local_mesh.texoff = (   float(mot[1]), float(mot[2])  )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def read_texrep( fi, line, local_mesh):
 	mot = line.split()
-	#print( "Read texrep  %f,%f" % (   float(mot[1]), float(mot[2])  ) )
+	debug_info( "Read texrep  %f,%f" % (   float(mot[1]), float(mot[2])  ) )
 	local_mesh.texrep = (   float(mot[1]), float(mot[2])  )
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -283,7 +283,7 @@ def read_name( f, line, local_mesh ):
 def read_crease( f, line, local_mesh ):
 	mot = line.split()
 	local_mesh.crease = float(mot[1])
-	#print( "crease = %f" % local_mesh.crease )
+	debug_info( "crease = %f" % local_mesh.crease )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def read_object( f, line, local_mesh ):
@@ -329,7 +329,7 @@ def read_material( f, line, local_mesh ):
 	
 	no = len(ac_manager.material_list)
 	ac_manager.material_list.append( (bl_mat, no, "", ac_mat, False) )
-	#print( "Creation du material No %d    ac %s  blender %s" % ( no, ac_mat.name_ac,ac_mat.name_bl ) )
+	debug_info( "Creation du material No %d    ac %s  blender %s" % ( no, ac_mat.name_ac,ac_mat.name_bl ) )
 #----------------------------------------------------------------------------------------------------------------------------------
 	
 TOKEN = {	'numvert ' 		: read_vertice,
@@ -367,7 +367,7 @@ def read_ac(filename, ac_option, extra=None):
 	
 	version = bpy.app.version
 	if version[1] < 63:
-		print( "Erreur : Scrpit pour blender >= 2.63" )
+		debug_info( "Erreur : Scrpit pour blender >= 2.63" )
 		return
 		
 	
@@ -378,7 +378,7 @@ def read_ac(filename, ac_option, extra=None):
 	ac_file.name = filename
 	ac_manager.set_ac_file( ac_file )
 	
-	print( "\tac_import:read_ac() %s" % filename.partition( 'Aircraft'+os.sep )[2] )
+	debug_info( "\tac_import:read_ac() %s" % filename.partition( 'Aircraft'+os.sep )[2] )
 	
 	if not extra:
 		ac_manager.xml_extra_position = Vector( (0.0,0.0,0.0) )
@@ -406,7 +406,7 @@ def read_ac(filename, ac_option, extra=None):
 	# look TOKEN dict
 	#--------------------------
 	while line!="":
-		#print("Ligne ----- %s" % line )
+		debug_info("Ligne ----- %s" % line )
 		for token, fct in TOKEN.items():
 			if line.find(token)!=-1:
 				fct(f, line, local_mesh)
@@ -417,9 +417,9 @@ def read_ac(filename, ac_option, extra=None):
 	
 	#ac_file.create_group_ac()
 	
-	#print( "Parent restant %d" % len(local_mesh.parent) )
+	debug_info( "Parent restant %d" % len(local_mesh.parent) )
 	#display_texture()
 	time_end = time.time()
-	print( "\tImport %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
+	debug_info( "\tImport %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
 
 
