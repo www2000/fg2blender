@@ -120,65 +120,36 @@ class XML_FILE:
 #----------------------------------------------------------------------------------------------------------------------------------
 #							CLASS ANIM
 #----------------------------------------------------------------------------------------------------------------------------------
-#	name				= "plane"							string	if transform name
-#	type				= 0									1:Rotate 2:translate 3: group objects 4:pick 
-#															5:light 6:shader 7: Spin
-#	xml_file			= ""								string : xml  file
+#	name				= "plane"				string	if transform name
+#	type				= 0					1:Rotate 2:translate 3: group objects 4:pick 5:light 6:shader 7: Spin
+#	xml_file			= ""					string : xml  file
 #	factor				= 0.0
-#	property			= ""								string : flightgear property of transform
-#	pos					= Vector( (0.0, 0.0, 0.0) )			bone location
-#	vec					= Vector( (0.0, 0.0, 0.0) )			bone vector
-#	objects				= []								objects list  ( name in xml file )
-#	group_objects		= []								list : group_objects[0] name of group
-#	layer				= 0									number of layer
+#	property			= ""					string : flightgear property of transform
+#	pos				= Vector( (0.0, 0.0, 0.0) )		bone location
+#	vec				= Vector( (0.0, 0.0, 0.0) )		bone vector
+#	objects				= []					objects list  ( name in xml file )
+#	group_objects			= []					list : group_objects[0] name of group
+#	layer				= 0					number of layer
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class ANIM:
 	def __init__(self):
-		self.name				= ""
-		self.type				= 0								# 1:Rotate 2:translate 3: group objects 4:pick 5:light 6:shader
-		self.xml_file			= ""							# 7: Spin
+		self.name			= ""
+		self.type			= 0				# 1:Rotate 2:translate 3: group objects 4:pick 5:light 6:shader 7: Spin
+		self.xml_file			= ""					
 		self.xml_file_no		= 0
-		self.factor				= 1.0
+		self.factor			= 1.0
 		self.interpolation		= []
 		self.property			= ""
-		self.pos				= Vector( (0.0, 0.0, 0.0) )
-		self.vec				= Vector( (0.0, 0.0, 0.0) )
+		self.pos			= Vector( (0.0, 0.0, 0.0) )
+		self.vec			= Vector( (0.0, 0.0, 0.0) )
 		self.objects			= []
 		self.group_objects		= []
 		self.texture			= ""
 		self.ac_file			= ""
 		self.offset_deg			= 0.0
-		self.layer				= 0						
+		self.layer			= 0						
 		self.active_layer		= False
-	#---------------------------------------------------------------------------------------------------------------------
-
-	def extract_type( self, node ):
-		from .xml_import import ret_text_value
-		from .xml_import import tabs
-
-		childs = node.getElementsByTagName('type')
-		if childs:
-			for child in childs:
-				if child.hasChildNodes():
-					value = ret_text_value(child)
-					if value == 'rotate':
-						self.type = 1
-					elif value == 'translate':
-						self.type = 2
-					elif value == 'pick':
-						self.type = 4
-					elif value == 'light':
-						self.type = 5
-					elif value == 'shader':
-						self.type = 6
-					elif value == 'spin':
-						debug_info( 'Spin animation' )
-						self.type = 7
-		else:
-			childs = node.getElementsByTagName('name')
-			if childs:
-				self.type = 3
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def extract_texture( self, node ):
@@ -395,8 +366,7 @@ class ANIM:
 			self.extract_factor( node )
 			self.factor = 360.0
 			self.extract_interpolation( node )
-			if self.type == 0:
-				self.extract_group_objects( node )
+
 		#---------------------------------------------------------------------------------------------------------------------
 		# pour recopier la valeur et non pas la référence
 		from . import xml_import

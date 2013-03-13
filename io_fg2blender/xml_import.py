@@ -44,7 +44,16 @@ from .ac_manager import AC_OPTION
 from .ac_manager import AC_FILE
 from .xml_manager import XML_OPTION
 from .xml_manager import XML_FILE
-from .xml_manager import ANIM
+#from .xml_manager import ANIM
+from .xml_anim import ANIM
+from .xml_anim import ANIM_ROTATE
+from .xml_anim import ANIM_TRANSLATE
+from .xml_anim import ANIM_SPIN
+from .xml_anim import ANIM_SHADER
+from .xml_anim import ANIM_LIGHT
+from .xml_anim import ANIM_GROUPS
+from .xml_anim import ANIM_PICK
+
 from .xml_manager import TEXT
 #---------------------------------------------------------------------------------------------------------------------
 niv = 0
@@ -872,8 +881,34 @@ def parse_node( node, file_name ):
 
 
 		elif node.nodeName == 'animation':
-			anim = ANIM()
-			anim.extract_anim( node )
+
+			from .xml_import import ret_text_value
+			from .xml_import import tabs
+
+			childs = node.getElementsByTagName('type')
+			if childs:
+				for child in childs:
+					if child.hasChildNodes():
+						value = ret_text_value(child)
+						if value == 'rotate':
+							anim = ANIM_ROTATE( node )
+						elif value == 'translate':
+							anim = ANIM_TRANSLATE( node )
+						elif value == 'pick':
+							anim = ANIM_PICK( node )
+						elif value == 'light':
+							anim = ANIM_LIGHT( node )
+						elif value == 'shader':
+							anim = ANIM_SHADER( node )
+						elif value == 'spin':
+							anim = ANIM_SPIN( node )
+			else:
+				childs = node.getElementsByTagName('name')
+				if childs:
+					anim = ANIM_GROUPS()
+
+			#anim = ANIM()
+			#anim.extract_anim( node )
 			xml_manager.get_current_xml().anims.append( anim )
 			print_animation( node )
 
