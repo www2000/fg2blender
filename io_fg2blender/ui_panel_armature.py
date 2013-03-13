@@ -100,8 +100,8 @@ def layout_armature_tool(self, obj, context):
 
 	box = layout.box()
 	row = box.row()
-	row.operator("view3d.show_animation", text="show")
-	row.operator("view3d.show_all", text="show_all")
+	row.operator("view3d.show_animation", text="Show object related to selected animation")
+	row.operator("view3d.show_all", text="Show all object")
 
 	boxTitre = layout.column()
 	boxTitre.label( text='Type' )
@@ -162,7 +162,7 @@ def layout_armature_properties(self, obj, context):
 	
 	#----------------------------------------------------
 	boxTitre = layout.column()
-	boxTitre.label( text='xml file:' )
+	boxTitre.label( text='XML File:' )
 	box = layout.box()
 	row = box.row()
 	row.prop( obj.data.fg, "bIncDiskFile" )
