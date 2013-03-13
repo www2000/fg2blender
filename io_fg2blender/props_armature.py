@@ -231,29 +231,29 @@ def dynamic_items( self, context ):
 
 	#familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear']
 
-	if obj.data.fg.familly == 'APU':
+	if obj.data.fg.family == 'APU':
 		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for (fc, _min, _max, b )in APUs ]
-	elif obj.data.fg.familly == 'anti_ice':
+	elif obj.data.fg.family == 'anti_ice':
 		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc, _min, _max, b in anti_ices ]
-	elif obj.data.fg.familly == 'armament':
+	elif obj.data.fg.family == 'armament':
 		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc, _min, _max, b in armaments ]
-	elif obj.data.fg.familly == 'autoflight':
+	elif obj.data.fg.family == 'autoflight':
 		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc, _min, _max, b in autoflights ]
-	elif obj.data.fg.familly == 'electric':
+	elif obj.data.fg.family == 'electric':
 		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc, _min, _max, b in electrics ]
-	elif obj.data.fg.familly == 'controls':
+	elif obj.data.fg.family == 'controls':
 		items = [ (fc,fc.split('/')[-1],fc.split('/')[-1]) for fc, _min, _max, b in flight_controls ]
-	elif obj.data.fg.familly == 'engine':
+	elif obj.data.fg.family == 'engine':
 	    items = [ (en,en.split('/')[-1],en.split('/')[-1]) for en, _min, _max, b in engines ]
-	elif obj.data.fg.familly == 'flight':
+	elif obj.data.fg.family == 'flight':
 	    items =	[ (fu,fu.split('/')[-1],fu.split('/')[-1]) for fu, _min, _max, b in flights ]
-	elif obj.data.fg.familly == 'fuel':
+	elif obj.data.fg.family == 'fuel':
 	    items =	[ (fu,fu.split('/')[-1],fu.split('/')[-1]) for fu, _min, _max, b in fuels ]
-	elif obj.data.fg.familly == 'gear':
+	elif obj.data.fg.family == 'gear':
 	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge, _min, _max, b in gears ]
-	elif obj.data.fg.familly == 'consumable':
+	elif obj.data.fg.family == 'consumable':
 	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge, _min, _max, b in consumables ]
-	elif obj.data.fg.familly == 'surface_position':
+	elif obj.data.fg.family == 'surface_position':
 	    items = [ (ge,ge.split('/')[-1],ge.split('/')[-1]) for ge, _min, _max, b in surface_positions ]
 	else:
 		items = [  ('error','error','error') ]
@@ -341,18 +341,18 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 		return None	
 	#----------------------------------------------------------------------------------------------------------------------------------
 
-	familly			= bpy.props.EnumProperty(	attr='familly', name='Familly', description="familly of properties", default='custom',
+	family			= bpy.props.EnumProperty(	attr='family', name='Family', description="family of properties", default='custom',
 						                        items = [ ('custom','custom','custom') ]
 						                        	+	[ (famille,famille,famille) for famille in familles ]    )
 
-	familly_value	= bpy.props.EnumProperty(	attr = 'familly_value', name='Node', description="node of familly", items = dynamic_items )
+	family_value	= bpy.props.EnumProperty(	attr = 'family_value', name='Node', description="node of family", items = dynamic_items )
 	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'Property')
 	property_idx	= bpy.props.IntProperty(	attr = 'value', name = '%d ', min=0)
 	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
 	factor_ini		= bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
 	xml_file		= bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File', update=update_xml_file)
 	xml_file_no		= bpy.props.IntProperty(	attr = 'xml_file_no', name = 'No xml File')
-	xml_present		= bpy.props.EnumProperty(	attr = 'xml_present', name='xml Present', description="familly animation", items = dynamic_items_xml_file )
+	xml_present		= bpy.props.EnumProperty(	attr = 'xml_present', name='xml Present', description="family animation", items = dynamic_items_xml_file )
 	type_anim		= bpy.props.IntProperty(	attr = 'type_anim', name = 'Type')
 	range_beg		= bpy.props.FloatProperty(	attr = 'range_beg', name = 'min')
 	range_end		= bpy.props.FloatProperty(	attr = 'range_end', name = 'max')
@@ -366,22 +366,22 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_armature():
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="familly",			type=FG_PROP_armature, name="Familly", description="Property familly")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="familly_value",	type=FG_PROP_armature, name="Familly value", description="Familly value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="family",			type=FG_PROP_armature, name="Family", description="Property family")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="family_value",	type=FG_PROP_armature, name="Family value", description="Family value")
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_value",	type=FG_PROP_armature, name="Property", description="Property value")
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_idx",	type=FG_PROP_armature, name="Property", description="Property value")
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="factor",			type=FG_PROP_armature, name="Factor", description="Property value")
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="factor_ini",		type=FG_PROP_armature, name="Factor ini", description="Property value")
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file",		type=FG_PROP_armature, name="xml file", description="Property value")
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file_no",		type=FG_PROP_armature, name="xml file no", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='xml_present',		type=FG_PROP_armature, name='xml file present', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='type_anim',		type=FG_PROP_armature, name='type_anim', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg',		type=FG_PROP_armature, name='range_beg', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end',		type=FG_PROP_armature, name='range_end', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg_ini',	type=FG_PROP_armature, name='range_beg_ini', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end_ini',	type=FG_PROP_armature, name='range_end_ini', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time',			type=FG_PROP_armature, name='time', description="familly" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time_ini',		type=FG_PROP_armature, name='time_ini', description="familly" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='xml_present',		type=FG_PROP_armature, name='xml file present', description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='type_anim',		type=FG_PROP_armature, name='type_anim', description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg',		type=FG_PROP_armature, name='range_beg', description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end',		type=FG_PROP_armature, name='range_end', description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg_ini',	type=FG_PROP_armature, name='range_beg_ini', description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end_ini',	type=FG_PROP_armature, name='range_end_ini', description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time',			type=FG_PROP_armature, name='time', description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time_ini',		type=FG_PROP_armature, name='time_ini', description="family" )
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='offset_deg',		type=FG_PROP_armature, name='offset_deg', description="Initial deg" )
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='bIncDiskFile',	type=FG_PROP_armature, name='bIncDiskFile', description="Include file Disk" )
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='bWriteDisc',		type=FG_PROP_armature, name='bWriteDisc', description="Write file to disk" )

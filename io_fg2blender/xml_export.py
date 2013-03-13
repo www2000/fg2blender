@@ -54,7 +54,7 @@ def debug_info( aff):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def build_property_name( armature ):
-	prop_name = armature.data.fg.familly_value
+	prop_name = armature.data.fg.family_value
 	if prop_name.find('%d')!=-1:
 		idx = armature.data.fg.property_idx
 		left  = prop_name.partition('[')[0]
@@ -313,15 +313,15 @@ def write_animation( context, node, obj ):
 		obj_ctx = bpy.context.scene.objects.active
 		bpy.context.scene.objects.active = armature
 
-		value = armature.data.fg.familly
+		value = armature.data.fg.family
 		debug_info( 'objet "%s"' % obj.name )
-		debug_info( 'Familly "%s"' % obj.data.fg.familly )
-		debug_info( 'Familly_value "%s"' % obj.data.fg.familly_value )
+		debug_info( 'Family "%s"' % obj.data.fg.family )
+		debug_info( 'Family_value "%s"' % obj.data.fg.family_value )
 		debug_info( 'Property_value "%s"' % obj.data.fg.property_value )
 		if value == "custom":
 			value = armature.data.fg.property_value
 		else:
-			value = armature.data.fg.familly_value
+			value = armature.data.fg.family_value
 
 		debug_info( 'Value "%s"' % value )
 	

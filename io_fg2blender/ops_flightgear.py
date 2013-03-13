@@ -120,8 +120,8 @@ class FG_OT_create_translate(bpy.types.Operator):
 			obj.data.fg.type_anim		= 2
 			obj.data.fg.xml_file		= ""
 			obj.data.fg.xml_file_no		= 0
-			obj.data.fg.familly			= "custom"
-			obj.data.fg.familly_value	= "error"
+			obj.data.fg.family			= "custom"
+			obj.data.fg.family_value	= "error"
 			obj.data.fg.property_value	= ""
 			obj.data.fg.property_idx	= -1
 			obj.data.fg.time			= 2.5
@@ -202,8 +202,8 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 				obj.data.fg.type_anim		= 2
 				obj.data.fg.xml_file		= ""
 				obj.data.fg.xml_file_no		= 0
-				obj.data.fg.familly			= "custom"
-				obj.data.fg.familly_value	= "error"
+				obj.data.fg.family			= "custom"
+				obj.data.fg.family_value	= "error"
 				obj.data.fg.property_value	= ""
 				obj.data.fg.property_idx	= -1
 				obj.data.fg.time			= 2.5
@@ -292,8 +292,8 @@ class FG_OT_create_rotate(bpy.types.Operator):
 			obj.data.fg.type_anim		= 1
 			obj.data.fg.xml_file		= ""
 			obj.data.fg.xml_file_no		= 0
-			obj.data.fg.familly			= "custom"
-			obj.data.fg.familly_value	= "error"
+			obj.data.fg.family			= "custom"
+			obj.data.fg.family_value	= "error"
 			obj.data.fg.property_value	= ""
 			obj.data.fg.property_idx	= -1
 			obj.data.fg.time			= 2.5
@@ -376,8 +376,8 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 				obj.data.fg.type_anim		= 1
 				obj.data.fg.xml_file		= ""
 				obj.data.fg.xml_file_no		= 0
-				obj.data.fg.familly			= "custom"
-				obj.data.fg.familly_value	= "error"
+				obj.data.fg.family			= "custom"
+				obj.data.fg.family_value	= "error"
 				obj.data.fg.property_value	= ""
 				obj.data.fg.property_idx	= -1
 				obj.data.fg.time			= 2.5
@@ -719,8 +719,8 @@ class FG_OT_copy_property(bpy.types.Operator):
 
 		active_obj = context.scene.objects.active
 		debug_info( "Copy de %s" % active_obj.data.fg.property_value )
-		familly			= active_obj.data.fg.familly
-		familly_value	= active_obj.data.fg.familly_value
+		family			= active_obj.data.fg.family
+		family_value	= active_obj.data.fg.family_value
 		property_value	= active_obj.data.fg.property_value
 		property_idx	= active_obj.data.fg.property_idx
 		factor			= active_obj.data.fg.factor
@@ -738,8 +738,8 @@ class FG_OT_copy_property(bpy.types.Operator):
 			if obj.type != 'ARMATURE':
 				continue
 			debug_info( '\t\tOn object "%s"' % obj.name )
-			obj.data.fg.familly			= familly
-			obj.data.fg.familly_value	= familly_value
+			obj.data.fg.family			= family
+			obj.data.fg.family_value	= family_value
 			obj.data.fg.property_value	= property_value
 			obj.data.fg.property_idx	= property_idx
 			obj.data.fg.factor			= factor

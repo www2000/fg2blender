@@ -590,8 +590,8 @@ class ANIM:
 		from . import props_armature
 		#------------------------------------------------------------
 
-		def find_prop( obj, left, right, familly, name ):
-			for prop in familly:
+		def find_prop( obj, left, right, family, name ):
+			for prop in family:
 				left_prop = prop[0]
 				right_prop = ''
 				if prop[0].find('[') != -1:
@@ -600,8 +600,8 @@ class ANIM:
 			
 				if left_prop == left and right_prop == right:
 					debug_info( ' Bingo "%s"' , prop )
-					obj.data.fg.familly = name
-					obj.data.fg.familly_value = prop[0]
+					obj.data.fg.family = name
+					obj.data.fg.family_value = prop[0]
 					if obj.data.fg.property_value.find('[') != -1:
 						idx = obj.data.fg.property_value.partition('[')[2]
 						idx = idx.partition(']')[0]
@@ -616,7 +616,7 @@ class ANIM:
 					
 		#------------------------------------------------------------
 
-		def find_in_familly( obj, left, right ):
+		def find_in_family( obj, left, right ):
 			find_prop( obj, left, right, props_armature.APUs, 'APU' )
 			find_prop( obj, left, right, props_armature.anti_ices, 'anti_ice' )
 			find_prop( obj, left, right, props_armature.armaments, 'armament' )
@@ -644,7 +644,7 @@ class ANIM:
 			left = obj.data.fg.property_value.partition('[')[0]
 			right = obj.data.fg.property_value.partition(']')[2]
 
-		find_in_familly( obj, left, right )
+		find_in_family( obj, left, right )
 	#---------------------------------------------------------------------------------------------------------------------
 
 	def create_armature_rotation( self ):
@@ -669,7 +669,7 @@ class ANIM:
 				continue
 			if obj.data.name == armature_name:
 				obj_arma = obj_armature = obj
-				obj_arma.data.fg.familly = "custom"
+				obj_arma.data.fg.family = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.property_idx = -1
 				obj_arma.data.fg.time = 60.0 / 24.0
@@ -753,7 +753,7 @@ class ANIM:
 				continue
 			if obj.data.name == armature_name:
 				obj_arma = obj_armature = obj
-				obj_arma.data.fg.familly = "custom"
+				obj_arma.data.fg.family = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.property_idx = -1
 				obj_arma.data.fg.range_beg = 0.0

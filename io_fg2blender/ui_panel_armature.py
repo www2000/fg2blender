@@ -136,27 +136,27 @@ def layout_armature_properties(self, obj, context):
 	box = layout.box()
 
 	row = box.row()
-	row.prop( obj.data.fg, "familly" )
+	row.prop( obj.data.fg, "family" )
 	#----------------------------------------------------
-	if obj.data.fg.familly != 'custom':
+	if obj.data.fg.family != 'custom':
 		row = box.row()
-		row.prop(obj.data.fg, "familly_value")
-		value = obj.data.fg.familly_value
+		row.prop(obj.data.fg, "family_value")
+		value = obj.data.fg.family_value
 
 	row = box.row()
 	row.alignment = 'LEFT'
-	if obj.data.fg.familly != 'custom':
+	if obj.data.fg.family != 'custom':
 		row.label( text="Property:" )
 		#if anim :
 		from . import xml_export
 		value = xml_export.build_property_name( obj )
 		row.label( text=value )
-		#obj.data.fg.property_value = obj.data.fg.familly_value
+		#obj.data.fg.property_value = obj.data.fg.family_value
 	else:
 		row.alignment = 'EXPAND'
 		row.prop( obj.data.fg,  "property_value" )
 
-	if obj.data.fg.familly_value.find('%d') != -1:
+	if obj.data.fg.family_value.find('%d') != -1:
 		row = box.row()
 		row.prop( obj.data.fg,  "property_idx" )
 	
