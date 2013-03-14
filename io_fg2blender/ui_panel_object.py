@@ -143,8 +143,8 @@ def layout_object_tool(self, obj, context):
 	
 	box = layout.box()
 	row = box.row()
-	row.operator("view3d.show_animation", text="show")
-	row.operator("view3d.show_all", text="show_all")
+	row.operator("view3d.show_animation", text="Show objects related to selected object")
+	row.operator("view3d.show_all", text="Show all objects")
 	
 	if obj.parent:
 		boxTitre = layout.column()
