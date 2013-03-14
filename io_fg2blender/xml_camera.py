@@ -50,7 +50,7 @@ CG = Vector( (0.0,0.0,0.0) )
 def debug_info( aff):
 	global DEBUG_INFO
 	if DEBUG_INFO:
-		debug_info( aff )
+		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def append_view( node_doc, obj ):

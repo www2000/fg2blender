@@ -28,11 +28,12 @@
 #----------------------------------------------------------------------------------------------------------------------------------
 import xml.dom.minidom
 import os
+import bpy
 
 from mathutils import Vector
 from mathutils import Euler
 
-DEBUG = False
+DEBUG = True
 
 #----------------------------
 def debug_info( aff):
@@ -218,6 +219,7 @@ class ANIM_ROTATE(ANIM):
 
 	def __init__( self, node ):
 		ANIM.__init__( self )
+		self.type = "rotate"
 		self.extract_name( node )
 		self.extract_property( node )
 		self.extract_objects( node )
@@ -321,6 +323,7 @@ class ANIM_TRANSLATE(ANIM):
 
 	def __init__( self ):
 		ANIM.__init__( self )
+		self.type = "translate"
 		self.extract_name( node )
 		self.extract_property( node )
 		self.extract_objects( node )
@@ -422,6 +425,7 @@ class ANIM_PICK(ANIM):
 
 	def __init__( self ):
 		ANIM.__init__( self )
+		self.type = "pick"
 		self.extract_name( node )
 		self.extract_property( node )
 		self.extract_objects( node )
@@ -463,6 +467,7 @@ class ANIM_SPIN(ANIM):
 
 	def __init__( self ):
 		ANIM.__init__( self )
+		self.type = "spin"
 		self.extract_name( node )
 		self.extract_property( node )
 		self.extract_objects( node )
@@ -565,6 +570,7 @@ class ANIM_LIGHT(ANIM):
 
 	def __init__( self ):
 		ANIM.__init__( self )
+		self.type = "light"
 		self.extract_name( node )
 		self.extract_objects( node )
 
@@ -607,6 +613,7 @@ class ANIM_SHADER(ANIM):
 
 	def __init__( self ):
 		ANIM.__init__( self )
+		self.type = "shader"
 		self.extract_name( node )
 		self.extract_objects( node )
 		self.extract_texture( node )
@@ -667,6 +674,7 @@ class ANIM_GROUPS(ANIM):
 
 	def __init__( self ):
 		ANIM.__init__( self )
+		self.type = "groups"
 		self.extract_name( node )
 		self.extract_objects( node )
 

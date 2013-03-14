@@ -46,21 +46,18 @@ xml_current_no = 0
 
 no_debug = 0
 
-DEBUG = False
+DEBUG = True
 BIDOUILLE = True
 
 #----------------------------------------------------------------------------------------------------------------------------------
-
-def debug_info( aff):
+#		At loading
+#----------------------------------------------------------------------------------------------------------------------------------
+def debug_info( aff ):
 	global DEBUG
 	if DEBUG:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
-
-#----------------------------------------------------------------------------------------------------------------------------------
-#		At loading
-#----------------------------------------------------------------------------------------------------------------------------------
 blender_path = os.getcwd()
 addon_path = os.getcwd() + os.sep + str(bpy.app.version[0]) + '.' + str(bpy.app.version[1]) + os.sep + 'scripts' + os.sep + 'addons'
 debug_info( 'Installation path ="%s"' % addon_path )
@@ -1261,12 +1258,6 @@ def is_exist_matrial_pick( obj ):
 			return True
 	return False
 #----------------------------------------------------------------------------------------------------------------------------------
-
-def debug_info( aff):
-	global DEBUG
-	if DEBUG:
-		debug_info( aff )
-#----------------------------------------------------------------------------------------------------------------------------------
 # xml_files  = tule ( xml_file, no_include )
 def add_xml_file( xml_file, no ):
 	if xml_file:
@@ -1398,11 +1389,11 @@ def create_anims():
 		debug_info( '------' )
 		debug_info( xml_file.name )
 		for anim in xml_file.anims:
-			debug_info( 'Animation type = %d' % anim.type )
+			debug_info( 'Animation type = %s' % anim.type )
 			if anim.type in [ 0 ]:
 				continue
 			anim.create_armature()
-			if not anim.type in [ 1,2,7 ]:
+			if not anim.type in [ "rotate", "translate", "spin" ]:
 				continue
 			obj = bpy.context.scene.objects.active
 			if obj:

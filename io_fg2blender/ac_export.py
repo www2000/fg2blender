@@ -58,7 +58,7 @@ DEBUG_VERTICE = False
 def debug_info( aff):
 	global DEBUG
 	if DEBUG:
-		debug_info( aff )
+		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def extract_path(name_path):

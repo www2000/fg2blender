@@ -560,7 +560,7 @@ def tronc_name(name_path):
 def debug_info( aff):
 	global DEBUG
 	if DEBUG:
-		debug_info( aff )
+		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def get_ac_file():
