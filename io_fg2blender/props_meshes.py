@@ -51,6 +51,8 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 		obj = context.active_object
 		if obj  == None:
 			return None
+		if obj.type != 'MESH':
+			return None
 		if bLock_update == True:
 			return None
 
