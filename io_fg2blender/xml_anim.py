@@ -33,6 +33,8 @@ import bpy
 from mathutils import Vector
 from mathutils import Euler
 
+from . import ac_manager
+
 DEBUG = True
 
 #----------------------------
@@ -211,6 +213,286 @@ class ANIM:
 		pass
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	#----------------------------------------------
+	# insert_keyframe_rotation( self, frame, value )
+	#----------------------------------------------
+	def insert_keyframe_rotation( self, frame, value ):
+		obj_armature = bpy.context.scene.objects.active
+		bpy.ops.object.posemode_toggle()
+	
+		bpy.context.scene.frame_current = frame
+		bpy.ops.pose.select_all( action='SELECT' )
+		obj_armature.pose.bones[-1].rotation_mode = 'XYZ'
+		obj_armature.pose.bones[-1].rotation_euler = Euler( (0.0, radians(value), 0.0), 'XYZ' )
+	
+		try:
+			bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+		except:
+			bpy.ops.anim.keying_set_add()
+			bpy.ops.anim.keying_set_active_set()
+			bpy.ops.anim.keyframe_insert_menu( type='Rotation')
+
+		bpy.ops.object.posemode_toggle()
+
+	#----------------------------------------------
+	# insert_keyframe_rotation_all( self )
+	#----------------------------------------------
+	def insert_keyframe_rotation_all( self ):
+		obj_armature = bpy.context.scene.objects.active
+		if len(self.interpolation) != 0:
+			_min = 0.0
+			_max = 0.0
+			for ind, dep in self.interpolation:
+				if ind > _max:
+					_max = ind
+				if ind < _min:
+					_min = ind
+			debug_info( "Debut %0.2f" % obj_armature.data.fg.range_beg )
+			debug_info( "Fin   %0.2f" % obj_armature.data.fg.range_end )
+			#if self.interpolation[0][1] > self.interpolation[-1][1]:
+			if obj_armature.data.fg.range_beg !=-999.0:
+				if obj_armature.data.fg.range_beg <_min:
+					_min = obj_armature.data.fg.range_beg
+			else:
+				obj_armature.data.fg.range_beg = obj_armature.data.fg.range_beg_ini = _min
+				
+			if obj_armature.data.fg.range_end !=-999.0:
+				if obj_armature.data.fg.range_end >_max:
+					_max = obj_armature.data.fg.range_beg
+			else:
+				obj_armature.data.fg.range_end = obj_armature.data.fg.range_end_ini = _max
+					
+			debug_info( obj_armature.name )
+			debug_info( obj_armature.data.fg.property_value )
+			debug_info( 'min=%0.2f max=%0.2f' % (_min,_max) )
+				
+			self.interpolation.reverse()
+			for ind, dep in self.interpolation:
+				coef = _max - _min
+				if coef == 0.0:
+					coef = 1.0
+				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
+				value = dep * self.factor
+				self.insert_keyframe_rotation( int(round(frame)), value )
+		else:
+			self.insert_keyframe_rotation( 60, self.offset_deg + self.factor )
+			self.insert_keyframe_rotation(  1, self.offset_deg + 0.0 )
+
+		bpy.context.scene.frame_current = 1
+		bpy.context.scene.frame_end = 60
+
+		obj_armature = bpy.context.scene.objects.active
+
+		'''
+		debug_info( obj_armature.name )
+		anim_data = obj_armature.animation_data_create()
+		#anim_data = obj_armature.data.animation_data_create()
+		debug_info( anim_data.action )
+		if anim_data:
+			debug_info( anim_data.action )
+			anim_data.action = bpy.data.actions.new(obj_armature.name+'Action')
+			#anim_data.action.fcurves.new('rotation_euler_x', action_group='Bone')
+			#anim_data.action.fcurves.new('rotation_euler_y', action_group='Bone')
+			#anim_data.action.fcurves.new('rotation_euler_Z', action_group='Bone')
+			anim_data.action.groups.new('Bone')
+			anim_data.action.id_root = 'OBJECT'
+			anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler[0]', action_group='Bone')
+			anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler[1]', action_group='Bone')
+			anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler[2]', action_group='Bone')
+			anim_data.action.fcurves.new('X Euler Rotation (Bone)', action_group='Bone')
+			#anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler')
+		return
+		'''
+
+		for fcurve in obj_armature.animation_data.action.fcurves:
+			debug_info( fcurve.data_path )
+			for keyframe in fcurve.keyframe_points:
+				keyframe.interpolation = 'LINEAR'
+		#obj_armature.animation_data.action.fcurves.new('pose.bones["Bone"].rotation_euler')
+
+
+	#----------------------------------------------
+	# insert_keyframe_translation( self, frame, value )
+	#----------------------------------------------
+	def insert_keyframe_translation( self, frame, value ):
+		obj_armature = bpy.context.scene.objects.active
+		bpy.ops.object.posemode_toggle()
+	
+		bpy.context.scene.frame_current = frame
+		bpy.ops.pose.select_all( action='SELECT' )
+		
+		tr = Vector( (0.0,value,0.0) )
+
+		obj_armature.pose.bones[-1].location = tr
+		try:
+			bpy.ops.anim.keyframe_insert_menu( type='Location')
+		except:
+			bpy.ops.anim.keying_set_add()
+			bpy.ops.anim.keying_set_active_set()
+			bpy.ops.anim.keyframe_insert_menu( type='Location')
+
+		bpy.ops.object.posemode_toggle()
+
+
+	#----------------------------------------------
+	# insert_keyframe_translation_all( self )
+	#----------------------------------------------
+	def insert_keyframe_translation_all( self ):
+		obj_armature = bpy.context.scene.objects.active
+
+		if len(self.interpolation) != 0:
+			_min = 0.0
+			_max = 0.0
+			for ind, dep in self.interpolation:
+				if ind > _max:
+					_max = ind
+				if ind < _min:
+					_min = ind
+			#if self.interpolation[0][1] > self.interpolation[-1][1]:
+			self.interpolation.reverse()
+			for ind, dep in self.interpolation:
+				coef = _max - _min
+				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
+				value = dep * self.factor
+				self.insert_keyframe_translation( int(round(frame)), value )
+				#self.insert_keyframe_translation(  frame, value )
+		else:
+			self.insert_keyframe_translation( 60, self.factor )
+			self.insert_keyframe_translation(  1, 0.0 )
+
+		bpy.context.scene.frame_current = 1
+		bpy.context.scene.frame_end = 60
+
+		obj_armature = bpy.context.scene.objects.active
+		for fcurve in obj_armature.animation_data.action.fcurves:
+			for keyframe in fcurve.keyframe_points:
+				keyframe.interpolation = 'LINEAR'
+
+
+	#----------------------------------------------
+	# insert_keyframe_all( self )
+	#----------------------------------------------	
+	def insert_keyframe_all( self ):
+		debug_info( "self.insert_keyframe_all()  for %s" % self.name )
+		debug_info( "self.insert_keyframe_all()" )
+		if self.type == 1:
+			bpy.context.scene.objects.active = bpy.data.objects[self.name]
+			self.insert_keyframe_rotation_all()
+		elif self.type == 2:
+			bpy.context.scene.objects.active = bpy.data.objects[self.name]
+			self.insert_keyframe_translation_all()
+		elif self.type == 7:
+			bpy.context.scene.objects.active = bpy.data.objects[self.name]
+			self.insert_keyframe_rotation_all()
+
+
+	#----------------------------------------------
+	# create_property( self, obj )
+	#----------------------------------------------
+	def create_property( self, obj ):
+		from . import props_armature
+
+		#----------------------------------------------
+		# extract_interpolation( self, node)
+		#----------------------------------------------
+		def find_prop( obj, left, right, family, name ):
+			for prop in family:
+				left_prop = prop[0]
+				right_prop = ''
+				if prop[0].find('[') != -1:
+					left_prop = prop[0].partition('[')[0]
+					right_prop = prop[0].partition(']')[2]
+			
+				if left_prop == left and right_prop == right:
+					debug_info( ' Bingo "%s"' , prop )
+					obj.data.fg.family = name
+					obj.data.fg.family_value = prop[0]
+					if obj.data.fg.property_value.find('[') != -1:
+						idx = obj.data.fg.property_value.partition('[')[2]
+						idx = idx.partition(']')[0]
+						obj.data.fg.property_idx = int(idx)
+
+					if prop[1] != 'x':
+						obj.data.fg.range_beg = prop[1]
+						obj.data.fg.range_beg_ini = prop[1]
+					if prop[2] != 'x':
+						obj.data.fg.range_end = prop[2]
+						obj.data.fg.range_end_ini = prop[2]
+					
+
+		#----------------------------------------------
+		# extract_interpolation( self, node)
+		#----------------------------------------------
+		def find_in_family( obj, left, right ):
+			find_prop( obj, left, right, props_armature.APUs, 'APU' )
+			find_prop( obj, left, right, props_armature.anti_ices, 'anti_ice' )
+			find_prop( obj, left, right, props_armature.armaments, 'armament' )
+			find_prop( obj, left, right, props_armature.autoflights, 'autoflight' )
+			find_prop( obj, left, right, props_armature.electrics, 'electric' )
+			find_prop( obj, left, right, props_armature.engines, 'engine' )
+			find_prop( obj, left, right, props_armature.flights, 'flight' )
+			find_prop( obj, left, right, props_armature.fuels, 'fuel' )
+			find_prop( obj, left, right, props_armature.consumables, 'consumable' )
+			find_prop( obj, left, right, props_armature.gears, 'gear' )
+		
+
+		if len(obj.data.fg.property_value) == 0:
+			return	
+
+		if obj.data.fg.property_value[0] != '/':
+			obj.data.fg.property_value = '/' + obj.data.fg.property_value
+
+		debug_info( ' Recherche  property "%s"' % obj.data.fg.property_value )
+		left = obj.data.fg.property_value
+		right = ''
+
+		if obj.data.fg.property_value.find('[') != -1:
+			left = obj.data.fg.property_value.partition('[')[0]
+			right = obj.data.fg.property_value.partition(']')[2]
+
+		find_in_family( obj, left, right )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #----------------------------------------------------------------------------------------------------------------------------------------------
 # ANIM_ROTATE(ANIM)
 #----------------------------------------------------------------------------------------------------------------------------------------------
@@ -232,7 +514,7 @@ class ANIM_ROTATE(ANIM):
 	#----------------------------------------------
 	# create_armature( self ) ROTATE
 	#----------------------------------------------
-	def create_armature( self ):
+	def create_armature( self, xml_current ):
 		bpy.ops.object.armature_add()
 
 		#bpy.ops.object.move_to_layer( layers = layer(10) )
@@ -458,6 +740,19 @@ class ANIM_PICK(ANIM):
 					obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
 					debug_info( 'Create Pick : "%s"' % obj_name_bl )
 					self.assign_pick( obj_name_bl )
+
+
+	#----------------------------------------------
+	# assign_pick( self ) PICK
+	#----------------------------------------------
+	def assign_pick( self, obj_name ):
+		obj = get_object( obj_name )
+		if obj:
+			if obj.type == 'MESH':
+				if not is_exist_matrial_pick(obj ):
+					obj.data.materials.append( bpy.data.materials['Material_Pick'])
+				obj.show_wire = True
+				obj.show_transparent = True
 	
 #----------------------------------------------------------------------------------------------------------------------------------------------
 # ANIM_SPIN(ANIM)
@@ -594,7 +889,6 @@ class ANIM_LIGHT(ANIM):
 					for obj_name_bl in group_objects[1:]:
 						debug_info( 'Create light : "%s"' % obj_name_bl )
 						bpy.data.objects[obj_name_bl].draw_type = 'WIRE'
-						#self.assign_pick( obj_name_bl )
 				else:
 					debug_info( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
 					continue
@@ -602,7 +896,6 @@ class ANIM_LIGHT(ANIM):
 				obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
 				debug_info( 'Create light : "%s"' % obj_name_bl )
 				bpy.data.objects[obj_name_bl].draw_type = 'WIRE'
-				#self.assign_pick( obj_name_bl )
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
