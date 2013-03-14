@@ -881,6 +881,17 @@ class ANIM_SPIN(ANIM):
 		limit_rotation.owner_space = 'LOCAL'
 		bpy.ops.object.posemode_toggle()
 	
+	#----------------------------------------------
+	# insert_keyframe_all( self )
+	#----------------------------------------------	
+	def insert_keyframe_all( self ):
+		debug_info( "self.insert_keyframe_all()  for %s" % self.name )
+		debug_info( "self.insert_keyframe_all()" )
+
+		bpy.context.scene.objects.active = bpy.data.objects[self.name]
+		self.insert_keyframe_rotation_all()
+
+		
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
 # ANIM_LIGHT(ANIM)
