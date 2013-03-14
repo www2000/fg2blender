@@ -73,7 +73,26 @@ class ANIM:
 		self.offset_deg			= 0.0
 		self.layer				= xml_import.arma_layer						
 		self.active_layer		= False
+		
+		self.init_common()
 
+
+	#----------------------------------------------
+	# init_common( self, node)
+	#----------------------------------------------
+	def init_common( self ):
+		#---------------------------------------------------------------------------------------------------------------------
+		# pour recopier la valeur et non pas la référence
+		from . import xml_import
+		from . import xml_manager
+		
+		self.xml_file		= "" + xml_manager.xml_current.name
+		self.xml_file_no	= 0 + xml_manager.xml_current.no
+		self.layer			= 0 + xml_import.arma_layer
+		self.active_layer	= xml_import.option_arma_rotate_layer
+
+		#self.extract_type( node )
+		debug_info( '\tfg.data.xml_file = %d-"%s"' % (self.xml_file_no,self.xml_file) )
 
 	#----------------------------------------------
 	# extract_texture( self, node)
@@ -216,9 +235,8 @@ class ANIM:
 	#----------------------------------------------
 	# create_armature( self )
 	#----------------------------------------------
-	def create_armature( self ):
+	def create_armature( self, xml_current ):
 		pass
-
 
 
 
@@ -661,7 +679,7 @@ class ANIM_TRANSLATE(ANIM):
 		armature = bpy.data.armatures[-1]
 		debug_info( 'Create armature translate : "%s"' % (armature.name) )
 		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(xml_current.name) )
-		debug_info( '\t\t       no  : %d' % self.xml_file.no )
+		debug_info( '\t\t       no  : %d' % self.xml_file_no )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
 		debug_info( '\t\tProperty : "%s"' % self.property )
 		debug_info( "\t\tPos %s" % str(self.pos) )
@@ -762,10 +780,11 @@ class ANIM_PICK(ANIM):
 	#----------------------------------------------
 	# create_armature( self ) PICK
 	#----------------------------------------------
-	def create_armature( self ):
+	def create_armature( self, xml_current ):
+		from . import xml_manager
 		#bpy.ops.object.move_to_layer( layers = self.set_layers(self.layer) )
 
-		for xml_file, no in xml_files:
+		for xml_file, no in xml_manager.xml_files:
 			if xml_file.name == self.xml_file and no == self.xml_file_no:
 				break
 		for obj_name_ac in self.objects:
@@ -794,10 +813,11 @@ class ANIM_PICK(ANIM):
 	# assign_pick( self ) PICK
 	#----------------------------------------------
 	def assign_pick( self, obj_name ):
-		obj = get_object( obj_name )
+		from . import xml_manager
+		obj = xml_manager.get_object( obj_name )
 		if obj:
 			if obj.type == 'MESH':
-				if not is_exist_matrial_pick(obj ):
+				if not xml_manager.is_exist_matrial_pick(obj ):
 					obj.data.materials.append( bpy.data.materials['Material_Pick'])
 				obj.show_wire = True
 				obj.show_transparent = True
@@ -822,7 +842,7 @@ class ANIM_SPIN(ANIM):
 	#----------------------------------------------
 	# create_armature( self ) SPIN
 	#----------------------------------------------
-	def create_armature( self ):
+	def create_armature( self, xml_current ):
 		bpy.ops.object.armature_add()
 
 		#bpy.ops.object.move_to_layer( layers = layer(10) )
@@ -934,8 +954,9 @@ class ANIM_LIGHT(ANIM):
 	#----------------------------------------------
 	# create_armature( self ) LIGHT
 	#----------------------------------------------
-	def create_armature( self ):
-		for xml_file, no in xml_files:
+	def create_armature( self, xml_current ):
+		from . import xml_manager
+		for xml_file, no in xml_manager.xml_files:
 			if xml_file.name == self.xml_file and no == self.xml_file_no:
 				break
 		for obj_name_ac in self.objects:
@@ -976,7 +997,7 @@ class ANIM_SHADER(ANIM):
 	#----------------------------------------------
 	# create_armature( self ) SHADER
 	#----------------------------------------------
-	def create_armature( self ):
+	def create_armature( self, xml_current ):
 		from . import xml_import
 		img_name = os.path.basename(self.texture)
 		if img_name == "":
@@ -1027,7 +1048,7 @@ class ANIM_SHADER(ANIM):
 class ANIM_GROUPS(ANIM):
 
 	def __init__( self, node ):
-		ANIM.__init__( self, node )
+		ANIM.__init__( self )
 		self.type = "groups"
 		self.extract_name( node )
 		self.extract_objects( node )
@@ -1035,7 +1056,7 @@ class ANIM_GROUPS(ANIM):
 	#----------------------------------------------
 	# create_armature( self ) GROUPS
 	#----------------------------------------------
-	def create_armature( self ):
+	def create_armature( self, xml_current ):
 		pass
 
 

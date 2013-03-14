@@ -917,7 +917,7 @@ def parse_node( node, file_name ):
 			else:
 				childs = node.getElementsByTagName('name')
 				if childs:
-					anim = ANIM_GROUPS()
+					anim = ANIM_GROUPS(node)
 
 			#anim = ANIM()
 			#anim.extract_anim( node )
