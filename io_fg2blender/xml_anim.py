@@ -36,6 +36,7 @@ from mathutils import Euler
 from math import radians
 
 from . import ac_manager
+from . import *
 
 DEBUG = True
 
@@ -54,22 +55,25 @@ def debug_info( aff):
 class ANIM:
 
 	def __init__( self ):
-		self.name			= ""
-		self.type			= 0				# 1:Rotate 2:translate 3: group objects 4:pick 5:light 6:shader 7: Spin
+		from . import xml_import
+		
+		self.name				= ""
+		self.type				= 0				# 1:Rotate 2:translate 3: group objects 4:pick 5:light 6:shader 7: Spin
 		self.xml_file			= ""					
 		self.xml_file_no		= 0
-		self.factor			= 1.0
+		self.factor				= 1.0
 		self.interpolation		= []
 		self.property			= ""
-		self.pos			= Vector( (0.0, 0.0, 0.0) )
-		self.vec			= Vector( (0.0, 0.0, 0.0) )
+		self.pos				= Vector( (0.0, 0.0, 0.0) )
+		self.vec				= Vector( (0.0, 0.0, 0.0) )
 		self.objects			= []
 		self.group_objects		= []
 		self.texture			= ""
 		self.ac_file			= ""
 		self.offset_deg			= 0.0
-		self.layer			= 0						
+		self.layer				= xml_import.arma_layer						
 		self.active_layer		= False
+
 
 	#----------------------------------------------
 	# extract_texture( self, node)
@@ -77,6 +81,7 @@ class ANIM:
 	def extract_texture( self, node ):
 		from .xml_import import ret_text_value
 		from .xml_import import tabs
+		from .xml_manager import get_xml_file
 		from . import xml_import
 
 		childs = node.getElementsByTagName('texture')
@@ -489,7 +494,20 @@ class ANIM:
 
 
 
-
+	#----------------------------------------------
+	# set_layers( self, no)
+	# compute layer list for activate a layer in blender
+	# when the object, armature is creating
+	# use for rotate layer
+	#----------------------------------------------
+	def set_layers( self, No ):
+		list_layer = []
+		for i in range(20):
+			if No == i:
+				list_layer.append( True )
+			else:
+				list_layer.append( False )
+		return list_layer
 
 
 
@@ -522,7 +540,7 @@ class ANIM_ROTATE(ANIM):
 	def create_armature( self, xml_current ):
 		bpy.ops.object.armature_add()
 
-		#bpy.ops.object.move_to_layer( layers = layer(10) )
+		bpy.ops.object.move_to_layer( layers = self.set_layers(self.layer) )
 		
 		armature = bpy.data.armatures[-1]
 		debug_info( 'Create armature rotate : "%s"' % (armature.name) )
@@ -619,7 +637,7 @@ class ANIM_ROTATE(ANIM):
 
 class ANIM_TRANSLATE(ANIM):
 
-	def __init__( self ):
+	def __init__( self, node ):
 		ANIM.__init__( self )
 		self.type = "translate"
 		self.extract_name( node )
@@ -638,6 +656,7 @@ class ANIM_TRANSLATE(ANIM):
 		#bpy.context.scene.layers = layer( 10 )
 		#bpy.context.scene.active_layer = 10
 		#bpy.ops.object.move_to_layer( layers = layer(10) )
+		bpy.ops.object.move_to_layer( layers = self.set_layers(self.layer) )
 
 		armature = bpy.data.armatures[-1]
 		debug_info( 'Create armature translate : "%s"' % (armature.name) )
@@ -732,7 +751,7 @@ class ANIM_TRANSLATE(ANIM):
 
 class ANIM_PICK(ANIM):
 
-	def __init__( self ):
+	def __init__( self, node ):
 		ANIM.__init__( self )
 		self.type = "pick"
 		self.extract_name( node )
@@ -744,6 +763,8 @@ class ANIM_PICK(ANIM):
 	# create_armature( self ) PICK
 	#----------------------------------------------
 	def create_armature( self ):
+		#bpy.ops.object.move_to_layer( layers = self.set_layers(self.layer) )
+
 		for xml_file, no in xml_files:
 			if xml_file.name == self.xml_file and no == self.xml_file_no:
 				break
@@ -787,7 +808,7 @@ class ANIM_PICK(ANIM):
 
 class ANIM_SPIN(ANIM):
 
-	def __init__( self ):
+	def __init__( self, node ):
 		ANIM.__init__( self )
 		self.type = "spin"
 		self.extract_name( node )
@@ -805,6 +826,7 @@ class ANIM_SPIN(ANIM):
 		bpy.ops.object.armature_add()
 
 		#bpy.ops.object.move_to_layer( layers = layer(10) )
+		bpy.ops.object.move_to_layer( layers = self.set_layers(self.layer) )
 		
 		armature = bpy.data.armatures[-1]
 		debug_info( 'Create armature rotate : "%s"' % (armature.name) )
@@ -902,7 +924,7 @@ class ANIM_SPIN(ANIM):
 
 class ANIM_LIGHT(ANIM):
 
-	def __init__( self ):
+	def __init__( self, node ):
 		ANIM.__init__( self )
 		self.type = "light"
 		self.extract_name( node )
@@ -943,7 +965,7 @@ class ANIM_LIGHT(ANIM):
 
 class ANIM_SHADER(ANIM):
 
-	def __init__( self ):
+	def __init__( self, node ):
 		ANIM.__init__( self )
 		self.type = "shader"
 		self.extract_name( node )
@@ -1004,8 +1026,8 @@ class ANIM_SHADER(ANIM):
 
 class ANIM_GROUPS(ANIM):
 
-	def __init__( self ):
-		ANIM.__init__( self )
+	def __init__( self, node ):
+		ANIM.__init__( self, node )
 		self.type = "groups"
 		self.extract_name( node )
 		self.extract_objects( node )

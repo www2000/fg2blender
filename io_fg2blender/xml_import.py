@@ -896,7 +896,7 @@ def parse_node( node, file_name ):
 
 			from .xml_import import ret_text_value
 			#from .xml_import import tabs
-
+			anim = None
 			childs = node.getElementsByTagName('type')
 			if childs:
 				for child in childs:
@@ -921,8 +921,9 @@ def parse_node( node, file_name ):
 
 			#anim = ANIM()
 			#anim.extract_anim( node )
-			xml_manager.get_current_xml().anims.append( anim )
-			print_animation( node )
+			if anim != None:
+				xml_manager.get_current_xml().anims.append( anim )
+				print_animation( node )
 
 		elif node.nodeName == 'text':
 			text = TEXT()
