@@ -33,6 +33,8 @@ import bpy
 from mathutils import Vector
 from mathutils import Euler
 
+from math import radians
+
 from . import ac_manager
 
 DEBUG = True
@@ -398,6 +400,9 @@ class ANIM:
 	# insert_keyframe_all( self )
 	#----------------------------------------------	
 	def insert_keyframe_all( self ):
+		pass
+	'''
+	def insert_keyframe_all( self ):
 		debug_info( "self.insert_keyframe_all()  for %s" % self.name )
 		debug_info( "self.insert_keyframe_all()" )
 		if self.type == 1:
@@ -409,7 +414,7 @@ class ANIM:
 		elif self.type == 7:
 			bpy.context.scene.objects.active = bpy.data.objects[self.name]
 			self.insert_keyframe_rotation_all()
-
+	'''
 
 	#----------------------------------------------
 	# create_property( self, obj )
@@ -596,6 +601,16 @@ class ANIM_ROTATE(ANIM):
 		limit_rotation.owner_space = 'LOCAL'
 		bpy.ops.object.posemode_toggle()
 
+	#----------------------------------------------
+	# insert_keyframe_all( self )
+	#----------------------------------------------	
+	def insert_keyframe_all( self ):
+		debug_info( "self.insert_keyframe_all()  for %s" % self.name )
+		debug_info( "self.insert_keyframe_all()" )
+
+		bpy.context.scene.objects.active = bpy.data.objects[self.name]
+		self.insert_keyframe_rotation_all()
+
 		
 #----------------------------------------------------------------------------------------------------------------------------------------------
 # ANIM_TRANSLATE(ANIM)
@@ -698,6 +713,16 @@ class ANIM_TRANSLATE(ANIM):
 		limit_rotation.owner_space = 'LOCAL'
 		bpy.ops.object.posemode_toggle()
 	
+	#----------------------------------------------
+	# insert_keyframe_all( self )
+	#----------------------------------------------	
+	def insert_keyframe_all( self ):
+		debug_info( "self.insert_keyframe_all()  for %s" % self.name )
+		debug_info( "self.insert_keyframe_all()" )
+
+		bpy.context.scene.objects.active = bpy.data.objects[self.name]
+		self.insert_keyframe_translation_all()
+
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
 # ANIM_PICK(ANIM)
