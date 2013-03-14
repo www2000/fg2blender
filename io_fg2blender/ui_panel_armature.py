@@ -100,21 +100,23 @@ def layout_armature_tool(self, obj, context):
 
 	box = layout.box()
 	row = box.row()
-	row.operator("view3d.show_animation", text="Show object related to selected animation")
-	row.operator("view3d.show_all", text="Show all object")
+	row.operator("view3d.show_animation", text="Show objects related to selected animation")
+	row.operator("view3d.show_all", text="Show all objects")
 
 	boxTitre = layout.column()
 	boxTitre.label( text='Type' )
 	boxType = layout.box()
 	colType = boxType.column()
 
+	#colType.label( text = obj.data.fg.type_anim )
+	
 	if obj.data.fg.type_anim == 1:
 		colType.label( text="Rotation" )
 	elif obj.data.fg.type_anim == 2:
 		colType.label( text="Translation" )
 	elif obj.data.fg.type_anim == 7:
 		colType.label( text="Spin" )
-
+	
 
 	col = layout.column()
 	col.prop( obj.data.fg, "factor" )
@@ -181,13 +183,15 @@ def layout_armature_properties(self, obj, context):
 	boxTitre.label( text='Type' )
 	boxType = layout.box()
 	colType = boxType.column()
-
+	#colType.label( text = obj.data.fg.type_anim )
+	
 	if obj.data.fg.type_anim == 1:
 		colType.label( text="Rotation" )
 	elif obj.data.fg.type_anim == 2:
 		colType.label( text="Translation" )
 	elif obj.data.fg.type_anim == 7:
 		colType.label( text="Spin" )
+	
 	#----------------------------------------------------
 	row = layout.row()
 	row.prop( obj.data.fg, "factor" )
