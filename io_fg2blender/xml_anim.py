@@ -521,8 +521,8 @@ class ANIM_ROTATE(ANIM):
 		
 		armature = bpy.data.armatures[-1]
 		debug_info( 'Create armature rotate : "%s"' % (armature.name) )
-		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
-		debug_info( '\t\t   no   xml: %d' % self.xml_file_no )
+		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(xml_current.name) )
+		debug_info( '\t\t   no   xml: %d' % xml_current.no )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
 		debug_info( '\t\tProperty : "%s"' % self.property )
 		debug_info( "\t\tPos %s" % str(self.pos) )
@@ -617,7 +617,7 @@ class ANIM_TRANSLATE(ANIM):
 	#----------------------------------------------
 	# create_armature( self ) TRANSLATE
 	#----------------------------------------------
-	def create_armature( self ):
+	def create_armature( self, xml_current ):
 		bpy.ops.object.armature_add()
 		#bpy.context.scene.layers = layer( 10 )
 		#bpy.context.scene.active_layer = 10
@@ -625,8 +625,8 @@ class ANIM_TRANSLATE(ANIM):
 
 		armature = bpy.data.armatures[-1]
 		debug_info( 'Create armature translate : "%s"' % (armature.name) )
-		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(self.xml_file) )
-		debug_info( '\t\t       no  : %d' % self.xml_file_no )
+		debug_info( '\t\tFichier xml: "%s"' % os.path.basename(xml_current.name) )
+		debug_info( '\t\t       no  : %d' % self.xml_file.no )
 		debug_info( "\t\tFactor %0.4f" % self.factor )
 		debug_info( '\t\tProperty : "%s"' % self.property )
 		debug_info( "\t\tPos %s" % str(self.pos) )
