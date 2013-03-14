@@ -243,12 +243,31 @@ def write_animation( context, node, obj ):
 					node_animation.appendChild( o )
 	#---------------------------------------------------------------------------
 
-	def append_axis( node_animation, armature ):
-		axis = create_node( 'axis' )
-		node_animation.appendChild( axis )
-		head = armature.data.bones["Bone"].head
+	def get_tail( armature ):
 		tail = armature.data.bones["Bone"].tail
+
+		m = armature.matrix_world
+		e = armature.delta_rotation_euler
+		m_euler = e.to_matrix()
+		i_delta = m_euler.inverted()
+		m_delta = i_delta.to_4x4()
+		l_delta =  armature.delta_location
 		
+		tt = m * tail
+		tt0 = tt - l_delta
+		tt = m_delta * tt0
+
+		return tt
+	#---------------------------------------------------------------------------
+
+	def get_tail_local( armature ):
+		tail = armature.data.bones["Bone"].tail
+		return tail
+	#---------------------------------------------------------------------------
+
+	def get_head( armature ):
+		head = armature.data.bones["Bone"].head
+
 		m = armature.matrix_world
 		e = armature.delta_rotation_euler
 		m_euler = e.to_matrix()
@@ -260,18 +279,83 @@ def write_animation( context, node, obj ):
 		ht0 = ht - l_delta
 		ht = m_delta * ht0
 		
-		tt = m * tail
-		tt0 = tt - l_delta
-		tt = m_delta * tt0
+		return ht
+	#---------------------------------------------------------------------------
 
-		v = tt - ht
+	def get_head_local( armature ):
+		head = armature.data.bones["Bone"].head
+		return head
+	#---------------------------------------------------------------------------
+
+	def compute_rotation_axis( armature ):
+		tail = get_tail(armature)
+		head = get_head(armature)
+
+		v = tail - head
+		v.normalize()
+		return v
+	#---------------------------------------------------------------------------
+
+	def compute_rotation_angle_current( armature ):
+		yFcurve = None
+		n = 0
+		# find curve for y component
+		for fcurve in armature.animation_data.action.fcurves:
+			if fcurve.data_path.find( "euler" ) != -1:
+				n = n + 1
+			if n == 2:
+				yFcurve = fcurve
+				break
+		
+		angle = yFcurve.evaluate( bpy.context.scene.frame_current )
+		#print( "Fcurve ; %s" % yFcurve.data_path )
+		#print( "%s Angle %.2f pour la frame : %.2f" % (armature.name,angle, bpy.context.scene.frame_current) ) 
+		return angle
+	#---------------------------------------------------------------------------
+
+	def compute_rotation_matrix( armature ):
+		angle		= compute_rotation_angle_current(armature)
+		axis		= compute_rotation_axis(armature)
+		location	= get_head(armature)
+
+		rot  = Matrix.Rotation(angle, 4, axis)
+		tr_n = Matrix.Translation( -location )
+		tr_p = Matrix.Translation( location )
+
+		m_ret = tr_p * rot * tr_n
+
+		return m_ret
+	#---------------------------------------------------------------------------
+
+	def compute_parent_matrix( armature ):
+		obj = armature
+		M = Matrix.Identity(4)
+		while ( obj.parent != None ):
+			if obj.parent.data.fg.type_anim == 1:
+				matrix = compute_rotation_matrix( obj.parent )
+				M0 = M * matrix
+				M = M0
+			obj = obj.parent
+			
+		return M
+	#---------------------------------------------------------------------------
+
+	def append_axis( node_animation, armature ):
+		axis = create_node( 'axis' )
+		node_animation.appendChild( axis )
+
+		#for evaluate transformation in current frame
+		m_parent_transform = compute_parent_matrix( armature )
+
+		M = m_parent_transform.inverted() * armature.matrix_world
+		v = (M * get_tail_local(armature)) - (M * get_head_local(armature))
 		v.normalize()
 
 		x_value = create_node_value( 'x', '%0.4f' % (v.x) )
 		y_value = create_node_value( 'y', '%0.4f' % (v.y) )
 		z_value = create_node_value( 'z', '%0.4f' % (v.z) )
 		debug_info(  'Append_axis %0.2f %0.2f %0.2f' % (v.x, v.y, v.z) )
-		
+
 		axis.appendChild( x_value )
 		axis.appendChild( y_value )
 		axis.appendChild( z_value )
@@ -281,20 +365,11 @@ def write_animation( context, node, obj ):
 		global CG
 		center = create_node( 'center' )
 		node_animation.appendChild( center )
-		head = armature.data.bones["Bone"].head
 
-		m = armature.matrix_world
-		e = armature.delta_rotation_euler
-		m_euler = e.to_matrix()
-		i_delta = m_euler.inverted()
-		m_delta = i_delta.to_4x4()
-		l_delta =  armature.delta_location
-		
-		loc = armature.delta_location
-		v = m * head
-		#v = v + loc
-		v0 = v - l_delta
-		v = m_delta * v0
+		m_parent_transform = compute_parent_matrix( armature )
+		M = m_parent_transform.inverted() * armature.matrix_world
+		v = M * get_head_local(armature)
+
 		v = v - CG
  		
 		loc = armature.delta_location
