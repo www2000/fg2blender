@@ -691,7 +691,7 @@ def assign_obj_to_anim():
 		
 		for anim in xml_file.anims:
 			#if anim.type != 1 and anim.type != 2:
-			if not anim.type in [ 1, 2, 7 ]:
+			if not anim.type in [ "rotate", "translate", "spin" ]:
 				continue
 			debug_info( '\tassign_obj_to_anim() pour l armature "%s"' % anim.name )
 			for obj_name in anim.objects:
