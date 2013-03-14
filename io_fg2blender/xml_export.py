@@ -38,10 +38,11 @@ from math import fabs
 
 from mathutils import Vector
 from mathutils import Euler
+from mathutils import Matrix
 
 #---------------------------------------------------------------------------------------------------------------------
 
-DEBUG = False
+DEBUG = True
 CG = Vector( (0.0,0.0,0.0) )
 
 
@@ -484,8 +485,9 @@ def appendPath( nodeDoc, node, filename, no ):
 		if obj.type != 'MESH':
 			continue
 		debug_info( obj.name )
-		debug_info( obj.parent.name )
-		if obj.parent != None:
+		if obj.parent:
+			debug_info( obj.parent.name )
+		#if obj.parent != None:
 			if obj.parent.type == 'ARMATURE':
 				obj_armature = obj.parent
 				if bpy.path.abspath(obj_armature.data.fg.xml_file).find( filename ) != -1 and obj_armature.data.fg.xml_file_no == no:
@@ -565,7 +567,8 @@ def write_animation_all( context, node, filename, no ):
 		if obj.type != 'ARMATURE':
 			continue
 		debug_info( obj.name )
-		debug_info( obj.parent.name )
+		if obj.parent:
+			debug_info( obj.parent.name )
 		if obj.parent != None:
 			if obj.parent.type != 'EMPTY':
 				continue

@@ -78,7 +78,12 @@ option_arma_rotate_end = 19
 mesh_layer = -1
 arma_layer = -1
 
-DEBUG_INFO = False
+DEBUG_INFO = True
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def debug_info(aff):
+	if DEBUG_INFO:
+		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def conversion(name_path):
@@ -768,8 +773,13 @@ def absolute_path( filename ):
 	global path_model
 	
 	if filename.find( path_model ) == -1:
-		#filename = path_model + filename
 		filename = abs_path_model + path_model + filename
+	else:
+		pos = filename.find(path_model)
+		debug_info( "absolute_path pos path_model %d" %pos )
+		debug_info( "    %s" % filename[len(path_model):] )
+		filename = abs_path_model + path_model +filename[len(path_model):]
+		
 	return filename
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -816,7 +826,9 @@ def parse_node( node, file_name ):
 					if node.parentNode:
 						if node.parentNode.nodeName == 'model':
 							xml_file = XML_FILE()
+							debug_info( "***** CREATION OBJET XML_FILE() *****" )
 							xml_file.name = absolute_path( conversion(ret_text(node.childNodes[0])) )
+							debug_info( "filename = %s" % xml_file.name )
 							no_include -= 1
 							xml_file.no = no_include
 							xml_manager.add_xml_file( xml_file, no_include )
@@ -883,7 +895,7 @@ def parse_node( node, file_name ):
 		elif node.nodeName == 'animation':
 
 			from .xml_import import ret_text_value
-			from .xml_import import tabs
+			#from .xml_import import tabs
 
 			childs = node.getElementsByTagName('type')
 			if childs:
@@ -984,7 +996,8 @@ def parse_file( filename, no_inc ):
 		if not xml_file:
 			xml_file = XML_FILE()
 
-	xml_file.name = abs_path_model + filename
+	#xml_file.name = abs_path_model + filename
+	xml_file.name = filename
 	debug_info( "******** Nom de fichier  : %s" % xml_file.name )
 	xml_file.no = no_inc
 	if no_inc == -1:
