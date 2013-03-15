@@ -62,6 +62,7 @@ class ANIM:
 		self.xml_file			= ""					
 		self.xml_file_no		= 0
 		self.factor				= 1.0
+		self.time				= 2.5
 		self.interpolation		= []
 		self.property			= ""
 		self.pos				= Vector( (0.0, 0.0, 0.0) )
@@ -291,6 +292,7 @@ class ANIM:
 	#----------------------------------------------
 	def insert_keyframe_rotation_all( self ):
 		obj_armature = bpy.context.scene.objects.active
+		tFrame = self.time * bpy.data.scenes[0].render.fps - 1
 		if len(self.interpolation) != 0:
 			_min = 0.0
 			_max = 0.0
@@ -323,15 +325,20 @@ class ANIM:
 				coef = _max - _min
 				if coef == 0.0:
 					coef = 1.0
-				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
+				#frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
+				frame = (( (ind-_min) / coef ) * (tFrame)  ) + 1.0 
 				value = dep * self.factor
 				self.insert_keyframe_rotation( int(round(frame)), value )
 		else:
-			self.insert_keyframe_rotation( 60, self.offset_deg + self.factor )
+			self.insert_keyframe_rotation( tFrame+1, self.offset_deg + self.factor )
 			self.insert_keyframe_rotation(  1, self.offset_deg + 0.0 )
 
 		bpy.context.scene.frame_current = 1
-		bpy.context.scene.frame_end = 60
+		#bpy.context.scene.frame_end = 60
+
+		max_frame = bpy.data.scenes[0].render.fps * self.time
+		if 	bpy.context.scene.frame_end < max_frame:
+			bpy.context.scene.frame_end = max_frame
 
 		obj_armature = bpy.context.scene.objects.active
 
@@ -584,13 +591,15 @@ class ANIM_ROTATE(ANIM):
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.property_idx = -1
 				obj_arma.data.fg.time = 60.0 / 24.0
+				obj_arma.data.fg.time_ini = 60.0 / 24.0
+				obj_arma.data.fg.time = self.time
+				obj_arma.data.fg.time_ini = self.time
 				obj_arma.data.fg.range_beg = 0.0
 				obj_arma.data.fg.range_end = 1.0
 				obj_arma.data.fg.range_beg = -999.0
 				obj_arma.data.fg.range_end = -999.0
 				obj_arma.data.fg.range_beg_ini = -999.0
 				obj_arma.data.fg.range_end_ini = -999.0
-				obj_arma.data.fg.time_ini = 60.0 / 24.0
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				obj_arma.data.fg.offset_deg = 0.0 + self.offset_deg
@@ -1105,5 +1114,76 @@ class ANIM_GROUPS(ANIM):
 	#----------------------------------------------
 	def create_armature( self, xml_current ):
 		pass
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+# ANIM_JSB(ANIM)
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
+class ANIM_JSB(ANIM):
+
+	def __init__( self, node ):
+		# dictionnary property->time
+		self.dic_property_time = {}
+		
+		ANIM.__init__( self )
+		self.type = "jsb"
+		self.extract_time_property( node )
+		
+	#----------------------------------------------
+	# extract_time_property( self ) GROUPS
+	#----------------------------------------------
+	def extract_time_property( self, node ):
+		from .xml_import import ret_text_value
+		from .xml_import import tabs
+		from .xml_manager import get_xml_file
+		from . import xml_import, fg2bl
+
+		childs = node.getElementsByTagName('channel')
+		if childs:
+			debug_info( "Find channel" )
+			for child in childs:
+				outputs = child.getElementsByTagName('output')
+				if outputs:
+					debug_info( "Find output : %s" % ret_text_value(outputs[0]) )
+					if ret_text_value(outputs[0]) == 'gear/gear-pos-norm':
+						debug_info( "Find time to gear" )
+						self.extract_list_traverse( child )
+		
+	#----------------------------------------------
+	# extract_list_traverse( self ) GROUPS
+	#----------------------------------------------
+	def extract_list_traverse( self, node ):
+		from .xml_import import ret_float_value
+		from .xml_import import tabs
+		from .xml_manager import get_xml_file
+		from . import xml_import, fg2bl
+
+		positions	= node.getElementsByTagName('position')
+		times		= node.getElementsByTagName('time')
+		if positions:
+			debug_info( "Find postion nb : %d" % len(positions) )
+			for i in range(len(positions)):
+				position = ret_float_value(positions[i])
+				time	 = ret_float_value(times[i])
+				if position == 1:
+					self.dic_property_time['gear/gear-pos-norm'] = time
+					debug_info( "Bingo : time = %f" % time )
+		
+	#----------------------------------------------
+	# create_armature( self ) GROUPS
+	#----------------------------------------------
+	def create_armature( self, xml_current ):
+		from . import xml_manager
+		
+		debug_info( "CHANGEMENT DE TIME" )
+		for xml_file, no in xml_manager.xml_files:
+			#debug_info( "%s - %s" % (obj.name,obj.type) )
+			for anim in xml_file.anims:
+				if anim.type in ['rotate','translate']:
+					debug_info( "anim.property : %s" % anim.property )
+					if anim.property == 'gear/gear/position-norm':
+						val = self.dic_property_time['gear/gear-pos-norm']
+						debug_info( "Changement de time : %f" % val )
+						anim.time = val
 
 

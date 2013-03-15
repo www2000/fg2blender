@@ -103,7 +103,8 @@ def write_animation( context, node, obj ):
 		keyframe = fcurve.keyframe_points[0]
 		x = keyframe.co.x
 		y = keyframe.co.y
-		x = (x -1.0)/59.0
+		tFrame = armature.data.fg.time * bpy.data.scenes[0].render.fps - 1
+		x = (x -1.0)/tFrame
 		if t == 1:
 			y = degrees(y) / armature.data.fg.factor
 		if t == 2:
@@ -140,7 +141,7 @@ def write_animation( context, node, obj ):
 		keyframe = fcurve.keyframe_points[1]
 		x = keyframe.co.x
 		y = keyframe.co.y
-		x = (x -1.0)/59.0
+		x = (x -1.0)/tFrame
 		if t == 1:
 			y = degrees(y) / armature.data.fg.factor
 		if t == 2:
@@ -199,7 +200,8 @@ def write_animation( context, node, obj ):
 			y = keyframe.co.y
 			y = y * armature.scale.y
 			debug_info( 'x=%0.2f y=%0.2f' % (x, y) )
-			x = (x -1.0)/59.0
+			tFrame = armature.data.fg.time * bpy.data.scenes[0].render.fps - 1
+			x = (x -1.0)/tFrame
 			beg = armature.data.fg.range_beg
 			end = armature.data.fg.range_end
 			

@@ -586,6 +586,7 @@ def create_anims():
 	# Save active layers
 	save_active_layers = [ b for b in bpy.context.scene.layers ]
 
+	bpy.context.scene.frame_end = 24
 	#
 	#	Create material Pick an groupd (ac filename)
 	#
@@ -602,6 +603,14 @@ def create_anims():
 
 	bpy.context.scene.objects.active = None
 	#
+	#	Change anim time 
+	#
+	for xml_file, no in xml_files:
+		for anim in xml_file.anims:
+			if  anim.type == 'jsb':
+				set_current_xml( xml_file, no )
+				anim.create_armature( xml_current )
+	#
 	#	Create Anim
 	#
 	for xml_file, no in xml_files:
@@ -610,7 +619,7 @@ def create_anims():
 		debug_info( xml_file.name )
 		for anim in xml_file.anims:
 			debug_info( 'Animation type = %s' % anim.type )
-			if anim.type in [ 0 ]:
+			if anim.type in [ 'jsb' ]:
 				continue
 			anim.create_armature( xml_current )
 			if not anim.type in [ "rotate", "translate", "spin" ]:

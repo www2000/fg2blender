@@ -45,18 +45,18 @@ class PATH:
 		self.test_blender_filename()
 		from_pathname = os.path.dirname( frompath )
 		
-		if not self.bSaveBlend:
-			pathname = os.path.dirname( filepath )
-			filename = os.path.basename( filepath )
+		#if not self.bSaveBlend:
+		pathname = os.path.dirname( filepath )
+		filename = os.path.basename( filepath )
 
-			rel_path = os.path.relpath( pathname, from_pathname )
-			rel_path_normalized = os.path.normpath( rel_path )
+		rel_path = os.path.relpath( pathname, from_pathname )
+		rel_path_normalized = os.path.normpath( rel_path )
 
-			return rel_path_normalized + os.sep + filename
-		else:
-			self.debug_info( "TODO")
-			
-		return filename
+		return rel_path_normalized + os.sep + filename
+		#else:
+		#	self.debug_info( "TODO")
+		#	
+		#return filename
 
 	#--------------------------------------------------------------------------------------------------------------------------------
 	def abs_from_with_aircraft( self, filepath="", frompath="" ):
@@ -78,23 +78,23 @@ class PATH:
 		from_pathname = os.path.dirname( frompath )
 		from_basename = os.path.basename( frompath )
 		
-		if not self.bSaveBlend:
-			pathname = os.path.dirname( filepath )
-			basename = os.path.basename( filepath )
-			self.debug_info( "from_pathname    : %s" % from_pathname )
-			self.debug_info( "from_basename    : %s" % from_basename )
-			self.debug_info( "     pathname    : %s" % pathname )
-			self.debug_info( "     basename    : %s" % basename )
+		#if not self.bSaveBlend:
+		pathname = os.path.dirname( filepath )
+		basename = os.path.basename( filepath )
+		self.debug_info( "from_pathname    : %s" % from_pathname )
+		self.debug_info( "from_basename    : %s" % from_basename )
+		self.debug_info( "     pathname    : %s" % pathname )
+		self.debug_info( "     basename    : %s" % basename )
 
-			filename = filepath			
-			pos = from_pathname.find(pathname)
-			if pos != -1:
-				filename = from_pathname[:pos] + os.sep + pathname + basename
-			return filename
-		else:
-			self.debug_info( "TODO")
-			
+		filename = filepath			
+		pos = from_pathname.find(pathname)
+		if pos != -1:
+			filename = from_pathname[:pos] + os.sep + pathname + basename
 		return filename
+		#else:
+		#	self.debug_info( "TODO")
+		#	
+		#return filename
 
 	#--------------------------------------------------------------------------------------------------------------------------------
 	def get_blender_filename( self ):
