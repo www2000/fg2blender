@@ -96,20 +96,6 @@ def layout_object(self, obj, context):
 
 	if obj.type == 'MESH':
 		col.prop( obj.data.fg, "name_ac" )
-
-	'''
-	#----------------------------------------------------
-	boxTitre = layout.column()
-	boxTitre.label( text='xml file:' )
-	box = layout.box()
-	row = box.row(align=True)
-	row.prop( obj.data.fg, "xml_file" )
-	row.operator( "object.file_select", icon='FILESEL' )
-	'''
-	
-	
-	
-	
 	row = box.row()
 
 	if obj.type == 'MESH':

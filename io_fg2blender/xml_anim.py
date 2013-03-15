@@ -41,11 +41,10 @@ from . import ac_manager
 from . import *
 from .__init__ import debug_xml_anim as DEBUG
 
-#----------------------------
+
 def debug_info( aff):
 	if DEBUG:
 		print( aff )
-#----------------------------
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
@@ -57,22 +56,22 @@ class ANIM:
 	def __init__( self ):
 		from . import xml_import
 		
-		self.name				= ""
-		self.type				= 0				# 1:Rotate 2:translate 3: group objects 4:pick 5:light 6:shader 7: Spin
+		self.name			= ""
+		self.type			= ""	# rotate, translate, groups, pick, light, shader, spin
 		self.xml_file			= ""					
 		self.xml_file_no		= 0
-		self.factor				= 1.0
-		self.time				= 100.0/bpy.data.scenes[0].render.fps
+		self.factor			= 1.0
+		self.time			= 100.0/bpy.data.scenes[0].render.fps
 		self.interpolation		= []
 		self.property			= ""
-		self.pos				= Vector( (0.0, 0.0, 0.0) )
-		self.vec				= Vector( (0.0, 0.0, 0.0) )
+		self.pos			= Vector( (0.0, 0.0, 0.0) )
+		self.vec			= Vector( (0.0, 0.0, 0.0) )
 		self.objects			= []
 		self.group_objects		= []
 		self.texture			= ""
 		self.ac_file			= ""
 		self.offset_deg			= 0.0
-		self.layer				= xml_import.arma_layer						
+		self.layer			= xml_import.arma_layer						
 		self.active_layer		= False
 		
 		self.init_common()
@@ -240,30 +239,6 @@ class ANIM:
 	#----------------------------------------------
 	def create_armature( self, xml_current ):
 		pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	#----------------------------------------------
@@ -483,12 +458,6 @@ class ANIM:
 		find_in_family( obj, left, right )
 
 
-
-
-
-
-
-
 	#----------------------------------------------
 	# set_layers( self, no)
 	# compute layer list for activate a layer in blender
@@ -503,12 +472,6 @@ class ANIM:
 			else:
 				list_layer.append( False )
 		return list_layer
-
-
-
-
-
-
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
