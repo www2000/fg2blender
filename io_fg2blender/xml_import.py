@@ -53,6 +53,7 @@ from .xml_anim import ANIM_SHADER
 from .xml_anim import ANIM_LIGHT
 from .xml_anim import ANIM_GROUPS
 from .xml_anim import ANIM_PICK
+from .xml_anim import ANIM_JSB
 
 from .xml_manager import TEXT
 
@@ -922,6 +923,12 @@ def parse_node( node, file_name ):
 				xml_manager.get_current_xml().anims.append( anim )
 				print_animation( node )
 
+		elif node.nodeName == 'fdm_config':
+			debug_info( "Creation ANIM_JSB()" )
+			anim = ANIM_JSB( node )
+			xml_manager.get_current_xml().anims.append( anim )
+
+
 		elif node.nodeName == 'text':
 			text = TEXT()
 			text.extract_text( node )
@@ -930,6 +937,16 @@ def parse_node( node, file_name ):
 			compute_offset_text( text )
 			xml_manager.get_current_xml().texts.append( text )
 			print_text( node )
+
+		elif node.nodeName == 'aero':
+			xml_file = XML_FILE()
+			xml_file.name = absolute_path( conversion(ret_text(node.childNodes[0])) )
+			xml_file.name = xml_file.name + '.xml'
+			debug_info( "Node aero - filename : %s" % xml_file.name ) 
+			xml_file.no = no_include
+			xml_manager.add_xml_file( xml_file, no_include )
+			ret_list +=  [ (os.path.basename(xml_file.name), xml_file.no) ]
+			no_include += 1
 
 	#Attribut nodeType =2
 	elif node.nodeType == 2:
