@@ -124,7 +124,8 @@ class FG_OT_create_translate(bpy.types.Operator):
 			obj.data.fg.family_value	= "error"
 			obj.data.fg.property_value	= ""
 			obj.data.fg.property_idx	= -1
-			obj.data.fg.time			= 2.5
+			obj.data.fg.time			= 100.0/bpy.data.scenes[0].render.fps
+			obj.data.fg.time_ini		= 100.0/bpy.data.scenes[0].render.fps
 			obj.data.fg.range_beg		= 0.0
 			obj.data.fg.range_beg_ini	= 0.0
 			obj.data.fg.range_end		= 1.0
@@ -206,7 +207,8 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 				obj.data.fg.family_value	= "error"
 				obj.data.fg.property_value	= ""
 				obj.data.fg.property_idx	= -1
-				obj.data.fg.time			= 2.5
+				obj.data.fg.time			= 100.0/bpy.data.scenes[0].render.fps
+				obj.data.fg.time_ini		= 100.0/bpy.data.scenes[0].render.fps
 				obj.data.fg.range_beg		= 0.0
 				obj.data.fg.range_beg_ini	= 0.0
 				obj.data.fg.range_end		= 1.0
@@ -296,7 +298,8 @@ class FG_OT_create_rotate(bpy.types.Operator):
 			obj.data.fg.family_value	= "error"
 			obj.data.fg.property_value	= ""
 			obj.data.fg.property_idx	= -1
-			obj.data.fg.time			= 2.5
+			obj.data.fg.time			= 100.0/bpy.data.scenes[0].render.fps
+			obj.data.fg.time_ini		= 100.0/bpy.data.scenes[0].render.fps
 			obj.data.fg.range_beg		= 0.0
 			obj.data.fg.range_beg_ini	= 0.0
 			obj.data.fg.range_end		= 1.0
@@ -380,7 +383,8 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 				obj.data.fg.family_value	= "error"
 				obj.data.fg.property_value	= ""
 				obj.data.fg.property_idx	= -1
-				obj.data.fg.time			= 2.5
+				obj.data.fg.time			= 100.0/bpy.data.scenes[0].render.fps
+				obj.data.fg.time_ini		= 100.0/bpy.data.scenes[0].render.fps
 				obj.data.fg.range_beg		= 0.0
 				obj.data.fg.range_beg_ini	= 0.0
 				obj.data.fg.range_end		= 1.0
@@ -803,7 +807,8 @@ class FG_OT_init_rotation(bpy.types.Operator):
 				insert_keyframe_rotation( obj, 1, 0.0 )
 
 			if obj.data.fg.range_end != -999.0:
-				insert_keyframe_rotation( obj, 60, obj.data.fg.range_end * obj.data.fg.factor )
+				frame = obj.data.fg.time / bpy.data.scenes[0].render.fps
+				insert_keyframe_rotation( obj, frame, obj.data.fg.range_end * obj.data.fg.factor )
 			else:
 				insert_keyframe_rotation( obj, 1, 0.0 )
 
@@ -863,7 +868,8 @@ class FG_OT_init_rotation_zero(bpy.types.Operator):
 			debug_info( "Insert keyframe sur %s" % obj.name )
 			
 			insert_keyframe_rotation( obj, 1, 0.0 )
-			insert_keyframe_rotation( obj, 60, 0.0 )
+			frame = obj.data.fg.time / bpy.data.scenes[0].render.fps
+			insert_keyframe_rotation( obj, frame, 0.0 )
 
 			for fcurve in obj.animation_data.action.fcurves:
 				for keyframe in fcurve.keyframe_points:

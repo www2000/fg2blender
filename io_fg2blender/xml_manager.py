@@ -609,7 +609,7 @@ def create_anims():
 		for anim in xml_file.anims:
 			if  anim.type == 'jsb':
 				set_current_xml( xml_file, no )
-				anim.create_armature( xml_current )
+				anim.change_time_animation( xml_current )
 	#
 	#	Create Anim
 	#

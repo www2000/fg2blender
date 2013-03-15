@@ -325,7 +325,6 @@ class ANIM:
 				coef = _max - _min
 				if coef == 0.0:
 					coef = 1.0
-				#frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
 				frame = (( (ind-_min) / coef ) * (tFrame)  ) + 1.0 
 				value = dep * self.factor
 				self.insert_keyframe_rotation( int(round(frame)), value )
@@ -334,7 +333,6 @@ class ANIM:
 			self.insert_keyframe_rotation(  1, self.offset_deg + 0.0 )
 
 		bpy.context.scene.frame_current = 1
-		#bpy.context.scene.frame_end = 60
 
 		max_frame = bpy.data.scenes[0].render.fps * self.time
 		if 	bpy.context.scene.frame_end < max_frame:
@@ -342,32 +340,11 @@ class ANIM:
 
 		obj_armature = bpy.context.scene.objects.active
 
-		'''
-		debug_info( obj_armature.name )
-		anim_data = obj_armature.animation_data_create()
-		#anim_data = obj_armature.data.animation_data_create()
-		debug_info( anim_data.action )
-		if anim_data:
-			debug_info( anim_data.action )
-			anim_data.action = bpy.data.actions.new(obj_armature.name+'Action')
-			#anim_data.action.fcurves.new('rotation_euler_x', action_group='Bone')
-			#anim_data.action.fcurves.new('rotation_euler_y', action_group='Bone')
-			#anim_data.action.fcurves.new('rotation_euler_Z', action_group='Bone')
-			anim_data.action.groups.new('Bone')
-			anim_data.action.id_root = 'OBJECT'
-			anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler[0]', action_group='Bone')
-			anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler[1]', action_group='Bone')
-			anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler[2]', action_group='Bone')
-			anim_data.action.fcurves.new('X Euler Rotation (Bone)', action_group='Bone')
-			#anim_data.action.fcurves.new('pose.bones["Bone"].rotation_euler')
-		return
-		'''
 
 		for fcurve in obj_armature.animation_data.action.fcurves:
 			debug_info( fcurve.data_path )
 			for keyframe in fcurve.keyframe_points:
 				keyframe.interpolation = 'LINEAR'
-		#obj_armature.animation_data.action.fcurves.new('pose.bones["Bone"].rotation_euler')
 
 
 	#----------------------------------------------
@@ -399,6 +376,8 @@ class ANIM:
 	def insert_keyframe_translation_all( self ):
 		obj_armature = bpy.context.scene.objects.active
 
+		tFrame = self.time * bpy.data.scenes[0].render.fps - 1
+
 		if len(self.interpolation) != 0:
 			_min = 0.0
 			_max = 0.0
@@ -411,16 +390,19 @@ class ANIM:
 			self.interpolation.reverse()
 			for ind, dep in self.interpolation:
 				coef = _max - _min
-				frame = (( (ind-_min) / coef ) * 59.0) + 1.0 
+				frame = (( (ind-_min) / coef ) * tFrame) + 1.0 
 				value = dep * self.factor
 				self.insert_keyframe_translation( int(round(frame)), value )
 				#self.insert_keyframe_translation(  frame, value )
 		else:
-			self.insert_keyframe_translation( 60, self.factor )
+			self.insert_keyframe_translation( tFrame+1, self.factor )
 			self.insert_keyframe_translation(  1, 0.0 )
 
 		bpy.context.scene.frame_current = 1
-		bpy.context.scene.frame_end = 60
+		max_frame = bpy.data.scenes[0].render.fps * self.time
+		if 	bpy.context.scene.frame_end < max_frame:
+			bpy.context.scene.frame_end = max_frame
+
 
 		obj_armature = bpy.context.scene.objects.active
 		for fcurve in obj_armature.animation_data.action.fcurves:
@@ -433,20 +415,6 @@ class ANIM:
 	#----------------------------------------------	
 	def insert_keyframe_all( self ):
 		pass
-	'''
-	def insert_keyframe_all( self ):
-		debug_info( "self.insert_keyframe_all()  for %s" % self.name )
-		debug_info( "self.insert_keyframe_all()" )
-		if self.type == 1:
-			bpy.context.scene.objects.active = bpy.data.objects[self.name]
-			self.insert_keyframe_rotation_all()
-		elif self.type == 2:
-			bpy.context.scene.objects.active = bpy.data.objects[self.name]
-			self.insert_keyframe_translation_all()
-		elif self.type == 7:
-			bpy.context.scene.objects.active = bpy.data.objects[self.name]
-			self.insert_keyframe_rotation_all()
-	'''
 
 	#----------------------------------------------
 	# create_property( self, obj )
@@ -590,8 +558,8 @@ class ANIM_ROTATE(ANIM):
 				obj_arma.data.fg.family = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.property_idx = -1
-				obj_arma.data.fg.time = 60.0 / 24.0
-				obj_arma.data.fg.time_ini = 60.0 / 24.0
+				#obj_arma.data.fg.time = 60.0 / 24.0
+				#obj_arma.data.fg.time_ini = 60.0 / 24.0
 				obj_arma.data.fg.time = self.time
 				obj_arma.data.fg.time_ini = self.time
 				obj_arma.data.fg.range_beg = 0.0
@@ -710,10 +678,12 @@ class ANIM_TRANSLATE(ANIM):
 				obj_arma.data.fg.property_idx = -1
 				obj_arma.data.fg.range_beg = 0.0
 				obj_arma.data.fg.range_end = 1.0
-				obj_arma.data.fg.time = 60.0 / 24.0
+				#obj_arma.data.fg.time = 60.0 / 24.0
+				#obj_arma.data.fg.time_ini = 60.0 / 24.0
+				obj_arma.data.fg.time = self.time
+				obj_arma.data.fg.time_ini = self.time
 				obj_arma.data.fg.range_beg_ini = 0.0
 				obj_arma.data.fg.range_end_ini = 1.0
-				obj_arma.data.fg.time_ini = 60.0 / 24.0
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				self.create_property( obj_arma )
@@ -880,14 +850,14 @@ class ANIM_SPIN(ANIM):
 				obj_arma.data.fg.family = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.property_idx = -1
-				obj_arma.data.fg.time = 60.0 / 24.0
+				obj_arma.data.fg.time = 100.0 / bpy.data.scenes[0].render.fps
 				obj_arma.data.fg.range_beg = 0.0
 				obj_arma.data.fg.range_end = 1.0
 				obj_arma.data.fg.range_beg = -999.0
 				obj_arma.data.fg.range_end = -999.0
 				obj_arma.data.fg.range_beg_ini = -999.0
 				obj_arma.data.fg.range_end_ini = -999.0
-				obj_arma.data.fg.time_ini = 60.0 / 24.0
+				obj_arma.data.fg.time_ini = 100.0 / bpy.data.scenes[0].render.fps
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				obj_arma.data.fg.offset_deg = 0.0 + self.offset_deg
@@ -1121,6 +1091,9 @@ class ANIM_GROUPS(ANIM):
 
 class ANIM_JSB(ANIM):
 
+	#----------------------------------------------
+	#     CONSTRUCTOR
+	#----------------------------------------------
 	def __init__( self, node ):
 		# dictionnary property->time
 		self.dic_property_time = {}
@@ -1132,12 +1105,13 @@ class ANIM_JSB(ANIM):
 	#----------------------------------------------
 	# extract_time_property( self ) GROUPS
 	#----------------------------------------------
+	# in jsbsim xml file searching <channel> markup
+	# and <ouput>
+	# this functions is calling by constructor
+	#----------------------------------------------
 	def extract_time_property( self, node ):
 		from .xml_import import ret_text_value
-		from .xml_import import tabs
-		from .xml_manager import get_xml_file
-		from . import xml_import, fg2bl
-
+ 
 		childs = node.getElementsByTagName('channel')
 		if childs:
 			debug_info( "Find channel" )
@@ -1151,6 +1125,10 @@ class ANIM_JSB(ANIM):
 		
 	#----------------------------------------------
 	# extract_list_traverse( self ) GROUPS
+	#----------------------------------------------
+	# in jsbsim file, this function search the time value
+	# of property
+	# this functions is calling by extract_time_property()
 	#----------------------------------------------
 	def extract_list_traverse( self, node ):
 		from .xml_import import ret_float_value
@@ -1170,9 +1148,13 @@ class ANIM_JSB(ANIM):
 					debug_info( "Bingo : time = %f" % time )
 		
 	#----------------------------------------------
-	# create_armature( self ) GROUPS
+	# change_time_animation( self ) 
 	#----------------------------------------------
-	def create_armature( self, xml_current ):
+	# this function is calling by xml_manager.create_anims()
+	# before creating the armatures.
+	# this focntion change self.time member
+	#----------------------------------------------
+	def change_time_animation( self, xml_current ):
 		from . import xml_manager
 		
 		debug_info( "CHANGEMENT DE TIME" )
