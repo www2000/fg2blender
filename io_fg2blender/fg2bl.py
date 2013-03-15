@@ -23,19 +23,24 @@
 import bpy
 import os
 
+#--------------------------------------------------------------------------------------------------------------------------------
 class PATH:
+	#--------------------------------------------------------------------------------------------------------------------------------
 	def __init__(self):
-		self.DEBUG = False
+		self.DEBUG = True
 		self.dir_name_plane = ""
 		self.bSaveBlend = False
 	
+	#--------------------------------------------------------------------------------------------------------------------------------
 	def debug_info(self, aff):
 		if self.DEBUG:
 			print(aff)
 
+	#--------------------------------------------------------------------------------------------------------------------------------
 	def print_filename(self, filename ):
 		self.debug_info( filename )
 	
+	#--------------------------------------------------------------------------------------------------------------------------------
 	def rel_from( self, filepath="", frompath="" ):
 		self.test_blender_filename()
 		from_pathname = os.path.dirname( frompath )
@@ -53,15 +58,56 @@ class PATH:
 			
 		return filename
 
+	#--------------------------------------------------------------------------------------------------------------------------------
+	def abs_from_with_aircraft( self, filepath="", frompath="" ):
+		self.test_blender_filename()
+
+		from_pathname = os.path.dirname( frompath )
+		i = from_pathname.find( 'Aircraft' )
+		from_pathname = frompath[:i]
+		filename = from_pathname + os.sep + filepath
+		
+		return filename
+	#--------------------------------------------------------------------------------------------------------------------------------
+	def abs_from( self, filepath="", frompath="" ):
+		self.test_blender_filename()
+
+		if filepath.find( 'Aircraft' ) != -1:
+			return self.abs_from_with_aircraft( filepath, frompath )
+			
+		from_pathname = os.path.dirname( frompath )
+		from_basename = os.path.basename( frompath )
+		
+		if not self.bSaveBlend:
+			pathname = os.path.dirname( filepath )
+			basename = os.path.basename( filepath )
+			self.debug_info( "from_pathname    : %s" % from_pathname )
+			self.debug_info( "from_basename    : %s" % from_basename )
+			self.debug_info( "     pathname    : %s" % pathname )
+			self.debug_info( "     basename    : %s" % basename )
+
+			filename = filepath			
+			pos = from_pathname.find(pathname)
+			if pos != -1:
+				filename = from_pathname[:pos] + os.sep + pathname + basename
+			return filename
+		else:
+			self.debug_info( "TODO")
+			
+		return filename
+
+	#--------------------------------------------------------------------------------------------------------------------------------
 	def get_blender_filename( self ):
 		return bpy.data.filepath
 		
+	#--------------------------------------------------------------------------------------------------------------------------------
 	def test_blender_filename( self ):
 		self.debug_info( "Name blend : %s"  % bpy.data.filepath )
 		if bpy.data.filepath == "":
 			self.bSaveBlend = False
 		else:
 			self.bSaveBlend = True
+#--------------------------------------------------------------------------------------------------------------------------------
 		
 path = PATH()
 
