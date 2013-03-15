@@ -17,7 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 #
 #
-# Script copyright (C) Clément de l'Hamaide
+# Script copyright (C) Clément de l'Hamaide 2013
+# Script copyright (C) René Nègre 2013
 # Contributors: 
 #
 
@@ -30,6 +31,7 @@ import xml.dom.minidom
 import os
 import bpy
 
+
 from mathutils import Vector
 from mathutils import Euler
 
@@ -37,12 +39,10 @@ from math import radians
 
 from . import ac_manager
 from . import *
-
-DEBUG = True
+from .__init__ import debug_xml_anim as DEBUG
 
 #----------------------------
 def debug_info( aff):
-	global DEBUG
 	if DEBUG:
 		print( aff )
 #----------------------------

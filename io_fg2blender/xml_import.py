@@ -55,6 +55,9 @@ from .xml_anim import ANIM_GROUPS
 from .xml_anim import ANIM_PICK
 
 from .xml_manager import TEXT
+
+from .__init__ import debug_xml_import as DEBUG
+
 #---------------------------------------------------------------------------------------------------------------------
 niv = 0
 path_model = ""
@@ -78,11 +81,10 @@ option_arma_rotate_end = 19
 mesh_layer = -1
 arma_layer = -1
 
-DEBUG_INFO = True
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info(aff):
-	if DEBUG_INFO:
+	if DEBUG:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -645,8 +647,7 @@ def print_offset_path( node ):
 				if heading:
 					debug_info( "%sheading-deg : %s" % (tabs(),ret_text_value(heading[0])) )
 	else:
-		if DEBUG_INFO:
-			debug_info( "%sPas d'offset" % tabs() )
+		debug_info( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_rotation_path( node, xml_file ):
@@ -670,8 +671,7 @@ def read_rotation_path( node, xml_file ):
 				if heading:
 					xml_file.eulerXYZ.z = xml_file.eulerXYZ.z + read_float_heading_deg(child)
 	else:
-		if DEBUG_INFO:
-			debug_info( "%sPas de rotation" % tabs() )
+		debug_info( "%sPas de rotation" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_offset_path( node, xml_file ):
@@ -689,8 +689,7 @@ def read_offset_path( node, xml_file ):
 					xml_file.offset = Vector( (0.0,0.0,0.0) )  + read_vector_center(child)
 					
 	else:
-		if DEBUG_INFO:
-			debug_info( "%sPas d'offset" % tabs() )
+		debug_info( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_rotation_text( node, text ):
@@ -716,8 +715,7 @@ def read_rotation_text( node, text ):
 				if heading:
 					text.eulerXYZ.z = xml_file.eulerXYZ.z + read_float_heading_deg(child)
 	else:
-		if DEBUG_INFO:
-			debug_info( "%sPas de rotation" % tabs() )
+		debug_info( "%sPas de rotation" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def read_offset_text( node, text ):
@@ -739,8 +737,7 @@ def read_offset_text( node, text ):
 				text.offset = Vector( (0.0,0.0,0.0) )  + read_vector_center(child)
 					
 	else:
-		if DEBUG_INFO:
-			debug_info( "%sPas d'offset" % tabs() )
+		debug_info( "%sPas d'offset" % tabs() )
 #---------------------------------------------------------------------------------------------------------------------
 
 def compute_offset_text( text ):
@@ -971,8 +968,8 @@ def parse_file( filename, no_inc ):
 			mesh_layer = option_mesh_rotate_beg
 		if mesh_layer > option_mesh_rotate_end:
 			mesh_layer = option_mesh_rotate_beg
-		if DEBUG_INFO:
-			print ( 'mesh_layer %d' % mesh_layer )	
+
+		debug_info( 'mesh_layer %d' % mesh_layer )	
 			
 		bpy.context.scene.layers = xml_manager.layer( mesh_layer-1 )
 			
@@ -983,8 +980,7 @@ def parse_file( filename, no_inc ):
 		if arma_layer > option_arma_rotate_end:
 			arma_layer = option_arma_rotate_beg
 
-		if DEBUG_INFO:
-			print ( 'arma_layer %d' % arma_layer )	
+		debug_info( 'arma_layer %d' % arma_layer )	
 		#bpy.context.scene.layers = xml_manager.layer( mesh_layer-1 )
 			
 	
@@ -1176,7 +1172,7 @@ def import_xml(filename, ac_option, xml_option):
 	option_ac_file = True
 	option_light = False
 
-	if DEBUG_INFO:		
+	if DEBUG:		
 		option_print_include = True
 		option_rotation = True
 		option_translation = True
