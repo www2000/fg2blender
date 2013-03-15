@@ -62,7 +62,7 @@ class ANIM:
 		self.xml_file			= ""					
 		self.xml_file_no		= 0
 		self.factor				= 1.0
-		self.time				= 2.5
+		self.time				= 100.0/bpy.data.scenes[0].render.fps
 		self.interpolation		= []
 		self.property			= ""
 		self.pos				= Vector( (0.0, 0.0, 0.0) )
