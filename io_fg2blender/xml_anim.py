@@ -101,12 +101,14 @@ class ANIM:
 		from .xml_import import ret_text_value
 		from .xml_import import tabs
 		from .xml_manager import get_xml_file
-		from . import xml_import
+		from . import xml_import, fg2bl
 
 		childs = node.getElementsByTagName('texture')
 		if childs:
 			self.texture = xml_import.conversion(  ret_text_value(childs[0]) )
-			self.texture = os.getcwd() + os.sep + self.texture 
+			#self.texture = os.getcwd() + os.sep + self.texture 
+			#self.texture = os.path.dirname( self.xml_file ) + os.sep + self.texture
+			self.texture = fg2bl.path.abs_from( self.texture, self.xml_file )
 			debug_info( "\t%sTexture name %s" % (tabs(),self.texture) )
 			ac_files = get_xml_file( self.xml_file, self.xml_file_no ).ac_files
 			if len(ac_files)>0:
@@ -998,7 +1000,7 @@ class ANIM_SHADER(ANIM):
 	# create_armature( self ) SHADER
 	#----------------------------------------------
 	def create_armature( self, xml_current ):
-		from . import xml_import
+		from . import xml_import, xml_manager
 		img_name = os.path.basename(self.texture)
 		if img_name == "":
 			return
@@ -1027,7 +1029,7 @@ class ANIM_SHADER(ANIM):
 			name_path = xml_import.conversion( name_path )
 			img = bpy.data.images.load( name_path )
 			debug_info( '*** bidouillle **** %s introuvale' % (name_path) )
-			if BIDOUILLE:
+			if xml_manager.BIDOUILLE:
 				debug_info( "Bonjour" )
 				#img = bpy.data.images.new(name='void', width=1024, height=1024, alpha=True, float_buffer=True)
 			else:
@@ -1038,7 +1040,52 @@ class ANIM_SHADER(ANIM):
 		if bpy.app.version[0]==2 and bpy.app.version[1]<66:
 			tex.use_alpha = True
 		debug_info( '    Creation de la texture img="%s"  name="%s"' % (img_name, tex.name) )
-		return tex
+		
+		self.assign_texture( tex )
+	#----------------------------------------------------------------------------------------------------------------------------------
+
+	def assign_texture( self, tex ):
+		if not tex:
+			return
+		if self.ac_file == "":
+			return
+		
+		#print( str(self.objects) )
+		for obj_name in self.objects:
+			if obj_name in self.ac_file.dic_name_meshs:
+				obj_name_bl = self.ac_file.dic_name_meshs[obj_name]
+				obj_bl = bpy.data.objects[obj_name_bl]
+			
+				if obj_bl.type == 'MESH':
+					mesh = obj_bl.data
+					for texture_slot in mesh.materials[0].texture_slots:
+						if texture_slot != None:
+							if texture_slot.texture.name == tex.name:
+								return
+
+					debug_info( '    Assigne objet="%s"  texture="%s"' % (obj_bl.name, tex.name) )
+					texture_slot = mesh.materials[0].texture_slots.add() 
+					#mesh.materials[0].texture_slots.add() 
+					texture_slot.texture = tex
+					texture_slot.texture_coords	= 'REFLECTION'
+					texture_slot.use_map_alpha	= True
+					texture_slot.alpha_factor	= 0.1
+				elif obj_bl.type == 'EMPTY':
+					for obj in bpy.data.objects:
+						if obj.parent == obj_bl:
+							mesh = obj.data
+							for texture_slot in mesh.materials[0].texture_slots:
+								if texture_slot != None:
+									if texture_slot.texture.name == tex.name:
+										return
+
+							debug_info( '    Assigne objet="%s"  texture="%s"' % (obj_bl.name, tex.name) )
+							texture_slot = mesh.materials[0].texture_slots.add() 
+							#mesh.materials[0].texture_slots.add() 
+							texture_slot.texture = tex
+							texture_slot.texture_coords	= 'REFLECTION'
+							texture_slot.use_map_alpha	= True
+							texture_slot.alpha_factor	= 0.1
 	
 
 #----------------------------------------------------------------------------------------------------------------------------------------------

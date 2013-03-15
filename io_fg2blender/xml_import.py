@@ -589,17 +589,17 @@ def print_animation( node ):
 					#bpy.ops.view3d.create_rotate()
 					if option_rotation:
 						debug_info( "%sAnimation rotate : %s" % (tabs(),value) )
-						debug_info( node.toxml() )
+						#debug_info( node.toxml() )
 						print_rotate( node )
 				elif value == 'translate':
 					if option_translation:
 						debug_info( "%sAnimation translate : %s" % (tabs(),value) )
-						debug_info( node.toxml() )
+						#debug_info( node.toxml() )
 						print_translate( node )
 				elif value == 'light':
 					if option_light:
 						debug_info( "%sAnimation light : %s" % (tabs(),value) )
-						debug_info( node.toxml() )
+						#debug_info( node.toxml() )
 						print_light( node )
 				else:
 					if option_animation:
