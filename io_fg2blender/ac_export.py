@@ -33,7 +33,7 @@ import mathutils
 from mathutils import Vector
 from mathutils import Euler
 
-
+from . import *
 
 
 
@@ -49,15 +49,14 @@ parent = mathutils.Vector()
 CG = mathutils.Vector( (0.0,0.0,0.0,0.0) )
 
 path_name = ""
-DEBUG = False
+#DEBUG = False
 DEBUG_VERTICE = False
 
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff):
-	global DEBUG
-	if DEBUG:
+	if debug_ac3d_export:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 

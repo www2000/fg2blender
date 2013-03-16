@@ -40,7 +40,8 @@ from mathutils import Vector
 from mathutils import Euler
 from mathutils import Matrix
 
-from .__init__ import debug_xml_export as DEBUG
+from . import *
+#from .__init__ import debug_xml_export as DEBUG
 
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -50,17 +51,22 @@ CG = Vector( (0.0,0.0,0.0) )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff):
-	if DEBUG:
+	if debug_xml_export:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def build_property_name( armature ):
 	prop_name = armature.data.fg.family_value
 	if prop_name.find('%d')!=-1:
-		idx = armature.data.fg.property_idx
-		left  = prop_name.partition('[')[0]
-		right = prop_name.partition(']')[2]
-		return left + '[' +  str(armature.data.fg.property_idx) + ']' + right
+		if armature.data.fg.property_idx == -1:
+			left  = prop_name.partition('[')[0]
+			right = prop_name.partition(']')[2]
+			return left + right
+		else:
+			idx = armature.data.fg.property_idx
+			left  = prop_name.partition('[')[0]
+			right = prop_name.partition(']')[2]
+			return left + '[' +  str(armature.data.fg.property_idx) + ']' + right
 	return prop_name
 #----------------------------------------------------------------------------------------------------------------------------------
 
