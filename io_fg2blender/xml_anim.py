@@ -269,6 +269,8 @@ class ANIM:
 	#----------------------------------------------
 	def insert_keyframe_rotation_all( self ):
 		obj_armature = bpy.context.scene.objects.active
+		debug_info( obj_armature.name )
+		debug_info( obj_armature.data.fg.property_value )
 		tFrame = self.time * bpy.data.scenes[0].render.fps - 1
 		if len(self.interpolation) != 0:
 			_min = 0.0
@@ -293,8 +295,6 @@ class ANIM:
 			else:
 				obj_armature.data.fg.range_end = obj_armature.data.fg.range_end_ini = _max
 					
-			debug_info( obj_armature.name )
-			debug_info( obj_armature.data.fg.property_value )
 			debug_info( 'min=%0.2f max=%0.2f' % (_min,_max) )
 				
 			self.interpolation.reverse()
@@ -304,10 +304,19 @@ class ANIM:
 					coef = 1.0
 				frame = (( (ind-_min) / coef ) * (tFrame)  ) + 1.0 
 				value = dep * self.factor
+				debug_info( "Insert keyframe %d, %.2f" %(int(round(frame)),value) )
 				self.insert_keyframe_rotation( int(round(frame)), value )
 		else:
-			self.insert_keyframe_rotation( tFrame+1, self.offset_deg + self.factor )
-			self.insert_keyframe_rotation(  1, self.offset_deg + 0.0 )
+			_min = obj_armature.data.fg.range_beg
+			_max = obj_armature.data.fg.range_end
+			value_min = self.offset_deg + (_min*self.factor)
+			value_max = self.offset_deg + (_max*self.factor)
+			#self.insert_keyframe_rotation( tFrame+1, self.offset_deg + self.factor )
+			#self.insert_keyframe_rotation(  1, self.offset_deg + 0.0 )
+			debug_info( "Insert keyframe %d, %.2f" %(int(tFrame+1),value_max) )
+			self.insert_keyframe_rotation( tFrame+1, value_max )
+			debug_info( "Insert keyframe %d, %.2f" %(int(1),value_min) )
+			self.insert_keyframe_rotation(  1, value_min )
 
 		bpy.context.scene.frame_current = 1
 
@@ -606,8 +615,8 @@ class ANIM_ROTATE(ANIM):
 	# insert_keyframe_all( self )
 	#----------------------------------------------	
 	def insert_keyframe_all( self ):
+		debug_info( "----------------------------------------" );
 		debug_info( "self.insert_keyframe_all()  for %s" % self.name )
-		debug_info( "self.insert_keyframe_all()" )
 
 		bpy.context.scene.objects.active = bpy.data.objects[self.name]
 		self.insert_keyframe_rotation_all()
@@ -722,8 +731,8 @@ class ANIM_TRANSLATE(ANIM):
 	# insert_keyframe_all( self )
 	#----------------------------------------------	
 	def insert_keyframe_all( self ):
+		debug_info( "----------------------------------------" );
 		debug_info( "self.insert_keyframe_all()  for %s" % self.name )
-		debug_info( "self.insert_keyframe_all()" )
 
 		bpy.context.scene.objects.active = bpy.data.objects[self.name]
 		self.insert_keyframe_translation_all()
