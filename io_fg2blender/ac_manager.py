@@ -600,6 +600,7 @@ def find_key( name, dic ):
 
 def clone_ac( ac_file, xml_extra_position ):
 	time_deb = time.time()
+	print( "    -Clone file %s" % os.path.basename(ac_file.name) )	
 	debug_info( "\tac_manager:clone_ac() %s" % ac_file.name.partition( 'Aircraft'+os.sep )[2] )
 
 	new_ac_file = AC_FILE()

@@ -46,20 +46,21 @@ xml_current_no = 0
 
 no_debug = 0
 
-DEBUG = True
+#DEBUG = False
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #		At loading
 #----------------------------------------------------------------------------------------------------------------------------------
 def debug_info( aff ):
-	global DEBUG
-	if DEBUG:
+	from . import debug_xml_manager
+	
+	if debug_xml_manager:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 blender_path = os.getcwd()
 addon_path = os.getcwd() + os.sep + str(bpy.app.version[0]) + '.' + str(bpy.app.version[1]) + os.sep + 'scripts' + os.sep + 'addons'
-debug_info( 'Installation path ="%s"' % addon_path )
+#debug_info( 'Installation path ="%s"' % addon_path )
 
 #----------------------------------------------------------------------------------------------------------------------------------
 	
@@ -582,6 +583,8 @@ def create_material_pick():
 def create_anims():
 	global xml_files
 	debug_info( '------' )
+	print( "Create animations" )
+	time_deb = time.time()
 	# Save active layers
 	save_active_layers = [ b for b in bpy.context.scene.layers ]
 
@@ -589,6 +592,7 @@ def create_anims():
 	#
 	#	Create material Pick an groupd (ac filename)
 	#
+	print( "  -Create new materials")
 	create_material_pick()
 	# Change layer
 	#bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
@@ -604,6 +608,7 @@ def create_anims():
 	#
 	#	Change anim time 
 	#
+	print( "  -Change anim time from jsbsim")
 	for xml_file, no in xml_files:
 		for anim in xml_file.anims:
 			if  anim.type == 'jsb':
@@ -612,6 +617,7 @@ def create_anims():
 	#
 	#	Create Anim
 	#
+	print( "  -Create animations")
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
 		debug_info( '------' )
@@ -643,11 +649,13 @@ def create_anims():
 	#
 	#	Assign objct to anim
 	#
+	print( "  -Assign objects to animations")
 	bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
 	assign_obj_to_anim()
 	#
 	#	Insert keyframe
 	#
+	print( "  -Insert keyframe")
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
 		for anim in xml_file.anims:
@@ -659,6 +667,8 @@ def create_anims():
 	#restore active layer
 	bpy.context.scene.layers = save_active_layers
 
+	time_end = time.time()
+	print( "Create animations in  %0.2f sec" % (time_end-time_deb) )
 #bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -694,7 +704,8 @@ def assign_obj_to_anim():
 		if len(dic_name) == 0:
 			continue
 
-		if DEBUG:
+		from . import debug_xml_manager
+		if debug_xml_manager:
 			print_dic_name( xml_file, dic_name )
 		
 		for anim in xml_file.anims:

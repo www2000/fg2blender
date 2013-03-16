@@ -46,6 +46,7 @@ bl_info = {
 import bpy
 import os
 import time
+#from . import *
 
 from math import radians
 from math import degrees
@@ -63,17 +64,19 @@ from bpy.props import CollectionProperty
 from .ac_manager import AC_OPTION
 from .xml_manager import XML_OPTION
 
-from . import *
 
 
 DEBUG = False
 
 debug_file_debug	= False
+debug_xml_manager	= False
 debug_xml_import	= False
 debug_xml_export	= False
 debug_xml_anim		= False
 debug_ac3d_import	= False
 debug_ac3d_export	= False
+debug_fg2bl			= False
+
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -160,8 +163,10 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 			xml_option.arma_active_layer	= self.armature_active_layer
 			xml_option.arma_layer_beg		= self.armature_rotate_layer_0
 			xml_option.arma_layer_end		= self.armature_rotate_layer_1
-		
-			if xml_manager.BIDOUILLE :
+			
+			global debug_file_debug
+			if debug_file_debug:
+				print( "Write /tmp/script-fg2bl" )
 				f = open('/tmp/script-fg2bl', mode='w')
 				f.write( filename )
 				f.close()
@@ -170,7 +175,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 				#xml_option.active_layer	= False
 				#xml_option.layer_beg	= 1
 				#xml_option.layer_end	= 10
-
+			print( "*********" )
 			import_xml(	filename, ac_option, xml_option )
 			bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
 			#bpy.ops.view3d.create_anim()
@@ -225,7 +230,8 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 			ac_option = AC_OPTION()
 			ac_option.context		= context
 			
-			if xml_manager.BIDOUILLE:
+			global debug_file_debug
+			if debug_file_debug:
 				f = open('/tmp/script-fg2bl', mode='w')
 				f.write( filename )
 				f.close()
@@ -325,16 +331,25 @@ def register():
 	ui_button.register()
 
 	if not os.path.isfile('/tmp/script-fg2bl'):
-		debug_info( "File debug not exist" )
+		print( "Run script without debug info" )
 	else:
+		print( "Run script with debug info" )
+		global	debug_xml_manager
 		global	debug_xml_import
 		global	debug_xml_export
 		global	debug_xml_anim
 		global	debug_ac3d_import
 		global	debug_ac3d_export
+		global	debug_fg2bl
+		global	DEBUG
+		global	debug_file_debug
 		
-		debug_info( "File debug OK" )
 		debug_file_debug	= True
+		DEBUG				= True
+		debug_info( "File debug OK" )
+
+		debug_fg2bl			= True
+		debug_xml_manager	= False
 		debug_xml_import	= True
 		debug_xml_export	= True
 		debug_xml_anim		= True

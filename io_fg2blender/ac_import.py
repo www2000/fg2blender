@@ -369,7 +369,8 @@ def read_ac(filename, ac_option, extra=None):
 	if version[1] < 63:
 		debug_info( "Erreur : Scrpit pour blender >= 2.63" )
 		return
-		
+	
+	print( "    -Read file %s" % os.path.basename(filename) )	
 	
 	time_deb = time.time()
 	CONTEXT		= ac_option.context

@@ -85,6 +85,8 @@ arma_layer = -1
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info(aff):
+	from . import debug_xml_import
+
 	if debug_xml_import:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -878,6 +880,7 @@ def parse_node( node, file_name ):
 						if node.parentNode:
 							if node.parentNode.nodeName == 'model':
 								xml_file = XML_FILE()
+								debug_info( "***** CREATION OBJET XML_FILE() *****" )
 								xml_file.name = absolute_path( conversion(ret_text(node.childNodes[0])) )
 								xml_file.no = no_include
 								xml_manager.add_xml_file( xml_file, no_include )
@@ -940,6 +943,7 @@ def parse_node( node, file_name ):
 
 		elif node.nodeName == 'aero':
 			xml_file = XML_FILE()
+			debug_info( "***** CREATION OBJET XML_FILE() *****" )
 			xml_file.name = absolute_path( conversion(ret_text(node.childNodes[0])) )
 			xml_file.name = xml_file.name + '.xml'
 			debug_info( "Node aero - filename : %s" % xml_file.name ) 
@@ -978,6 +982,7 @@ def parse_file( filename, no_inc ):
 	global option_arma_rotate_beg
 	global option_arma_rotate_end
 
+	print( "  -Parse file : %s" % os.path.basename(filename) )
 
 	if option_mesh_rotate_layer:
 		#mesh_layer = mesh_layer + 1
@@ -1004,6 +1009,7 @@ def parse_file( filename, no_inc ):
 	#xml_file = XML_FILE()
 	if no_inc == -1:
 		xml_file = XML_FILE()
+		debug_info( "***** CREATION OBJET XML_FILE() *****" )
 		no_include = 0
 	else:
 		xml_file = xml_manager.get_xml_file( filename, no_inc )
@@ -1138,17 +1144,17 @@ def charge_xml( filename ):
 		except:
 			fsock.close()                 
 			fsock = codecs.open(filename, 'r+', 'iso-8859-1' )
-			debug_info( " **********************************************************************************" )
-			debug_info( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
-			debug_info( " **********************************************************************************" )
-			debug_info( " ***************  Changement de Codec ; Ah les messieurs iso-8859-1 ***************" )
-			debug_info( " **********************************************************************************" )
+			print( " **********************************************************************************" )
+			print( " ***************        CODEC  utf-8 invalide !!!!                  ***************" )
+			print( " **********************************************************************************" )
+			print( " ***************  Changement de Codec ; Ah les messieurs iso-8859-1 ***************" )
+			print( " **********************************************************************************" )
 			xmldoc = xml.dom.minidom.parse(fsock)
 
 		fsock.close()                 
 		#node = xmldoc.documentElement
 	else:
-		debug_info( "*** xml_import.charge_xml( filename ) Erreur: Fichier inconnu ***" )
+		print( "*** xml_import.charge_xml( filename ) Erreur: Fichier inconnu ***" )
 	return xmldoc
 #---------------------------------------------------------------------------------------------------------------------
 #
@@ -1202,13 +1208,15 @@ def import_xml(filename, ac_option, xml_option):
 	# Save active layers
 	save_active_layers = bpy.context.scene.layers
 
+	print( "Import plane : %s" % os.path.basename(filename)  )
 	read_file_xml( conversion(filename) )
 
 	#restore active layer
 	bpy.context.scene.layers = save_active_layers
 
 	time_end = time.time()
-	debug_info( "Import %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
+	#debug_info( "Import %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
+	print( "Import %s in %0.2f sec" % (os.path.basename(filename),(time_end-time_deb) ) )
 	nb_rotate = 0
 	nb_translate = 0
 	nb_pick = 0
@@ -1216,21 +1224,24 @@ def import_xml(filename, ac_option, xml_option):
 	nb_shader = 0
 	nb_spin = 0
 	nb_xml = 0
+	nb_acFile = 0
 	for xml_file, no in xml_manager.xml_files:
 		for anim in xml_file.anims:
-			if anim.type == 1:
+			if anim.type == 'rotate':
 				nb_rotate = nb_rotate + 1
-			elif anim.type == 2:
+			elif anim.type == 'translate':
 				nb_translate = nb_translate + 1
-			elif anim.type == 4:
+			elif anim.type == 'pick':
 				nb_pick = nb_pick + 1
-			elif anim.type == 5:
+			elif anim.type == 'light':
 				nb_light = nb_light + 1
-			elif anim.type == 6:
+			elif anim.type == 'shader':
 				nb_shader = nb_shader + 1
-			elif anim.type == 7:
+			elif anim.type == 'spin':
 				nb_spin = nb_spin + 1
+		nb_acFile += len(xml_file.ac_files)
 		nb_xml = nb_xml + 1
+	'''
 	debug_info( "\tNb xml file   : %d" % nb_xml )
 	debug_info( "\tNb rotate     : %d" % nb_rotate )
 	debug_info( "\tNb translate  : %d" % nb_translate )
@@ -1238,5 +1249,15 @@ def import_xml(filename, ac_option, xml_option):
 	debug_info( "\tNb light      : %d" % nb_light )
 	debug_info( "\tNb shader     : %d" % nb_shader )
 	debug_info( "\tNb spin       : %d" % nb_spin )
+	'''
+
+	print( "  Nb xml file   : %d" % nb_xml )
+	print( "  Nb ac file    : %d" % nb_acFile )
+	print( "  Nb rotate     : %d" % nb_rotate )
+	print( "  Nb translate  : %d" % nb_translate )
+	print( "  Nb pick       : %d" % nb_pick )
+	print( "  Nb light      : %d" % nb_light )
+	print( "  Nb shader     : %d" % nb_shader )
+	print( "  Nb spin       : %d" % nb_spin )
 	
 

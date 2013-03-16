@@ -176,26 +176,17 @@ class FG_OT_exec(bpy.types.Operator):
 		xml_option.arma_layer_beg		= 11
 		xml_option.arma_layer_end		= 20
 		
-
-		if xml_manager.BIDOUILLE:
+		from . import debug_file_debug
+		if debug_file_debug:
+			debug_info( "Raccourci Ctrl+F" )
 			f = open('/tmp/script-fg2bl', mode='r')
 			filename = f.readline()
 			f.close()
 		else:
-			debug_info( "Bidouille OK" )
 			return {'FINISHED'}
 
 		import_xml( filename, ac_option, xml_option )
-		
-		#from . import xml_jsbsim
-
-		#bpy.ops.object.file_select_jsb()
-
-		#xml_jsbsim.write_jsbsim( context, '' )
-		
 		bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
-		#bpy.ops.object.select_all(action='SELECT')
-		#bpy.ops.view3d.edge_split()
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-X       utilise pour le "debuggage"

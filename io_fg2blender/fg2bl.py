@@ -24,21 +24,24 @@ import bpy
 import os
 
 #--------------------------------------------------------------------------------------------------------------------------------
+def debug_info(aff):
+	from . import debug_fg2bl
+
+	if debug_fg2bl:
+		print(aff)
+
+
+#--------------------------------------------------------------------------------------------------------------------------------
 class PATH:
 	#--------------------------------------------------------------------------------------------------------------------------------
 	def __init__(self):
-		self.DEBUG = True
 		self.dir_name_plane = ""
 		self.bSaveBlend = False
 	
-	#--------------------------------------------------------------------------------------------------------------------------------
-	def debug_info(self, aff):
-		if self.DEBUG:
-			print(aff)
 
 	#--------------------------------------------------------------------------------------------------------------------------------
 	def print_filename(self, filename ):
-		self.debug_info( filename )
+		debug_info( filename )
 	
 	#--------------------------------------------------------------------------------------------------------------------------------
 	def rel_from( self, filepath="", frompath="" ):
@@ -54,7 +57,7 @@ class PATH:
 
 		return rel_path_normalized + os.sep + filename
 		#else:
-		#	self.debug_info( "TODO")
+		#	debug_info( "TODO")
 		#	
 		#return filename
 
@@ -81,10 +84,10 @@ class PATH:
 		#if not self.bSaveBlend:
 		pathname = os.path.dirname( filepath )
 		basename = os.path.basename( filepath )
-		self.debug_info( "from_pathname    : %s" % from_pathname )
-		self.debug_info( "from_basename    : %s" % from_basename )
-		self.debug_info( "     pathname    : %s" % pathname )
-		self.debug_info( "     basename    : %s" % basename )
+		debug_info( "from_pathname    : %s" % from_pathname )
+		debug_info( "from_basename    : %s" % from_basename )
+		debug_info( "     pathname    : %s" % pathname )
+		debug_info( "     basename    : %s" % basename )
 
 		filename = filepath			
 		pos = from_pathname.find(pathname)
@@ -92,7 +95,7 @@ class PATH:
 			filename = from_pathname[:pos] + os.sep + pathname + basename
 		return filename
 		#else:
-		#	self.debug_info( "TODO")
+		#	debug_info( "TODO")
 		#	
 		#return filename
 
@@ -102,7 +105,7 @@ class PATH:
 		
 	#--------------------------------------------------------------------------------------------------------------------------------
 	def test_blender_filename( self ):
-		self.debug_info( "Name blend : %s"  % bpy.data.filepath )
+		debug_info( "Name blend : %s"  % bpy.data.filepath )
 		if bpy.data.filepath == "":
 			self.bSaveBlend = False
 		else:

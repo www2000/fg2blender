@@ -43,6 +43,8 @@ from . import *
 
 
 def debug_info( aff):
+	from . import debug_xml_anim
+	
 	if debug_xml_anim:
 		print( aff )
 
@@ -937,6 +939,7 @@ class ANIM_LIGHT(ANIM):
 						bpy.data.objects[obj_name_bl].draw_type = 'WIRE'
 				else:
 					debug_info( '**** Erreur objet "%s" inconnu ***' % obj_name_ac )
+					print( '**** Error unknown object "%s"  in "%" ***' % (obj_name_ac,os.path.basename(self.xml_file)) )
 					continue
 			else:
 				obj_name_bl = xml_file.ac_files[0].dic_name_meshs[obj_name_ac]
@@ -991,7 +994,7 @@ class ANIM_SHADER(ANIM):
 			name_path = xml_import.conversion( name_path )
 			img = bpy.data.images.load( name_path )
 			debug_info( '*** bidouillle **** %s introuvale' % (name_path) )
-			if xml_manager.BIDOUILLE:
+			if debug_file_debug:
 				debug_info( "Bonjour" )
 				#img = bpy.data.images.new(name='void', width=1024, height=1024, alpha=True, float_buffer=True)
 			else:
