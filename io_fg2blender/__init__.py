@@ -68,6 +68,7 @@ from . import *
 
 DEBUG = False
 
+debug_file_debug	= False
 debug_xml_import	= False
 debug_xml_export	= False
 debug_xml_anim		= False
@@ -324,11 +325,21 @@ def register():
 	ui_button.register()
 
 	if not os.path.isfile('/tmp/script-fg2bl'):
-		debug_info( "N'existe pas" )
-		xml_manager.BIDOUILLE = False
+		debug_info( "File debug not exist" )
 	else:
-		debug_info( "Bidouille OK" )
-		xml_manager.BIDOUILLE = True
+		global	debug_xml_import
+		global	debug_xml_export
+		global	debug_xml_anim
+		global	debug_ac3d_import
+		global	debug_ac3d_export
+		
+		debug_info( "File debug OK" )
+		debug_file_debug	= True
+		debug_xml_import	= True
+		debug_xml_export	= True
+		debug_xml_anim		= True
+		debug_ac3d_import	= False
+		debug_ac3d_export	= False
 
 	
 def unregister():

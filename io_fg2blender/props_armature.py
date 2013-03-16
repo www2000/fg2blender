@@ -345,9 +345,9 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 						                        items = [ ('custom','custom','custom') ]
 						                        	+	[ (famille,famille,famille) for famille in familles ]    )
 
-	family_value	= bpy.props.EnumProperty(	attr = 'family_value', name='Node', description="node of family", items = dynamic_items )
+	family_value	= bpy.props.EnumProperty(	attr = 'family_value', name='Value', description="Value in family", items = dynamic_items )
 	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'Property')
-	property_idx	= bpy.props.IntProperty(	attr = 'value', name = '%d ', min=0)
+	property_idx	= bpy.props.IntProperty(	attr = 'value', name = 'number ', min=-1)
 	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
 	factor_ini		= bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
 	xml_file		= bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File', update=update_xml_file)

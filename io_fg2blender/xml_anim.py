@@ -39,11 +39,11 @@ from math import radians
 
 from . import ac_manager
 from . import *
-from .__init__ import debug_xml_anim as DEBUG
+
 
 
 def debug_info( aff):
-	if DEBUG:
+	if debug_xml_anim:
 		print( aff )
 
 
@@ -407,9 +407,28 @@ class ANIM:
 				if prop[0].find('[') != -1:
 					left_prop = prop[0].partition('[')[0]
 					right_prop = prop[0].partition(']')[2]
+					
+				#test example 
+				# gear/gear[%d]/position-norm == gear/gear/position-norm
+				without_bracket = left_prop + right_prop
+				if  without_bracket == left and right =='':
+					debug_info( " Bingo %s " % without_bracket )
+					obj.data.fg.family = name
+					obj.data.fg.family_value = prop[0]
+					if obj.data.fg.property_value.find('[') != -1:
+						idx = -1
+						obj.data.fg.property_idx = int(-1)
+
+					if prop[1] != 'x':
+						obj.data.fg.range_beg = prop[1]
+						obj.data.fg.range_beg_ini = prop[1]
+					if prop[2] != 'x':
+						obj.data.fg.range_end = prop[2]
+						obj.data.fg.range_end_ini = prop[2]
+					return
 			
 				if left_prop == left and right_prop == right:
-					debug_info( ' Bingo "%s"' , prop )
+					debug_info( " Bingo %s" % (left+right) )
 					obj.data.fg.family = name
 					obj.data.fg.family_value = prop[0]
 					if obj.data.fg.property_value.find('[') != -1:
@@ -439,13 +458,14 @@ class ANIM:
 			find_prop( obj, left, right, props_armature.fuels, 'fuel' )
 			find_prop( obj, left, right, props_armature.consumables, 'consumable' )
 			find_prop( obj, left, right, props_armature.gears, 'gear' )
+			find_prop( obj, left, right, props_armature.surface_positions, 'surface_position' )
 		
 
 		if len(obj.data.fg.property_value) == 0:
 			return	
 
-		if obj.data.fg.property_value[0] != '/':
-			obj.data.fg.property_value = '/' + obj.data.fg.property_value
+		#if obj.data.fg.property_value[0] != '/':
+		#	obj.data.fg.property_value = '/' + obj.data.fg.property_value
 
 		debug_info( ' Recherche  property "%s"' % obj.data.fg.property_value )
 		left = obj.data.fg.property_value
