@@ -35,12 +35,9 @@ import os
 
 class FG_PT_camera_properties(bpy.types.Panel):
 	'''Flight Object Panel'''
-	bl_label = "Flightgear View"
-	bl_space_type = "PROPERTIES"
-	bl_region_type = "WINDOW"
-	#bl_space_type = 'VIEW_3D'
-	#bl_region_type = 'TOOLS'
-	bl_context = "object"
+	bl_label = "Flightgear"
+	bl_space_type = 'VIEW_3D'
+	bl_region_type = 'TOOLS'
 
 	@classmethod
 	def poll(self,context):
@@ -94,5 +91,4 @@ def register():
 
 def unregister():
 	bpy.utils.unregister_class(FG_PT_camera_properties)
-
 
