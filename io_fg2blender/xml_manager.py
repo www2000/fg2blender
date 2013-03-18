@@ -38,7 +38,7 @@ from . import fg2bl
 from .ac_manager import AC_FILE
 
 #----------------------------------------------------------------------------------------------------------------------------------
-add_on_path = ""
+#add_on_path = ""
 
 xml_files = []
 xml_current = None

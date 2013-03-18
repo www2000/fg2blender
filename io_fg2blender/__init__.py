@@ -75,7 +75,7 @@ debug_xml_export	= False
 debug_xml_anim		= False
 debug_ac3d_import	= False
 debug_ac3d_export	= False
-debug_fg2bl		= False
+debug_fg2bl			= False
 debug_props_camera	= False
 debug_props_empty	= False
 

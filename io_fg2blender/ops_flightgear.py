@@ -1631,8 +1631,8 @@ class MousePanel(bpy.types.Panel):
 #	Registration
 #   Not really necessary to register the class, because this happens
 #   automatically when the module is registered. OTOH, it does not hurt either.
-#bpy.utils.register_class(SimpleMouseOperator)
-#bpy.utils.register_class(MousePanel)
+bpy.utils.register_class(SimpleMouseOperator)
+bpy.utils.register_class(MousePanel)
  
 # Automatically display mouse position on startup
 #bpy.ops.wm.mouse_position('INVOKE_DEFAULT')
