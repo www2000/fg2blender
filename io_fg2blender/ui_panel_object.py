@@ -34,9 +34,9 @@ import os
 
 class FG_PT_object_tool(bpy.types.Panel):
 	'''Flight Object Panel'''
-	bl_label 	= "Flightgear"
-	bl_space_type	= "VIEW_3D"
-	bl_region_type	= "TOOLS"
+	bl_label	= "Flightgear object"
+	bl_space_type	= 'VIEW_3D'
+	bl_region_type	= 'TOOLS'
 
 	@classmethod
 	def poll(self,context):
@@ -51,10 +51,60 @@ class FG_PT_object_tool(bpy.types.Panel):
 		obj = context.active_object
 		if obj:
 			if obj.type in ('MESH'):
-				layout_object(self, obj, context);
+				layout_object_tool(self, obj, context);
 #--------------------------------------------------------------------------------------------------------------------------------
 
-def layout_object(self, obj, context):
+class FG_PT_object_properties(bpy.types.Panel):
+	'''Flight Object Panel'''
+	bl_label	= "Flightgear object"
+	bl_space_type	= 'PROPERTIES'
+	bl_region_type	= 'WINDOW'
+	bl_context	= 'object'
+
+	@classmethod
+	def poll(self,context):
+		obj = context.object
+
+		if obj:      
+			if obj.type in ('MESH'):
+				return True
+		return False
+
+	def draw(self, context):
+		obj = context.active_object
+		if obj:
+			if obj.type in ('MESH'):
+				layout_object_tool(self, obj, context);
+#--------------------------------------------------------------------------------------------------------------------------------
+
+def layout_object_tool(self, obj, context):
+	from . import xml_manager
+	
+	layout = self.layout
+	xml_files = xml_manager.xml_files
+
+	box = layout.box()
+	row = box.row()
+	row.operator("view3d.show_animation", text="Show objects related to selected object")
+	row.operator("view3d.show_all", text="Show all objects")
+
+	if obj.parent:
+		boxTitre = layout.column()
+		boxTitre.label( text='Parent' )
+		box = layout.box()
+		row = box.row()
+		if obj.parent.type == 'MESH':
+			row.label( text=obj.parent.name,icon='OBJECT_DATA' )
+		elif obj.parent.type == 'ARMATURE':
+			row.label( text=obj.parent.name, icon='BONE_DATA' )
+		elif obj.parent.type == 'EMPTY':
+			row.label( text=obj.parent.name, icon='EMPTY_DATA' )
+		else:
+			row.label( text=obj.parent.name )
+		row.operator("fg.button_select", text="Select").object_name=obj.parent.name
+#--------------------------------------------------------------------------------------------------------------------------------
+
+def layout_object_properties(self, obj, context):
 	from . import xml_manager
 	
 	layout = self.layout
@@ -79,20 +129,6 @@ def layout_object(self, obj, context):
 	row = box.row()
 	row.operator( "view3d.save_ac_file" ).object_name=obj.name
 
-	if obj.parent:
-		boxTitre = layout.column()
-		boxTitre.label( text='Parent' )
-		box = layout.box()
-		row = box.row()
-		if obj.parent.type == 'MESH':
-			row.label( text=obj.parent.name,icon='OBJECT_DATA' )
-		elif obj.parent.type == 'ARMATURE':
-			row.label( text=obj.parent.name, icon='BONE_DATA' )
-		elif obj.parent.type == 'EMPTY':
-			row.label( text=obj.parent.name, icon='EMPTY_DATA' )
-		else:
-			row.label( text=obj.parent.name )
-		row.operator("fg.button_select", text="Select").object_name=obj.parent.name
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
@@ -104,8 +140,10 @@ def layout_object(self, obj, context):
 
 def register():
 	bpy.utils.register_class(FG_PT_object_tool)
+	bpy.utils.register_class(FG_PT_object_properties)
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
 	bpy.utils.unregister_class(FG_PT_object_tool)
+	bpy.utils.unregister_class(FG_PT_object_properties)
 
