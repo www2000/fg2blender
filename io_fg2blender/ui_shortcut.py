@@ -37,6 +37,7 @@ def register_shortcut():
     kmi = km.keymap_items.new('fg.exec', 'F', 'PRESS', ctrl=True)
     kmi = km.keymap_items.new('fg.exec2', 'X', 'PRESS', ctrl=True)
     kmi = km.keymap_items.new('view3d.create_anim', 'C', 'PRESS', alt=True)
+    kmi = km.keymap_items.new('wm.mouse_position', 'J', 'PRESS')
     kmi = km.keymap_items.new('wm.call_menu', 'F', 'PRESS')
     kmi.properties.name = 'VIEW3D_FG_root_menu' 
     #kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS')
@@ -55,6 +56,8 @@ def unregister_shortcut():
         if kmi.idname == 'wm.call_menu':
             km.keymap_items.remove(kmi)
         if kmi.idname == 'fg.only_render':
+            km.keymap_items.remove(kmi)
+        if kmi.idname == 'wm.mouse_position':
             km.keymap_items.remove(kmi)
 #----------------------------------------------------------------------------------------------------------------------------------
 #

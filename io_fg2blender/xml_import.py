@@ -983,7 +983,8 @@ def parse_file( filename, no_inc ):
 	global option_arma_rotate_end
 
 	print( "  -Parse file : %s" % os.path.basename(filename) )
-
+	#bpy.ops.wm.mouse_position('EXEC_DEFAULT', x=20, y=66)
+	bpy.ops.wm.mouse_position('INVOKE_DEFAULT')
 	if option_mesh_rotate_layer:
 		#mesh_layer = mesh_layer + 1
 		if mesh_layer < option_mesh_rotate_beg:
