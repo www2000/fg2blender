@@ -86,7 +86,6 @@ def debug_info( aff):
 	global DEBUG
 	if DEBUG:
 		print( aff )
-#----------------------------------------------------------------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #
@@ -103,15 +102,9 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 	# ExportHelper mixin class uses this
 	filename_ext = ".xml"
 	filter_glob = StringProperty(default="*.xml", options={'HIDDEN'})
-
-
 	
-	files = CollectionProperty(	name="File Path",
-								description="File path used for importing " "xml file",
-								type=bpy.types.OperatorFileListElement)
-	
+	files = CollectionProperty( name="File Path", description="File path used for importing " "xml file", type=bpy.types.OperatorFileListElement)
 	directory = StringProperty()
-
 
 	include		= BoolProperty(name="Include file", description="Read file include", default=True)
 
@@ -172,15 +165,9 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 				f = open('/tmp/script-fg2bl', mode='w')
 				f.write( filename )
 				f.close()
-				#xml_option = XML_OPTION()
-				#xml_option.include		= False
-				#xml_option.active_layer	= False
-				#xml_option.layer_beg	= 1
-				#xml_option.layer_end	= 10
 			print( "*********" )
 			import_xml(	filename, ac_option, xml_option )
 			bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
-			#bpy.ops.view3d.create_anim()
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 #
@@ -243,45 +230,6 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 		
 		return {'FINISHED'}
 
-
-
-'''
-class ExportFG(bpy.types.Operator, ExportHelper):
-	bl_idname = "export.fg2blender"  # this is important since its how bpy.ops.export.some_data is constructed
-	bl_label = "Export .xml"
-	bl_options = {'PRESET'}	
-
-	# ExportHelper mixin class uses this
-	filename_ext = ".xml"
-
-	filter_glob = StringProperty(default="*.xml", options={'HIDDEN'})
-
-	# List of operator properties, the attributes will be assigned
-	# to the class instance from the operator settings before calling.
-	#use_setting = BoolProperty(name="Example Boolean", description="Example Tooltip", default=True)
-	#filepath = bpy.props.StringProperty(name="File Path", maxlen=1024, default="")
-
-	select_only 		= BoolProperty(name="Selection only", description="Export selected objects only", default=True)
-	tex_path			= BoolProperty(name="Path in texture name", description="Path name in texture name", default=False)
-	apply_modifiers		= BoolProperty(name="Apply modifiers", description="Apply modifiers in meshes", default=True)
-
-
-	
-		
-	@classmethod
-	def poll(cls, context):
-		return context.active_object != None
-
-	def execute(self, context):
-		from . import export_xml
-		export_xml.write_file(	context, 
-									self.filepath, 
-									select_only=self.select_only, 
-									tex_path=self.tex_path,
-									apply_modifiers=self.apply_modifiers  )
-		return {'FINISHED'}
-
-'''
 #====================================================================================================================
 #
 #
@@ -294,10 +242,6 @@ class ExportFG(bpy.types.Operator, ExportHelper):
 def menu_func_import(self, context):
     self.layout.operator(ImportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
     self.layout.operator(ImportAC.bl_idname, text="Flightgear (.ac)")		# text=Title in the menu
-
-#def menu_func_export(self, context):
-#    self.layout.operator(ExportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
-
 
 def register():
 	from . import ops_flightgear
@@ -357,7 +301,6 @@ def register():
 		debug_xml_anim		= True
 		debug_ac3d_import	= False
 		debug_ac3d_export	= False
-
 	
 def unregister():
 	from . import ops_flightgear
