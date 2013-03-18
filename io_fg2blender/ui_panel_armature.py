@@ -38,40 +38,11 @@ def debug_info( aff):
 	global DEBUG
 	if DEBUG:
 		print( aff )
-#----------------------------------------------------------------------------------------------------------------------------------
-
-
-#--------------------------------------------------------------------------------------------------------------------------------
-
-class FG_PT_armature_properties(bpy.types.Panel):
-	'''Flight Object Panel'''
-	bl_label		= "Flightgear Animation"
-	bl_space_type	= "PROPERTIES"
-	bl_region_type	= "WINDOW"
-	bl_context = "object"
-
-	bIncludeFileDisc = bpy.props.BoolProperty()
-
-	@classmethod
-	def poll(self,context):
-		debug_info( context.mode )
-		obj = context.object
-
-		if obj:      
-			if obj.type in ("ARMATURE"):
-				return True
-		return False
-
-	def draw(self, context):
-		obj = context.active_object
-		if obj:
-			if obj.type == "ARMATURE":
-				layout_armature_properties(self, obj, context);
 #--------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PT_armature_tool(bpy.types.Panel):
 	'''Flight Object Panel'''
-	bl_label		= "Flightgear tools"
+	bl_label	= "Flightgear"
 	bl_space_type	= 'VIEW_3D'
 	bl_region_type	= 'TOOLS'
 
@@ -81,50 +52,15 @@ class FG_PT_armature_tool(bpy.types.Panel):
 		obj = context.object
 
 		if obj:      
-			if obj.type in ("ARMATURE"):
+			if obj.type in ('ARMATURE'):
 				return True
 		return False
 
 	def draw(self, context):
 		obj = context.active_object
 		if obj:
-			if obj.type == "ARMATURE":
-				layout_armature_tool(self, obj, context);
-#--------------------------------------------------------------------------------------------------------------------------------
-
-def layout_armature_tool(self, obj, context):
-	from . import xml_manager
-	
-	layout = self.layout
-	xml_files = xml_manager.xml_files
-
-	box = layout.box()
-	row = box.row()
-	row.operator("view3d.show_animation", text="Show objects related to selected animation")
-	row.operator("view3d.show_all", text="Show all objects")
-
-	boxTitre = layout.column()
-	boxTitre.label( text='Type' )
-	boxType = layout.box()
-	colType = boxType.column()
-
-	#colType.label( text = obj.data.fg.type_anim )
-	
-	if obj.data.fg.type_anim == 1:
-		colType.label( text="Rotation" )
-	elif obj.data.fg.type_anim == 2:
-		colType.label( text="Translation" )
-	elif obj.data.fg.type_anim == 7:
-		colType.label( text="Spin" )
-	
-
-	col = layout.column()
-	col.prop( obj.data.fg, "factor" )
-			
-	box_child_object( self, obj, context )
-
-	if obj.parent:			
-		box_parent( self, obj, context )			
+			if obj.type in ('ARMATURE'):
+				layout_armature_properties(self, obj, context);
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def layout_armature_properties(self, obj, context):
@@ -149,11 +85,9 @@ def layout_armature_properties(self, obj, context):
 	row.alignment = 'LEFT'
 	if obj.data.fg.family != 'custom':
 		row.label( text="Property:" )
-		#if anim :
 		from . import xml_export
 		value = xml_export.build_property_name( obj )
 		row.label( text=value )
-		#obj.data.fg.property_value = obj.data.fg.family_value
 	else:
 		row.alignment = 'EXPAND'
 		row.prop( obj.data.fg,  "property_value" )
@@ -161,7 +95,6 @@ def layout_armature_properties(self, obj, context):
 	if obj.data.fg.family_value.find('%d') != -1:
 		row = box.row()
 		row.prop( obj.data.fg,  "property_idx" )
-	
 	#----------------------------------------------------
 	boxTitre = layout.column()
 	boxTitre.label( text='XML File:' )
@@ -176,22 +109,18 @@ def layout_armature_properties(self, obj, context):
 	row = box.row()
 	row.operator( "view3d.write_xml" ).obj_name = obj.name#.data.fg.xml_file
 	
-	
 	row = box.row(align=True)
 	#----------------------------------------------------
 	boxTitre = layout.column()
 	boxTitre.label( text='Type' )
 	boxType = layout.box()
-	colType = boxType.column()
-	#colType.label( text = obj.data.fg.type_anim )
-	
+	colType = boxType.column()	
 	if obj.data.fg.type_anim == 1:
 		colType.label( text="Rotation" )
 	elif obj.data.fg.type_anim == 2:
 		colType.label( text="Translation" )
 	elif obj.data.fg.type_anim == 7:
 		colType.label( text="Spin" )
-	
 	#----------------------------------------------------
 	row = layout.row()
 	row.prop( obj.data.fg, "factor" )
@@ -264,11 +193,8 @@ def box_child_object( self, obj, context ):
 
 def register():
 	bpy.utils.register_class(FG_PT_armature_tool)
-	bpy.utils.register_class(FG_PT_armature_properties)
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
 	bpy.utils.unregister_class(FG_PT_armature_tool)
-	bpy.utils.unregister_class(FG_PT_armature_properties)
-
 

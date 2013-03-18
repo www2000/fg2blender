@@ -31,11 +31,20 @@
 import bpy
 
 
-camera_items = [	('None',			'None', ''),
-					('COCKPIT_VIEW',	'COCKPIT_VIEW', '')
-			]
+camera_items = 	[
+			('None',		'None', ''),
+			('COCKPIT_VIEW',	'COCKPIT_VIEW', '')
+		]
 			
 bLock_update = False
+
+#----------------------------------------------------------------------------------------------------------------------------------
+def debug_info( aff ):
+	from . import debug_props_camera
+	
+	if debug_props_camera:
+		print( aff )
+
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_camera(bpy.types.PropertyGroup):

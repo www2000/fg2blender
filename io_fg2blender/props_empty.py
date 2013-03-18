@@ -27,24 +27,31 @@
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
-
 import bpy
 
-
-jsb_items = [	('None',			'None', ''),
-				('TAIL_GEAR',		'TAIL_GEAR', ''),
-				('RIGHT_GEAR',		'RIGHT_GEAR', ''),
-				('LEFT_GEAR',		'LEFT_GEAR', ''),
-				('CG',				'CG', ''),
-				('AERO_CENTER',		'AERO_CENTER', ''),
-				('ENGINE',			'ENGINE', ''),
-				('NOSE_CONTACT',	'NOSE_CONTACT', ''),
-				('RIGHT_CONTACT',	'RIGHT_CONTACT', ''),
-				('LEFT_CONTACT',	'LEFT_CONTACT', ''),
-				('TAIL_CONTACT',	'TAIL_CONTACT', '')
-			]
+jsb_items = 	[
+			('None',		'None', ''),
+			('TAIL_GEAR',		'TAIL_GEAR', ''),
+			('RIGHT_GEAR',		'RIGHT_GEAR', ''),
+			('LEFT_GEAR',		'LEFT_GEAR', ''),
+			('CG',			'CG', ''),
+			('AERO_CENTER',		'AERO_CENTER', ''),
+			('ENGINE',		'ENGINE', ''),
+			('NOSE_CONTACT',	'NOSE_CONTACT', ''),
+			('RIGHT_CONTACT',	'RIGHT_CONTACT', ''),
+			('LEFT_CONTACT',	'LEFT_CONTACT', ''),
+			('TAIL_CONTACT',	'TAIL_CONTACT', '')
+		]
 			
 bLock_update = False
+
+#----------------------------------------------------------------------------------------------------------------------------------
+def debug_info( aff ):
+	from . import debug_props_empty
+	
+	if debug_props_empty:
+		print( aff )
+
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PROP_empty(bpy.types.PropertyGroup):
@@ -84,9 +91,8 @@ class FG_PROP_empty(bpy.types.PropertyGroup):
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 
-	jsb_xml_file = bpy.props.StringProperty(	attr = 'jsb_xml_file', name = 'Filename', update = update_xml_file)
-	#jsb_xml_file = bpy.props.StringProperty(	attr = 'jsb_xml_file', name = 'Filename' )
-	jsb_attr	 = bpy.props.EnumProperty(	attr = 'jsb_attr', name = 'Attribute', items = jsb_items, default = 'None', update = update_jsb_attr )
+	jsb_xml_file 	= bpy.props.StringProperty(	attr = 'jsb_xml_file', name = 'Filename', update = update_xml_file)
+	jsb_attr	= bpy.props.EnumProperty(	attr = 'jsb_attr', name = 'Attribute', items = jsb_items, default = 'None', update = update_jsb_attr )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_empty():
@@ -101,16 +107,11 @@ def RNA_empty():
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
-#def removeProjectRNA():
-	# complex classes, depending on basic classes
-#----------------------------------------------------------------------------------------------------------------------------------
-
 def register():
 	bpy.utils.register_class( FG_PROP_empty )
 	RNA_empty()
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
 	bpy.utils.unregister_class( FG_PROP_empty )
-	#removeProjectRNA()
-#----------------------------------------------------------------------------------------------------------------------------------
 
