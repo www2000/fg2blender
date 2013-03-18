@@ -60,6 +60,11 @@ def layout_object(self, obj, context):
 	layout = self.layout
 	xml_files = xml_manager.xml_files
 
+	box = layout.box()
+	row = box.row()
+	row.operator("view3d.show_animation", text="Show objects related to selected object")
+	row.operator("view3d.show_all", text="Show all objects")
+
 	row = layout.row()
 	row.label( text='AC3D file' )
 	box = layout.box()

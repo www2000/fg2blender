@@ -69,6 +69,11 @@ def layout_armature_properties(self, obj, context):
 	layout = self.layout
 	xml_files = xml_manager.xml_files
 
+	box = layout.box()
+	row = box.row()
+	row.operator("view3d.show_animation", text="Show objects related to selected animation")
+	row.operator("view3d.show_all", text="Show all objects")
+
 	col = layout.column()
 	col.label( text='Property' )
 	box = layout.box()
