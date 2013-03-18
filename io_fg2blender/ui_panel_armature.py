@@ -42,9 +42,33 @@ def debug_info( aff):
 
 class FG_PT_armature_tool(bpy.types.Panel):
 	'''Flight Object Panel'''
-	bl_label	= "Flightgear"
+	bl_label	= "Flightgear animation"
 	bl_space_type	= 'VIEW_3D'
 	bl_region_type	= 'TOOLS'
+
+	@classmethod
+	def poll(self,context):
+		debug_info( context.mode )
+		obj = context.object
+
+		if obj:      
+			if obj.type in ('ARMATURE'):
+				return True
+		return False
+
+	def draw(self, context):
+		obj = context.active_object
+		if obj:
+			if obj.type in ('ARMATURE'):
+				layout_armature_tool(self, obj, context);
+#--------------------------------------------------------------------------------------------------------------------------------
+
+class FG_PT_armature_properties(bpy.types.Panel):
+	'''Flight Object Panel'''
+	bl_label	= "Flightgear animation"
+	bl_space_type	= 'PROPERTIES'
+	bl_region_type	= 'WINDOW'
+	bl_context	= 'object'
 
 	@classmethod
 	def poll(self,context):
@@ -68,11 +92,6 @@ def layout_armature_properties(self, obj, context):
 	#----------------------------------------------------
 	layout = self.layout
 	xml_files = xml_manager.xml_files
-
-	box = layout.box()
-	row = box.row()
-	row.operator("view3d.show_animation", text="Show objects related to selected animation")
-	row.operator("view3d.show_all", text="Show all objects")
 
 	col = layout.column()
 	col.label( text='Property' )
@@ -133,8 +152,20 @@ def layout_armature_properties(self, obj, context):
 
 	row = layout.row()
 	row.prop( obj.data.fg, "range_beg" )
-	row.prop( obj.data.fg, "range_end" )
+	row.prop( obj.data.fg, "range_end" )		
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def layout_armature_tool(self, obj, context):
+	from . import xml_manager
 	#----------------------------------------------------
+	layout = self.layout
+	xml_files = xml_manager.xml_files
+
+	box = layout.box()
+	row = box.row()
+	row.operator("view3d.show_animation", text="Show objects related to selected animation")
+	row.operator("view3d.show_all", text="Show all objects")
+
 	box_child_object( self, obj, context )
 	if obj.parent:
 		box_parent( self, obj, context )			
@@ -198,8 +229,10 @@ def box_child_object( self, obj, context ):
 
 def register():
 	bpy.utils.register_class(FG_PT_armature_tool)
+	bpy.utils.register_class(FG_PT_armature_properties)
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
 	bpy.utils.unregister_class(FG_PT_armature_tool)
+	bpy.utils.unregister_class(FG_PT_armature_properties)
 
