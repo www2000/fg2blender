@@ -74,7 +74,7 @@ class FG_PT_object_properties(bpy.types.Panel):
 		obj = context.active_object
 		if obj:
 			if obj.type in ('MESH'):
-				layout_object_tool(self, obj, context);
+				layout_object_properties(self, obj, context);
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def layout_object_tool(self, obj, context):
