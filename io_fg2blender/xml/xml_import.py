@@ -40,8 +40,9 @@ from math import radians
 from mathutils import Vector
 from mathutils import Euler
 
-from .ac_manager import AC_OPTION
-from .ac_manager import AC_FILE
+from ..meshes.ac3d.ac_manager import AC_OPTION
+from ..meshes.ac3d.ac_manager import AC_FILE
+
 from .xml_manager import XML_OPTION
 from .xml_manager import XML_FILE
 #from .xml_manager import ANIM
@@ -56,6 +57,8 @@ from .xml_anim import ANIM_PICK
 from .xml_anim import ANIM_JSB
 
 from .xml_manager import TEXT
+
+from ..meshes.ac3d import ac_manager
 
 #from .__init__ import debug_xml_import as DEBUG
 
@@ -85,7 +88,7 @@ arma_layer = -1
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info(aff):
-	from . import debug_xml_import
+	from .. import debug_xml_import
 
 	if debug_xml_import:
 		print( aff )
@@ -861,7 +864,7 @@ def parse_node( node, file_name ):
 							arma_layer = arma_layer + 1
 						else:
 							if os.path.isfile(file_ac):
-								from .ac_import import read_ac
+								from ..meshes.ac3d.ac_import import read_ac
 								ac_option = AC_OPTION()
 								ac_option.smooth_all	= True
 								ac_option.edge_split	= True
@@ -984,7 +987,7 @@ def parse_file( filename, no_inc ):
 
 	print( "  -Parse file : %s" % os.path.basename(filename) )
 	#bpy.ops.wm.mouse_position('EXEC_DEFAULT', x=20, y=66)
-	bpy.ops.wm.mouse_position('INVOKE_DEFAULT')
+	#bpy.ops.wm.mouse_position('INVOKE_DEFAULT')
 	if option_mesh_rotate_layer:
 		#mesh_layer = mesh_layer + 1
 		if mesh_layer < option_mesh_rotate_beg:
@@ -1196,7 +1199,9 @@ def import_xml(filename, ac_option, xml_option):
 	option_ac_file = True
 	option_light = False
 
-	if DEBUG:		
+	from .. import debug_xml_import
+	#if DEBUG:		
+	if debug_xml_import:
 		option_print_include = True
 		option_rotation = True
 		option_translation = True

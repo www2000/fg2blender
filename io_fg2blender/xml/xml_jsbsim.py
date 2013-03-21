@@ -48,8 +48,9 @@ CG = Vector( (0.0,0.0,0.0) )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff):
-	global DEBUG_INFO
-	if DEBUG_INFO:
+	from .. import debug_xml_jsbsim
+
+	if debug_xml_jsbsim:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
@@ -273,7 +274,7 @@ def write_jsbsim( context, filename  ):
 		CG = obj.location
  	
  	
-	template = xml_manager.addon_path + os.sep + 'io_fg2blender' + os.sep + 'jsbsim_template.xml'
+	template = xml_manager.addon_path + os.sep + 'io_fg2blender' + os.sep + 'templates' + os.sep + 'jsbsim_template.xml'
 	debug_info( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % template )
 
 	doc = xml_import.charge_xml( template )

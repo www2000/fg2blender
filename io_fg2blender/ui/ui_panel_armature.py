@@ -88,7 +88,7 @@ class FG_PT_armature_properties(bpy.types.Panel):
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def layout_armature_properties(self, obj, context):
-	from . import xml_manager
+	from ..xml import xml_manager
 	#----------------------------------------------------
 	layout = self.layout
 	xml_files = xml_manager.xml_files
@@ -109,7 +109,7 @@ def layout_armature_properties(self, obj, context):
 	row.alignment = 'LEFT'
 	if obj.data.fg.family != 'custom':
 		row.label( text="Property:" )
-		from . import xml_export
+		from ..xml import xml_export
 		value = xml_export.build_property_name( obj )
 		row.label( text=value )
 	else:
@@ -156,7 +156,7 @@ def layout_armature_properties(self, obj, context):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def layout_armature_tool(self, obj, context):
-	from . import xml_manager
+	from ..xml import xml_manager
 	#----------------------------------------------------
 	layout = self.layout
 	xml_files = xml_manager.xml_files

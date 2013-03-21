@@ -35,9 +35,10 @@ import os
 
 class FG_PT_empty_properties(bpy.types.Panel):
 	'''Flight Object Panel'''
-	bl_label = "Flightgear"
-	bl_space_type	= "VIEW_3D"
-	bl_region_type	= "TOOLS"
+	bl_label = "Flightgear contact"
+	bl_space_type	= 'PROPERTIES'
+	bl_region_type	= 'WINDOW'
+	bl_context	= 'object'
 
 	@classmethod
 	def poll(self,context):
@@ -56,7 +57,7 @@ class FG_PT_empty_properties(bpy.types.Panel):
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def layout_empty(self, obj, context):
-	from . import xml_manager
+	from ..xml import xml_manager
 	
 	layout = self.layout
 	xml_files = xml_manager.xml_files

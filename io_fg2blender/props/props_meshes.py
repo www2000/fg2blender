@@ -29,6 +29,11 @@
 
 
 import bpy
+import os
+
+
+
+
 bLock_update = False
 
 DEBUG = False
@@ -47,23 +52,47 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def update_ac_file( self, context ):
+		#------------------------------------------------------------------------------------------------------------------------------
+		def isGroupExist( groupName ):
+			groupName = os.path.basename(groupName)
+			print( "Test si le group : %s existe ??" % groupName )
+			for group in bpy.data.groups:
+				if group.name == groupName:
+					print( "Existe")
+					return True
+			print( "N'Existe pas")
+			return False
+		#------------------------------------------------------------------------------------------------------------------------------
+		def createGroup( groupName ):
+			groupName = os.path.basename(groupName)
+			bpy.ops.group.create( name = groupName )
+			print( "Creation du group : %s" % groupName )
+		#------------------------------------------------------------------------------------------------------------------------------
 		global bLock_update
-		obj = context.active_object
-		if obj  == None:
-			return None
-		if obj.type != 'MESH':
-			return None
+		from .. import fg2bl
+
 		if bLock_update == True:
 			return None
 
-		debug_info( 'update_ac_file "%s"  %s' % (obj.name, str(bLock_update))  )
+		active_object = context.active_object
+		if active_object  == None:
+			return None
+		if active_object.type != 'MESH':
+			return None
+
+		debug_info( 'update_ac_file "%s"  %s' % (active_object.name, str(bLock_update))  )
 			
 		bLock_update = True
 
-		active_object = context.active_object
 		ac_file = "" + active_object.data.fg.ac_file
-		ac_file = bpy.path.relpath( ac_file )
+		ac_file = bpy.path.abspath( ac_file )
+		ac_file = fg2bl.path.compute_path( ac_file )
+		
+		if not isGroupExist(ac_file):
+			createGroup(ac_file)
+		
 		active_object.data.fg.ac_file = ac_file
+		
 		for obj in context.selected_objects:
 			if obj.name == active_object.name:
 				continue

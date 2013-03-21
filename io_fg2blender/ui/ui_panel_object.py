@@ -78,7 +78,7 @@ class FG_PT_object_properties(bpy.types.Panel):
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def layout_object_tool(self, obj, context):
-	from . import xml_manager
+	from ..xml import xml_manager
 	
 	layout = self.layout
 	xml_files = xml_manager.xml_files
@@ -105,7 +105,7 @@ def layout_object_tool(self, obj, context):
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def layout_object_properties(self, obj, context):
-	from . import xml_manager
+	from ..xml import xml_manager
 	
 	layout = self.layout
 	xml_files = xml_manager.xml_files

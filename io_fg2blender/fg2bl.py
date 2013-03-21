@@ -106,11 +106,152 @@ class PATH:
 	#--------------------------------------------------------------------------------------------------------------------------------
 	def test_blender_filename( self ):
 		debug_info( "Name blend : %s"  % bpy.data.filepath )
+		#print( "Name blend : %s"  % bpy.data.filepath )
 		if bpy.data.filepath == "":
 			self.bSaveBlend = False
 		else:
 			self.bSaveBlend = True
-#--------------------------------------------------------------------------------------------------------------------------------
+
+	#--------------------------------------------------------------------------------------------------------------------------------
+	def compute_path( self, filepath ):
+		self.test_blender_filename()
+		debug_info( "Name blend : %s"  % bpy.data.filepath )
 		
+		if self.bSaveBlend:
+			return bpy.path.relpath( filepath )
+		else:
+			return filepath
+
+	#--------------------------------------------------------------------------------------------------------------------------------
+	def change_all_to_relatif( self ):
+		#----------------------------------------------------------------------------------------------------------------------------
+		def change_to_relatif( filepath ):
+			if filepath == "":
+				return ""
+			pathfile = bpy.path.relpath( filepath )
+			pathfile = "//" + os.path.normpath( pathfile[2:])
+			return pathfile
+			
+		#----------------------------------------------------------------------------------------------------------------------------
+		def change_mesh( obj ):
+			if obj:
+				pathfile = change_to_relatif( obj.data.fg.ac_file )
+				debug_info( "%s : %s" % (obj.name, pathfile) )
+				if pathfile != obj.data.fg.ac_file:
+					obj.data.fg.ac_file = pathfile
+		#----------------------------------------------------------------------------------------------------------------------------
+		def change_armature( obj ):
+			if obj:
+				pathfile = change_to_relatif( obj.data.fg.xml_file )
+				debug_info( "%s : %s" % (obj.name, pathfile) )
+				if pathfile != obj.data.fg.xml_file:
+					obj.data.fg.xml_file = pathfile
+		#----------------------------------------------------------------------------------------------------------------------------
+		def change_camera( obj ):
+			if obj:
+				pathfile = change_to_relatif( obj.data.fg.xml_file )
+				debug_info( "%s : %s" % (obj.name, pathfile) )
+				if pathfile != obj.data.fg.xml_file:
+					obj.data.fg.xml_file = pathfile
+		#----------------------------------------------------------------------------------------------------------------------------
+		def change_empty( obj ):
+			if obj:
+				pathfile = change_to_relatif( obj.data.fg.jsb_xml_file )
+				debug_info( "%s : %s" % (obj.name, pathfile) )
+				if pathfile != obj.data.fg.jsb_xm_file:
+					obj.data.fg.jsb_xml_file = pathfile
+		#----------------------------------------------------------------------------------------------------------------------------
+		
+		self.test_blender_filename()
+		
+		for obj in bpy.data.objects:
+			if obj.type == 'MESH':
+				change_mesh( obj )
+			if obj.type == 'ARMATURE':
+				change_armature( obj )
+			if obj.type == 'CAMERA':
+				change_camera( obj )
+			if obj.type == 'EMPTY':
+				change_empty( obj )
+		
+	#--------------------------------------------------------------------------------------------------------------------------------
+	def change_all_to_abs( self ):
+		#----------------------------------------------------------------------------------------------------------------------------
+		def change_to_abs( filepath ):
+			if filepath == "":
+				return ""
+			pathfile = bpy.path.abspath( filepath )
+			return pathfile
+			
+		#----------------------------------------------------------------------------------------------------------------------------
+		def change_mesh( obj ):
+			if obj:
+				pathfile = change_to_abs( obj.data.fg.ac_file )
+				debug_info( "%s : %s" % (obj.name, pathfile) )
+				if path != obj.data.fg.ac_file:
+					obj.data.fg.ac_file = pathfile
+		#----------------------------------------------------------------------------------------------------------------------------
+		def change_armature( obj ):
+			if obj:
+				pathfile = change_to_abs( obj.data.fg.xml_file )
+				debug_info( "%s : %s" % (obj.name, pathfile) )
+				if pathfile != obj.data.fg.xml_file:
+					obj.data.fg.xml_file = pathfile
+		#----------------------------------------------------------------------------------------------------------------------------
+		def change_camera( obj ):
+			if obj:
+				pathfile = change_to_abs( obj.data.fg.xml_file )
+				debug_info( "%s : %s" % (obj.name, pathfile) )
+				if pathfile != obj.data.fg.xml_file:
+					obj.data.fg.xml_file = pathfile
+		#----------------------------------------------------------------------------------------------------------------------------
+		def change_empty( obj ):
+			if obj:
+				pathfile = change_to_abs( obj.data.fg.jsb_xml_file )
+				debug_info( "%s : %s" % (obj.name, pathfile) )
+				if pathfile != obj.data.fg.jsb_xm_file:
+					obj.data.fg.jsb_xml_file = pathfile
+		#----------------------------------------------------------------------------------------------------------------------------
+		
+		self.test_blender_filename()
+		
+		for obj in bpy.data.objects:
+			if obj.type == 'MESH':
+				change_mesh( obj )
+			if obj.type == 'ARMATURE':
+				change_armature( obj )
+			if obj.type == 'CAMERA':
+				change_camera( obj )
+			if obj.type == 'EMPTY':
+				change_empty( obj )
+		
+#------------------------------------------------------------------------------------------------------------------------------------
 path = PATH()
+
+
+		
+#----------------------------------------------------------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------------------------------------------------------
+#
+#
+#
+#				REGISTER
+#
+#
+#----------------------------------------------------------------------------------------------------------------------------------
+
+#----------------------------------------------------------------------------------------------------------------------------------
+from bpy.app.handlers import persistent
+
+@persistent
+def cb_save_pre( dummy ):
+	global path
+	print( dummy )
+	path.change_all_to_relatif()
+
+
+bpy.app.handlers.save_pre.append( cb_save_pre )
+#----------------------------------------------------------------------------------------------------------------------------------
+
 

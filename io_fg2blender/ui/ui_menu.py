@@ -40,10 +40,21 @@ from bpy.props import BoolProperty
 from bpy.props import EnumProperty
 from bpy.props import CollectionProperty
 
-from .ac_manager import AC_OPTION
-from .xml_manager import XML_OPTION
+from ..meshes.ac3d.ac_manager import AC_OPTION
+from ..xml.xml_manager import XML_OPTION
 
 from . import *
+
+#----------------------------------------------------------------------------------------------------------------------------------
+#		At loading
+#----------------------------------------------------------------------------------------------------------------------------------
+def debug_info( aff ):
+	from .. import debug_file_debug
+
+	if debug_file_debug:
+		print( aff )
+#----------------------------------------------------------------------------------------------------------------------------------
+
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_root_menu(bpy.types.Menu):
@@ -157,9 +168,9 @@ class FG_OT_exec(bpy.types.Operator):
 	bl_label = "fg.exec"
 
 	def execute(self, context ):
-		from .ac_manager import AC_OPTION
-		from .xml_manager import XML_OPTION
-		from .xml_import import import_xml
+		from ..meshes.ac3d.ac_manager import AC_OPTION
+		from ..xml.xml_manager import XML_OPTION
+		from ..xml.xml_import import import_xml
 		
 		ac_option = AC_OPTION()
 		ac_option.smooth_all	= True
@@ -176,7 +187,7 @@ class FG_OT_exec(bpy.types.Operator):
 		xml_option.arma_layer_beg		= 11
 		xml_option.arma_layer_end		= 20
 		
-		from . import debug_file_debug
+		from .. import debug_file_debug
 		if debug_file_debug:
 			debug_info( "Raccourci Ctrl+F" )
 			f = open('/tmp/script-fg2bl', mode='r')
@@ -241,8 +252,8 @@ class FG_OT_exec2(bpy.types.Operator):
 		f.write( "    fg.jsb_attr : %s\n" % obj.fg.jsb_attr )
 		
 	def execute(self, context ):
-		from . import xml_manager
-		from . import fg2bl
+		from ..xml import xml_manager
+		from .. import fg2bl
 
 		f = open("/tmp/debug_script.txt", "w")
 

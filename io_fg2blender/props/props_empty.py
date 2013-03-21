@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE bLock_update #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -18,42 +18,49 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors:
+# Contributors: 
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #
-#									PROPS_CAMERA.PY
+#									PROPS_EMPTY.PY
 #
 #----------------------------------------------------------------------------------------------------------------------------------
-
 
 import bpy
 
-
-camera_items = 	[
+jsb_items = 	[
 			('None',		'None', ''),
-			('COCKPIT_VIEW',	'COCKPIT_VIEW', '')
+			('TAIL_GEAR',		'TAIL_GEAR', ''),
+			('RIGHT_GEAR',		'RIGHT_GEAR', ''),
+			('LEFT_GEAR',		'LEFT_GEAR', ''),
+			('CG',			'CG', ''),
+			('AERO_CENTER',		'AERO_CENTER', ''),
+			('ENGINE',		'ENGINE', ''),
+			('NOSE_CONTACT',	'NOSE_CONTACT', ''),
+			('RIGHT_CONTACT',	'RIGHT_CONTACT', ''),
+			('LEFT_CONTACT',	'LEFT_CONTACT', ''),
+			('TAIL_CONTACT',	'TAIL_CONTACT', '')
 		]
 			
 bLock_update = False
 
 #----------------------------------------------------------------------------------------------------------------------------------
 def debug_info( aff ):
-	from . import debug_props_camera
+	from .. import debug_props_empty
 	
-	if debug_props_camera:
+	if debug_props_empty:
 		print( aff )
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
-class FG_PROP_camera(bpy.types.PropertyGroup):
+class FG_PROP_empty(bpy.types.PropertyGroup):
 	#----------------------------------------------------------------------------------------------------------------------------------
 
-	def update_type_view( self, context ):
+	def update_jsb_attr( self, context ):
 		obj = context.active_object
-		debug_info( obj.name )
-		obj.name = "" + obj.data.fg.type_view
+		debug_info( 'update_jsb_attr "%s"' % obj.name )
+		obj.name = "" + obj.fg.jsb_attr
 		obj.show_name = True
 		return None	
 	#----------------------------------------------------------------------------------------------------------------------------------
@@ -68,27 +75,29 @@ class FG_PROP_camera(bpy.types.PropertyGroup):
 		bLock_update = True
 
 		active_object = context.active_object
-		xml_file = "" + active_object.data.fg.xml_file
+		xml_file = "" + active_object.fg.jsb_xml_file
 		xml_file = bpy.path.relpath( xml_file )
-		active_object.data.fg.xml_file = xml_file
+		active_object.fg.jsb_xml_file = xml_file
 		for obj in context.selected_objects:
 			if obj.name == active_object.name:
 				continue
-			if obj.type != 'CAMERA':
+			if obj.type != 'EMPTY':
 				continue
 			debug_info( "\t%s" % obj.name )
-			obj.data.fg.xml_file = "" + xml_file
+			obj.fg.jsb_xml_file = "" + xml_file
 			
 		bLock_update = False
 		return None	
 	#----------------------------------------------------------------------------------------------------------------------------------
-	xml_file	= bpy.props.StringProperty(	attr = 'xml_file', name = 'Filename', update=update_xml_file )
-	type_view	= bpy.props.EnumProperty(	attr = 'type_view', name = 'Attribute', items = camera_items, default = 'None', update = update_type_view )
+
+
+	jsb_xml_file 	= bpy.props.StringProperty(	attr = 'jsb_xml_file', name = 'Filename', update = update_xml_file)
+	jsb_attr	= bpy.props.EnumProperty(	attr = 'jsb_attr', name = 'Attribute', items = jsb_items, default = 'None', update = update_jsb_attr )
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def RNA_camera():
-	bpy.types.Camera.fg = bpy.props.PointerProperty(	attr="xml_file", type=FG_PROP_camera, name="xml_file", description="File .xml")
-	bpy.types.Camera.fg = bpy.props.PointerProperty(	attr="type_view", type=FG_PROP_camera, name="type_view", description="Name of view")
+def RNA_empty():
+	bpy.types.Object.fg = bpy.props.PointerProperty(	attr="jsb_xml_file", type=FG_PROP_empty, name="jsb_xml_file", description="File .xml")
+	bpy.types.Object.fg = bpy.props.PointerProperty(	attr="jsb_attr", type=FG_PROP_empty, name="Attribute", description="JsbSim attribute")
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
@@ -98,16 +107,11 @@ def RNA_camera():
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
-#def removeProjectRNA():
-	# complex classes, depending on basic classes
-#----------------------------------------------------------------------------------------------------------------------------------
-
 def register():
-	bpy.utils.register_class( FG_PROP_camera )
-	RNA_camera()
+	bpy.utils.register_class( FG_PROP_empty )
+	RNA_empty()
+#----------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
-	bpy.utils.unregister_class( FG_PROP_camera )
-	#removeProjectRNA()
-#----------------------------------------------------------------------------------------------------------------------------------
+	bpy.utils.unregister_class( FG_PROP_empty )
 

@@ -40,7 +40,7 @@ from . import *
 
 
 TEX_PATH		= False
-APPLY_MODIFIERS = True
+APPLY_MODIFIERS 	= True
 SELECT_ONLY		= True
 
 list_material = []
@@ -56,6 +56,8 @@ DEBUG_VERTICE = False
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff):
+	from ... import debug_ac3d_export
+
 	if debug_ac3d_export:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------

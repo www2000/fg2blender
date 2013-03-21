@@ -27,9 +27,12 @@
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
+def debug_info( aff ):
+	from .. import debug_props_armature
+	
+	if debug_props_armature:
+		print( aff )
+#----------------------------------------------------------------------------------------------------------------------------------
  
 familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear', 'consumable','surface_position']
  
@@ -164,7 +167,6 @@ from . import *
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def update_keyframe( obj, coef ):
-	#from mathutils import Euler
 	
 	if obj.animation_data:
 		for fcurve in obj.animation_data.action.fcurves:
@@ -175,7 +177,6 @@ def update_keyframe( obj, coef ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def update_keyframe_time( obj, coef ):
-	#from mathutils import Euler
 	
 	if obj.animation_data:
 		for fcurve in obj.animation_data.action.fcurves:
@@ -283,6 +284,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 	#---------------------------------------------------------------------------
 
 	def creer_xml(self, filename, obj):
+		from ..xml import xml_manager
 		new_filename = ""
 		new_no = 0
 		for xml_file, no in xml_manager.xml_files:
@@ -307,17 +309,23 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 	def update_xml_file( self, context ):
 		global bLock_update
-		active_object = context.active_object
+		from .. import fg2bl
+
 		if bLock_update == True:
 			return None
+		
+		active_object = context.active_object
 
 		debug_info( 'update_xml_file "%s"  %s' % (active_object.name, str(bLock_update))  )
+		debug_info( ' value :  %s' % (active_object.data.fg.xml_file)  )
 			
 		bLock_update = True
 
-		#active_object = context.active_object
 		xml_file = "" + active_object.data.fg.xml_file
-		#xml_file = bpy.path.relpath( xml_file )
+		xml_file = bpy.path.abspath( xml_file )
+		xml_file = fg2bl.path.compute_path( xml_file )
+
+		debug_info( ' compute value :  %s' % (xml_file)  )
 
 		if active_object.data.fg.xml_file == xml_file:
 			debug_info("Don't change!!!")

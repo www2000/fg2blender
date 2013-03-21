@@ -49,8 +49,10 @@ from bpy.props import BoolProperty
 from bpy.props import EnumProperty
 from bpy.props import CollectionProperty
 
+#--------------------------------------------------------------------------------------------------------------------------------
 STACK_SAVE_KEYFRAMES = []
 
+#--------------------------------------------------------------------------------------------------------------------------------
 class SAVE_KEYFRAME:
 	def __init__(self):
 		self.armature_name			= ""
@@ -58,12 +60,20 @@ class SAVE_KEYFRAME:
 
 STACK_SAVE_PARENT = []
 
+#--------------------------------------------------------------------------------------------------------------------------------
 class SAVE_PARENT:
 	def __init__(self):
 		self.object_name			= ""
 		self.parent_name			= ""
 
-#
+#--------------------------------------------------------------------------------------------------------------------------------
+def debug_info(aff):
+	from .. import debug_ops_flightgear
+
+	if debug_ops_flightgear:
+		print(aff)
+
+
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_translate(bpy.types.Operator):
@@ -426,7 +436,7 @@ class FG_OT_create_anim(bpy.types.Operator):
 		return True
 
 	def execute(self, context):
-		from . import xml_manager
+		from ..xml import xml_manager
 		xml_manager.create_anims()
 		xml_manager.create_texts()
 		# change orgin for all objects
@@ -449,7 +459,7 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 		return context.scene.objects.active.type == 'ARMATURE'
 
 	def execute(self, context):
-		from . import xml_manager
+		from ..xml import xml_manager
 		global STACK_SAVE_KEYFRAMES
 
 		debug_info( 'bpy.ops.view3d.save_keyframe()' )
@@ -498,7 +508,7 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 		return context.scene.objects.active.type == 'ARMATURE'
 
 	def execute(self, context):
-		from . import xml_manager
+		from ..xml import xml_manager
 		global STACK_SAVE_KEYFRAMES
 
 		debug_info( 'bpy.ops.view3d.restore_keyframe()' )
@@ -543,7 +553,7 @@ class FG_OT_save_parent(bpy.types.Operator):
 		return context.scene.objects.active.type in ('MESH','ARMATURE','EMPTY')
 
 	def execute(self, context):
-		from . import xml_manager
+		from ..xml import xml_manager
 		global STACK_SAVE_PARENT
 
 		debug_info( 'bpy.ops.view3d.save_parent()' )
@@ -598,7 +608,7 @@ class FG_OT_restore_parent(bpy.types.Operator):
 		return context.scene.objects.active.type in ('MESH','ARMATURE','EMPTY')
 
 	def execute(self, context):
-		from . import xml_manager
+		from ..xml import xml_manager
 		global STACK_SAVE_PARENT
 
 		debug_info( 'bpy.ops.view3d.restore_parent()' )
@@ -641,7 +651,7 @@ class FG_OT_copy_xml_file(bpy.types.Operator):
 		#return True
 
 	def execute(self, context):
-		from . import xml_manager
+		from ..xml import xml_manager
 
 		debug_info( 'bpy.ops.view3d.copy_xml_file()' )
 		active_obj = context.scene.objects.active
@@ -686,7 +696,7 @@ class FG_OT_copy_ac_file(bpy.types.Operator):
 		#return True
 
 	def execute(self, context):
-		from . import xml_manager
+		from ..xml import xml_manager
 
 		debug_info( 'bpy.ops.view3d.copy_ac_file()' )
 		active_obj = context.scene.objects.active
@@ -717,7 +727,7 @@ class FG_OT_copy_property(bpy.types.Operator):
 		#return True
 
 	def execute(self, context):
-		from . import xml_manager
+		from ..xml import xml_manager
 
 		debug_info( 'bpy.ops.view3d.copy_property()' )
 
@@ -771,7 +781,7 @@ class FG_OT_init_rotation(bpy.types.Operator):
 		#return True
 
 	def execute(self, context):
-		from . import xml_manager
+		from ..xml import xml_manager
 		
 		#-------------------------------------------------------------------------------------------
 		def insert_keyframe_rotation( obj_armature, frame, value ):
@@ -837,7 +847,7 @@ class FG_OT_init_rotation_zero(bpy.types.Operator):
 		#return True
 
 	def execute(self, context):
-		from . import xml_manager
+		from ..xml import xml_manager
 		
 		#-------------------------------------------------------------------------------------------
 		def insert_keyframe_rotation( obj_armature, frame, value ):
@@ -1236,9 +1246,9 @@ class FG_OT_write_xml(bpy.types.Operator):
 	#---------------------------------------------------------------------------
 
 	def charge_xml(self, context, filename, no):
-		from .xml_import import charge_xml
-		from . import xml_export
-		from . import xml_import
+		from ..xml.xml_import import charge_xml
+		from ..xml import xml_export
+		from ..xml import xml_import
 
 		debug_info( 'charge_xml "%s"' % filename )
 		name = os.path.basename( filename )
@@ -1265,7 +1275,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 		bpy.data.texts[script_name].write( node.toprettyxml() )
 		
 		debug_info( 'Filename "%s"' % filename )
-		from . import props_armature
+		from ..props import props_armature
 		if obj.data.fg.bWriteDisc:
 			obj = bpy.data.objects[self.obj_name]
 			f = open(filename, 'w')
@@ -1288,7 +1298,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 		debug_info( 'Save xml_file "%s"' % self.obj_name )
 		obj = bpy.data.objects[self.obj_name]
 		if obj.type == 'CAMERA':
-			from . import xml_camera
+			from ..xml import xml_camera
 			filename = obj.data.fg.xml_file
 			filename = bpy.path.abspath( filename )
 			xml_camera.write_camera( context, filename )
@@ -1337,7 +1347,7 @@ class FG_OT_write_jsb(bpy.types.Operator):
 		filename = bpy.data.objects[self.obj_name].fg.jsb_xml_file 
 		filename = bpy.path.abspath( filename )
 		debug_info( 'Save JSBsim "%s"' % filename )
-		from . import xml_jsbsim
+		from ..xml import xml_jsbsim
 		xml_jsbsim.write_jsbsim( context, filename )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1431,7 +1441,7 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 		return True
 
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
-		from . import ac_export
+		from ..meshes.ac3d import ac_export
 		#-----------------------------------------------------------------------------------------------------
 
 		def set_ac_file( ac_filename ):
@@ -1468,6 +1478,8 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 			debug_info( str(group) )
 			if group.name.find('.ac') != -1:
 				group_name = group.name
+			else:
+				print( "Can't export to AC3D : object %s is not in a group" %bpy.data.objects[self.object_name].name )
 			debug_info( group_name )
 			set_ac_file( group_name )
 		
@@ -1499,7 +1511,7 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 			debug_info( obj.name )
 			
 		#clear_parent( list_objects )
-		from . import xml_import
+		from ..xml import xml_import
 		ac_export.write_ac_file( context, xml_import.conversion(filename), list_objects, True, False, True )
 		#restore_parent( list_objects )
 		return {'FINISHED'}
@@ -1543,6 +1555,44 @@ class FG_OT_transforme_to_translate(bpy.types.Operator):
 				continue
 			obj.data.fg.type_anim = 2
 		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+class FG_OT_relpath(bpy.types.Operator):
+	'''C'est un exemple d'operateur blender '''
+	bl_idname = "object.relpath"					
+	bl_label = "Exemple d'operateur"
+	bl_options = {'REGISTER', 'UNDO'}
+	'''
+	@classmethod
+	def poll(cls, context):
+		return True
+	'''
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		# ce que l'on veut faire
+		debug_info( "HelloWord" )
+		from .. import fg2bl
+		fg2bl.path.change_all_to_relatif()
+		return {'FINISHED'}
+		
+
+#----------------------------------------------------------------------------------------------------------------------------------
+class FG_OT_abspath(bpy.types.Operator):
+	'''C'est un exemple d'operateur blender '''
+	bl_idname = "object.abspath"					
+	bl_label = "Exemple d'operateur"
+	bl_options = {'REGISTER', 'UNDO'}
+	'''
+	@classmethod
+	def poll(cls, context):
+		return True
+	'''
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		# ce que l'on veut faire
+		debug_info( "HelloWord" )
+		from .. import fg2bl
+		fg2bl.path.change_all_to_abs()
+		return {'FINISHED'}
+		
+
 #----------------------------------------------------------------------------------------------------------------------------------
 # Sample : simple operator
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1631,8 +1681,8 @@ class MousePanel(bpy.types.Panel):
 #	Registration
 #   Not really necessary to register the class, because this happens
 #   automatically when the module is registered. OTOH, it does not hurt either.
-bpy.utils.register_class(SimpleMouseOperator)
-bpy.utils.register_class(MousePanel)
+#bpy.utils.register_class(SimpleMouseOperator)
+#bpy.utils.register_class(MousePanel)
  
 # Automatically display mouse position on startup
 #bpy.ops.wm.mouse_position('INVOKE_DEFAULT')
@@ -1683,6 +1733,8 @@ def register():
 	bpy.utils.register_class( FG_OT_save_ac_file )
 	bpy.utils.register_class( FG_OT_transforme_to_rotate )
 	bpy.utils.register_class( FG_OT_transforme_to_translate )
+	bpy.utils.register_class( FG_OT_relpath )
+	bpy.utils.register_class( FG_OT_abspath )
 	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
@@ -1719,4 +1771,6 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_save_ac_file )
 	bpy.utils.unregister_class( FG_OT_transforme_to_rotate )
 	bpy.utils.unregister_class( FG_OT_transforme_to_translate )
+	bpy.utils.unregister_class( FG_OT_relpath )
+	bpy.utils.unregister_class( FG_OT_abspath )
 

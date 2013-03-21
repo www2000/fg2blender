@@ -26,16 +26,18 @@
 #									XML_MANAGER.PY
 #
 #----------------------------------------------------------------------------------------------------------------------------------
+import bpy
 import xml.dom.minidom
 import os
+import time
 
 from mathutils import Vector
 from mathutils import Euler
 
 from . import *
-from . import fg2bl
+from .. import fg2bl
 
-from .ac_manager import AC_FILE
+from ..meshes.ac3d.ac_manager import AC_FILE
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #add_on_path = ""
@@ -50,7 +52,7 @@ no_debug = 0
 #		At loading
 #----------------------------------------------------------------------------------------------------------------------------------
 def debug_info( aff ):
-	from . import debug_xml_manager
+	from .. import debug_xml_manager
 	
 	if debug_xml_manager:
 		print( aff )
@@ -702,7 +704,7 @@ def assign_obj_to_anim():
 		if len(dic_name) == 0:
 			continue
 
-		from . import debug_xml_manager
+		from .. import debug_xml_manager
 		if debug_xml_manager:
 			print_dic_name( xml_file, dic_name )
 		

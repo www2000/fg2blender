@@ -61,23 +61,27 @@ from bpy.props import BoolProperty
 from bpy.props import EnumProperty
 from bpy.props import CollectionProperty
 
-from .ac_manager import AC_OPTION
-from .xml_manager import XML_OPTION
+from .meshes.ac3d.ac_manager import AC_OPTION
+from .xml.xml_manager import XML_OPTION
 
 
 
 DEBUG = False
 
-debug_file_debug	= False
-debug_xml_manager	= False
-debug_xml_import	= False
-debug_xml_export	= False
-debug_xml_anim		= False
-debug_ac3d_import	= False
-debug_ac3d_export	= False
+debug_file_debug		= False
+debug_xml_manager		= False
+debug_xml_import		= False
+debug_xml_export		= False
+debug_xml_camera		= True
+debug_xml_jsbsim		= True
+debug_xml_anim			= False
+debug_ac3d_import		= False
+debug_ac3d_export		= False
 debug_fg2bl			= False
-debug_props_camera	= False
-debug_props_empty	= False
+debug_props_armature		= False
+debug_props_camera		= False
+debug_props_empty		= False
+debug_ops_flightgear		= False
 
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -145,7 +149,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 
 		paths = [os.path.join(self.directory, name.name)	for name in self.files]
 			
-		from .xml_import import import_xml
+		from .xml.xml_import import import_xml
 		for filename in paths:
 			debug_info( filename )
 			ac_option = AC_OPTION()
@@ -213,12 +217,12 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 
 		paths = [os.path.join(self.directory, name.name)	for name in self.files]
 			
-		from .ac_import import read_ac
+		from .meshes.ac3d.ac_import import read_ac
 		for filename in paths:
 			debug_info( filename )
 			ac_option = AC_OPTION()
 			ac_option.context		= context
-			
+			print ("import ac : %s" % os.path.basename(filename) )
 			global debug_file_debug
 			if debug_file_debug:
 				f = open('/tmp/script-fg2bl', mode='w')
@@ -244,19 +248,19 @@ def menu_func_import(self, context):
     self.layout.operator(ImportAC.bl_idname, text="Flightgear (.ac)")		# text=Title in the menu
 
 def register():
-	from . import ops_flightgear
-	from . import ops_unwrap
-	from . import props_armature
-	from . import props_meshes
-	from . import props_empty
-	from . import props_camera
-	from . import ui_menu
-	from . import ui_panel_armature
-	from . import ui_panel_object
-	from . import ui_panel_empty
-	from . import ui_panel_camera
-	from . import ui_shortcut
-	from . import ui_button
+	from .ops import ops_flightgear
+	from .ops import ops_unwrap
+	from .props import props_armature
+	from .props import props_meshes
+	from .props import props_empty
+	from .props import props_camera
+	from .ui import ui_menu
+	from .ui import ui_panel_armature
+	from .ui import ui_panel_object
+	from .ui import ui_panel_empty
+	from .ui import ui_panel_camera
+	from .ui import ui_shortcut
+	from .ui import ui_button
 
 	bpy.utils.register_class(ImportFG)
 	bpy.utils.register_class(ImportAC)
@@ -283,39 +287,47 @@ def register():
 		global	debug_xml_manager
 		global	debug_xml_import
 		global	debug_xml_export
+		global	debug_xml_camera
+		global	debug_xml_jsbsim
 		global	debug_xml_anim
 		global	debug_ac3d_import
 		global	debug_ac3d_export
 		global	debug_fg2bl
 		global	DEBUG
 		global	debug_file_debug
+		global	debug_ops_flightgear
+		global  debug_props_armature
 		
 		debug_file_debug	= True
-		DEBUG				= True
+		DEBUG			= True
 		debug_info( "File debug OK" )
 
-		debug_fg2bl			= True
-		debug_xml_manager	= False
-		debug_xml_import	= True
-		debug_xml_export	= True
-		debug_xml_anim		= True
-		debug_ac3d_import	= False
-		debug_ac3d_export	= False
+		debug_fg2bl				= True
+		debug_xml_manager		= False
+		debug_xml_import		= False
+		debug_props_armature	= False
+		debug_xml_export		= False
+		debug_xml_camera		= False
+		debug_xml_jsbsim		= False
+		debug_xml_anim			= False
+		debug_ac3d_import		= False
+		debug_ac3d_export		= False
+		debug_ops_flightgear	= False
 	
 def unregister():
-	from . import ops_flightgear
-	from . import ops_unwrap
-	from . import props_armature
-	from . import props_meshes
-	from . import props_empty
-	from . import props_camera
-	from . import ui_menu
-	from . import ui_panel_armature
-	from . import ui_panel_object
-	from . import ui_panel_empty
-	from . import ui_panel_camera
-	from . import ui_shortcut
-	from . import ui_button
+	from .ops import ops_flightgear
+	from .osp import ops_unwrap
+	from .props import props_armature
+	from .props import props_meshes
+	from .props import props_empty
+	from .props import props_camera
+	from .ui import ui_menu
+	from .ui import ui_panel_armature
+	from .ui import ui_panel_object
+	from .ui import ui_panel_empty
+	from .ui import ui_panel_camera
+	from .ui import ui_shortcut
+	from .ui import ui_button
 
 	bpy.utils.unregister_class(ImportFG)
 	bpy.utils.unregister_class(ImportAC)

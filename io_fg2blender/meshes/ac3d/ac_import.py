@@ -90,6 +90,7 @@ def tronc_name(name_path):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff):
+	from ... import debug_ac3d_import
 	#global DEBUG
 	if debug_ac3d_import:
 		print( aff )

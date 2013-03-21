@@ -37,13 +37,13 @@ from mathutils import Euler
 
 from math import radians
 
-from . import ac_manager
+from ..meshes.ac3d import ac_manager
 from . import *
 
 
 
 def debug_info( aff):
-	from . import debug_xml_anim
+	from .. import debug_xml_anim
 	
 	if debug_xml_anim:
 		print( aff )
@@ -90,7 +90,7 @@ class ANIM:
 		
 		self.xml_file		= "" + xml_manager.xml_current.name
 		self.xml_file_no	= 0 + xml_manager.xml_current.no
-		self.layer			= 0 + xml_import.arma_layer
+		self.layer		= 0 + xml_import.arma_layer
 		self.active_layer	= xml_import.option_arma_rotate_layer
 
 		#self.extract_type( node )
@@ -103,7 +103,8 @@ class ANIM:
 		from .xml_import import ret_text_value
 		from .xml_import import tabs
 		from .xml_manager import get_xml_file
-		from . import xml_import, fg2bl
+		from . import xml_import
+		from .. import fg2bl
 
 		childs = node.getElementsByTagName('texture')
 		if childs:
@@ -406,7 +407,7 @@ class ANIM:
 	# create_property( self, obj )
 	#----------------------------------------------
 	def create_property( self, obj ):
-		from . import props_armature
+		from ..props import props_armature
 
 		#----------------------------------------------
 		# extract_interpolation( self, node)
@@ -998,6 +999,7 @@ class ANIM_SHADER(ANIM):
 			img = bpy.data.images.load( name_path )
 		except:
 			debug_info( '*** erreur **** %s introuvale' % (name_path) )
+			'''
 			right_name = name_path.partition('Aircraft')[2]
 			name_path = '/media/sauvegarde/fg-2.6/install/fgfs/fgdata/Aircraft' + right_name
 			name_path = xml_import.conversion( name_path )
@@ -1008,6 +1010,7 @@ class ANIM_SHADER(ANIM):
 				#img = bpy.data.images.new(name='void', width=1024, height=1024, alpha=True, float_buffer=True)
 			else:
 				return None
+			'''
 	
 		tex = bpy.data.textures.new( img_name, 'IMAGE')
 		tex.image = img
@@ -1129,7 +1132,8 @@ class ANIM_JSB(ANIM):
 		from .xml_import import ret_float_value
 		from .xml_import import tabs
 		from .xml_manager import get_xml_file
-		from . import xml_import, fg2bl
+		from . import xml_import
+		from .. import fg2bl
 
 		positions	= node.getElementsByTagName('position')
 		times		= node.getElementsByTagName('time')

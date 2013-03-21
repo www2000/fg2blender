@@ -40,7 +40,7 @@ from mathutils import Vector
 from mathutils import Euler
 from mathutils import Matrix
 
-from . import *
+#from . import *
 #from .__init__ import debug_xml_export as DEBUG
 
 #---------------------------------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ CG = Vector( (0.0,0.0,0.0) )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff):
-	from . import debug_xml_export
+	from .. import debug_xml_export
 
 	if debug_xml_export:
 		print( aff )
@@ -249,6 +249,8 @@ def write_animation( context, node, obj ):
 						continue
 					else:
 						name = obj.name
+					# for obj file
+					#name = name + '_' + name + '.mesh'
 					debug_info( 'Append_object "%s" pour "%s"' % (name,armature.name) )
 					o = create_node_value( 'object-name', name )
 					node_animation.appendChild( o )
@@ -501,7 +503,7 @@ def appendPath( nodeDoc, node, filename, no ):
 			if obj.parent.type == 'ARMATURE':
 				obj_armature = obj.parent
 				if bpy.path.abspath(obj_armature.data.fg.xml_file).find( filename ) != -1 and obj_armature.data.fg.xml_file_no == no:
-					from . import fg2bl 
+					from .. import fg2bl 
 					ac_file = "" + fg2bl.path.rel_from( obj.data.fg.ac_file, filename  )
 					path = nodeDoc.createElement( 'path' )
 					txt  = nodeDoc.createTextNode( ac_file )

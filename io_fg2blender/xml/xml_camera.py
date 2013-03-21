@@ -48,8 +48,9 @@ CG = Vector( (0.0,0.0,0.0) )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff):
-	global DEBUG_INFO
-	if DEBUG_INFO:
+	from .. import debug_xml_camera
+
+	if debug_xml_camera:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 		
@@ -108,7 +109,7 @@ def write_camera( context, filename  ):
  	
 	debug_info( 'xml_camera.write_camera() Write xml_file "%s"' % filename )
 	basename = os.path.basename( filename )
-	template = xml_manager.addon_path + os.sep + 'io_fg2blender' + os.sep + 'view_template.xml'
+	template = xml_manager.addon_path + os.sep + 'io_fg2blender' + os.sep + 'templates' + os.sep + 'view_template.xml'
 	debug_info( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % template )
 
 	doc = xml_import.charge_xml( template )
