@@ -592,7 +592,7 @@ def create_anims():
 	#
 	#	Create material Pick an groupd (ac filename)
 	#
-	print( "  -Create new materials")
+	debug_info( "  -Create new materials")
 	create_material_pick()
 	# Change layer
 	#bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
@@ -608,7 +608,7 @@ def create_anims():
 	#
 	#	Change anim time 
 	#
-	print( "  -Change anim time from jsbsim")
+	debug_info( "  -Change anim time from jsbsim")
 	for xml_file, no in xml_files:
 		for anim in xml_file.anims:
 			if  anim.type == 'jsb':
@@ -617,7 +617,7 @@ def create_anims():
 	#
 	#	Create Anim
 	#
-	print( "  -Create animations")
+	debug_info( "  -Create animations")
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
 		debug_info( '------' )
@@ -649,13 +649,13 @@ def create_anims():
 	#
 	#	Assign objct to anim
 	#
-	print( "  -Assign objects to animations")
+	debug_info( "  -Assign objects to animations")
 	bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
 	assign_obj_to_anim()
 	#
 	#	Insert keyframe
 	#
-	print( "  -Insert keyframe")
+	debug_info( "  -Insert keyframe")
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
 		for anim in xml_file.anims:
@@ -668,7 +668,7 @@ def create_anims():
 	bpy.context.scene.layers = save_active_layers
 
 	time_end = time.time()
-	print( "Create animations in  %0.2f sec" % (time_end-time_deb) )
+	debug_info( "Create animations in  %0.2f sec" % (time_end-time_deb) )
 #bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
 #----------------------------------------------------------------------------------------------------------------------------------
 
