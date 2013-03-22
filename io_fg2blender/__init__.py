@@ -77,11 +77,13 @@ debug_xml_jsbsim		= True
 debug_xml_anim			= False
 debug_ac3d_import		= False
 debug_ac3d_export		= False
-debug_fg2bl			= False
+debug_fg2bl			= True
 debug_props_armature		= False
 debug_props_camera		= False
 debug_props_empty		= False
+debug_props_meshes		= False
 debug_ops_flightgear		= False
+debug_unwrap			= False
 
 
 #----------------------------------------------------------------------------------------------------------------------------------

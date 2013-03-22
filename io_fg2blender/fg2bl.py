@@ -247,11 +247,10 @@ from bpy.app.handlers import persistent
 @persistent
 def cb_save_pre( dummy ):
 	global path
-	print( dummy )
 	path.change_all_to_relatif()
 
 
-bpy.app.handlers.save_pre.append( cb_save_pre )
+bpy.app.handlers.save_post.append( cb_save_pre )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 

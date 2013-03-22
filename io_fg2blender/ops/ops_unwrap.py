@@ -46,6 +46,13 @@ from bpy.props import EnumProperty
 from bpy.props import CollectionProperty
 
 #----------------------------------------------------------------------------------------------------------------------------------
+def debug_info( aff ):
+	from .. import debug_unwrap
+	
+	if debug_unwrap:
+		print( aff )
+
+#----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_unwrap_4_faces(bpy.types.Operator):
 	'''C'est un exemple d'operateur blender '''
