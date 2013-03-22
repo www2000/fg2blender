@@ -156,10 +156,11 @@ class PATH:
 		#----------------------------------------------------------------------------------------------------------------------------
 		def change_empty( obj ):
 			if obj:
-				pathfile = change_to_relatif( obj.data.fg.jsb_xml_file )
-				debug_info( "%s : %s" % (obj.name, pathfile) )
-				if pathfile != obj.data.fg.jsb_xm_file:
-					obj.data.fg.jsb_xml_file = pathfile
+				if hasattr( obj.data, "fg" ):
+					pathfile = change_to_relatif( obj.data.fg.jsb_xml_file )
+					debug_info( "%s : %s" % (obj.name, pathfile) )
+					if pathfile != obj.data.fg.jsb_xm_file:
+						obj.data.fg.jsb_xml_file = pathfile
 		#----------------------------------------------------------------------------------------------------------------------------
 		
 		self.test_blender_filename()
