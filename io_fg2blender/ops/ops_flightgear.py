@@ -149,9 +149,9 @@ class FG_OT_create_translate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_translate_axis(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''Add armature type translate axis '''
 	bl_idname = "view3d.create_translate_axis"
-	bl_label = "Create Rotate"
+	bl_label = "Create Translate axis"
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	axis = StringProperty(default="")
@@ -323,9 +323,9 @@ class FG_OT_create_rotate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_rotate_axis(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''Add armature type rotate axis '''
 	bl_idname = "view3d.create_rotate_axis"
-	bl_label = "Create Rotate"
+	bl_label = "Create Rotate axis"
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	axis = StringProperty(default="")
@@ -426,7 +426,7 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_anim(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''???????????'''
 	bl_idname = "view3d.create_anim"
 	bl_label = "Create Animation"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -447,7 +447,7 @@ class FG_OT_create_anim(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_save_keyframe(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''???????????'''
 	bl_idname = "view3d.save_keyframe"
 	bl_label = "Save animation keyframe"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -496,7 +496,7 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_restore_keyframe(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''???????????'''
 	bl_idname = "view3d.restore_keyframe"
 	bl_label = "Restore animation keyframe"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -541,9 +541,9 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_save_parent(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''?????????'''
 	bl_idname = "view3d.save_parent"
-	bl_label = "Create Animation"
+	bl_label = "Save parent"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -596,9 +596,9 @@ class FG_OT_save_parent(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_restore_parent(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''????????'''
 	bl_idname = "view3d.restore_parent"
-	bl_label = "Create Animation"
+	bl_label = "Restore parent"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -638,9 +638,9 @@ class FG_OT_restore_parent(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_copy_xml_file(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''Assign XML filename from active object to selected objects'''
 	bl_idname = "view3d.copy_xml_file"
-	bl_label = "Copy xml file"
+	bl_label = "Copy XML filename"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -683,9 +683,9 @@ class FG_OT_copy_xml_file(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_copy_ac_file(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''Assign AC3D filename from active object to selected objects'''
 	bl_idname = "view3d.copy_ac_file"
-	bl_label = "Copy ac file"
+	bl_label = "Copy AC3D filename"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -714,9 +714,9 @@ class FG_OT_copy_ac_file(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_copy_property(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''Assign FG property from active object to selected objects'''
 	bl_idname = "view3d.copy_property"
-	bl_label = "Copy property"
+	bl_label = "Copy FG property"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -768,9 +768,9 @@ class FG_OT_copy_property(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_init_rotation(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''???????????'''
 	bl_idname = "view3d.init_rotation"
-	bl_label = "Copy property"
+	bl_label = "?????????????"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -834,9 +834,9 @@ class FG_OT_init_rotation(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_init_rotation_zero(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''???????????????'''
 	bl_idname = "view3d.init_rotation_zero"
-	bl_label = "Copy property"
+	bl_label = "????????????"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -892,9 +892,9 @@ class FG_OT_init_rotation_zero(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_edges_split(bpy.types.Operator):
-	'''Add edge split sor select object '''
+	'''Apply edge split to selected objects '''
 	bl_idname = "view3d.edge_split"
-	bl_label = "Edge split"
+	bl_label = "Apply edge split"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -960,6 +960,7 @@ class FG_OT_edges_split(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_select_property(bpy.types.Operator):
+	'''Select all objects with same property than active object'''
 	bl_idname = "view3d.select_property"
 	bl_label = "Select property"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -1013,8 +1014,9 @@ class FG_OT_select_property(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_select_armature_property(bpy.types.Operator):
+	'''????????????'''
 	bl_idname = "view3d.select_armature_property"
-	bl_label = "Select property"
+	bl_label = "??????????"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -1040,9 +1042,9 @@ class FG_OT_select_armature_property(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 class FG_OT_show_animation(bpy.types.Operator):
-	'''Show all object used by the same property and hid other '''
+	'''Show all objects with the same property and hide other'''
 	bl_idname = "view3d.show_animation"
-	bl_label = "Show animate objects"
+	bl_label = "Show animated objects"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -1061,7 +1063,7 @@ class FG_OT_show_animation(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 class FG_OT_show_all(bpy.types.Operator):
-	'''Show all object used by the same property and hid other '''
+	'''Show all objects'''
 	bl_idname = "view3d.show_all"
 	bl_label = "Show all objects"
 	bl_options = {'REGISTER', 'UNDO'}
@@ -1411,9 +1413,9 @@ class FG_OT_insertion_keyframe_translate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_copy_name_bl2ac(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
+	'''Copy object name to Mesh Name for selected objects'''
 	bl_idname = "view3d.copy_name_bl2ac"					# sera appelé par bpy.ops.view3d.exemple()
-	bl_label = "Copy blender name in ac name "
+	bl_label = "Copy object name in Mesh Name"
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -1421,15 +1423,20 @@ class FG_OT_copy_name_bl2ac(bpy.types.Operator):
 		return True
 
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		current_obj = bpy.context.scene.objects.active
+
 		for obj in context.selected_objects:
 			if obj.type != 'MESH':
 				continue
-			obj.data.fg.name_ac = obj.name
+			bpy.context.scene.objects.active = obj
+			obj.data.fg.name_ac = "" + obj.name
+
+		bpy.context.scene.objects.active = current_obj
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_save_ac_file(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
+	'''Save AC3D file (create it automatically if not exit)'''
 	bl_idname = "view3d.save_ac_file"					# sera appelé par bpy.ops.view3d.exemple()
 	bl_label = "Save ac file "
 	bl_options = {'REGISTER', 'UNDO'}
