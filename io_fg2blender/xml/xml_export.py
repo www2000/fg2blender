@@ -206,7 +206,7 @@ def write_animation( context, node, obj ):
 			entry = create_node( 'entry' )
 			x = keyframe.co.x
 			y = keyframe.co.y
-			y = y * armature.scale.y
+			#y = y * armature.scale.y
 			debug_info( 'x=%0.2f y=%0.2f' % (x, y) )
 			tFrame = armature.data.fg.time * bpy.data.scenes[0].render.fps - 1
 			x = (x -1.0)/tFrame
