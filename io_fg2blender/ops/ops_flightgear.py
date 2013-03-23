@@ -1227,6 +1227,8 @@ class FG_OT_write_xml(bpy.types.Operator):
 	#---------------------------------------------------------------------------
 
 	def creer_xml(self, filename):
+		from ..xml import xml_manager
+
 		new_filename = ""
 		new_no = 0
 		for xml_file, no in xml_manager.xml_files:
@@ -1297,6 +1299,8 @@ class FG_OT_write_xml(bpy.types.Operator):
 	#---------------------------------------------------------------------------
 
 	def invoke(self, context, event):
+		from ..xml import xml_manager
+		
 		debug_info( 'Save xml_file "%s"' % self.obj_name )
 		obj = bpy.data.objects[self.obj_name]
 		if obj.type == 'CAMERA':
@@ -1516,6 +1520,7 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 
 		for obj in list_objects:
 			debug_info( obj.name )
+			print( obj.name )
 			
 		#clear_parent( list_objects )
 		from ..xml import xml_import

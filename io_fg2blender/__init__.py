@@ -307,13 +307,13 @@ def register():
 		debug_fg2bl				= True
 		debug_xml_manager		= False
 		debug_xml_import		= False
-		debug_props_armature	= False
-		debug_xml_export		= False
+		debug_xml_export		= True
 		debug_xml_camera		= False
 		debug_xml_jsbsim		= False
 		debug_xml_anim			= False
 		debug_ac3d_import		= False
 		debug_ac3d_export		= False
+		debug_props_armature	= False
 		debug_ops_flightgear	= False
 	
 def unregister():
