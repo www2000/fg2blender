@@ -425,6 +425,109 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_create_spin(bpy.types.Operator):
+	'''Add armature type spin '''
+	bl_idname = "view3d.create_spin"
+	bl_label = "Create spin"
+	bl_options = {'REGISTER', 'UNDO'}
+	
+	axis = StringProperty(default="")
+
+	@classmethod
+	def poll(cls, context):
+		return True
+		return context.active_object != None
+
+	def execute(self, context):
+		import bpy
+		import mathutils
+		from math import radians
+		
+		def create_spin( vec ):
+			debug_info( "Create_spin : " )
+			bpy.ops.object.armature_add( view_align=False )
+			vec = vec / 10.0
+			#vec = Vector(( 0.0, 0.1, 0.0) )
+			head = Vector( (0.0,0.0,0.0) )
+			tail = Vector( (0.0,0.0,0.0) ) + vec
+		
+			bpy.ops.object.editmode_toggle()
+
+			bpy.context.object.data.edit_bones["Bone"].head = head #Vector( (0.0,0.0,0.0) ) #self.head
+			bpy.context.object.data.edit_bones["Bone"].tail = tail #self.vec /10.0
+
+			bpy.ops.object.editmode_toggle()
+		
+			obj = context.active_object
+			debug_info( obj.name )
+
+			if obj.type == 'ARMATURE':
+				debug_info( "\tSelecion de : %s" %(obj.name) )
+				#bpy.ops.object.select_pattern(pattern=obj.name)
+				context.scene.objects.active = obj
+
+				#bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+				debug_info("\tActivation Pose Mode")
+				bpy.ops.object.posemode_toggle()
+
+				bpy.ops.pose.select_all( action='SELECT' )
+				debug_info("\tAjout limite rotation")
+				bpy.ops.pose.constraint_add(type='LIMIT_ROTATION')
+
+				debug_info("\tMatrice en mode EulerXYZ")
+				debug_info("\tActivation des limites en local")
+				limit_rotation = bpy.data.objects[obj.name].pose.bones[-1].constraints[-1]
+				limit_rotation.use_limit_x = True
+				limit_rotation.use_limit_y = False
+				limit_rotation.use_limit_z = True
+				limit_rotation.owner_space = 'LOCAL'
+
+				bpy.data.objects[obj.name].pose.bones[-1].rotation_mode = 'XYZ'
+				bpy.data.objects[obj.name].pose.bones[-1].lock_rotation = ( True, False, True )
+				bpy.ops.object.posemode_toggle()
+			
+				#obj.pose.bones[-1].rotation_mode = lock_location = ( True, False, True )
+				#obj.lock_rotation = ( True, False, True )
+			
+				obj.data.fg.type_anim		= 7
+				obj.data.fg.xml_file		= ""
+				obj.data.fg.xml_file_no		= 0
+				obj.data.fg.family		= "custom"
+				obj.data.fg.family_value	= "error"
+				obj.data.fg.property_value	= ""
+				obj.data.fg.property_idx	= -1
+				obj.data.fg.time		= 100.0/bpy.data.scenes[0].render.fps
+				obj.data.fg.time_ini		= 100.0/bpy.data.scenes[0].render.fps
+				obj.data.fg.range_beg		= -999
+				obj.data.fg.range_beg_ini	= -999
+				obj.data.fg.range_end		= 999
+				obj.data.fg.range_end_ini	= 999
+				obj.data.fg.factor		= 1.0
+				obj.data.fg.factor_ini		= 1.0
+				obj.data.fg.offset_deg		= 0.0
+
+				debug_info("\tDesactivation Pose Mode")
+				
+		for ax in self.axis:
+			if ax =='X':
+				vec = Vector((1.0,0.0,0.0))
+			elif ax =='Y':
+				vec = Vector((0.0,1.0,0.0))
+			elif ax =='Z':
+				vec = Vector((0.0,0.0,1.0))
+			elif ax =='x':
+				vec = Vector((-1.0,0.0,0.0))
+			elif ax =='y':
+				vec = Vector((0.0,-1.0,0.0))
+			elif ax =='z':
+				vec = Vector((0.0,0.0,-1.0))
+				
+			create_spin( vec )
+
+		debug_info( self.axis )
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_create_anim(bpy.types.Operator):
 	'''???????????'''
 	bl_idname = "view3d.create_anim"
@@ -1721,6 +1824,7 @@ def register():
 	bpy.utils.register_class( FG_OT_create_anim)
 	bpy.utils.register_class( FG_OT_create_rotate)
 	bpy.utils.register_class( FG_OT_create_rotate_axis)
+	bpy.utils.register_class( FG_OT_create_spin)
 	bpy.utils.register_class( FG_OT_create_translate)
 	bpy.utils.register_class( FG_OT_create_translate_axis)
 	bpy.utils.register_class( FG_OT_exemple)
@@ -1759,6 +1863,7 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_create_anim)
 	bpy.utils.unregister_class( FG_OT_create_rotate)
 	bpy.utils.unregister_class( FG_OT_create_rotate_axis)
+	bpy.utils.unregister_class( FG_OT_create_spin)
 	bpy.utils.unregister_class( FG_OT_create_translate)
 	bpy.utils.unregister_class( FG_OT_create_translate_axis)
 	bpy.utils.unregister_class( FG_OT_exemple)

@@ -106,21 +106,22 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.menu('VIEW3D_FG_sub_menu_create_rotation' )
         layout.menu('VIEW3D_FG_sub_menu_create_translate' )
-        layout.operator("view3d.transform_to_rotate",	text='Transform to rotate' )
+        layout.menu('VIEW3D_FG_sub_menu_create_spin' )
+        layout.operator("view3d.transform_to_rotate",		text='Transform to rotate' )
         layout.operator("view3d.transform_to_translate",	text='Transform to translate' )
-        #layout.operator("view3d.create_translate",	text='Create Translation' )
+        #layout.operator("view3d.create_translate",		text='Create Translation' )
         layout.separator()
-        layout.operator("view3d.select_armature_property",		text='Select related armatures' )
-        layout.operator("view3d.copy_xml_file",		text='Copy xml file (active->selects)' )
-        layout.operator("view3d.copy_property",		text='Copy property (active->selects)' )
+        layout.operator("view3d.select_armature_property",	text='Select related armatures' )
+        layout.operator("view3d.copy_xml_file",			text='Copy xml file (active->selects)' )
+        layout.operator("view3d.copy_property",			text='Copy property (active->selects)' )
         layout.separator()
-        layout.operator("view3d.init_rotation_zero",text='Reset Rotate' )
-        layout.operator("view3d.init_rotation",		text='Init Rotate' )
+        layout.operator("view3d.init_rotation_zero",		text='Reset Rotate' )
+        layout.operator("view3d.init_rotation",			text='Init Rotate' )
         layout.separator()
-        layout.operator("view3d.save_keyframe",		text='Save Keyframe and Reset' )
-        layout.operator("view3d.restore_keyframe",	text='Restore Keyframe ' )
-        layout.operator("view3d.save_parent",		text='Save Parent and Reset' )
-        layout.operator("view3d.restore_parent",	text='Restore Parent ' )
+        layout.operator("view3d.save_keyframe",			text='Save Keyframe and Reset' )
+        layout.operator("view3d.restore_keyframe",		text='Restore Keyframe ' )
+        layout.operator("view3d.save_parent",			text='Save Parent and Reset' )
+        layout.operator("view3d.restore_parent",		text='Restore Parent ' )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_create_rotation(bpy.types.Menu):
@@ -157,6 +158,24 @@ class VIEW3D_FG_sub_menu_create_translate(bpy.types.Menu):
         layout.operator("view3d.create_translate_axis",	text='Create Translation XZ').axis = 'XZ'
         layout.operator("view3d.create_translate_axis",	text='Create Translation YZ').axis = 'YZ'
         layout.operator("view3d.create_translate_axis",	text='Create Translation XYZ').axis = 'XYZ'
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class VIEW3D_FG_sub_menu_create_spin(bpy.types.Menu):
+    bl_label = 'Create Spin'
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator("view3d.create_spin",	text='Create Spin X').axis = 'X'
+        layout.operator("view3d.create_spin",	text='Create Spin Y').axis = 'Y'
+        layout.operator("view3d.create_spin",	text='Create Spin Z').axis = 'Z'
+        layout.operator("view3d.create_spin",	text='Create Spin -X').axis = 'x'
+        layout.operator("view3d.create_spin",	text='Create Spin -Y').axis = 'y'
+        layout.operator("view3d.create_spin",	text='Create Spin -Z').axis = 'z'
+        layout.operator("view3d.create_spin",	text='Create Spin XY').axis = 'XY'
+        layout.operator("view3d.create_spin",	text='Create Spin XZ').axis = 'XZ'
+        layout.operator("view3d.create_spin",	text='Create Spin YZ').axis = 'YZ'
+        layout.operator("view3d.create_spin",	text='Create Spin XYZ').axis = 'XYZ'
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-F       utilise pour le "debuggage"
 # Réouvre le dernier xml     contenu dans '/tmp/script-fg2bl'
@@ -305,6 +324,7 @@ def register():
     bpy.utils.register_class(VIEW3D_FG_sub_menu_unwrap)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_armature)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_create_rotation)
+    bpy.utils.register_class(VIEW3D_FG_sub_menu_create_spin)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_create_translate)
 def unregister():
     bpy.utils.unregister_class(FG_OT_exec)
@@ -313,6 +333,7 @@ def unregister():
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_unwrap)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_armature)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_rotation)
+    bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_spin)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_translate)
 
 
