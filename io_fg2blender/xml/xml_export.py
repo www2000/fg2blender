@@ -207,7 +207,7 @@ def write_animation( context, node, obj ):
 			x = keyframe.co.x
 			y = keyframe.co.y
 			#y = y * armature.scale.y
-			debug_info( 'x=%0.2f y=%0.2f' % (x, y) )
+			debug_info( 'x=%0.2f y=%0.2f scale.y=%0.2f' % (x, y,armature.scale.y) )
 			tFrame = armature.data.fg.time * bpy.data.scenes[0].render.fps - 1
 			x = (x -1.0)/tFrame
 			beg = armature.data.fg.range_beg
@@ -578,7 +578,8 @@ def write_animation_all( context, node, filename, no ):
 	for obj in bpy.data.objects:
 		if obj.type != 'ARMATURE':
 			continue
-		debug_info( obj.name )
+		debug_info( "------------" )
+		debug_info( "Export : %s" %obj.name )
 		if obj.parent:
 			debug_info( obj.parent.name )
 		if obj.parent != None:
@@ -587,9 +588,6 @@ def write_animation_all( context, node, filename, no ):
 		obj_filename = bpy.path.abspath(obj.data.fg.xml_file)
 		debug_info( 'Obj "%s"  filename "%s"' % ( obj.name, obj_filename) )
 		if bpy.path.abspath(obj.data.fg.xml_file).find( filename ) != -1 and obj.data.fg.xml_file_no == no:
-			debug_info("ICI")
 			debug_info( obj.name )
 			write_animation_recurs( context, node, obj )
-		else:
-			debug_info("AILLEURS")
 	

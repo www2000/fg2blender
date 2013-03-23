@@ -129,6 +129,9 @@ class PATH:
 			if filepath == "":
 				return ""
 			pathfile = bpy.path.relpath( filepath )
+			#print ( bpy.ops.wm.save_as_mainfile.filepath )
+			for s in pathfile.split( '..' ):
+				print( s )
 			pathfile = "//" + os.path.normpath( pathfile[2:])
 			return pathfile
 			
@@ -249,9 +252,11 @@ from bpy.app.handlers import persistent
 def cb_save_pre( dummy ):
 	global path
 	path.change_all_to_relatif()
+	print( "Dummy" )
+	print( dummy )
 
 
-bpy.app.handlers.save_post.append( cb_save_pre )
+bpy.app.handlers.save_pre.append( cb_save_pre )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 
