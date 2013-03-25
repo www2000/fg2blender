@@ -1724,19 +1724,48 @@ class FG_OT_select_by_property(bpy.types.Operator):
 		active_object = context.active_object
 		if active_object and active_object.type == 'ARMATURE':
 			property_value = xml_export.build_property_name( active_object )
-			print( "Actif %s %s" % (active_object.name, property_value) )
+			#print( "Actif %s %s" % (active_object.name, property_value) )
 			
 			for obj in bpy.data.objects:
 				if obj.type != 'ARMATURE':
 					continue
-				bpy.ops.object.posemode_toggle()
+				#bpy.ops.object.posemode_toggle()
 				if xml_export.build_property_name(obj) == property_value:
 					obj.select = True
-				print( "%s %s" % (obj.name, xml_export.build_property_name(obj)) )
+				#print( "%s %s %s - %s %s" % (obj.name, obj.data.fg.family, obj.data.fg.family_value, xml_export.build_property_name(obj), obj.select) )
 					
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+class FG_OT_select_object_by_armature(bpy.types.Operator):
+	'''C'est un exemple d'operateur blender '''
+	bl_idname = "view3d.select_object_by_armature"					
+	bl_label = "Select alla armatures with same flightgear property"
+	bl_options = {'REGISTER', 'UNDO'}
+	'''
+	@classmethod
+	def poll(cls, context):
+		return True
+	'''
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		def find_son( parent_obj ):
+		    for obj in bpy.data.objects:
+		        if obj.parent == parent_obj:
+		            if obj.type == 'MESH':
+		                obj.select = True
+		            find_son( obj )
+
+		for obj in bpy.context.selected_objects:
+		    if obj.type != 'ARMATURE':
+		        continue
+		    print( obj.name )
+		    obj.select = False
+		    find_son( obj )
+		
 		return {'FINISHED'}
 		
 
+       
+        
 #----------------------------------------------------------------------------------------------------------------------------------
 # Sample : simple operator
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1881,6 +1910,7 @@ def register():
 	bpy.utils.register_class( FG_OT_relpath )
 	bpy.utils.register_class( FG_OT_abspath )
 	bpy.utils.register_class( FG_OT_select_by_property )
+	bpy.utils.register_class( FG_OT_select_object_by_armature )
 	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
@@ -1921,4 +1951,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_relpath )
 	bpy.utils.unregister_class( FG_OT_abspath )
 	bpy.utils.unregister_class( FG_OT_select_by_property )
+	bpy.utils.unregister_class( FG_OT_select_object_by_armature )
 

@@ -69,8 +69,8 @@ def build_property_name( armature ):
 			left  = prop_name.partition('[')[0]
 			right = prop_name.partition(']')[2]
 			return left + '[' +  str(armature.data.fg.property_idx) + ']' + right
-	elif prop_name == 'error':
-		prop_name = armature.data.fg.property_value
+	elif armature.data.fg.family == 'custom':
+		prop_name = "" + armature.data.fg.property_value
 	return prop_name
 #----------------------------------------------------------------------------------------------------------------------------------
 
