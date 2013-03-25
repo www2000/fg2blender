@@ -313,6 +313,62 @@ def update_range_end( self, context ):
 	bLock_update = False
 	return None	
 
+#---------------------------------------------------------------------------
+
+def update_bWriteDisc( self, context ):
+	from ..xml import xml_export
+	global bLock_update
+
+	if bLock_update == True:
+		return None
+	
+	active_object = context.active_object
+
+	debug_info( 'update_toDisk "%s"  %s' % (active_object.name, str(bLock_update))  )
+		
+	xml_file = active_object.data.fg.xml_file
+	xml_file_no = active_object.data.fg.xml_file_no
+	bWriteDisc = active_object.data.fg.bWriteDisc
+	debug_info( ' bWriteDisc :  %s' % (bWriteDisc)  )
+
+	bLock_update = True
+	for obj in bpy.data.objects:
+		if obj.type != 'ARMATURE':
+			continue
+		if xml_file == obj.data.fg.xml_file and xml_file_no == obj.data.fg.xml_file_no:
+			debug_info( "\tupdate pour : %s" % obj.name )
+			obj.data.fg.bWriteDisc = bWriteDisc
+		
+	bLock_update = False
+	return None	
+#---------------------------------------------------------------------------
+
+def update_bIncDiskFile( self, context ):
+	from ..xml import xml_export
+	global bLock_update
+
+	if bLock_update == True:
+		return None
+	
+	active_object = context.active_object
+
+	debug_info( 'update_toDisk "%s"  %s' % (active_object.name, str(bLock_update))  )
+		
+	xml_file = active_object.data.fg.xml_file
+	xml_file_no = active_object.data.fg.xml_file_no
+	bIncDiskFile = active_object.data.fg.bIncDiskFile
+	debug_info( ' bIncDiskFile :  %s' % (bIncDiskFile)  )
+
+	bLock_update = True
+	for obj in bpy.data.objects:
+		if obj.type != 'ARMATURE':
+			continue
+		if xml_file == obj.data.fg.xml_file and xml_file_no == obj.data.fg.xml_file_no:
+			debug_info( "\tupdate pour : %s" % obj.name )
+			obj.data.fg.bIncDiskFile = bIncDiskFile
+		
+	bLock_update = False
+	return None	
 #----------------------------------------------------------------------------------------------------------------------------------
 def endline():
 	global rca, nChar, nBit
@@ -495,8 +551,8 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 	time			= bpy.props.FloatProperty(	attr = 'time', name = 'time', update=update_time)
 	time_ini		= bpy.props.FloatProperty(	attr = 'time_ini', name = 'time')
 	offset_deg		= bpy.props.FloatProperty(	attr = 'offset_deg', name = 'time')
-	bIncDiskFile	= bpy.props.BoolProperty(	attr = 'bIncDiskFile', name = 'Include disk file')
-	bWriteDisc		= bpy.props.BoolProperty(	attr = 'bWriteDisc', name = 'to Disc')
+	bIncDiskFile	= bpy.props.BoolProperty(	attr = 'bIncDiskFile', name = 'Include disk file', update=update_bIncDiskFile)
+	bWriteDisc		= bpy.props.BoolProperty(	attr = 'bWriteDisc', name = 'to Disc', update=update_bWriteDisc)
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_armature():
