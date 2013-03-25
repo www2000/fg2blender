@@ -307,7 +307,7 @@ def register():
 		debug_fg2bl				= True
 		debug_xml_manager		= False
 		debug_xml_import		= False
-		debug_xml_export		= True
+		debug_xml_export		= False
 		debug_xml_camera		= False
 		debug_xml_jsbsim		= False
 		debug_xml_anim			= False

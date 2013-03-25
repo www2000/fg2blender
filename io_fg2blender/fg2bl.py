@@ -46,20 +46,36 @@ class PATH:
 	#--------------------------------------------------------------------------------------------------------------------------------
 	def rel_from( self, filepath="", frompath="" ):
 		self.test_blender_filename()
-		from_pathname = os.path.dirname( frompath )
+
+		debug_info( "------------------------------" )
+		debug_info( "args : filepath=%s frompath=%s" % (filepath, frompath) )
 		
-		#if not self.bSaveBlend:
-		pathname = os.path.dirname( filepath )
-		filename = os.path.basename( filepath )
+		from_pathname = ""
+		if self.bSaveBlend and frompath[:2] == '//':
+				fromp = os.path.dirname(bpy.data.tilepath) + os.sep +  frompath[2:]
+				from_pathname = os.path.dirname( fromp )
+		else:
+			from_pathname = os.path.dirname( frompath )
+		
+		debug_info( "from_pathname : %s" % from_pathname )
+
+		pathname = ""
+		filename = ""
+		if self.bSaveBlend and filepath[:2] == '//':
+				filep = os.path.dirname(bpy.data.filepath) + os.sep +  filepath[2:]
+				pathname = os.path.dirname( filep )
+				filename = os.path.basename( filep )
+		else:
+			pathname = os.path.dirname( filepath )
+			filename = os.path.basename( filepath )
+
+		debug_info( "pathname : %s" % pathname )
+		debug_info( "filename : %s" % filename )
 
 		rel_path = os.path.relpath( pathname, from_pathname )
 		rel_path_normalized = os.path.normpath( rel_path )
 
 		return rel_path_normalized + os.sep + filename
-		#else:
-		#	debug_info( "TODO")
-		#	
-		#return filename
 
 	#--------------------------------------------------------------------------------------------------------------------------------
 	def abs_from_with_aircraft( self, filepath="", frompath="" ):
@@ -105,7 +121,7 @@ class PATH:
 		
 	#--------------------------------------------------------------------------------------------------------------------------------
 	def test_blender_filename( self ):
-		debug_info( "Name blend : %s"  % bpy.data.filepath )
+		#debug_info( "Name blend : %s"  % bpy.data.filepath )
 		#print( "Name blend : %s"  % bpy.data.filepath )
 		if bpy.data.filepath == "":
 			self.bSaveBlend = False
@@ -113,11 +129,31 @@ class PATH:
 			self.bSaveBlend = True
 
 	#--------------------------------------------------------------------------------------------------------------------------------
+	def compute_path_abs( self, filepath ):
+		self.test_blender_filename()
+		
+		if filepath == "" or filepath == None:
+			return ""
+		
+		if self.bSaveBlend:
+			if filepath[:2] == "//":
+				filepath = os.path.dirname(bpy.data.filepath) + os.sep + os.path.basename(filepaht[2:])
+
+			return filepath
+		else:
+			return filepath
+
+	#--------------------------------------------------------------------------------------------------------------------------------
 	def compute_path( self, filepath ):
 		self.test_blender_filename()
 		debug_info( "Name blend : %s"  % bpy.data.filepath )
 		
+		if filepath == "" or filepath == None:
+			return ""
+		
+		
 		if self.bSaveBlend:
+			filepath = self.compute_path_abs( filepath )
 			return bpy.path.relpath( filepath )
 		else:
 			return filepath
@@ -126,13 +162,12 @@ class PATH:
 	def change_all_to_relatif( self ):
 		#----------------------------------------------------------------------------------------------------------------------------
 		def change_to_relatif( filepath ):
+			debug_info( 'change_to_relatif( "%s" )' % (filepath) )
 			if filepath == "":
 				return ""
 			pathfile = bpy.path.relpath( filepath )
 			#print ( bpy.ops.wm.save_as_mainfile.filepath )
-			for s in pathfile.split( '..' ):
-				print( s )
-			pathfile = "//" + os.path.normpath( pathfile[2:])
+			#pathfile = "//" + os.path.normpath( pathfile[2:])
 			return pathfile
 			
 		#----------------------------------------------------------------------------------------------------------------------------
@@ -247,16 +282,31 @@ path = PATH()
 
 #----------------------------------------------------------------------------------------------------------------------------------
 from bpy.app.handlers import persistent
+bBlockSave = True
 
+'''
 @persistent
 def cb_save_pre( dummy ):
 	global path
 	path.change_all_to_relatif()
 	print( "Dummy" )
 	print( dummy )
+'''
+@persistent
+def cb_save_post( dummy ):
+	global path
+	global bBlockSave
+	
+	path.change_all_to_relatif()
+	if bBlockSave:
+		bBlockSave = False
+		print( "Re save" )
+		bpy.ops.wm.save_as_mainfile()
+	bBlockSave = True
 
 
-bpy.app.handlers.save_pre.append( cb_save_pre )
+#bpy.app.handlers.save_pre.append( cb_save_pre )
+bpy.app.handlers.save_post.append( cb_save_post )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 

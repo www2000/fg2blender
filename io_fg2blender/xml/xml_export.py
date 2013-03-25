@@ -491,8 +491,8 @@ def write_animation_recurs( context, node, obj ):
 			write_animation_recurs( context, node, objet)
 #----------------------------------------------------------------------------------------------------------------------------------
 		
-def appendPath( nodeDoc, node, filename, no ):
-	debug_info( 'appendPath()' )
+def append_path( nodeDoc, node, filename, no ):
+	debug_info( 'append_path()' )
 	for obj in bpy.data.objects:
 		if obj.type != 'MESH':
 			continue
@@ -504,7 +504,10 @@ def appendPath( nodeDoc, node, filename, no ):
 				obj_armature = obj.parent
 				if bpy.path.abspath(obj_armature.data.fg.xml_file).find( filename ) != -1 and obj_armature.data.fg.xml_file_no == no:
 					from .. import fg2bl 
+					
+					print( "Armature : %s" % obj_armature.name )
 					ac_file = "" + fg2bl.path.rel_from( obj.data.fg.ac_file, filename  )
+					#ac_file = fg2bl.path.compute_path( obj.data.fg.ac_file, filename  )
 					path = nodeDoc.createElement( 'path' )
 					txt  = nodeDoc.createTextNode( ac_file )
 					path.appendChild( txt )
@@ -569,8 +572,8 @@ def write_animation_all( context, node, filename, no ):
 	txt = node.createComment( "\n\n\t***********************************************************\n\t***********************************************************\n\t\tPart of this file was generating by a blender script\n\n\t\tScript fg2blender v0.1 alpha  (c)paf\n\t\tdownload: http://gitorious.org/paf/fg2blender\n\t\tcontacts: http://equipe-flightgear.forumactif.com\n\t\tdoc:      http://wiki.flightgear.org/Fr/fg2blender\n\t***********************************************************\n\t***********************************************************\n\n\t") 
 	nodePropertyList[0].appendChild( txt )
 	
-	appendPath( node, nodePropertyList[0], filename, no )
-	#print ( "AppendPath : %s" % filename )
+	append_path( node, nodePropertyList[0], filename, no )
+	#print ( "append_path : %s" % filename )
 	filename = os.path.basename( filename )
 
 	#remove_animation( nodePropertyList[0], node )

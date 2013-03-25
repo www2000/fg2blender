@@ -635,7 +635,7 @@ def create_anims():
 				debug_info( xml_file.name )
 				#obj.data.fg.xml_file = "//../" + xml_file.name
 				obj.data.fg.xml_file = "" + xml_file.name
-				debug_info( "FILENAME %s" % fg2bl.path.rel_from(obj.data.fg.xml_file, "" ) )
+				debug_info( "FILENAME %s" % obj.data.fg.xml_file )
 				obj.data.fg.xml_file_no = 0 + no
 				#fg2bl.path.print_filename( obj.data.fg.xml_file )
 				#Assign group ac_file to armature
