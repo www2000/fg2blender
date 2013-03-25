@@ -309,16 +309,16 @@ def cb_save_post( dummy ):
 	global bBlockSave
 	global previous_blendfile
 
+	if not bBlockSave:
+		return
+
 	if previous_blendfile != "":
 		path.change_all_to_abs_previous()
 		
-
-	
 	path.change_all_to_relatif()
-	if bBlockSave:
-		bBlockSave = False
-		print( "Re save" )
-		bpy.ops.wm.save_as_mainfile()
+
+	bBlockSave = False
+	bpy.ops.wm.save_as_mainfile()
 	bBlockSave = True
 
 
