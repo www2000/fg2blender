@@ -214,12 +214,19 @@ class PATH:
 				change_empty( obj )
 		
 	#--------------------------------------------------------------------------------------------------------------------------------
-	def change_all_to_abs( self ):
+	def change_all_to_abs_previous( self ):
 		#----------------------------------------------------------------------------------------------------------------------------
 		def change_to_abs( filepath ):
+			global previous_blendfile
+		
 			if filepath == "":
 				return ""
-			pathfile = bpy.path.abspath( filepath )
+	
+			pathfile = ""
+			if filepath[:2] == "//":
+				pathfile = os.path.dirname(previous_blendfile) + os.sep + filepath[2:]
+			else:
+				pathfile = filepath
 			return pathfile
 			
 		#----------------------------------------------------------------------------------------------------------------------------
@@ -283,19 +290,29 @@ path = PATH()
 #----------------------------------------------------------------------------------------------------------------------------------
 from bpy.app.handlers import persistent
 bBlockSave = True
+previous_blendfile = ""
 
-'''
 @persistent
 def cb_save_pre( dummy ):
 	global path
-	path.change_all_to_relatif()
-	print( "Dummy" )
-	print( dummy )
-'''
+	global previous_blendfile
+	
+	if bpy.data.filepath != "":
+		previous_blendfile = "" + bpy.data.filepath
+
+
+
+
 @persistent
 def cb_save_post( dummy ):
 	global path
 	global bBlockSave
+	global previous_blendfile
+
+	if previous_blendfile != "":
+		path.change_all_to_abs_previous()
+		
+
 	
 	path.change_all_to_relatif()
 	if bBlockSave:
@@ -305,7 +322,7 @@ def cb_save_post( dummy ):
 	bBlockSave = True
 
 
-#bpy.app.handlers.save_pre.append( cb_save_pre )
+bpy.app.handlers.save_pre.append( cb_save_pre )
 bpy.app.handlers.save_post.append( cb_save_post )
 #----------------------------------------------------------------------------------------------------------------------------------
 
