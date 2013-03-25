@@ -186,7 +186,21 @@ def update_keyframe_time( obj, coef ):
 				debug_info( keyframe.co )
 #----------------------------------------------------------------------------------------------------------------------------------
 
+def update_keyframe_time( obj, coef ):
+	
+	if obj.animation_data:
+		for fcurve in obj.animation_data.action.fcurves:
+			for keyframe in fcurve.keyframe_points:
+				#keyframe.interpolation = 'LINEAR'
+				keyframe.co.x = ((keyframe.co.x-1) * coef ) +1
+				debug_info( keyframe.co )
+#----------------------------------------------------------------------------------------------------------------------------------
+
 def update_factor( self, context ):
+	global bLock_update
+	from ..xml import xml_export
+
+	coef = 0.0
 	obj = context.active_object
 	if obj:
 		#if obj.type == 'ARMATURE':
@@ -196,21 +210,54 @@ def update_factor( self, context ):
 			coef = obj.data.fg.factor  / obj.data.fg.factor_ini
 			update_keyframe( obj, coef )
 			obj.data.fg.factor_ini = obj.data.fg.factor
+
+			if bLock_update == True:
+				return None
+			
+			bLock_update = True
+			obj_factor = obj.data.fg.factor
+			property_value = xml_export.build_property_name( obj )
+			for o in bpy.data.objects:
+				if o.type != 'ARMATURE' or o == obj:
+					continue
+				if xml_export.build_property_name(o) == property_value:
+					debug_info( "update keyframe pour %s" %o.name )
+					o.data.fg.factor = obj_factor
+					o.data.fg.factor_ini = obj_factor
+					update_keyframe( o, coef )
+			bLock_update = False
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def update_time( self, context ):
+	global bLock_update
+	from ..xml import xml_export
+
+	coef = 0.0
 	obj = context.active_object
 	if obj:
 		#if obj.type == 'ARMATURE':
 		if obj.data.fg.type_anim in [ 1,2]:
-			coef = 0.0
 			if obj.data.fg.time_ini == 0.0:
 				obj.data.fg.time_ini = obj.data.fg.time
 			coef = 0.0 + obj.data.fg.time  / obj.data.fg.time_ini
 			update_keyframe_time( obj, coef )
 			obj.data.fg.time_ini = 0.0 +  obj.data.fg.time
 
-
+			if bLock_update == True:
+				return None
+			
+			bLock_update = True
+			obj_time = obj.data.fg.time
+			property_value = xml_export.build_property_name( obj )
+			for o in bpy.data.objects:
+				if o.type != 'ARMATURE' or obj == o:
+					continue
+				if xml_export.build_property_name(o) == property_value:
+					debug_info( "update keyframe pour %s" %o.name )
+					o.data.fg.time = obj_time
+					o.data.fg.time_ini = 0.0 +  o.data.fg.time
+					update_keyframe_time( o, coef )
+			bLock_update = False
 #---------------------------------------------------------------------------
 
 def update_range_beg( self, context ):

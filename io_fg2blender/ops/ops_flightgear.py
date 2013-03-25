@@ -1721,17 +1721,18 @@ class FG_OT_select_by_property(bpy.types.Operator):
 	'''
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
 		from ..xml import xml_export
-
 		active_object = context.active_object
 		if active_object and active_object.type == 'ARMATURE':
 			property_value = xml_export.build_property_name( active_object )
+			print( "Actif %s %s" % (active_object.name, property_value) )
 			
 			for obj in bpy.data.objects:
 				if obj.type != 'ARMATURE':
 					continue
-				#bpy.ops.object.posemode_toggle()
+				bpy.ops.object.posemode_toggle()
 				if xml_export.build_property_name(obj) == property_value:
 					obj.select = True
+				print( "%s %s" % (obj.name, xml_export.build_property_name(obj)) )
 					
 		return {'FINISHED'}
 		
