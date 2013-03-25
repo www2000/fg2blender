@@ -1709,6 +1709,34 @@ class FG_OT_abspath(bpy.types.Operator):
 		
 
 #----------------------------------------------------------------------------------------------------------------------------------
+class FG_OT_select_by_property(bpy.types.Operator):
+	'''C'est un exemple d'operateur blender '''
+	bl_idname = "view3d.select_by_property"					
+	bl_label = "Select alla armatures with same flightgear property"
+	bl_options = {'REGISTER', 'UNDO'}
+	'''
+	@classmethod
+	def poll(cls, context):
+		return True
+	'''
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		from ..xml import xml_export
+
+		active_object = context.active_object
+		if active_object and active_object.type == 'ARMATURE':
+			property_value = xml_export.build_property_name( active_object )
+			
+			for obj in bpy.data.objects:
+				if obj.type != 'ARMATURE':
+					continue
+				#bpy.ops.object.posemode_toggle()
+				if xml_export.build_property_name(obj) == property_value:
+					obj.select = True
+					
+		return {'FINISHED'}
+		
+
+#----------------------------------------------------------------------------------------------------------------------------------
 # Sample : simple operator
 #----------------------------------------------------------------------------------------------------------------------------------
 class FG_OT_exemple(bpy.types.Operator):
@@ -1851,6 +1879,7 @@ def register():
 	bpy.utils.register_class( FG_OT_transforme_to_translate )
 	bpy.utils.register_class( FG_OT_relpath )
 	bpy.utils.register_class( FG_OT_abspath )
+	bpy.utils.register_class( FG_OT_select_by_property )
 	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
@@ -1890,4 +1919,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_transforme_to_translate )
 	bpy.utils.unregister_class( FG_OT_relpath )
 	bpy.utils.unregister_class( FG_OT_abspath )
+	bpy.utils.unregister_class( FG_OT_select_by_property )
 

@@ -304,7 +304,7 @@ def register():
 		DEBUG			= True
 		debug_info( "File debug OK" )
 
-		debug_fg2bl				= True
+		debug_fg2bl				= False
 		debug_xml_manager		= False
 		debug_xml_import		= False
 		debug_xml_export		= False
@@ -313,7 +313,7 @@ def register():
 		debug_xml_anim			= False
 		debug_ac3d_import		= False
 		debug_ac3d_export		= False
-		debug_props_armature	= False
+		debug_props_armature	= True
 		debug_ops_flightgear	= False
 	
 def unregister():

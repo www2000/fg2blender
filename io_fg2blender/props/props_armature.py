@@ -209,6 +209,63 @@ def update_time( self, context ):
 			coef = 0.0 + obj.data.fg.time  / obj.data.fg.time_ini
 			update_keyframe_time( obj, coef )
 			obj.data.fg.time_ini = 0.0 +  obj.data.fg.time
+
+
+#---------------------------------------------------------------------------
+
+def update_range_beg( self, context ):
+	from ..xml import xml_export
+	global bLock_update
+
+	if bLock_update == True:
+		return None
+	
+	active_object = context.active_object
+
+	debug_info( 'update_range_deb "%s"  %s' % (active_object.name, str(bLock_update))  )
+		
+	property_value = xml_export.build_property_name( active_object )
+	range_beg = active_object.data.fg.range_beg
+	debug_info( ' range_beg :  %s' % (range_beg)  )
+
+	bLock_update = True
+	for obj in bpy.data.objects:
+		if obj.type != 'ARMATURE':
+			continue
+		if xml_export.build_property_name(obj) == property_value:
+			debug_info( "\tupdate pour : %s" % obj.name )
+			obj.data.fg.range_beg = range_beg
+		
+	bLock_update = False
+	return None	
+#---------------------------------------------------------------------------
+
+def update_range_end( self, context ):
+	from ..xml import xml_export
+	global bLock_update
+
+	if bLock_update == True:
+		return None
+	
+	active_object = context.active_object
+
+	debug_info( 'update_range_end "%s"  %s' % (active_object.name, str(bLock_update))  )
+		
+	property_value = xml_export.build_property_name( active_object )
+	range_end = active_object.data.fg.range_end
+	debug_info( ' range_end :  %s' % (range_end)  )
+
+	bLock_update = True
+	for obj in bpy.data.objects:
+		if obj.type != 'ARMATURE':
+			continue
+		if xml_export.build_property_name(obj) == property_value:
+			debug_info( "\tupdate pour : %s" % obj.name )
+			obj.data.fg.range_end = range_end
+		
+	bLock_update = False
+	return None	
+
 #----------------------------------------------------------------------------------------------------------------------------------
 def endline():
 	global rca, nChar, nBit
@@ -347,13 +404,35 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 			
 		bLock_update = False
 		return None	
+	#---------------------------------------------------------------------------
+
+	def update_family_value( self, context ):
+		from ..xml import xml_export
+		global bLock_update
+
+		if bLock_update == True:
+			return None
+		
+		active_object = context.active_object
+		value = xml_export.build_property_name( active_object )
+		
+		print( "%s %s" % (active_object.name, value) )
+
+		debug_info( 'update_familly_value "%s"  %s' % (active_object.name, str(bLock_update))  )
+		debug_info( ' value :  %s' % (active_object.data.fg.family_value)  )
+			
+		bLock_update = True
+
+			
+		bLock_update = False
+		return None	
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	family			= bpy.props.EnumProperty(	attr='family', name='Family', description="family of properties", default='custom',
 						                        items = [ ('custom','custom','custom') ]
 						                        	+	[ (famille,famille,famille) for famille in familles ]    )
 
-	family_value	= bpy.props.EnumProperty(	attr = 'family_value', name='Value', description="Value in family", items = dynamic_items )
+	family_value	= bpy.props.EnumProperty(	attr = 'family_value', name='Value', description="Value in family", items=dynamic_items, update=update_family_value )
 	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'Property')
 	property_idx	= bpy.props.IntProperty(	attr = 'value', name = 'number ', min=-1)
 	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
@@ -362,8 +441,8 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 	xml_file_no		= bpy.props.IntProperty(	attr = 'xml_file_no', name = 'No xml File')
 	xml_present		= bpy.props.EnumProperty(	attr = 'xml_present', name='xml Present', description="family animation", items = dynamic_items_xml_file )
 	type_anim		= bpy.props.IntProperty(	attr = 'type_anim', name = 'Type')
-	range_beg		= bpy.props.FloatProperty(	attr = 'range_beg', name = 'min')
-	range_end		= bpy.props.FloatProperty(	attr = 'range_end', name = 'max')
+	range_beg		= bpy.props.FloatProperty(	attr = 'range_beg', name = 'min', update=update_range_beg)
+	range_end		= bpy.props.FloatProperty(	attr = 'range_end', name = 'max', update=update_range_end)
 	range_beg_ini	= bpy.props.FloatProperty(	attr = 'range_beg_ini', name = 'min')
 	range_end_ini	= bpy.props.FloatProperty(	attr = 'range_end_ini', name = 'max')
 	time			= bpy.props.FloatProperty(	attr = 'time', name = 'time', update=update_time)

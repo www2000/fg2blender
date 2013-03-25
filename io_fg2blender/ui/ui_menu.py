@@ -112,6 +112,7 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
         #layout.operator("view3d.create_translate",		text='Create Translation' )
         layout.separator()
         layout.operator("view3d.select_armature_property",	text='Select related armatures' )
+        layout.operator("view3d.select_by_property",		text='Select by property' )
         layout.operator("view3d.copy_xml_file",			text='Copy xml file (active->selects)' )
         layout.operator("view3d.copy_property",			text='Copy property (active->selects)' )
         layout.separator()
