@@ -1420,11 +1420,8 @@ class FG_OT_write_xml(bpy.types.Operator):
 		debug_info( ' file = "%s"' % filename )
 		#filename = self.filename
 		if filename == "":
-			try:
-				filename = xml_manager.xml_files[0][0].name
-			except:
-				bpy.ops.view3d.popup('INVOKE_DEFAULT', message="Armature information is missing !")
-				return {'FINISHED'}
+			bpy.ops.view3d.popup('INVOKE_DEFAULT', message="Armature information is missing !")
+			return {'FINISHED'}
 		
 		if filename.find('Aircraft')!=-1:
 			#right_name = filename.partition('Aircraft')[2]
@@ -1787,33 +1784,6 @@ class FG_OT_exemple(bpy.types.Operator):
 		# ce que l'on veut faire
 		debug_info( "HelloWord" )
 		return {'FINISHED'}
-		
-
-
-#----------------------------------------------------------------------------------------------------------------------------------
-# Sample Dialog Box
-#----------------------------------------------------------------------------------------------------------------------------------
-class DialogOperator(bpy.types.Operator):
-    bl_idname = "view3d.popup"
-    bl_label = "FG2Blender error"
-
-    message = bpy.props.StringProperty()
-
-    def execute(self, context):
-        debug_info("Dialog Runs")
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
-        wm = context.window_manager
-        return wm.invoke_props_dialog(self)
-
-
-# test call
-#bpy.utils.register_class(DialogOperator)
-#bpy.ops.object.dialog_operator('INVOKE_DEFAULT') 
-
-#----------------------------------------------------------------------------------------------------------------------------------
-
 
 #----------------------------------------------------------
 # Sample
@@ -1913,7 +1883,6 @@ def register():
 	bpy.utils.register_class( FG_OT_abspath )
 	bpy.utils.register_class( FG_OT_select_by_property )
 	bpy.utils.register_class( FG_OT_select_object_by_armature )
-	bpy.utils.register_class( DialogOperator )
 	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
@@ -1955,5 +1924,4 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_abspath )
 	bpy.utils.unregister_class( FG_OT_select_by_property )
 	bpy.utils.unregister_class( FG_OT_select_object_by_armature )
-	bpy.utils.unregister_class( DialogOperator )
 
