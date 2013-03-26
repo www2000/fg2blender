@@ -69,6 +69,7 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
         layout.operator("view3d.insert_keyframe_translate", 	text='Insert Keyframe Translate' )
         layout.separator()
         layout.operator("import.fg2blender",			text='Import (.xml)' )
+        layout.operator("view3d.popup",				text='popup' ).message = "toto"
         layout.separator()
         layout.operator("view3d.create_anim",			text='Create animations' )
         layout.separator()

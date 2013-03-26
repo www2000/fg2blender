@@ -1420,7 +1420,10 @@ class FG_OT_write_xml(bpy.types.Operator):
 		debug_info( ' file = "%s"' % filename )
 		#filename = self.filename
 		if filename == "":
-			filename = xml_manager.xml_files[0][0].name
+			try:
+				filename = xml_manager.xml_files[0][0].name
+			except:
+				bpy.ops.view3d.popup(error="Armature information is missing !")
 		
 		if filename.find('Aircraft')!=-1:
 			#right_name = filename.partition('Aircraft')[2]
@@ -1790,15 +1793,13 @@ class FG_OT_exemple(bpy.types.Operator):
 # Sample Dialog Box
 #----------------------------------------------------------------------------------------------------------------------------------
 class DialogOperator(bpy.types.Operator):
-    bl_idname = "object.dialog_operator"
-    bl_label = "Property Example"
+    bl_idname = "view3d.popup"
+    bl_label = "FG2Blender error"
 
-    my_float = bpy.props.FloatProperty(name="Some Floating Point")
-    my_bool = bpy.props.BoolProperty(name="Toggle Option")
-    my_string = bpy.props.StringProperty(name="String Value")
+    message = bpy.props.StringProperty()
 
     def execute(self, context):
-        print("Dialog Runs")
+        debug_info("Dialog Runs")
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -1911,6 +1912,7 @@ def register():
 	bpy.utils.register_class( FG_OT_abspath )
 	bpy.utils.register_class( FG_OT_select_by_property )
 	bpy.utils.register_class( FG_OT_select_object_by_armature )
+	bpy.utils.register_class( DialogOperator )
 	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
@@ -1952,4 +1954,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_abspath )
 	bpy.utils.unregister_class( FG_OT_select_by_property )
 	bpy.utils.unregister_class( FG_OT_select_object_by_armature )
+	bpy.utils.unregister_class( DialogOperator )
 
