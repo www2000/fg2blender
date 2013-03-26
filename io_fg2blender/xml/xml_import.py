@@ -786,6 +786,51 @@ def absolute_path( filename ):
 	return filename
 #---------------------------------------------------------------------------------------------------------------------
 
+def next_layer():
+	global mesh_layer
+	global option_mesh_rotate_layer
+	global option_mesh_rotate_beg
+	global option_mesh_rotate_end
+	global arma_layer
+	global option_arma_rotate_layer
+	global option_arma_rotate_beg
+	global option_arma_rotate_end
+
+
+	mesh_layer = mesh_layer + 1
+	arma_layer = arma_layer + 1
+
+	bpy.context.scene.layers = xml_manager.layer( mesh_layer )
+
+	if option_mesh_rotate_layer:
+		if mesh_layer < option_mesh_rotate_beg:
+			mesh_layer = option_mesh_rotate_beg
+		if mesh_layer > option_mesh_rotate_end:
+			mesh_layer = option_mesh_rotate_beg
+
+		debug_info( 'mesh_layer %d' % mesh_layer )	
+			
+			
+	if option_arma_rotate_layer:
+		if arma_layer < option_arma_rotate_beg:
+			arma_layer = option_arma_rotate_beg
+		if arma_layer > option_arma_rotate_end:
+			arma_layer = option_arma_rotate_beg
+#---------------------------------------------------------------------------------------------------------------------
+
+def previous_arma_layer( no ):
+	global option_arma_rotate_layer
+	global option_arma_rotate_beg
+	global option_arma_rotate_end
+
+
+	if option_arma_rotate_layer:
+		no = no - 1
+		if no < option_arma_rotate_beg:
+			no = option_arma_rotate_end
+	return no
+#---------------------------------------------------------------------------------------------------------------------
+
 no_include = 0;
 
 def parse_node( node, file_name ):
@@ -794,8 +839,8 @@ def parse_node( node, file_name ):
 	global option_print_include
 	global option_ac_file
 	global no_include
-	global mesh_layer
-	global arma_layer
+	#global mesh_layer
+	#global arma_layer
 	
 
 	ret_list = []
@@ -860,8 +905,9 @@ def parse_node( node, file_name ):
 							ac_manager.clone_ac(	xml_manager.get_ac_file(file_ac),
 													xml_manager.xml_current )
 							xml_manager.xml_current.add_ac_file( ac_manager.get_ac_file() )
-							mesh_layer = mesh_layer + 1
-							arma_layer = arma_layer + 1
+							next_layer()
+							#mesh_layer = mesh_layer + 1
+							#arma_layer = arma_layer + 1
 						else:
 							if os.path.isfile(file_ac):
 								from ..meshes.ac3d.ac_import import read_ac
@@ -870,12 +916,13 @@ def parse_node( node, file_name ):
 								ac_option.edge_split	= True
 								ac_option.split_angle	= 60.0
 								ac_option.context		= bpy.context
-								
+								print( "Mesh layer %d" % mesh_layer )
 								read_ac(	filename 	= conversion(file_ac),
 											ac_option	= ac_option,
 											extra		= xml_manager.xml_current )
-								mesh_layer = mesh_layer + 1
-								arma_layer = arma_layer + 1
+								next_layer()
+								#mesh_layer = mesh_layer + 1
+								#arma_layer = arma_layer + 1
 								ac_file = ac_manager.get_ac_file()
 								xml_manager.xml_current.add_ac_file( ac_file )
 							else:
@@ -988,6 +1035,7 @@ def parse_file( filename, no_inc ):
 	print( "  -Parse file : %s" % os.path.basename(filename) )
 	#bpy.ops.wm.mouse_position('EXEC_DEFAULT', x=20, y=66)
 	#bpy.ops.wm.mouse_position('INVOKE_DEFAULT')
+
 	if option_mesh_rotate_layer:
 		#mesh_layer = mesh_layer + 1
 		if mesh_layer < option_mesh_rotate_beg:
@@ -1008,7 +1056,6 @@ def parse_file( filename, no_inc ):
 
 		debug_info( 'arma_layer %d' % arma_layer )	
 		#bpy.context.scene.layers = xml_manager.layer( mesh_layer-1 )
-			
 	
 	#xml_file = XML_FILE()
 	if no_inc == -1:
@@ -1121,12 +1168,14 @@ def charge_xml( filename ):
 	global option_animation
 	global option_ac_file
 	global option_light
+	'''
 	global option_mesh_rotate_layer
 	global option_mesh_rotate_beg
 	global option_mesh_rotate_end
 	global option_arma_rotate_layer
 	global option_arma_rotate_beg
 	global option_arma_rotate_end
+	'''
 
 	option_include = False
 	option_print_include = False
@@ -1135,9 +1184,11 @@ def charge_xml( filename ):
 	option_animation = False
 	option_ac_file = False
 	option_light = False
+	'''
 	option_mesh_rotate_layer = False
 	option_mesh_rotate_beg = 0
 	option_mesh_rotate_end = 10
+	'''
 	
 	xmldoc = None
 	debug_info( "xml_import:charge_xml()  %s " % filename )
@@ -1173,9 +1224,11 @@ def import_xml(filename, ac_option, xml_option):
 	global option_animation
 	global option_ac_file
 	global option_light
+	global mesh_layer
 	global option_mesh_rotate_layer
 	global option_mesh_rotate_beg
 	global option_mesh_rotate_end
+	global arma_layer
 	global option_arma_rotate_layer
 	global option_arma_rotate_beg
 	global option_arma_rotate_end
@@ -1187,10 +1240,12 @@ def import_xml(filename, ac_option, xml_option):
 	option_mesh_rotate_layer = not xml_option.mesh_active_layer
 	option_mesh_rotate_beg = xml_option.mesh_layer_beg
 	option_mesh_rotate_end = xml_option.mesh_layer_end
+	mesh_layer = xml_option.mesh_layer_beg
 
 	option_arma_rotate_layer = not xml_option.arma_active_layer
 	option_arma_rotate_beg = xml_option.arma_layer_beg
 	option_arma_rotate_end = xml_option.arma_layer_end
+	arma_layer = xml_option.arma_layer_beg
 
 	option_print_include = False
 	option_rotation = False
