@@ -328,6 +328,23 @@ def write_animation( context, node, obj ):
 		return angle
 	#---------------------------------------------------------------------------
 
+	def compute_translation_current( armature ):
+		yFcurve = None
+		n = 0
+		# find curve for y component
+		for fcurve in armature.animation_data.action.fcurves:
+			if fcurve.data_path.find( "location" ) != -1:
+				n = n + 1
+			if n == 2:
+				yFcurve = fcurve
+				break
+		
+		value = yFcurve.evaluate( bpy.context.scene.frame_current )
+		debug_info( "Fcurve ; %s" % yFcurve.data_path )
+		debug_info( "%s Angle %.2f pour la frame : %.2f" % (armature.name,value, bpy.context.scene.frame_current) ) 
+		return value
+	#---------------------------------------------------------------------------
+
 	def compute_rotation_matrix( armature ):
 		angle		= compute_rotation_angle_current(armature)
 		axis		= compute_rotation_axis(armature)
@@ -342,12 +359,26 @@ def write_animation( context, node, obj ):
 		return m_ret
 	#---------------------------------------------------------------------------
 
+	def compute_translation_matrix( armature ):
+		value		= compute_translation_current(armature)
+		axis		= compute_rotation_axis(armature)
+		axis		= value * axis
+
+		m_ret  = Matrix.Translation( axis)
+
+		return m_ret
+	#---------------------------------------------------------------------------
+
 	def compute_parent_matrix( armature ):
 		obj = armature
 		M = Matrix.Identity(4)
 		while ( obj.parent != None ):
 			if obj.parent.data.fg.type_anim == 1:
 				matrix = compute_rotation_matrix( obj.parent )
+				M0 = M * matrix
+				M = M0
+			elif obj.parent.data.fg.type_anim == 2:
+				matrix = compute_translation_matrix( obj.parent )
 				M0 = M * matrix
 				M = M0
 			obj = obj.parent
@@ -567,7 +598,7 @@ def write_animation_all( context, node, filename, no ):
 	debug_info( 'xml_export.write_animation_all() Recherche xml_file "%s"' % filename )
 	debug_info( 'xml_export.write_animation_all() Recherche xml_file "%s"' % filename )
 	cleanDoc(node,"\t","\n\r")
-	#return
+
 	nodePropertyList = node.getElementsByTagName( 'PropertyList' )
 
 	
@@ -575,7 +606,6 @@ def write_animation_all( context, node, filename, no ):
 	nodePropertyList[0].appendChild( txt )
 	
 	append_path( node, nodePropertyList[0], filename, no )
-	#print ( "append_path : %s" % filename )
 	filename = os.path.basename( filename )
 
 	#remove_animation( nodePropertyList[0], node )

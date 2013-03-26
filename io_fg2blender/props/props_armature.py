@@ -509,7 +509,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 		return None	
 	#---------------------------------------------------------------------------
 
-	def update_family_value( self, context ):
+	def update_property( self, context ):
 		from ..xml import xml_export
 		global bLock_update
 
@@ -517,15 +517,29 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 			return None
 		
 		active_object = context.active_object
-		value = xml_export.build_property_name( active_object )
+		family = "" + active_object.data.fg.family
+		if family == 'custom':
+			value = xml_export.build_property_name( active_object )
+		else:
+			value = "" + active_object.data.fg.family_value
 		
-		print( "%s %s" % (active_object.name, value) )
 
-		debug_info( 'update_familly_value "%s"  %s' % (active_object.name, str(bLock_update))  )
-		debug_info( ' value :  %s' % (active_object.data.fg.family_value)  )
+		debug_info( '---- update_familly_value() "%s"  %s' % (active_object.name, str(bLock_update))  )
+		debug_info( ' value :  %s' % (value)  )
+		debug_info( " objet - actif  : %s" % active_object.name )
 			
 		bLock_update = True
 
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE' or obj == active_object:
+				continue
+			debug_info( " objet - select : %s" % obj.name )
+			obj.data.fg.family = family
+			if family == 'custom':
+				obj.data.fg.property_value = value
+			else:
+				obj.data.fg.family_value = value
+			
 			
 		bLock_update = False
 		return None	
@@ -533,10 +547,11 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 	family			= bpy.props.EnumProperty(	attr='family', name='Family', description="family of properties", default='custom',
 						                        items = [ ('custom','custom','custom') ]
-						                        	+	[ (famille,famille,famille) for famille in familles ]    )
+						                        	+	[ (famille,famille,famille) for famille in familles ]
+						                        , update=update_property    )
 
-	family_value	= bpy.props.EnumProperty(	attr = 'family_value', name='Value', description="Value in family", items=dynamic_items, update=update_family_value )
-	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'Property')
+	family_value	= bpy.props.EnumProperty(	attr = 'family_value', name='Value', description="Value in family", items=dynamic_items, update=update_property )
+	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'Property', update=update_property)
 	property_idx	= bpy.props.IntProperty(	attr = 'value', name = 'number ', min=-1)
 	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
 	factor_ini		= bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
