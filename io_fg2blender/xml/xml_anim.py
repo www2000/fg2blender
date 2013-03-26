@@ -414,6 +414,7 @@ class ANIM:
 		# extract_interpolation( self, node)
 		#----------------------------------------------
 		def find_prop( obj, left, right, family, name ):
+			debug_info( "find_prop( %s, %s, %s, %s, %s " % (obj.name, left, right, 'FAMILY', name) )
 			for prop in family:
 				left_prop = prop[0]
 				right_prop = ''
@@ -425,13 +426,14 @@ class ANIM:
 				# gear/gear[%d]/position-norm == gear/gear/position-norm
 				without_bracket = left_prop + right_prop
 				if  without_bracket == left and right =='':
-					debug_info( " Bingo %s " % without_bracket )
+					debug_info( " Bingo %s without bracket " % without_bracket )
 					obj.data.fg.family = name
 					obj.data.fg.family_value = prop[0]
 					if obj.data.fg.property_value.find('[') != -1:
 						idx = -1
 						obj.data.fg.property_idx = int(-1)
 
+					debug_info( " beg=%d end=%d " % (prop[1],prop[2]) )
 					if prop[1] != 'x':
 						obj.data.fg.range_beg = prop[1]
 						obj.data.fg.range_beg_ini = prop[1]
@@ -441,7 +443,7 @@ class ANIM:
 					return
 			
 				if left_prop == left and right_prop == right:
-					debug_info( " Bingo %s" % (left+right) )
+					debug_info( " Bingo %s with bracket" % (left+right) )
 					obj.data.fg.family = name
 					obj.data.fg.family_value = prop[0]
 					if obj.data.fg.property_value.find('[') != -1:
@@ -449,6 +451,7 @@ class ANIM:
 						idx = idx.partition(']')[0]
 						obj.data.fg.property_idx = int(idx)
 
+					debug_info( " beg=%d end=%d " % (prop[1],prop[2]) )
 					if prop[1] != 'x':
 						obj.data.fg.range_beg = prop[1]
 						obj.data.fg.range_beg_ini = prop[1]
