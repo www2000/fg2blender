@@ -69,7 +69,7 @@ class ANIM:
 		self.pos				= Vector( (0.0, 0.0, 0.0) )
 		self.vec				= Vector( (0.0, 0.0, 0.0) )
 		self.objects			= []
-		self.group_objects		= []
+		self.group_objects		= []			# group_objects[0] = "group_name"
 		self.texture			= ""
 		self.ac_file			= ""
 		self.offset_deg			= 0.0
@@ -777,7 +777,7 @@ class ANIM_PICK(ANIM):
 			
 			if xml_file.ac_files:
 				if not obj_name_ac in xml_file.ac_files[0].dic_name_meshs:
-					group_objects = find_group( obj_name_ac, xml_file )
+					group_objects = xml_manager.find_group( obj_name_ac, xml_file )
 					if group_objects:
 						debug_info( '\tgroup : "%s"' % str(self.group_objects)  )
 						for obj_name_bl in group_objects[1:]:
@@ -1092,7 +1092,11 @@ class ANIM_GROUPS(ANIM):
 	# create_armature( self ) GROUPS
 	#----------------------------------------------
 	def create_armature( self, xml_current ):
-		pass
+		self.group_objects.append( self.name )
+		for objet in self.objects:
+			self.group_objects.append( objet )
+			
+		#pass
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
 # ANIM_JSB(ANIM)
