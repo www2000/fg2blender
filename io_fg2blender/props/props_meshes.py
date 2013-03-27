@@ -31,7 +31,6 @@
 import bpy
 import os
 
-bLock_update = False
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -63,10 +62,10 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 			bpy.ops.group.create( name = groupName )
 			print( "Creation du group : %s" % groupName )
 		#------------------------------------------------------------------------------------------------------------------------------
-		global bLock_update
 		from .. import fg2bl
+		from . import props_armature
 
-		if bLock_update == True:
+		if props_armature.bLock_update == True:
 			return None
 
 		active_object = context.active_object
@@ -75,9 +74,9 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 		if active_object.type != 'MESH':
 			return None
 
-		debug_info( 'update_ac_file "%s"  %s' % (active_object.name, str(bLock_update))  )
+		debug_info( 'update_ac_file "%s"  %s' % (active_object.name, str(props_armature.bLock_update))  )
 			
-		bLock_update = True
+		props_armature.bLock_update = True
 
 		ac_file = "" + active_object.data.fg.ac_file
 		ac_file = bpy.path.abspath( ac_file )
@@ -96,7 +95,7 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 			debug_info( "\t%s" % obj.name )
 			obj.data.fg.ac_file = "" + ac_file
 			
-		bLock_update = False
+		props_armature.bLock_update = False
 		return None	
 
 	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = 'Filename', update=update_ac_file)

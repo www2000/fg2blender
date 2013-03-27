@@ -154,7 +154,7 @@ surface_positions = [			('surface-positions/rudder-pos-norm',-1,1,False),
 								('surface-positions/elevator-pos-norm',-1,1,False),
 								('surface-positions/left-aileron-pos-norm',-1,1,False),
 								('surface-positions/right-aileron-pos-norm',-1,1,False),
-								('surface-positions/flap-pos-norm',-1,1,False),
+								('surface-positions/flap-pos-norm',0,1,False),
 								('surface-positions/left-aileron-pos-norm',-1,1,False),
                                 ('surface-positions/left-aileron-pos-norm',-1,1,False)				]
 
@@ -168,6 +168,10 @@ from . import *
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def update_keyframe( obj, coef ):
+	global bLock_update
+
+	if bLock_update == True:
+		return None
 	
 	if obj.animation_data:
 		for fcurve in obj.animation_data.action.fcurves:
@@ -178,6 +182,10 @@ def update_keyframe( obj, coef ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def update_keyframe_time( obj, coef ):
+	global bLock_update
+
+	if bLock_update == True:
+		return None
 	
 	if obj.animation_data:
 		for fcurve in obj.animation_data.action.fcurves:
@@ -188,6 +196,10 @@ def update_keyframe_time( obj, coef ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def update_keyframe_time( obj, coef ):
+	global bLock_update
+
+	if bLock_update == True:
+		return None
 	
 	if obj.animation_data:
 		for fcurve in obj.animation_data.action.fcurves:

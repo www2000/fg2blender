@@ -66,13 +66,15 @@ class FG_PROP_empty(bpy.types.PropertyGroup):
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def update_xml_file( self, context ):
-		global bLock_update
-		obj = context.active_object
-		debug_info( 'update_xml_file "%s"  %s' % (obj.name, str(bLock_update))  )
-		if bLock_update == True:
+		from . import props_armature
+
+		if props_armature.bLock_update == True:
 			return None
+
+		obj = context.active_object
+		debug_info( 'update_xml_file "%s"  %s' % (obj.name, str(props_armature.bLock_update))  )
 			
-		bLock_update = True
+		props_armature.bLock_update = True
 
 		active_object = context.active_object
 		xml_file = "" + active_object.fg.jsb_xml_file
@@ -86,7 +88,7 @@ class FG_PROP_empty(bpy.types.PropertyGroup):
 			debug_info( "\t%s" % obj.name )
 			obj.fg.jsb_xml_file = "" + xml_file
 			
-		bLock_update = False
+		props_armature.bLock_update = False
 		return None	
 	#----------------------------------------------------------------------------------------------------------------------------------
 

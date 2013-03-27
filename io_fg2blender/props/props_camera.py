@@ -36,7 +36,6 @@ camera_items = 	[
 			('COCKPIT_VIEW',	'COCKPIT_VIEW', '')
 		]
 			
-bLock_update = False
 
 #----------------------------------------------------------------------------------------------------------------------------------
 def debug_info( aff ):
@@ -51,6 +50,11 @@ class FG_PROP_camera(bpy.types.PropertyGroup):
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def update_type_view( self, context ):
+		from . import props_armature
+
+		if props_armature.bLock_update == True:
+			return None
+
 		obj = context.active_object
 		debug_info( obj.name )
 		obj.name = "" + obj.data.fg.type_view
@@ -59,13 +63,17 @@ class FG_PROP_camera(bpy.types.PropertyGroup):
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def update_xml_file( self, context ):
-		global bLock_update
+		from . import props_armature
+
+		if props_armature.bLock_update == True:
+			return None
+
 		obj = context.active_object
-		debug_info( 'update_xml_file "%s"  %s' % (obj.name, str(bLock_update))  )
+		debug_info( 'update_xml_file "%s"  %s' % (obj.name, str(props_armature.bLock_update))  )
 		if bLock_update == True:
 			return None
 			
-		bLock_update = True
+		props_armature.bLock_update = True
 
 		active_object = context.active_object
 		xml_file = "" + active_object.data.fg.xml_file
@@ -79,7 +87,7 @@ class FG_PROP_camera(bpy.types.PropertyGroup):
 			debug_info( "\t%s" % obj.name )
 			obj.data.fg.xml_file = "" + xml_file
 			
-		bLock_update = False
+		props_armature.bLock_update = False
 		return None	
 	#----------------------------------------------------------------------------------------------------------------------------------
 	xml_file	= bpy.props.StringProperty(	attr = 'xml_file', name = 'Filename', update=update_xml_file )

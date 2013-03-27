@@ -450,7 +450,7 @@ class ANIM:
 						idx = idx.partition(']')[0]
 						obj.data.fg.property_idx = int(idx)
 
-					debug_info( " beg=%d end=%d " % (prop[1],prop[2]) )
+					debug_info( " beg=%s end=%s " % (prop[1],prop[2]) )
 					if prop[1] != 'x':
 						obj.data.fg.range_beg = prop[1]
 						obj.data.fg.range_beg_ini = prop[1]
@@ -551,8 +551,6 @@ class ANIM_ROTATE(ANIM):
 			if obj.type != 'ARMATURE':
 				continue
 			if obj.data.name == armature_name:
-				from ..props import props_armature
-				props_armature.bLock_update = True
 				obj_arma = obj_armature = obj
 				obj_arma.data.fg.type_anim = 1
 				obj_arma.data.fg.family = "custom"
@@ -564,15 +562,18 @@ class ANIM_ROTATE(ANIM):
 				obj_arma.data.fg.time_ini = self.time
 				obj_arma.data.fg.range_beg = 0.0
 				obj_arma.data.fg.range_end = 1.0
+				obj_arma.data.fg.range_beg_ini = 0.0
+				obj_arma.data.fg.range_end_ini = 1.0
+				'''
 				obj_arma.data.fg.range_beg = -999.0
 				obj_arma.data.fg.range_end = -999.0
 				obj_arma.data.fg.range_beg_ini = -999.0
 				obj_arma.data.fg.range_end_ini = -999.0
+				'''
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				obj_arma.data.fg.offset_deg = 0.0 + self.offset_deg
 				self.create_property( obj_arma )
-				props_armature.bLock_update = False
 				break;
 
 		if self.name != "":
@@ -672,8 +673,6 @@ class ANIM_TRANSLATE(ANIM):
 			if obj.type != 'ARMATURE':
 				continue
 			if obj.data.name == armature_name:
-				from ..props import props_armature
-				props_armature.bLock_update = True
 				obj_arma = obj_armature = obj
 				obj_arma.data.fg.type_anim = 2
 				obj_arma.data.fg.family = "custom"
@@ -690,7 +689,6 @@ class ANIM_TRANSLATE(ANIM):
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				self.create_property( obj_arma )
-				props_armature.bLock_update = False
 				break;
 
 		if self.name != "":
@@ -849,8 +847,6 @@ class ANIM_SPIN(ANIM):
 			if obj.type != 'ARMATURE':
 				continue
 			if obj.data.name == armature_name:
-				from ..props import props_armature
-				props_armature.bLock_update = True
 				obj_arma = obj_armature = obj
 				obj_arma.data.fg.type_anim = 7
 				obj_arma.data.fg.family = "custom"
@@ -859,16 +855,19 @@ class ANIM_SPIN(ANIM):
 				obj_arma.data.fg.time = 100.0 / bpy.data.scenes[0].render.fps
 				obj_arma.data.fg.range_beg = 0.0
 				obj_arma.data.fg.range_end = 1.0
+				obj_arma.data.fg.range_beg_ini = 0.0
+				obj_arma.data.fg.range_end_ini = 1.0
+				'''
 				obj_arma.data.fg.range_beg = -999.0
 				obj_arma.data.fg.range_end = -999.0
 				obj_arma.data.fg.range_beg_ini = -999.0
 				obj_arma.data.fg.range_end_ini = -999.0
+				'''
 				obj_arma.data.fg.time_ini = 100.0 / bpy.data.scenes[0].render.fps
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				obj_arma.data.fg.offset_deg = 0.0 + self.offset_deg
 				self.create_property( obj_arma )
-				props_armature.bLock_update = False
 				break;
 
 		if self.name != "":
@@ -1021,8 +1020,8 @@ class ANIM_SHADER(ANIM):
 				debug_info( "Bonjour" )
 				#img = bpy.data.images.new(name='void', width=1024, height=1024, alpha=True, float_buffer=True)
 			else:
-				return None
 			'''
+			return None
 	
 		tex = bpy.data.textures.new( img_name, 'IMAGE')
 		tex.image = img

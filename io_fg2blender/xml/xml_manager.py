@@ -582,6 +582,10 @@ def create_material_pick():
 
 def create_anims():
 	global xml_files
+	from ..props import props_armature
+	
+	props_armature.bLock_update = True
+	
 	debug_info( '------' )
 	print( "Create animations" )
 	time_deb = time.time()
@@ -592,7 +596,10 @@ def create_anims():
 	#
 	#	Create material Pick an groupd (ac filename)
 	#
-	debug_info( "  -Create new materials")
+	#********************************************
+	# Laisse un affichage mini
+	print( "  -Create new materials")
+	#********************************************
 	create_material_pick()
 	# Change layer
 	#bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
@@ -608,7 +615,10 @@ def create_anims():
 	#
 	#	Change anim time 
 	#
-	debug_info( "  -Change anim time from jsbsim")
+	#********************************************
+	# Laisse un affichage mini
+	print( "  -Change anim time from jsbsim")
+	#********************************************
 	for xml_file, no in xml_files:
 		for anim in xml_file.anims:
 			if  anim.type == 'jsb':
@@ -617,7 +627,10 @@ def create_anims():
 	#
 	#	Create Anim
 	#
-	debug_info( "  -Create animations")
+	#********************************************
+	# Laisse un affichage mini
+	print( "  -Create animations")
+	#********************************************
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
 		debug_info( '------' )
@@ -649,13 +662,19 @@ def create_anims():
 	#
 	#	Assign objct to anim
 	#
-	debug_info( "  -Assign objects to animations")
+	#********************************************
+	# Laisse un affichage mini
+	print( "  -Assign objects to animations")
+	#********************************************
 	bpy.context.scene.layers = [True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True,True]
 	assign_obj_to_anim()
 	#
 	#	Insert keyframe
 	#
-	debug_info( "  -Insert keyframe")
+	#********************************************
+	# Laisse un affichage mini
+	print( "  -Insert keyframe")
+	#********************************************
 	for xml_file, no in xml_files:
 		set_current_xml( xml_file, no )
 		for anim in xml_file.anims:
@@ -669,6 +688,8 @@ def create_anims():
 
 	time_end = time.time()
 	debug_info( "Create animations in  %0.2f sec" % (time_end-time_deb) )
+
+	props_armature.bLock_update = False
 #bpy.ops.view3d.layers( nr=2, extend=True, toggle = True )
 #----------------------------------------------------------------------------------------------------------------------------------
 
