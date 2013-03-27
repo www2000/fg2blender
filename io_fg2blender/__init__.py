@@ -315,7 +315,7 @@ def register():
 		debug_xml_anim			= True
 		debug_ac3d_import		= False
 		debug_ac3d_export		= False
-		debug_props_armature	= True
+		debug_props_armature	= False
 		debug_ops_flightgear	= False
 	
 def unregister():
