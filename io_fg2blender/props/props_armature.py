@@ -33,6 +33,7 @@ def debug_info( aff ):
 	if debug_props_armature:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
+bLock_update = False
  
 familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear', 'consumable','surface_position']
  
@@ -200,6 +201,9 @@ def update_factor( self, context ):
 	global bLock_update
 	from ..xml import xml_export
 
+	if bLock_update == True:
+		return None
+
 	coef = 0.0
 	obj = context.active_object
 	if obj:
@@ -211,8 +215,6 @@ def update_factor( self, context ):
 			update_keyframe( obj, coef )
 			obj.data.fg.factor_ini = obj.data.fg.factor
 
-			if bLock_update == True:
-				return None
 			
 			bLock_update = True
 			obj_factor = obj.data.fg.factor
@@ -232,6 +234,9 @@ def update_time( self, context ):
 	global bLock_update
 	from ..xml import xml_export
 
+	if bLock_update == True:
+		return None
+			
 	coef = 0.0
 	obj = context.active_object
 	if obj:
@@ -243,9 +248,6 @@ def update_time( self, context ):
 			update_keyframe_time( obj, coef )
 			obj.data.fg.time_ini = 0.0 +  obj.data.fg.time
 
-			if bLock_update == True:
-				return None
-			
 			bLock_update = True
 			obj_time = obj.data.fg.time
 			property_value = xml_export.build_property_name( obj )
@@ -271,7 +273,7 @@ def update_range_beg( self, context ):
 
 	debug_info( 'update_range_deb "%s"  %s' % (active_object.name, str(bLock_update))  )
 		
-	property_value = xml_export.build_property_name( active_object )
+	property_value = "" + xml_export.build_property_name( active_object )
 	range_beg = active_object.data.fg.range_beg
 	debug_info( ' range_beg :  %s' % (range_beg)  )
 
@@ -279,7 +281,8 @@ def update_range_beg( self, context ):
 	for obj in bpy.data.objects:
 		if obj.type != 'ARMATURE':
 			continue
-		if xml_export.build_property_name(obj) == property_value:
+		value = "" + xml_export.build_property_name(obj)
+		if value == property_value:
 			debug_info( "\tupdate pour : %s" % obj.name )
 			obj.data.fg.range_beg = range_beg
 		
@@ -296,9 +299,10 @@ def update_range_end( self, context ):
 	
 	active_object = context.active_object
 
-	debug_info( 'update_range_end "%s"  %s' % (active_object.name, str(bLock_update))  )
+	debug_info( 'update_range_end "%s" block_update=%s' % (active_object.name, str(bLock_update))  )
 		
 	property_value = xml_export.build_property_name( active_object )
+	debug_info( 'update_range_end "%s" -- property_value %s' % (active_object.name, property_value)  )
 	range_end = active_object.data.fg.range_end
 	debug_info( ' range_end :  %s' % (range_end)  )
 
@@ -307,7 +311,7 @@ def update_range_end( self, context ):
 		if obj.type != 'ARMATURE':
 			continue
 		if xml_export.build_property_name(obj) == property_value:
-			debug_info( "\tupdate pour : %s" % obj.name )
+			debug_info( "\tupdate pour : %s  -- property_value %s" % (obj.name,xml_export.build_property_name(obj)) )
 			obj.data.fg.range_end = range_end
 		
 	bLock_update = False
@@ -431,7 +435,6 @@ nBit = 2
 #----------------------------------------------------------------------------------------------------------------------------------
 
 
-bLock_update = False
 
 class FG_PROP_armature(bpy.types.PropertyGroup):
 
@@ -552,7 +555,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 	family_value	= bpy.props.EnumProperty(	attr = 'family_value', name='Value', description="Value in family", items=dynamic_items, update=update_property )
 	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'Property', update=update_property)
-	property_idx	= bpy.props.IntProperty(	attr = 'value', name = 'number ', min=-1)
+	property_idx	= bpy.props.IntProperty(	attr = 'idx', name = 'number ', min=-1)
 	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
 	factor_ini		= bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
 	xml_file		= bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File', update=update_xml_file)

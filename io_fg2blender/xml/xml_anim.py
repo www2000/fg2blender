@@ -91,7 +91,6 @@ class ANIM:
 		self.xml_file		= "" + xml_manager.xml_current.name
 		self.xml_file_no	= 0 + xml_manager.xml_current.no
 		#self.layer			= 0 + xml_import.arma_layer
-		print( "Layer armature %d" % self.layer )
 		#self.active_layer	= xml_import.option_arma_rotate_layer
 
 		#self.extract_type( node )
@@ -552,6 +551,8 @@ class ANIM_ROTATE(ANIM):
 			if obj.type != 'ARMATURE':
 				continue
 			if obj.data.name == armature_name:
+				from ..props import props_armature
+				props_armature.bLock_update = True
 				obj_arma = obj_armature = obj
 				obj_arma.data.fg.type_anim = 1
 				obj_arma.data.fg.family = "custom"
@@ -571,6 +572,7 @@ class ANIM_ROTATE(ANIM):
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				obj_arma.data.fg.offset_deg = 0.0 + self.offset_deg
 				self.create_property( obj_arma )
+				props_armature.bLock_update = False
 				break;
 
 		if self.name != "":
@@ -670,6 +672,8 @@ class ANIM_TRANSLATE(ANIM):
 			if obj.type != 'ARMATURE':
 				continue
 			if obj.data.name == armature_name:
+				from ..props import props_armature
+				props_armature.bLock_update = True
 				obj_arma = obj_armature = obj
 				obj_arma.data.fg.type_anim = 2
 				obj_arma.data.fg.family = "custom"
@@ -686,6 +690,7 @@ class ANIM_TRANSLATE(ANIM):
 				obj_arma.data.fg.factor = 0.0 + self.factor
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				self.create_property( obj_arma )
+				props_armature.bLock_update = False
 				break;
 
 		if self.name != "":
@@ -844,6 +849,8 @@ class ANIM_SPIN(ANIM):
 			if obj.type != 'ARMATURE':
 				continue
 			if obj.data.name == armature_name:
+				from ..props import props_armature
+				props_armature.bLock_update = True
 				obj_arma = obj_armature = obj
 				obj_arma.data.fg.type_anim = 7
 				obj_arma.data.fg.family = "custom"
@@ -861,6 +868,7 @@ class ANIM_SPIN(ANIM):
 				obj_arma.data.fg.factor_ini = 0.0 + self.factor
 				obj_arma.data.fg.offset_deg = 0.0 + self.offset_deg
 				self.create_property( obj_arma )
+				props_armature.bLock_update = False
 				break;
 
 		if self.name != "":

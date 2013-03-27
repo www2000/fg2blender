@@ -58,18 +58,20 @@ def debug_info( aff):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def build_property_name( armature ):
-	prop_name = armature.data.fg.family_value
+	prop_name = "" + armature.data.fg.family_value
 	if prop_name.find('%d')!=-1:
 		if armature.data.fg.property_idx == -1:
 			left  = prop_name.partition('[')[0]
 			right = prop_name.partition(']')[2]
-			return left + right
+			prop_name = "" + left + right
 		else:
 			idx = armature.data.fg.property_idx
 			left  = prop_name.partition('[')[0]
 			right = prop_name.partition(']')[2]
-			return left + '[' +  str(armature.data.fg.property_idx) + ']' + right
+			prop_name = "" + left + '[' +  str(armature.data.fg.property_idx) + ']' + right
 	elif armature.data.fg.family == 'custom':
+		prop_name = "" + armature.data.fg.property_value
+	elif prop_name == 'error':
 		prop_name = "" + armature.data.fg.property_value
 	return prop_name
 #----------------------------------------------------------------------------------------------------------------------------------

@@ -916,7 +916,7 @@ def parse_node( node, file_name ):
 								ac_option.edge_split	= True
 								ac_option.split_angle	= 60.0
 								ac_option.context		= bpy.context
-								print( "Mesh layer %d" % mesh_layer )
+
 								read_ac(	filename 	= conversion(file_ac),
 											ac_option	= ac_option,
 											extra		= xml_manager.xml_current )
