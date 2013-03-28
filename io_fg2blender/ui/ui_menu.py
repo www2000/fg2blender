@@ -124,6 +124,7 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
         layout.operator("view3d.init_rotation",			text='Init Rotate' )
         layout.separator()
         layout.operator("view3d.freeze_armature",		text='Freeze selected armatures' )
+        layout.menu('VIEW3D_FG_sub_menu_unfreeze_armature' )
         layout.operator("view3d.save_keyframe",			text='Save Keyframe and Reset' )
         layout.operator("view3d.restore_keyframe",		text='Restore Keyframe ' )
         layout.operator("view3d.save_parent",			text='Save Parent and Reset' )
@@ -182,6 +183,35 @@ class VIEW3D_FG_sub_menu_create_spin(bpy.types.Menu):
         layout.operator("view3d.create_spin",	text='Create Spin XZ').axis = 'XZ'
         layout.operator("view3d.create_spin",	text='Create Spin YZ').axis = 'YZ'
         layout.operator("view3d.create_spin",	text='Create Spin XYZ').axis = 'XYZ'
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class VIEW3D_FG_sub_menu_unfreezeè_armature(bpy.types.Menu):
+    bl_label = "Unfreeze armature"
+
+    def draw(self, context):
+    	from ..ops import ops_flightgear
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        ob = context.object
+        layout.label
+        if ob.mode == 'OBJECT':
+            #show all used materials in entire blend file
+        	for fa in ops.flightgear.STACK_FREEZE_ARMATURES:
+        		layout.operator("view3d.unfreeze_armature",
+                                    text=fa.armature_name,
+                                    icon='MATERIAL_DATA',
+                                    ).obj_name=fa.armature_name
+
+        elif ob.mode == 'EDIT':
+            #show only the materials on this object
+            mats = ob.material_slots.keys()
+            for m in mats:
+                layout.operator("view3d.select_material_by_name",
+                    text=m,
+                    icon='MATERIAL_DATA').matname = m
+
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-F       utilise pour le "debuggage"
 # Réouvre le dernier xml     contenu dans '/tmp/script-fg2bl'
