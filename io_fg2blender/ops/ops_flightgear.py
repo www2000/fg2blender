@@ -610,6 +610,56 @@ class FG_OT_freeze_armature(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_unfreeze_armature(bpy.types.Operator):
+	'''Unfreeze selected armatures'''
+	bl_idname = "view3d.unfreeze_armature"
+	bl_label = "Unfreeze selected armatures"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	object_name = bpy.props.StringProperty()
+
+	@classmethod
+	def poll(cls, context):
+		if context.active_object == None:
+			return False
+		return context.scene.objects.active.type == 'ARMATURE'
+
+	def execute(self, context):
+		from ..xml import xml_manager
+		global STACK_FREEZE_ARMATURES
+
+		debug_info( 'bpy.ops.view3d.unfreeze_armature()' )
+		obj = context.scene.objects.active
+		current_frame = context.scene.frame_current
+
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				continue
+			
+			freeze_armature = None
+			for ska in STACK_FREEZE_ARMATURES:
+				if ska.name == obj.name:
+					freeze_armature = ska
+				
+			if freeze_armature == None:
+				debug_info( '\tUnfreeze "%s" : wasn\'t freezed' % obj.name )
+				continue
+		
+			armature = obj
+			if armature.animation_data != None:
+				idx = 0
+				for fcurve in armature.animation_data.action.fcurves:
+					for point in fcurve.keyframe_points:
+						point.co.y = freeze_armature.keyframe[idx][1]
+						idx = idx + 1
+				
+		
+			STACK_FREEZE_ARMATURES.remove( freeze_armature )
+			context.scene.frame_current = current_frame		
+			debug_info( '\tUnfreeze armature : "%s"' % ( obj.name ) )
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_save_keyframe(bpy.types.Operator):
 	'''???????????'''
 	bl_idname = "view3d.save_keyframe"
@@ -679,6 +729,8 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 
 		debug_info( 'bpy.ops.view3d.restore_keyframe()' )
 		obj = context.scene.objects.active
+		current_frame = context.scene.frame_current
+
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
 				continue
@@ -701,7 +753,8 @@ class FG_OT_restore_keyframe(bpy.types.Operator):
 						idx = idx + 1
 				
 		
-			STACK_SAVE_KEYFRAMES.remove( save_keyframe )		
+			STACK_SAVE_KEYFRAMES.remove( save_keyframe )
+			context.scene.frame_current = current_frame
 			debug_info( '\tRestore "%s" : %d keyframes' % ( obj.name, idx ) )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1908,6 +1961,7 @@ class MousePanel(bpy.types.Panel):
 
 def register():
 	bpy.utils.register_class( FG_OT_freeze_armature)
+	bpy.utils.register_class( FG_OT_unfreeze_armature)
 	bpy.utils.register_class( FG_OT_save_keyframe)
 	bpy.utils.register_class( FG_OT_restore_keyframe)
 	bpy.utils.register_class( FG_OT_save_parent)
@@ -1950,6 +2004,7 @@ def register():
 	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_freeze_armature)
+	bpy.utils.unregister_class( FG_OT_unfreeze_armature)
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
 	bpy.utils.unregister_class( FG_OT_restore_keyframe)
 	bpy.utils.unregister_class( FG_OT_save_parent)
