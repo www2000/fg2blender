@@ -123,6 +123,7 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
         layout.operator("view3d.init_rotation_zero",		text='Reset Rotate' )
         layout.operator("view3d.init_rotation",			text='Init Rotate' )
         layout.separator()
+        layout.operator("view3d.freeze_armature",		text='Freeze selected armatures' )
         layout.operator("view3d.save_keyframe",			text='Save Keyframe and Reset' )
         layout.operator("view3d.restore_keyframe",		text='Restore Keyframe ' )
         layout.operator("view3d.save_parent",			text='Save Parent and Reset' )

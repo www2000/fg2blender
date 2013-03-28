@@ -51,6 +51,7 @@ from bpy.props import CollectionProperty
 
 #--------------------------------------------------------------------------------------------------------------------------------
 STACK_SAVE_KEYFRAMES = []
+STACK_FREEZE_ARMATURES = []
 
 #--------------------------------------------------------------------------------------------------------------------------------
 class SAVE_KEYFRAME:
@@ -65,6 +66,12 @@ class SAVE_PARENT:
 	def __init__(self):
 		self.object_name			= ""
 		self.parent_name			= ""
+
+#--------------------------------------------------------------------------------------------------------------------------------
+class FREEZE_ARMATURE:
+	def __init__(self):
+		self.armature_name			= ""
+		self.keyframe				= []
 
 #--------------------------------------------------------------------------------------------------------------------------------
 def debug_info(aff):
@@ -549,6 +556,56 @@ class FG_OT_create_anim(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_freeze_armature(bpy.types.Operator):
+	'''Freeze selected armatures'''
+	bl_idname = "view3d.freeze_armature"
+	bl_label = "Freeze an armature"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if context.active_object == None:
+			return False
+		return context.scene.objects.active.type == 'ARMATURE'
+
+	def execute(self, context):
+		from ..xml import xml_manager
+		global STACK_FREEZE_ARMATURES
+
+		debug_info( 'bpy.ops.view3d.freeze_armature()' )
+		obj = context.scene.objects.active
+		current_frame = context.scene.frame_current
+		
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				continue
+
+			for ska in STACK_FREEZE_ARMATURES:
+				if ska.name == obj.name:
+					debug_info( '\tFreeze exist on "%s"' % obj.name )
+					continue
+		
+			freeze_armature = FREEZE_ARMATURE()
+			freeze_armature.name = obj.name
+			'''
+			armature = obj#obj.data
+			nb_key = 0
+			if armature.animation_data != None:
+				for fcurve in armature.animation_data.action.fcurves:
+					for point in fcurve.keyframe_points:
+						x = 0.0 + point.co.x
+						y = 0.0 + point.co.y
+						co = ( x, y )
+						save_keyframe.keyframe.append( co )
+						nb_key = nb_key + 1
+						point.co.y = 0.0
+			'''
+			STACK_FREEZE_ARMATURES.append( freeze_armature )
+			context.scene.frame_current = current_frame
+			debug_info( '\tFreeze armature : "%s"' % ( obj.name ) )
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_save_keyframe(bpy.types.Operator):
 	'''???????????'''
 	bl_idname = "view3d.save_keyframe"
@@ -567,6 +624,7 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 
 		debug_info( 'bpy.ops.view3d.save_keyframe()' )
 		obj = context.scene.objects.active
+		current_frame = context.scene.frame_current
 		
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
@@ -592,8 +650,8 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 						nb_key = nb_key + 1
 						point.co.y = 0.0
 				
-		
-			STACK_SAVE_KEYFRAMES.append( save_keyframe )		
+			STACK_SAVE_KEYFRAMES.append( save_keyframe )
+			context.scene.frame_current = current_frame
 			debug_info( '\tSave for "%s" : %d keyframes' % ( obj.name, nb_key ) )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -1531,7 +1589,7 @@ class FG_OT_copy_name_bl2ac(bpy.types.Operator):
 		return True
 
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
-		current_obj = bpy.context.scene.objects.active
+		current_obj = context.scene.objects.active
 
 		for obj in context.selected_objects:
 			if obj.type != 'MESH':
@@ -1539,7 +1597,7 @@ class FG_OT_copy_name_bl2ac(bpy.types.Operator):
 			bpy.context.scene.objects.active = obj
 			obj.data.fg.name_ac = "" + obj.name
 
-		bpy.context.scene.objects.active = current_obj
+		context.scene.objects.active = current_obj
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1844,6 +1902,7 @@ class MousePanel(bpy.types.Panel):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def register():
+	bpy.utils.register_class( FG_OT_freeze_armature)
 	bpy.utils.register_class( FG_OT_save_keyframe)
 	bpy.utils.register_class( FG_OT_restore_keyframe)
 	bpy.utils.register_class( FG_OT_save_parent)
@@ -1885,6 +1944,7 @@ def register():
 	bpy.utils.register_class( FG_OT_select_object_by_armature )
 	
 def unregister():
+	bpy.utils.unregister_class( FG_OT_freeze_armature)
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
 	bpy.utils.unregister_class( FG_OT_restore_keyframe)
 	bpy.utils.unregister_class( FG_OT_save_parent)
