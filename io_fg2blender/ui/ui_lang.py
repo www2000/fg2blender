@@ -18,39 +18,51 @@
 #
 #
 # Script copyright (C) Clément de l'Hamaide
-# Contributors:
+# Contributors: 
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #
-#									OPS_POPUP.PY
+#									UI_LANG.PY
 #
 #----------------------------------------------------------------------------------------------------------------------------------
-
 import bpy
 
+user_lang = bpy.context.user_preferences.system.language
 
-class FG_OT_popup(bpy.types.Operator):
-	bl_idname = "view3d.popup"
-	bl_label = "FG2Blender error"
+lang = {}
+lang_en = {}
+lang_fr = {}
 
-	message = bpy.props.StringProperty()
+lang_en['ERR001'] = "It's a syntax error"
+lang_fr['ERR001'] = "C'est une erreur de syntaxe"
 
-	def execute(self, context):
-		return {'FINISHED'}
+lang_en['ERR002'] = "Unknow file"
+lang_fr['ERR002'] = "Fichier inconnu"
 
-	def invoke(self, context, event):
-		wm = context.window_manager
-		return wm.invoke_props_dialog(self)
+lang_en['ERR003'] = "Armature information is missing !"
+lang_fr['ERR003'] = "Informations manquantes pour l'armature"
 
-	def draw(self, context):
-		from ..ui.ui_lang import lang
-		self.layout.label(lang[self.message])
+lang_en['insert_keyframe_rotate'] = "Insert Keyframe Rotate"
+lang_fr['insert_keyframe_rotate'] = "Insérer une keyframe Rotate"
+
+lang_en['insert_keyframe_translate'] = "Insert Keyframe Translate"
+lang_fr['insert_keyframe_translate'] = "Insérer une keyframe Translate"
+
+lang_en['import_(.xml)'] = "Import (.xml)"
+lang_fr['import_(.xml)'] = "Importer (.xml)"
+
+lang_en['create_animations'] = "Create animations"
+lang_fr['create_animations'] = "Créer les animations"
 
 
-def register():
-	bpy.utils.register_class( FG_OT_popup )
 
-def unregister():
-	bpy.utils.unregister_class( FG_OT_popup )
+if user_lang == 'DEFAULT':
+	lang = lang_en
+elif user_lang == 'en_EN':
+	lang = lang_en
+elif user_lang == 'fr_FR':
+	lang = lang_fr
+else:
+	lang = lang_en
 

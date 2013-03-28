@@ -61,17 +61,18 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
     bl_label = "Flightgear Tools Menu"
 
     def draw(self, context):
+        from ..ui.ui_lang import lang
+
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.separator()
-        layout.operator("view3d.insert_keyframe_rotate",	text='Insert Keyframe Rotate' )
-        layout.operator("view3d.insert_keyframe_translate", 	text='Insert Keyframe Translate' )
+        layout.operator("view3d.insert_keyframe_rotate",	text=lang['insert_keyframe_rotate'] )
+        layout.operator("view3d.insert_keyframe_translate", 	text=lang['insert_keyframe_translate'] )
         layout.separator()
-        layout.operator("import.fg2blender",			text='Import (.xml)' )
-        layout.operator("view3d.popup",				text='popup' ).message = "toto"
+        layout.operator("import.fg2blender",			text=lang['import_(.xml)'] )
         layout.separator()
-        layout.operator("view3d.create_anim",			text='Create animations' )
+        layout.operator("view3d.create_anim",			text=lang['create_animations'] )
         layout.separator()
         layout.operator("view3d.edge_split",			text='Apply edge-split' )
         layout.operator("view3d.select_property",		text='Select objects by property' )
@@ -85,7 +86,8 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
         layout.menu( 'VIEW3D_FG_sub_menu_unwrap' )
         layout.separator()
         layout.operator("wm.url_open", text='Manual').url="http://wiki.flightgear.org/Fr/fg2blender"
-        #layout.operator("view3d.unwrap_4_faces",	text='Unwrap 4 faces' )
+        #layout.operator("view3d.unwrap_4_faces",		text='Unwrap 4 faces' )
+        #layout.operator("view3d.popup",			text='popup' ).message = "ERR001"
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_unwrap(bpy.types.Menu):

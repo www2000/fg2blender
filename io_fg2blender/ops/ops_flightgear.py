@@ -1420,7 +1420,7 @@ class FG_OT_write_xml(bpy.types.Operator):
 		debug_info( ' file = "%s"' % filename )
 		#filename = self.filename
 		if filename == "":
-			bpy.ops.view3d.popup('INVOKE_DEFAULT', message="Armature information is missing !")
+			bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR003")
 			return {'FINISHED'}
 		
 		if filename.find('Aircraft')!=-1:
