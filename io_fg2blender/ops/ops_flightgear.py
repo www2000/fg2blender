@@ -595,7 +595,12 @@ class FG_OT_freeze_armature(bpy.types.Operator):
 			value = xml_export.compute_rotation_angle_current( armature )
 
 			if armature.animation_data != None:
+				n = 0
 				for fcurve in armature.animation_data.action.fcurves:
+					if fcurve.data_path.find( "euler" ) != -1:
+						n = n + 1
+					if n != 2:
+						continue
 					for point in fcurve.keyframe_points:
 						x = 0.0 + point.co.x
 						y = 0.0 + point.co.y
@@ -651,7 +656,7 @@ class FG_OT_unfreeze_armature(bpy.types.Operator):
 		obj = context.scene.objects.active
 		current_frame = context.scene.frame_current
 
-		if self.object_name.find("All") != -1:
+		if self.object_name == "All":
 			for obj in context.selected_objects:
 				if obj.type != 'ARMATURE':
 					continue
