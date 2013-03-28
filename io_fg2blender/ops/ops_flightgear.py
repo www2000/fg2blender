@@ -570,6 +570,7 @@ class FG_OT_freeze_armature(bpy.types.Operator):
 
 	def execute(self, context):
 		from ..xml import xml_manager
+		from ..xml import xml_export
 		global STACK_FREEZE_ARMATURES
 
 		debug_info( 'bpy.ops.view3d.freeze_armature()' )
@@ -583,23 +584,26 @@ class FG_OT_freeze_armature(bpy.types.Operator):
 			for ska in STACK_FREEZE_ARMATURES:
 				if ska.name == obj.name:
 					debug_info( '\tFreeze exist on "%s"' % obj.name )
-					continue
+					bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR005")
+					return {'FINISHED'}
 		
 			freeze_armature = FREEZE_ARMATURE()
 			freeze_armature.name = obj.name
-			'''
+			
 			armature = obj#obj.data
 			nb_key = 0
+			value = xml_export.compute_rotation_angle_current( armature )
+
 			if armature.animation_data != None:
 				for fcurve in armature.animation_data.action.fcurves:
 					for point in fcurve.keyframe_points:
 						x = 0.0 + point.co.x
 						y = 0.0 + point.co.y
 						co = ( x, y )
-						save_keyframe.keyframe.append( co )
+						freeze_armature.keyframe.append( co )
 						nb_key = nb_key + 1
-						point.co.y = 0.0
-			'''
+						point.co.y = value
+			
 			STACK_FREEZE_ARMATURES.append( freeze_armature )
 			context.scene.frame_current = current_frame
 			debug_info( '\tFreeze armature : "%s"' % ( obj.name ) )
@@ -633,7 +637,8 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 			for skf in STACK_SAVE_KEYFRAMES:
 				if skf.name == obj.name:
 					debug_info( '\tSave exist on "%s"' % obj.name )
-					continue
+					bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR004")
+					return {'FINISHED'}
 		
 			save_keyframe = SAVE_KEYFRAME()
 			save_keyframe.name = obj.name

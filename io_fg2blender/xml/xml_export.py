@@ -57,6 +57,23 @@ def debug_info( aff):
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
 
+def compute_rotation_angle_current( armature ):
+	yFcurve = None
+	n = 0
+	# find curve for y component
+	for fcurve in armature.animation_data.action.fcurves:
+		if fcurve.data_path.find( "euler" ) != -1:
+			n = n + 1
+		if n == 2:
+			yFcurve = fcurve
+			break
+	
+	angle = yFcurve.evaluate( bpy.context.scene.frame_current )
+	#print( "Fcurve ; %s" % yFcurve.data_path )
+	#print( "%s Angle %.2f pour la frame : %.2f" % (armature.name,angle, bpy.context.scene.frame_current) ) 
+	return angle
+#------------------------------------------------------------------------------------------------------------------------------------
+
 def build_property_name( armature ):
 	prop_name = "" + armature.data.fg.family_value
 	if prop_name.find('%d')!=-1:
@@ -311,23 +328,6 @@ def write_animation( context, node, obj ):
 		v = tail - head
 		v.normalize()
 		return v
-	#---------------------------------------------------------------------------
-
-	def compute_rotation_angle_current( armature ):
-		yFcurve = None
-		n = 0
-		# find curve for y component
-		for fcurve in armature.animation_data.action.fcurves:
-			if fcurve.data_path.find( "euler" ) != -1:
-				n = n + 1
-			if n == 2:
-				yFcurve = fcurve
-				break
-		
-		angle = yFcurve.evaluate( bpy.context.scene.frame_current )
-		#print( "Fcurve ; %s" % yFcurve.data_path )
-		#print( "%s Angle %.2f pour la frame : %.2f" % (armature.name,angle, bpy.context.scene.frame_current) ) 
-		return angle
 	#---------------------------------------------------------------------------
 
 	def compute_translation_current( armature ):

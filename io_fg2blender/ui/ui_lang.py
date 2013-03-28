@@ -43,6 +43,12 @@ lang_fr['ERR002'] = "Fichier inconnu"
 lang_en['ERR003'] = "Armature information is missing !"
 lang_fr['ERR003'] = "Informations manquantes pour l'armature"
 
+lang_en['ERR004'] = "Keyframes are already saved !"
+lang_fr['ERR004'] = "Les keyframes sont déjà sauvegardés"
+
+lang_en['ERR005'] = "Armatures are already freezed !"
+lang_fr['ERR005'] = "Les armatures sont déjà gelés"
+
 lang_en['insert_keyframe_rotate'] = "Insert Keyframe Rotate"
 lang_fr['insert_keyframe_rotate'] = "Insérer une keyframe Rotate"
 
