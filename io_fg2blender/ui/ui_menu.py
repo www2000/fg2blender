@@ -186,32 +186,23 @@ class VIEW3D_FG_sub_menu_create_spin(bpy.types.Menu):
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
-class VIEW3D_FG_sub_menu_unfreezeè_armature(bpy.types.Menu):
-    bl_label = "Unfreeze armature"
+class VIEW3D_FG_sub_menu_unfreeze_armature(bpy.types.Menu):
+	bl_label = "Unfreeze"
 
-    def draw(self, context):
-    	from ..ops import ops_flightgear
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
+	def draw(self, context):
+		from ..ops import ops_flightgear
+		layout = self.layout
+		layout.operator_context = 'INVOKE_REGION_WIN'
 
-        ob = context.object
-        layout.label
-        if ob.mode == 'OBJECT':
-            #show all used materials in entire blend file
-        	for fa in ops.flightgear.STACK_FREEZE_ARMATURES:
-        		layout.operator("view3d.unfreeze_armature",
-                                    text=fa.armature_name,
-                                    icon='MATERIAL_DATA',
-                                    ).obj_name=fa.armature_name
+		ob = context.object
+		layout.label
 
-        elif ob.mode == 'EDIT':
-            #show only the materials on this object
-            mats = ob.material_slots.keys()
-            for m in mats:
-                layout.operator("view3d.select_material_by_name",
-                    text=m,
-                    icon='MATERIAL_DATA').matname = m
-
+		if ob.mode == 'OBJECT':
+			for fa in ops_flightgear.STACK_FREEZE_ARMATURES:
+				layout.operator("view3d.unfreeze_armature",
+				                    text=fa.armature_name,
+				                    icon='MATERIAL_DATA',
+				                    ).obj_name=fa.armature_name
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-F       utilise pour le "debuggage"
 # Réouvre le dernier xml     contenu dans '/tmp/script-fg2bl'
@@ -362,6 +353,7 @@ def register():
     bpy.utils.register_class(VIEW3D_FG_sub_menu_create_rotation)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_create_spin)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_create_translate)
+    bpy.utils.register_class(VIEW3D_FG_sub_menu_unfreeze_armature)
 def unregister():
     bpy.utils.unregister_class(FG_OT_exec)
     bpy.utils.unregister_class(FG_OT_exec2)
@@ -371,6 +363,6 @@ def unregister():
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_rotation)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_spin)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_translate)
-
+    bpy.utils.unregister_class(VIEW3D_FG_sub_menu_unfreeze_armature)
 
 
