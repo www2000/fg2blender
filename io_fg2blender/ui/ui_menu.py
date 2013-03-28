@@ -191,18 +191,20 @@ class VIEW3D_FG_sub_menu_unfreeze_armature(bpy.types.Menu):
 
 	def draw(self, context):
 		from ..ops import ops_flightgear
+
 		layout = self.layout
-		layout.operator_context = 'INVOKE_REGION_WIN'
+		#layout.operator_context = 'INVOKE_REGION_WIN'
 
-		ob = context.object
-		layout.label
-
-		if ob.mode == 'OBJECT':
-			for fa in ops_flightgear.STACK_FREEZE_ARMATURES:
-				layout.operator("view3d.unfreeze_armature",
-				                    text=fa.armature_name,
-				                    icon='MATERIAL_DATA',
-				                    ).obj_name=fa.armature_name
+		#ob = context.object
+		#layout.label
+		layout.operator("view3d.unfreeze_armature",
+		                    text="All armatures",
+		                    icon='MATERIAL_DATA').object_name = "All"
+		                    
+		for sfa in ops_flightgear.STACK_FREEZE_ARMATURES:
+			layout.operator("view3d.unfreeze_armature",
+			                    text=sfa.name,
+			                    icon='ARMATURE_DATA').object_name = sfa.name
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-F       utilise pour le "debuggage"
 # Réouvre le dernier xml     contenu dans '/tmp/script-fg2bl'

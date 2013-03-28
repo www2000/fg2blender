@@ -70,7 +70,7 @@ class SAVE_PARENT:
 #--------------------------------------------------------------------------------------------------------------------------------
 class FREEZE_ARMATURE:
 	def __init__(self):
-		self.armature_name			= ""
+		self.name					= ""
 		self.keyframe				= []
 
 #--------------------------------------------------------------------------------------------------------------------------------
@@ -588,7 +588,7 @@ class FG_OT_freeze_armature(bpy.types.Operator):
 					return {'FINISHED'}
 		
 			freeze_armature = FREEZE_ARMATURE()
-			freeze_armature.name = obj.name
+			freeze_armature.name = "" + obj.name
 			
 			armature = obj#obj.data
 			nb_key = 0
@@ -618,45 +618,50 @@ class FG_OT_unfreeze_armature(bpy.types.Operator):
 
 	object_name = bpy.props.StringProperty()
 
+	#-----------------------------------------------------------------------------------------------------------------------------
 	@classmethod
 	def poll(cls, context):
 		if context.active_object == None:
 			return False
 		return context.scene.objects.active.type == 'ARMATURE'
 
+	#-----------------------------------------------------------------------------------------------------------------------------
 	def execute(self, context):
-		from ..xml import xml_manager
-		global STACK_FREEZE_ARMATURES
-
-		debug_info( 'bpy.ops.view3d.unfreeze_armature()' )
-		obj = context.scene.objects.active
-		current_frame = context.scene.frame_current
-
-		for obj in context.selected_objects:
-			if obj.type != 'ARMATURE':
-				continue
-			
+		#-------------------------------------------------------------------------------------------------------------------------
+		def unfreeze_armature( armature ):
 			freeze_armature = None
 			for ska in STACK_FREEZE_ARMATURES:
-				if ska.name == obj.name:
+				if ska.name == armature.name:
 					freeze_armature = ska
 				
 			if freeze_armature == None:
 				debug_info( '\tUnfreeze "%s" : wasn\'t freezed' % obj.name )
-				continue
+				return
 		
-			armature = obj
 			if armature.animation_data != None:
 				idx = 0
 				for fcurve in armature.animation_data.action.fcurves:
 					for point in fcurve.keyframe_points:
 						point.co.y = freeze_armature.keyframe[idx][1]
 						idx = idx + 1
-				
-		
 			STACK_FREEZE_ARMATURES.remove( freeze_armature )
-			context.scene.frame_current = current_frame		
-			debug_info( '\tUnfreeze armature : "%s"' % ( obj.name ) )
+		#-------------------------------------------------------------------------------------------------------------------------
+
+		debug_info( 'bpy.ops.view3d.unfreeze_armature()' )
+		obj = context.scene.objects.active
+		current_frame = context.scene.frame_current
+
+		if self.object_name.find("All") != -1:
+			for obj in context.selected_objects:
+				if obj.type != 'ARMATURE':
+					continue
+
+				unfreeze_armature(obj)			
+		else:
+			unfreeze_armature(bpy.data.objects[self.object_name])			
+		
+		context.scene.frame_current = current_frame		
+		debug_info( '\tUnfreeze armature : "%s"' % ( obj.name ) )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
