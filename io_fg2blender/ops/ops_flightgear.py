@@ -165,8 +165,7 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		return True
-		return context.active_object != None
+		return context.mode == 'OBJECT'
 
 	def execute(self, context):
 		import bpy
@@ -339,8 +338,7 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		return True
-		return context.active_object != None
+		return context.mode == 'OBJECT'
 
 	def execute(self, context):
 		import bpy
@@ -442,8 +440,7 @@ class FG_OT_create_spin(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		return True
-		return context.active_object != None
+		return context.mode == 'OBJECT'
 
 	def execute(self, context):
 		import bpy
