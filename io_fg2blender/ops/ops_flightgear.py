@@ -639,23 +639,27 @@ class FG_OT_unfreeze_armature(bpy.types.Operator):
 					point.co.y = armature.data.fg.keyframes[idx].y
 					idx = idx + 1
 
+				for point in yFcurve.keyframe_points:
+					armature.data.fg.keyframes.remove(0)
+				
+
 		#-------------------------------------------------------------------------------------------------------------------------
 
 		debug_info( 'bpy.ops.view3d.unfreeze_armature()' )
-		obj = context.scene.objects.active
+		#obj = context.scene.objects.active
 		current_frame = context.scene.frame_current
 
 		if self.object_name == "All":
-			for obj in context.selected_objects:
+			for obj in bpy.data.objects:
 				if obj.type != 'ARMATURE':
 					continue
-
-				unfreeze_armature(obj)			
+				if len(obj.data.fg.keyframes) != 0:
+					unfreeze_armature(obj)			
 		else:
 			unfreeze_armature(bpy.data.objects[self.object_name])			
 		
 		context.scene.frame_current = current_frame		
-		debug_info( '\tUnfreeze armature : "%s"' % ( obj.name ) )
+		#debug_info( '\tUnfreeze armature : "%s"' % ( obj.name ) )
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
