@@ -112,6 +112,7 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
         layout.menu('VIEW3D_FG_sub_menu_create_spin' )
         layout.operator("view3d.transform_to_rotate",		text='Transform to rotate' )
         layout.operator("view3d.transform_to_translate",	text='Transform to translate' )
+        layout.operator("view3d.transform_to_spin",			text='Transform to spin' )
         #layout.operator("view3d.create_translate",		text='Create Translation' )
         layout.separator()
         layout.operator("view3d.select_armature_property",	text='Select related armatures' )
@@ -197,8 +198,10 @@ class VIEW3D_FG_sub_menu_unfreeze_armature(bpy.types.Menu):
 		                    text="All armatures",
 		                    icon='MATERIAL_DATA').object_name = "All"
 		                    
-		for armature in bpy.data.armatures:
-			if len(armature.fg.keyframes) != 0:
+		for armature in bpy.data.objects:
+			if armature.type != 'ARMATURE':
+				continue
+			if len(armature.data.fg.keyframes) != 0:
 				layout.operator("view3d.unfreeze_armature",
 					                text=armature.name,
 					                icon='ARMATURE_DATA').object_name = armature.name

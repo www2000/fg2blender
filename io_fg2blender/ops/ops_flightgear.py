@@ -567,30 +567,40 @@ class FG_OT_freeze_armature(bpy.types.Operator):
 					continue
 
 				if len(armature.data.fg.keyframes) != 0:
-					debug_info( '\tFreeze exist on "%s"' % armature.name )
-					bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR005")
-					return {'FINISHED'}
+					#debug_info( '\tFreeze exist on "%s"' % armature.name )
+					#bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR005")
+					continue
+					#return {'FINISHED'}
 		
-				value = xml_export.compute_rotation_angle_current( armature )
+				value = 0.0
 
 				if armature.animation_data != None:
 					yFcurve = None
 					n = 0
 					for fcurve in armature.animation_data.action.fcurves:
-						if fcurve.data_path.find( "euler" ) != -1:
-							n = n + 1
-						if n == 2:
-							yFcurve = fcurve
+						if armature.data.fg.type_anim in [1,7]:
+							if fcurve.data_path.find( "euler" ) != -1:
+								n = n + 1
+							if n == 2:
+								yFcurve = fcurve
+								value = xml_export.compute_rotation_angle_current( armature )
+						elif armature.data.fg.type_anim in [2]:
+							if fcurve.data_path.find( "location" ) != -1:
+								n = n + 1
+							if n == 2:
+								yFcurve = fcurve
+								value = xml_export.compute_translation_current( armature )
+						else:
+							continue
 			
 					if yFcurve == None:
-						return
+						continue
+						#return {'FINISHED'}
 
 					for point in yFcurve.keyframe_points:
-						x = 0.0 + point.co.x
-						y = 0.0 + point.co.y
 						key = armature.data.fg.keyframes.add()
-						key.x = x
-						key.y = y
+						key.x = 0.0 + point.co.x
+						key.y = 0.0 + point.co.y
 						point.co.y = value
 
 			
@@ -625,10 +635,18 @@ class FG_OT_unfreeze_armature(bpy.types.Operator):
 			if armature.animation_data != None:
 				yFcurve = None			
 				for fcurve in armature.animation_data.action.fcurves:
-					if fcurve.data_path.find( "euler" ) != -1:
-						n = n + 1
-					if n == 2:
-						yFcurve = fcurve
+					if armature.data.fg.type_anim in [1,7]:
+						if fcurve.data_path.find( "euler" ) != -1:
+							n = n + 1
+						if n == 2:
+							yFcurve = fcurve
+					elif armature.data.fg.type_anim in [2]:
+						if fcurve.data_path.find( "location" ) != -1:
+							n = n + 1
+						if n == 2:
+							yFcurve = fcurve
+					else:
+						continue
 			
 				if yFcurve == None:
 					return
@@ -768,8 +786,8 @@ class FG_OT_save_parent(bpy.types.Operator):
 				
 			obj.select = True
 			context.scene.objects.active = obj
-			#bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
-			bpy.ops.object.parent_clear(type='CLEAR')
+			bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
+			#bpy.ops.object.parent_clear(type='CLEAR')
 			obj.select = False
 			#obj.parent = None
 		
@@ -1755,6 +1773,26 @@ class FG_OT_transforme_to_translate(bpy.types.Operator):
 			obj.data.fg.type_anim = 2
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_transforme_to_spin(bpy.types.Operator):
+	'''C'est un exemple d'operateur blender '''
+	bl_idname = "view3d.transform_to_spin"					# sera appelé par bpy.ops.view3d.exemple()
+	bl_label = "Exemple d'operateur"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		if not context.active_object:
+			return False
+		return context.active_object.type == 'ARMATURE'
+
+	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+		for obj in context.selected_objects:
+			if obj.type != 'ARMATURE':
+				continue
+			obj.data.fg.type_anim = 7
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
 class FG_OT_relpath(bpy.types.Operator):
 	'''C'est un exemple d'operateur blender '''
 	bl_idname = "object.relpath"					
@@ -1963,6 +2001,7 @@ def register():
 	bpy.utils.register_class( FG_OT_save_ac_file )
 	bpy.utils.register_class( FG_OT_transforme_to_rotate )
 	bpy.utils.register_class( FG_OT_transforme_to_translate )
+	bpy.utils.register_class( FG_OT_transforme_to_spin )
 	bpy.utils.register_class( FG_OT_relpath )
 	bpy.utils.register_class( FG_OT_abspath )
 	bpy.utils.register_class( FG_OT_select_by_property )
@@ -2005,6 +2044,7 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_save_ac_file )
 	bpy.utils.unregister_class( FG_OT_transforme_to_rotate )
 	bpy.utils.unregister_class( FG_OT_transforme_to_translate )
+	bpy.utils.unregister_class( FG_OT_transforme_to_spin )
 	bpy.utils.unregister_class( FG_OT_relpath )
 	bpy.utils.unregister_class( FG_OT_abspath )
 	bpy.utils.unregister_class( FG_OT_select_by_property )

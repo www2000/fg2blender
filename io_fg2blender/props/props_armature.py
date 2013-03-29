@@ -498,6 +498,8 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 			return None
 		
 		active_object = context.active_object
+		if active_object == None:
+			return None
 
 		debug_info( 'update_xml_file "%s"  %s' % (active_object.name, str(bLock_update))  )
 		debug_info( ' value :  %s' % (active_object.data.fg.xml_file)  )
