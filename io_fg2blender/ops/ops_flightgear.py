@@ -633,11 +633,12 @@ class FG_OT_unfreeze_armature(bpy.types.Operator):
 				if yFcurve == None:
 					return
 								
-				idx = 0
-				for point in yFcurve.keyframe_points:
-					point.co.x = armature.data.fg.keyframes[idx].x
-					point.co.y = armature.data.fg.keyframes[idx].y
-					idx = idx + 1
+				#for i in range(len(yFcurve.keyframe_points)):
+				#	yFcurve.keyframe_points.remove(0)
+				
+				for i,point in enumerate(yFcurve.keyframe_points):
+					point.co.x = armature.data.fg.keyframes[i].x
+					point.co.y = armature.data.fg.keyframes[i].y
 
 				for point in yFcurve.keyframe_points:
 					armature.data.fg.keyframes.remove(0)
