@@ -552,9 +552,7 @@ class FG_OT_freeze_armature(bpy.types.Operator):
 		return context.scene.objects.active.type == 'ARMATURE'
 
 	def execute(self, context):
-		from ..xml import xml_manager
 		from ..xml import xml_export
-		global STACK_FREEZE_ARMATURES
 
 		debug_info( 'bpy.ops.view3d.freeze_armature()' )
 		obj = context.scene.objects.active
@@ -695,9 +693,7 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 		return context.scene.objects.active.type == 'ARMATURE'
 
 	def execute(self, context):
-		from ..xml import xml_manager
 		from ..xml import xml_export
-		global STACK_FREEZE_ARMATURES
 
 		debug_info( 'bpy.ops.view3d.freeze_armature()' )
 		obj = context.scene.objects.active
@@ -710,9 +706,10 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 					continue
 
 				if len(armature.data.fg.keyframes) != 0:
-					debug_info( '\tFreeze exist on "%s"' % armature.name )
-					bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR005")
-					return {'FINISHED'}
+					#debug_info( '\tFreeze exist on "%s"' % armature.name )
+					#bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR005")
+					continue
+					#return {'FINISHED'}
 		
 				value = 0.0
 
@@ -720,20 +717,27 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 					yFcurve = None
 					n = 0
 					for fcurve in armature.animation_data.action.fcurves:
-						if fcurve.data_path.find( "euler" ) != -1:
-							n = n + 1
-						if n == 2:
-							yFcurve = fcurve
+						if armature.data.fg.type_anim in [1,7]:
+							if fcurve.data_path.find( "euler" ) != -1:
+								n = n + 1
+							if n == 2:
+								yFcurve = fcurve
+						elif armature.data.fg.type_anim in [2]:
+							if fcurve.data_path.find( "location" ) != -1:
+								n = n + 1
+							if n == 2:
+								yFcurve = fcurve
+						else:
+							continue
 			
 					if yFcurve == None:
-						return
+						continue
+						#return {'FINISHED'}
 
 					for point in yFcurve.keyframe_points:
-						x = 0.0 + point.co.x
-						y = 0.0 + point.co.y
 						key = armature.data.fg.keyframes.add()
-						key.x = x
-						key.y = y
+						key.x = 0.0 + point.co.x
+						key.y = 0.0 + point.co.y
 						point.co.y = value
 
 			
