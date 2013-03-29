@@ -726,54 +726,6 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
-class FG_OT_restore_keyframe(bpy.types.Operator):
-	'''???????????'''
-	bl_idname = "view3d.restore_keyframe"
-	bl_label = "Restore animation keyframe"
-	bl_options = {'REGISTER', 'UNDO'}
-
-	@classmethod
-	def poll(cls, context):
-		if context.active_object == None:
-			return False
-		return context.scene.objects.active.type == 'ARMATURE'
-
-	def execute(self, context):
-		from ..xml import xml_manager
-		global STACK_SAVE_KEYFRAMES
-
-		debug_info( 'bpy.ops.view3d.restore_keyframe()' )
-		obj = context.scene.objects.active
-		current_frame = context.scene.frame_current
-
-		for obj in context.selected_objects:
-			if obj.type != 'ARMATURE':
-				continue
-			
-			save_keyframe = None		
-			for skf in STACK_SAVE_KEYFRAMES:
-				if skf.name == obj.name:
-					save_keyframe = skf
-				
-			if save_keyframe == None:
-				debug_info( '\tRestore "%s" : had not save' % obj.name )
-				continue
-		
-			armature = obj
-			if armature.animation_data != None:
-				idx = 0
-				for fcurve in armature.animation_data.action.fcurves:
-					for point in fcurve.keyframe_points:
-						point.co.y = save_keyframe.keyframe[idx][1]
-						idx = idx + 1
-				
-		
-			STACK_SAVE_KEYFRAMES.remove( save_keyframe )
-			context.scene.frame_current = current_frame
-			debug_info( '\tRestore "%s" : %d keyframes' % ( obj.name, idx ) )
-		return {'FINISHED'}
-#----------------------------------------------------------------------------------------------------------------------------------
-
 class FG_OT_save_parent(bpy.types.Operator):
 	'''?????????'''
 	bl_idname = "view3d.save_parent"
@@ -1978,7 +1930,6 @@ def register():
 	bpy.utils.register_class( FG_OT_freeze_armature)
 	bpy.utils.register_class( FG_OT_unfreeze_armature)
 	bpy.utils.register_class( FG_OT_save_keyframe)
-	bpy.utils.register_class( FG_OT_restore_keyframe)
 	bpy.utils.register_class( FG_OT_save_parent)
 	bpy.utils.register_class( FG_OT_restore_parent)
 	bpy.utils.register_class( FG_OT_edges_split)
@@ -2021,7 +1972,6 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_freeze_armature)
 	bpy.utils.unregister_class( FG_OT_unfreeze_armature)
 	bpy.utils.unregister_class( FG_OT_save_keyframe)
-	bpy.utils.unregister_class( FG_OT_restore_keyframe)
 	bpy.utils.unregister_class( FG_OT_save_parent)
 	bpy.utils.unregister_class( FG_OT_restore_parent)
 	bpy.utils.unregister_class( FG_OT_edges_split)
