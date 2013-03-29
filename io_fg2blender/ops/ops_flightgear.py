@@ -50,14 +50,6 @@ from bpy.props import EnumProperty
 from bpy.props import CollectionProperty
 
 #--------------------------------------------------------------------------------------------------------------------------------
-STACK_SAVE_KEYFRAMES = []
-STACK_FREEZE_ARMATURES = []
-
-#--------------------------------------------------------------------------------------------------------------------------------
-class SAVE_KEYFRAME:
-	def __init__(self):
-		self.armature_name			= ""
-		self.keyframe				= []
 
 STACK_SAVE_PARENT = []
 
@@ -66,12 +58,6 @@ class SAVE_PARENT:
 	def __init__(self):
 		self.object_name			= ""
 		self.parent_name			= ""
-
-#--------------------------------------------------------------------------------------------------------------------------------
-class FREEZE_ARMATURE:
-	def __init__(self):
-		self.name					= ""
-		self.keyframe				= []
 
 #--------------------------------------------------------------------------------------------------------------------------------
 def debug_info(aff):
@@ -579,36 +565,38 @@ class FG_OT_freeze_armature(bpy.types.Operator):
 		armature = obj#obj.data
 
 		if armature.animation_data != None:
-			for obj in context.selected_objects:
-				if obj.type != 'ARMATURE':
+			for armature in context.selected_objects:
+				if armature.type != 'ARMATURE':
 					continue
 
-				for ska in STACK_FREEZE_ARMATURES:
-					if ska.name == obj.name:
-						debug_info( '\tFreeze exist on "%s"' % obj.name )
-						bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR005")
-						return {'FINISHED'}
+				if len(armature.data.fg.keyframes) != 0:
+					debug_info( '\tFreeze exist on "%s"' % armature.name )
+					bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR005")
+					return {'FINISHED'}
 		
-				freeze_armature = FREEZE_ARMATURE()
-				freeze_armature.name = "" + obj.name
-				nb_key = 0
 				value = xml_export.compute_rotation_angle_current( armature )
 
-				n = 0
-				for fcurve in armature.animation_data.action.fcurves:
-					if fcurve.data_path.find( "euler" ) != -1:
-						n = n + 1
-					if n != 2:
-						continue
-					for point in fcurve.keyframe_points:
+				if armature.animation_data != None:
+					yFcurve = None
+					n = 0
+					for fcurve in armature.animation_data.action.fcurves:
+						if fcurve.data_path.find( "euler" ) != -1:
+							n = n + 1
+						if n == 2:
+							yFcurve = fcurve
+			
+					if yFcurve == None:
+						return
+
+					for point in yFcurve.keyframe_points:
 						x = 0.0 + point.co.x
 						y = 0.0 + point.co.y
-						co = ( x, y )
-						freeze_armature.keyframe.append( co )
-						nb_key = nb_key + 1
+						key = armature.data.fg.keyframes.add()
+						key.x = x
+						key.y = y
 						point.co.y = value
+
 			
-				STACK_FREEZE_ARMATURES.append( freeze_armature )
 				context.scene.frame_current = current_frame
 				debug_info( '\tFreeze armature : "%s"' % ( obj.name ) )
 		else:
@@ -627,35 +615,33 @@ class FG_OT_unfreeze_armature(bpy.types.Operator):
 	#-----------------------------------------------------------------------------------------------------------------------------
 	@classmethod
 	def poll(cls, context):
-		if context.active_object == None:
-			return False
-		return context.scene.objects.active.type == 'ARMATURE'
+		for armature in bpy.data.armatures:
+			if len(armature.fg.keyframes) != 0:
+				return True
+		return False
 
 	#-----------------------------------------------------------------------------------------------------------------------------
 	def execute(self, context):
 		#-------------------------------------------------------------------------------------------------------------------------
 		def unfreeze_armature( armature ):
-			freeze_armature = None
-			for ska in STACK_FREEZE_ARMATURES:
-				if ska.name == armature.name:
-					freeze_armature = ska
-				
-			if freeze_armature == None:
-				debug_info( '\tUnfreeze "%s" : wasn\'t freezed' % obj.name )
-				return
-		
+			n = 0
 			if armature.animation_data != None:
-				idx = 0
-				n = 0
+				yFcurve = None			
 				for fcurve in armature.animation_data.action.fcurves:
 					if fcurve.data_path.find( "euler" ) != -1:
 						n = n + 1
-					if n != 2:
-						continue
-					for point in fcurve.keyframe_points:
-						point.co.y = freeze_armature.keyframe[idx][1]
-						idx = idx + 1
-			STACK_FREEZE_ARMATURES.remove( freeze_armature )
+					if n == 2:
+						yFcurve = fcurve
+			
+				if yFcurve == None:
+					return
+								
+				idx = 0
+				for point in yFcurve.keyframe_points:
+					point.co.x = armature.data.fg.keyframes[idx].x
+					point.co.y = armature.data.fg.keyframes[idx].y
+					idx = idx + 1
+
 		#-------------------------------------------------------------------------------------------------------------------------
 
 		debug_info( 'bpy.ops.view3d.unfreeze_armature()' )
@@ -690,40 +676,49 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 
 	def execute(self, context):
 		from ..xml import xml_manager
-		global STACK_SAVE_KEYFRAMES
+		from ..xml import xml_export
+		global STACK_FREEZE_ARMATURES
 
-		debug_info( 'bpy.ops.view3d.save_keyframe()' )
+		debug_info( 'bpy.ops.view3d.freeze_armature()' )
 		obj = context.scene.objects.active
 		current_frame = context.scene.frame_current
 		armature = obj#obj.data
 
 		if armature.animation_data != None:
-			for obj in context.selected_objects:
-				if obj.type != 'ARMATURE':
+			for armature in context.selected_objects:
+				if armature.type != 'ARMATURE':
 					continue
 
-				for skf in STACK_SAVE_KEYFRAMES:
-					if skf.name == obj.name:
-						debug_info( '\tSave exist on "%s"' % obj.name )
-						bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR004")
-						return {'FINISHED'}
+				if len(armature.data.fg.keyframes) != 0:
+					debug_info( '\tFreeze exist on "%s"' % armature.name )
+					bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR005")
+					return {'FINISHED'}
 		
-				save_keyframe = SAVE_KEYFRAME()
-				save_keyframe.name = obj.name
-				nb_key = 0
+				value = 0.0
+
+				if armature.animation_data != None:
+					yFcurve = None
+					n = 0
+					for fcurve in armature.animation_data.action.fcurves:
+						if fcurve.data_path.find( "euler" ) != -1:
+							n = n + 1
+						if n == 2:
+							yFcurve = fcurve
 			
-				for fcurve in armature.animation_data.action.fcurves:
-					for point in fcurve.keyframe_points:
+					if yFcurve == None:
+						return
+
+					for point in yFcurve.keyframe_points:
 						x = 0.0 + point.co.x
 						y = 0.0 + point.co.y
-						co = ( x, y )
-						save_keyframe.keyframe.append( co )
-						nb_key = nb_key + 1
-						point.co.y = 0.0
-				
-				STACK_SAVE_KEYFRAMES.append( save_keyframe )
+						key = armature.data.fg.keyframes.add()
+						key.x = x
+						key.y = y
+						point.co.y = value
+
+			
 				context.scene.frame_current = current_frame
-				debug_info( '\tSave for "%s" : %d keyframes' % ( obj.name, nb_key ) )
+				debug_info( '\tFreeze armature : "%s"' % ( obj.name ) )
 		else:
 			bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR006")
 		return {'FINISHED'}

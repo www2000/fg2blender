@@ -448,6 +448,14 @@ nBit = 2
 
 
 
+class FG_PROP_keyframe(bpy.types.PropertyGroup):
+	x = bpy.props.FloatProperty( attr = 'x', name = 'x' )
+	y = bpy.props.FloatProperty( attr = 'y', name = 'y' )
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+
+
 class FG_PROP_armature(bpy.types.PropertyGroup):
 
 	#---------------------------------------------------------------------------
@@ -583,6 +591,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 	offset_deg		= bpy.props.FloatProperty(	attr = 'offset_deg', name = 'time')
 	bIncDiskFile	= bpy.props.BoolProperty(	attr = 'bIncDiskFile', name = 'Include disk file', update=update_bIncDiskFile)
 	bWriteDisc		= bpy.props.BoolProperty(	attr = 'bWriteDisc', name = 'to Disc', update=update_bWriteDisc)
+	keyframes		= bpy.props.CollectionProperty( attr = 'keyframes', name = 'keyframes', type=FG_PROP_keyframe )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_armature():
@@ -605,6 +614,7 @@ def RNA_armature():
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='offset_deg',		type=FG_PROP_armature, name='offset_deg', description="Initial deg" )
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='bIncDiskFile',	type=FG_PROP_armature, name='bIncDiskFile', description="Include file Disk" )
 	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='bWriteDisc',		type=FG_PROP_armature, name='bWriteDisc', description="Write file to disk" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(  attr='keyframes',		 type=FG_PROP_armature )
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
@@ -615,11 +625,13 @@ def RNA_armature():
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def register():
+	bpy.utils.register_class( FG_PROP_keyframe )
 	bpy.utils.register_class( FG_PROP_armature )
 	RNA_armature()
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def unregister():
+	bpy.utils.unregister_class( FG_PROP_keyframe )
 	bpy.utils.unregister_class( FG_PROP_armature )
 
 #----------------------------------------------------------------------------------------------------------------------------------
