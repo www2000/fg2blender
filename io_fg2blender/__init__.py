@@ -18,7 +18,7 @@
 #
 #
 # Script copyright (C) René Nègre
-# Contributors: 
+# Contributors: Clément de l'Hamaide
 #
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -77,12 +77,15 @@ debug_xml_jsbsim		= False
 debug_xml_anim			= False
 debug_ac3d_import		= False
 debug_ac3d_export		= False
-debug_fg2bl			= False
-debug_props_armature		= False
+debug_fg2bl				= False
+debug_props_armature	= False
 debug_props_camera		= False
 debug_props_empty		= False
 debug_props_meshes		= False
-debug_ops_flightgear		= False
+debug_ops_flightgear	= False
+debug_ops_ac3d			= False
+debug_ops_xml			= False
+debug_ops_tools			= False
 debug_unwrap			= False
 
 
@@ -251,6 +254,9 @@ def menu_func_import(self, context):
 
 def register():
 	from .ops import ops_flightgear
+	from .ops import ops_ac3d
+	from .ops import ops_tools
+	from .ops import ops_xml
 	from .ops import ops_popup
 	from .ops import ops_unwrap
 	from .props import props_armature
@@ -270,6 +276,9 @@ def register():
 	bpy.types.INFO_MT_file_import.append(menu_func_import)
 
 	ops_flightgear.register()
+	ops_ac3d.register()
+	ops_tools.register()
+	ops_xml.register()
 	ops_popup.register()
 	ops_unwrap.register()
 	props_armature.register()
@@ -300,6 +309,9 @@ def register():
 		global	DEBUG
 		global	debug_file_debug
 		global	debug_ops_flightgear
+		global	debug_ops_ac3d
+		global	debug_ops_tools
+		global	debug_ops_xml
 		global  debug_props_armature
 		
 		debug_file_debug	= True
@@ -317,9 +329,15 @@ def register():
 		debug_ac3d_export		= False
 		debug_props_armature	= False
 		debug_ops_flightgear	= False
+		debug_ops_ac3d			= False
+		debug_ops_tools			= False
+		debug_ops_xml			= False
 	
 def unregister():
 	from .ops import ops_flightgear
+	from .ops import ops_ac3d
+	from .ops import ops_tools
+	from .ops import ops_xml
 	from .ops import ops_popup
 	from .osp import ops_unwrap
 	from .props import props_armature
@@ -339,6 +357,9 @@ def unregister():
 	bpy.types.INFO_MT_file_import.remove(menu_func_import)
 
 	ops_flightgear.unregister()
+	ops_ac3d.unregister()
+	ops_tools.unregister()
+	ops_xml.unregister()
 	ops_popup.unregister()
 	ops_unwrap.unregister()
 	props_armature.unregister()
