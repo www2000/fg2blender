@@ -58,78 +58,83 @@ def debug_info( aff ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_root_menu(bpy.types.Menu):
-    bl_label = "Flightgear Tools Menu"
+	from ..ui.ui_lang import lang
+	bl_label = lang['MENTIT'] #"Flightgear Tools Menu"
 
-    def draw(self, context):
-        from ..ui.ui_lang import lang
+	def draw(self, context):
+		from ..ui.ui_lang import lang
 
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
+		layout = self.layout
+		layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.separator()
-        layout.operator("view3d.insert_keyframe_rotate",	text=lang['insert_keyframe_rotate'] )
-        layout.operator("view3d.insert_keyframe_translate", 	text=lang['insert_keyframe_translate'] )
-        layout.separator()
-        layout.operator("import.fg2blender",			text=lang['import_(.xml)'] )
-        layout.separator()
-        layout.operator("view3d.create_anim",			text=lang['create_animations'] )
-        layout.separator()
-        layout.operator("view3d.edge_split",			text='Apply edge-split' )
-        layout.operator("view3d.select_property",		text='Select objects by property' )
-        layout.operator("view3d.time_2x",			text='Time x2' )
-        layout.operator("view3d.time_0_5x",			text='Time x0.5' )
-        layout.operator("view3d.copy_name_bl2ac",		text='Assign object name' )
-        layout.operator("view3d.copy_ac_file",			text='Assign AC3D filename' )
-        layout.separator()
-        layout.menu( 'VIEW3D_FG_sub_menu_armature',		text='Armatures' )
-        layout.separator()
-        layout.menu( 'VIEW3D_FG_sub_menu_unwrap' )
-        layout.separator()
-        layout.operator("wm.url_open", text='Manual').url="http://wiki.flightgear.org/Fr/fg2blender"
-        #layout.operator("view3d.unwrap_4_faces",		text='Unwrap 4 faces' )
-        #layout.operator("view3d.popup",			text='popup' ).message = "ERR001"
+		layout.separator()
+		layout.operator("view3d.insert_keyframe_rotate",	text=lang['MEN000'] )
+		layout.operator("view3d.insert_keyframe_translate",	text=lang['MEN001'] )
+		layout.separator()
+		layout.operator("import.fg2blender",				text=lang['MEN002'] )
+		layout.separator()
+		layout.operator("view3d.create_anim",				text=lang['MEN003'] )
+		layout.separator()
+		layout.operator("view3d.edge_split",				text=lang['MEN004'] )
+		layout.operator("view3d.select_property",			text=lang['MEN005'] )
+		layout.operator("view3d.time_2x",					text=lang['MEN006'] ) 		#text='Time x2'
+		layout.operator("view3d.time_0_5x",					text=lang['MEN007'] ) 		#text='Time x0.5' )
+		layout.operator("view3d.copy_name_bl2ac",			text=lang['MEN008'] ) 		#text='Assign object name' )
+		layout.operator("view3d.copy_ac_file",				text=lang['MEN009'] ) 		#text='Assign AC3D filename' )
+		layout.separator()
+		layout.menu( 'VIEW3D_FG_sub_menu_armature',			text=lang['MEN010'] ) 		#text='Armatures' )
+		layout.separator()
+		layout.menu( 'VIEW3D_FG_sub_menu_unwrap',			text=lang['MEN011'] ) 		#text='Unwrap' )
+		layout.separator()
+		layout.operator("wm.url_open", text='Manual').url="http://wiki.flightgear.org/Fr/fg2blender"
+		#layout.operator("view3d.unwrap_4_faces",		text='Unwrap 4 faces' )
+		#layout.operator("view3d.popup",			text='popup' ).message = "ERR001"
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_unwrap(bpy.types.Menu):
-    bl_label = "Unwrap 4 faces"
+	bl_label = "Unwrap 4 faces"
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("view3d.unwrap_4_faces",	text='Along X' ).axis = 'X'
-        layout.operator("view3d.unwrap_4_faces",	text='Along Y' ).axis = 'Y'
-        layout.operator("view3d.unwrap_4_faces",	text='Along Z' ).axis = 'Z'
+	def draw(self, context):
+		from ..ui.ui_lang import lang
+
+		layout = self.layout
+		layout.operator_context = 'INVOKE_REGION_WIN'
+		layout.operator("view3d.unwrap_4_faces",	text=lang['MEN020'] ).axis = 'X'	#text='Along X' ).axis = 'X'
+		layout.operator("view3d.unwrap_4_faces",	text=lang['MEN021'] ).axis = 'Y'	#text='Along Y' ).axis = 'Y'
+		layout.operator("view3d.unwrap_4_faces",	text=lang['MEN022'] ).axis = 'Z'	#text='Along Z' ).axis = 'Z'
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
-    bl_label = "Armatures"
+	bl_label = "Armatures"
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu('VIEW3D_FG_sub_menu_create_rotation' )
-        layout.menu('VIEW3D_FG_sub_menu_create_translate' )
-        layout.menu('VIEW3D_FG_sub_menu_create_spin' )
-        layout.operator("view3d.transform_to_rotate",		text='Transform to rotate' )
-        layout.operator("view3d.transform_to_translate",	text='Transform to translate' )
-        layout.operator("view3d.transform_to_spin",			text='Transform to spin' )
-        #layout.operator("view3d.create_translate",		text='Create Translation' )
-        layout.separator()
-        layout.operator("view3d.select_armature_property",	text='Select related armatures' )
-        layout.operator("view3d.select_by_property",		text='Select by property' )
-        layout.operator("view3d.select_object_by_armature",	text='Select objects by armature' )
-        layout.operator("view3d.copy_xml_file",			text='Copy xml file (active->selects)' )
-        layout.operator("view3d.copy_property",			text='Copy property (active->selects)' )
-        layout.separator()
-        layout.operator("view3d.init_rotation_zero",		text='Reset Rotate' )
-        layout.operator("view3d.init_rotation",			text='Init Rotate' )
-        layout.separator()
-        layout.operator("view3d.freeze_armature",		text='Freeze selected armatures' )
-        layout.operator("view3d.save_keyframe",			text='Save Keyframe and Reset' )
-        layout.menu('VIEW3D_FG_sub_menu_unfreeze_armature' )
-        #layout.operator("view3d.restore_keyframe",		text='Restore Keyframe ' )
-        layout.operator("view3d.save_parent",			text='Save Parent and Reset' )
-        layout.operator("view3d.restore_parent",		text='Restore Parent ' )
+	def draw(self, context):
+		from ..ui.ui_lang import lang
+
+		layout = self.layout
+		layout.operator_context = 'INVOKE_REGION_WIN'
+		layout.menu('VIEW3D_FG_sub_menu_create_rotation',	text=lang['MEN040']  )
+		layout.menu('VIEW3D_FG_sub_menu_create_translate',	text=lang['MEN041']  )
+		layout.menu('VIEW3D_FG_sub_menu_create_spin',		text=lang['MEN042']  )
+		layout.operator("view3d.transform_to_rotate",		text=lang['MEN043']  )	#'Transform to rotate' )
+		layout.operator("view3d.transform_to_translate",	text=lang['MEN044']  )	#'Transform to translate' )
+		layout.operator("view3d.transform_to_spin",			text=lang['MEN045']  )	#'Transform to spin' )
+		layout.separator()
+		layout.operator("view3d.select_armature_property",	text=lang['MEN046']  )	#'Select related armatures' )
+		layout.operator("view3d.select_by_property",		text=lang['MEN047']  )	#'Select by property' )
+		layout.operator("view3d.select_object_by_armature",	text=lang['MEN048']  )	#'Select objects by armature' )
+		layout.operator("view3d.copy_xml_file",				text=lang['MEN049']  )	#'Copy xml file (active->selects)' )
+		layout.operator("view3d.copy_property",				text=lang['MEN050']  )	#'Copy property (active->selects)' )
+		layout.separator()
+		layout.operator("view3d.init_rotation_zero",		text=lang['MEN051']  )	#'Reset Rotate' )
+		layout.operator("view3d.init_rotation",				text=lang['MEN052']  )	#'Init Rotate' )
+		layout.separator()
+		layout.operator("view3d.freeze_armature",			text=lang['MEN053']  )	#'Freeze selected armatures' )
+		layout.operator("view3d.save_keyframe",				text=lang['MEN054']  )	#'Save Keyframe and Reset' )
+		layout.menu('VIEW3D_FG_sub_menu_unfreeze_armature',	text=lang['MEN055']  )	#'UNFREEZE')
+		#layout.operator("view3d.restore_keyframe",			text='Restore Keyframe ' )
+		layout.separator()
+		layout.operator("view3d.save_parent",				text=lang['MEN056']  )	#'Save Parent and Reset' )
+		layout.operator("view3d.restore_parent",			text=lang['MEN057']  )	#'Restore Parent ' )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_create_rotation(bpy.types.Menu):

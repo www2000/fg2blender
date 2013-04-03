@@ -43,6 +43,11 @@ def register_shortcut():
     #kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS')
     #kmi.properties.name = 'VIEW3D_FG_root_menu' 
     kmi = km.keymap_items.new('fg.only_render', 'R', 'PRESS', ctrl=True)
+    
+    # for "edit mode" because F key is use
+    #km = kc.keymaps.new(name="3D View", space_type="VIEW_3D")
+    #kmi = km.keymap_items.new('wm.call_menu', 'M', 'PRESS')
+    #kmi.properties.name = 'VIEW3D_FG_root_menu' 
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def unregister_shortcut():

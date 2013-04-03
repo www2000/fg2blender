@@ -47,9 +47,9 @@ from bpy.props import CollectionProperty
 
 #----------------------------------------------------------------------------------------------------------------------------------
 def debug_info( aff ):
-	from .. import debug_unwrap
+	from .. import debug_ops_unwrap
 	
-	if debug_unwrap:
+	if debug_ops_unwrap:
 		print( aff )
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -113,6 +113,7 @@ class FG_OT_unwrap_4_faces(bpy.types.Operator):
 		#---------------------------------------------------------------------------
 		
 		def compute_uv_left( indices, vertices, uvtex, idx, mat, bbmin, bbmax, dim, coef,  _max, decal  ):
+			debug_info( " Nb uvtex : %d" % len( uvtex.data ) )
 			#return 0.0
 			dim = m * dim
 			b = m * bbmin

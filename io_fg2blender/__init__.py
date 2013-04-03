@@ -82,6 +82,7 @@ debug_props_armature	= False
 debug_props_camera		= False
 debug_props_empty		= False
 debug_props_meshes		= False
+debug_ops_unwrap		= False
 debug_ops_flightgear	= False
 debug_ops_ac3d			= False
 debug_ops_xml			= False
@@ -308,6 +309,7 @@ def register():
 		global	debug_fg2bl
 		global	DEBUG
 		global	debug_file_debug
+		global	debug_ops_unwrap
 		global	debug_ops_flightgear
 		global	debug_ops_ac3d
 		global	debug_ops_tools
@@ -328,6 +330,7 @@ def register():
 		debug_ac3d_import		= False
 		debug_ac3d_export		= False
 		debug_props_armature	= False
+		debug_ops_unwrap		= True
 		debug_ops_flightgear	= False
 		debug_ops_ac3d			= False
 		debug_ops_tools			= False
