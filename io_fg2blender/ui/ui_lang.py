@@ -137,9 +137,6 @@ lang_fr['MEN051'] = 'Reset'
 lang_en['MEN052'] = 'Init Rotate'
 lang_fr['MEN052'] = 'Initialise'
 
-lang_en['MEN052'] = 'Init Rotate'
-lang_fr['MEN052'] = 'Initialise'
-
 lang_en['MEN053'] = 'Freeze selected armatures'
 lang_fr['MEN053'] = 'Gèler armatures'
 

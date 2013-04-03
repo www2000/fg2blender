@@ -432,7 +432,7 @@ class ANIM:
 						idx = -1
 						obj.data.fg.property_idx = int(-1)
 
-					debug_info( " beg=%d end=%d " % (prop[1],prop[2]) )
+					#debug_info( " beg=%d end=%d " % (prop[1],prop[2]) )
 					if prop[1] != 'x':
 						obj.data.fg.range_beg = prop[1]
 						obj.data.fg.range_beg_ini = prop[1]
