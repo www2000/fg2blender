@@ -114,7 +114,9 @@ class FG_OT_copy_name_bl2ac(bpy.types.Operator):
 
 	@classmethod
 	def poll(cls, context):
-		return True
+		for obj in context.selected_objects:
+			if obj.type == 'MESH':
+				return True
 
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
 		current_obj = context.scene.objects.active
