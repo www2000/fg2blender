@@ -119,7 +119,7 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
 		layout.operator("view3d.transform_to_translate",	text=lang['MEN044']  )	#'Transform to translate' )
 		layout.operator("view3d.transform_to_spin",			text=lang['MEN045']  )	#'Transform to spin' )
 		layout.separator()
-		layout.operator("view3d.select_armature_property",	text=lang['MEN046']  )	#'Select related armatures' )
+		#layout.operator("view3d.select_armature_property",	text=lang['MEN046']  )	#'Select related armatures' )
 		layout.operator("view3d.select_by_property",		text=lang['MEN047']  )	#'Select by property' )
 		layout.operator("view3d.select_object_by_armature",	text=lang['MEN048']  )	#'Select objects by armature' )
 		layout.menu('VIEW3D_FG_sub_menu_select_by_file',	text=lang['MEN058']  )	#'Select by file')

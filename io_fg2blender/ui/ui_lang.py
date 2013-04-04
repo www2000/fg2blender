@@ -77,7 +77,7 @@ lang_en['MEN006'] = 'Time x2'
 lang_fr['MEN006'] = 'Accélération par 2'
 
 lang_en['MEN007'] = 'Time x0.5'
-lang_fr['MEN007'] = 'Deccéleration par 2'
+lang_fr['MEN007'] = 'Décéleration par 2'
 
 lang_en['MEN008'] = 'Assign object name'
 lang_fr['MEN008'] = 'Initialise le nom ac3d'
@@ -85,7 +85,7 @@ lang_fr['MEN008'] = 'Initialise le nom ac3d'
 lang_en['MEN009'] = 'Copy AC3D filename'
 lang_fr['MEN009'] = 'Recopie le nom de fichier AC3D'
 
-lang_en['MEN010'] = 'Aramtures'
+lang_en['MEN010'] = 'Armatures'
 lang_fr['MEN010'] = 'Armatures'
 
 lang_en['MEN011'] = 'Unwrap'
@@ -121,10 +121,10 @@ lang_en['MEN045'] = 'Transform to spin'
 lang_fr['MEN045'] = 'Type spin'
 
 lang_en['MEN046'] = 'Select related armatures'
-lang_fr['MEN046'] = "Selection relié àà l'armature"
+lang_fr['MEN046'] = "Séléction relié à l'armature"
 
 lang_en['MEN047'] = 'Select by property'
-lang_fr['MEN047'] = 'Selction par propriété'
+lang_fr['MEN047'] = 'Séléction par propriété'
 
 lang_en['MEN048'] = 'Select objects by armature'
 lang_fr['MEN048'] = "Séléction d'objet liés a(ux) armature(s)"
@@ -142,13 +142,13 @@ lang_en['MEN052'] = 'Init Rotate'
 lang_fr['MEN052'] = 'Initialise'
 
 lang_en['MEN053'] = 'Freeze selected armatures'
-lang_fr['MEN053'] = 'Gèler armatures'
+lang_fr['MEN053'] = 'Geler armatures'
 
 lang_en['MEN054'] = 'Save Keyframe and Reset'
 lang_fr['MEN054'] = 'Sauver keyframe et reset'
 
 lang_en['MEN055'] = 'Unfreeze'
-lang_fr['MEN055'] = 'Dégèler'
+lang_fr['MEN055'] = 'Dégeler'
 
 lang_en['MEN056'] = 'Save Parent and Reset'
 lang_fr['MEN056'] = 'Sauve parenté et reset'
@@ -157,7 +157,7 @@ lang_en['MEN057'] = 'Restore Parent '
 lang_fr['MEN057'] = 'Restaurer parenté'
 
 lang_en['MEN058'] = 'Select by file'
-lang_fr['MEN058'] = 'Sectionne par fichier'
+lang_fr['MEN058'] = 'Séléction par fichier'
 
 #----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MEN070'] = 'Along X'
