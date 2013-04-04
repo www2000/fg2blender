@@ -122,6 +122,7 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
 		layout.operator("view3d.select_armature_property",	text=lang['MEN046']  )	#'Select related armatures' )
 		layout.operator("view3d.select_by_property",		text=lang['MEN047']  )	#'Select by property' )
 		layout.operator("view3d.select_object_by_armature",	text=lang['MEN048']  )	#'Select objects by armature' )
+		layout.menu('VIEW3D_FG_sub_menu_select_by_file',	text=lang['MEN058']  )	#'Select by file')
 		layout.operator("view3d.copy_xml_file",				text=lang['MEN049']  )	#'Copy xml file (active->selects)' )
 		layout.operator("view3d.copy_property",				text=lang['MEN050']  )	#'Copy property (active->selects)' )
 		layout.separator()
@@ -138,57 +139,63 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_create_rotation(bpy.types.Menu):
-    bl_label = 'Create Rotation'
+	bl_label = 'Create Rotation'
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("view3d.create_rotate_axis",	text='Create Rotation X').axis = 'X'
-        layout.operator("view3d.create_rotate_axis",	text='Create Rotation Y').axis = 'Y'
-        layout.operator("view3d.create_rotate_axis",	text='Create Rotation Z').axis = 'Z'
-        layout.operator("view3d.create_rotate_axis",	text='Create Rotation -X').axis = 'x'
-        layout.operator("view3d.create_rotate_axis",	text='Create Rotation -Y').axis = 'y'
-        layout.operator("view3d.create_rotate_axis",	text='Create Rotation -Z').axis = 'z'
-        layout.operator("view3d.create_rotate_axis",	text='Create Rotation XY').axis = 'XY'
-        layout.operator("view3d.create_rotate_axis",	text='Create Rotation XZ').axis = 'XZ'
-        layout.operator("view3d.create_rotate_axis",	text='Create Rotation YZ').axis = 'YZ'
-        layout.operator("view3d.create_rotate_axis",	text='Create Rotation XYZ').axis = 'XYZ'
+	def draw(self, context):
+		from ..ui.ui_lang import lang
+
+		layout = self.layout
+		layout.operator_context = 'INVOKE_REGION_WIN'
+		layout.operator("view3d.create_rotate_axis",	text=lang['MEN070']  ).axis = 'X'	#	text='Create Rotation X').axis = 'X'
+		layout.operator("view3d.create_rotate_axis",	text=lang['MEN071']  ).axis = 'Y'	#	text='Create Rotation Y').axis = 'Y'
+		layout.operator("view3d.create_rotate_axis",	text=lang['MEN072']  ).axis = 'Z'	#	text='Create Rotation Z').axis = 'Z'
+		layout.operator("view3d.create_rotate_axis",	text=lang['MEN073']  ).axis = 'x'	#	text='Create Rotation -X').axis = 'x'
+		layout.operator("view3d.create_rotate_axis",	text=lang['MEN074']  ).axis = 'y'	#	text='Create Rotation -Y').axis = 'y'
+		layout.operator("view3d.create_rotate_axis",	text=lang['MEN075']  ).axis = 'z'	#	text='Create Rotation -Z').axis = 'z'
+		layout.operator("view3d.create_rotate_axis",	text=lang['MEN076']  ).axis = 'XY'	#	text='Create Rotation XY').axis = 'XY'
+		layout.operator("view3d.create_rotate_axis",	text=lang['MEN077']  ).axis = 'XZ'	#	text='Create Rotation XZ').axis = 'XZ'
+		layout.operator("view3d.create_rotate_axis",	text=lang['MEN078']  ).axis = 'YZ'	#	text='Create Rotation YZ').axis = 'YZ'
+		layout.operator("view3d.create_rotate_axis",	text=lang['MEN079']  ).axis = 'XYZ'	#	text='Create Rotation XYZ').axis = 'XYZ'
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_create_translate(bpy.types.Menu):
-    bl_label = 'Create Translate'
+	bl_label = 'Create Translate'
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("view3d.create_translate_axis",	text='Create Translation X').axis = 'X'
-        layout.operator("view3d.create_translate_axis",	text='Create Translation Y').axis = 'Y'
-        layout.operator("view3d.create_translate_axis",	text='Create Translation Z').axis = 'Z'
-        layout.operator("view3d.create_translate_axis",	text='Create Translation -X').axis = 'x'
-        layout.operator("view3d.create_translate_axis",	text='Create Translation -Y').axis = 'y'
-        layout.operator("view3d.create_translate_axis",	text='Create Translation -Z').axis = 'z'
-        layout.operator("view3d.create_translate_axis",	text='Create Translation XY').axis = 'XY'
-        layout.operator("view3d.create_translate_axis",	text='Create Translation XZ').axis = 'XZ'
-        layout.operator("view3d.create_translate_axis",	text='Create Translation YZ').axis = 'YZ'
-        layout.operator("view3d.create_translate_axis",	text='Create Translation XYZ').axis = 'XYZ'
+	def draw(self, context):
+		from ..ui.ui_lang import lang
+
+		layout = self.layout
+		layout.operator_context = 'INVOKE_REGION_WIN'
+		layout.operator("view3d.create_translate_axis",	text=lang['MEN070']  ).axis = 'X'	#	text='Create Rotation X').axis = 'X'
+		layout.operator("view3d.create_translate_axis",	text=lang['MEN071']  ).axis = 'Y'	#	text='Create Rotation Y').axis = 'Y'
+		layout.operator("view3d.create_translate_axis",	text=lang['MEN072']  ).axis = 'Z'	#	text='Create Rotation Z').axis = 'Z'
+		layout.operator("view3d.create_translate_axis",	text=lang['MEN073']  ).axis = 'x'	#	text='Create Rotation -X').axis = 'x'
+		layout.operator("view3d.create_translate_axis",	text=lang['MEN074']  ).axis = 'y'	#	text='Create Rotation -Y').axis = 'y'
+		layout.operator("view3d.create_translate_axis",	text=lang['MEN075']  ).axis = 'z'	#	text='Create Rotation -Z').axis = 'z'
+		layout.operator("view3d.create_translate_axis",	text=lang['MEN076']  ).axis = 'XY'	#	text='Create Rotation XY').axis = 'XY'
+		layout.operator("view3d.create_translate_axis",	text=lang['MEN077']  ).axis = 'XZ'	#	text='Create Rotation XZ').axis = 'XZ'
+		layout.operator("view3d.create_translate_axis",	text=lang['MEN078']  ).axis = 'YZ'	#	text='Create Rotation YZ').axis = 'YZ'
+		layout.operator("view3d.create_translate_axis",	text=lang['MEN079']  ).axis = 'XYZ'	#	text='Create Rotation XYZ').axis = 'XYZ'
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_create_spin(bpy.types.Menu):
-    bl_label = 'Create Spin'
+	bl_label = 'Create Spin'
 
-    def draw(self, context):
-        layout = self.layout
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("view3d.create_spin",	text='Create Spin X').axis = 'X'
-        layout.operator("view3d.create_spin",	text='Create Spin Y').axis = 'Y'
-        layout.operator("view3d.create_spin",	text='Create Spin Z').axis = 'Z'
-        layout.operator("view3d.create_spin",	text='Create Spin -X').axis = 'x'
-        layout.operator("view3d.create_spin",	text='Create Spin -Y').axis = 'y'
-        layout.operator("view3d.create_spin",	text='Create Spin -Z').axis = 'z'
-        layout.operator("view3d.create_spin",	text='Create Spin XY').axis = 'XY'
-        layout.operator("view3d.create_spin",	text='Create Spin XZ').axis = 'XZ'
-        layout.operator("view3d.create_spin",	text='Create Spin YZ').axis = 'YZ'
-        layout.operator("view3d.create_spin",	text='Create Spin XYZ').axis = 'XYZ'
+	def draw(self, context):
+		from ..ui.ui_lang import lang
+
+		layout = self.layout
+		layout.operator_context = 'INVOKE_REGION_WIN'
+		layout.operator("view3d.create_spin",	text=lang['MEN070']  ).axis = 'X'	#	text='Create Rotation X').axis = 'X'
+		layout.operator("view3d.create_spin",	text=lang['MEN071']  ).axis = 'Y'	#	text='Create Rotation Y').axis = 'Y'
+		layout.operator("view3d.create_spin",	text=lang['MEN072']  ).axis = 'Z'	#	text='Create Rotation Z').axis = 'Z'
+		layout.operator("view3d.create_spin",	text=lang['MEN073']  ).axis = 'x'	#	text='Create Rotation -X').axis = 'x'
+		layout.operator("view3d.create_spin",	text=lang['MEN074']  ).axis = 'y'	#	text='Create Rotation -Y').axis = 'y'
+		layout.operator("view3d.create_spin",	text=lang['MEN075']  ).axis = 'z'	#	text='Create Rotation -Z').axis = 'z'
+		layout.operator("view3d.create_spin",	text=lang['MEN076']  ).axis = 'XY'	#	text='Create Rotation XY').axis = 'XY'
+		layout.operator("view3d.create_spin",	text=lang['MEN077']  ).axis = 'XZ'	#	text='Create Rotation XZ').axis = 'XZ'
+		layout.operator("view3d.create_spin",	text=lang['MEN078']  ).axis = 'YZ'	#	text='Create Rotation YZ').axis = 'YZ'
+		layout.operator("view3d.create_spin",	text=lang['MEN079']  ).axis = 'XYZ'	#	text='Create Rotation XYZ').axis = 'XYZ'
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -210,6 +217,35 @@ class VIEW3D_FG_sub_menu_unfreeze_armature(bpy.types.Menu):
 				layout.operator("view3d.unfreeze_armature",
 					                text=armature.name,
 					                icon='ARMATURE_DATA').object_name = armature.name
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class VIEW3D_FG_sub_menu_select_by_file(bpy.types.Menu):
+	bl_label = "Select by File"
+
+	#-----------------------------------------------------------------------------------------------------------------------------
+	def draw(self, context):
+		layout = self.layout
+		xml_files = []
+		ac_files = []
+
+		for obj in bpy.data.objects:
+			if obj.type == 'ARMATURE':
+				xml_file = obj.data.fg.xml_file
+				if xml_file != "" and not xml_file in xml_files:
+					xml_files.append( xml_file )
+			elif obj.type == 'MESH':
+				ac_file = obj.data.fg.ac_file
+				if ac_file != "" and not ac_file in ac_files:
+					ac_files.append( ac_file )
+					
+		for f in xml_files:
+			layout.operator(	"view3d.select_by_file",
+								text=f,
+								icon='ARMATURE_DATA').filename = f
+		for f in ac_files:
+			layout.operator(	"view3d.select_by_file",
+								text=f,
+								icon='MESH_CUBE').filename = f
 #----------------------------------------------------------------------------------------------------------------------------------
 # Pour le raccourci CTRL-F       utilise pour le "debuggage"
 # Réouvre le dernier xml     contenu dans '/tmp/script-fg2bl'
@@ -361,6 +397,7 @@ def register():
     bpy.utils.register_class(VIEW3D_FG_sub_menu_create_spin)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_create_translate)
     bpy.utils.register_class(VIEW3D_FG_sub_menu_unfreeze_armature)
+    bpy.utils.register_class(VIEW3D_FG_sub_menu_select_by_file)
 def unregister():
     bpy.utils.unregister_class(FG_OT_exec)
     bpy.utils.unregister_class(FG_OT_exec2)
@@ -371,5 +408,6 @@ def unregister():
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_spin)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_create_translate)
     bpy.utils.unregister_class(VIEW3D_FG_sub_menu_unfreeze_armature)
+    bpy.utils.unregister_class(VIEW3D_FG_sub_menu_select_by_file)
 
 

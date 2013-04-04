@@ -680,6 +680,26 @@ class FG_OT_unfreeze_armature(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
+class FG_OT_select_by_file(bpy.types.Operator):
+	'''Select by file'''
+	bl_idname = "view3d.select_by_file"
+	bl_label = "Unfreeze selected armatures"
+	bl_options = {'REGISTER', 'UNDO'}
+
+	filename = bpy.props.StringProperty()
+
+	#-----------------------------------------------------------------------------------------------------------------------------
+	def execute(self, context):
+		debug_info( 'bpy.ops.view3d.select_by_file()' )
+		for obj in bpy.data.objects:
+			if obj.type == 'ARMATURE' and obj.data.fg.xml_file == self.filename:
+				obj.select = True
+			elif obj.type == 'MESH' and obj.data.fg.ac_file == self.filename:
+				obj.select = True
+
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_save_keyframe(bpy.types.Operator):
 	'''???????????'''
 	bl_idname = "view3d.save_keyframe"
@@ -1350,7 +1370,7 @@ def register():
 	bpy.utils.register_class( FG_OT_transforme_to_spin )
 	bpy.utils.register_class( FG_OT_select_by_property )
 	bpy.utils.register_class( FG_OT_select_object_by_armature )
-	
+	bpy.utils.register_class( FG_OT_select_by_file )
 def unregister():
 	bpy.utils.unregister_class( FG_OT_freeze_armature)
 	bpy.utils.unregister_class( FG_OT_unfreeze_armature)
@@ -1377,4 +1397,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_transforme_to_spin )
 	bpy.utils.unregister_class( FG_OT_select_by_property )
 	bpy.utils.unregister_class( FG_OT_select_object_by_armature )
+	bpy.utils.unregister_class( FG_OT_select_by_file )
 

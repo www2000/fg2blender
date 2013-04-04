@@ -50,9 +50,11 @@ lang_fr['ERR005'] = 'Les armatures sont déjà gelés'
 lang_en['ERR006'] = "Can't found keyframes"
 lang_fr['ERR006'] = 'Aucune keyframes trouvés'
 
+#----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MENTIT'] = 'Flightgear Tools Menu'
 lang_fr['MENTIT'] = 'Flightgear boîte à outils'
 
+#----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MEN000'] = 'Insert Keyframe Rotate'
 lang_fr['MEN000'] = 'Insérer une keyframe de rotation'
 
@@ -89,6 +91,7 @@ lang_fr['MEN010'] = 'Armatures'
 lang_en['MEN011'] = 'Unwrap'
 lang_fr['MEN011'] = 'Dépliage UV'
 
+#----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MEN020'] = 'Along X'
 lang_fr['MEN020'] = 'Le long de X'
 
@@ -98,6 +101,7 @@ lang_fr['MEN021'] = 'Le long de Y'
 lang_en['MEN022'] = 'Along Z' 
 lang_fr['MEN022'] = 'Le long de Z'
 
+#----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MEN040'] = 'Create rotate' 
 lang_fr['MEN040'] = 'Créer rotation'
 
@@ -152,6 +156,41 @@ lang_fr['MEN056'] = 'Sauve parenté et reset'
 lang_en['MEN057'] = 'Restore Parent '
 lang_fr['MEN057'] = 'Restaurer parenté'
 
+lang_en['MEN058'] = 'Select by file'
+lang_fr['MEN058'] = 'Sectionne par fichier'
+
+#----------------------------------------------------------------------------------------------------------------------------------
+lang_en['MEN070'] = 'Along X'
+lang_fr['MEN070'] = 'Axe X'
+
+lang_en['MEN071'] = 'Along Y'
+lang_fr['MEN071'] = 'Axe Y'
+
+lang_en['MEN072'] = 'Along Z'
+lang_fr['MEN072'] = 'Axe Z'
+
+lang_en['MEN073'] = 'Along -X'
+lang_fr['MEN073'] = 'Axe -X'
+
+lang_en['MEN074'] = 'Along -Y'
+lang_fr['MEN074'] = 'Axe -Y'
+
+lang_en['MEN075'] = 'Along -Z'
+lang_fr['MEN075'] = 'Axe -Z'
+
+lang_en['MEN076'] = 'Along  XY'
+lang_fr['MEN076'] = 'Axe XY'
+
+lang_en['MEN077'] = 'Along XZ'
+lang_fr['MEN077'] = 'Axe XZ'
+
+lang_en['MEN078'] = 'Along YZ'
+lang_fr['MEN078'] = 'Axe YZ'
+
+lang_en['MEN079'] = 'Along XYZ '
+lang_fr['MEN079'] = 'Axe XYZ'
+
+#----------------------------------------------------------------------------------------------------------------------------------
 
 
 
