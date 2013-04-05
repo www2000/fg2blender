@@ -44,9 +44,9 @@ def debug_info(aff):
 #--------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_copy_ac_file(bpy.types.Operator):
-	'''Assign AC3D filename from active object to selected objects'''
+	'''Assign AC3D filename from active object to selected object(s)'''
 	bl_idname = "view3d.copy_ac_file"
-	bl_label = "Copy AC3D filename"
+	bl_label = ""
 	bl_description = lang['DOC001']
 	bl_options = {'REGISTER', 'UNDO'}
 
@@ -85,8 +85,10 @@ class FG_OT_copy_ac_file(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_select_file_ac(bpy.types.Operator):
+	'''Select AC3D file destination'''
 	bl_idname = "object.file_select_ac"
 	bl_label = ""
+	bl_description = lang['DOC002']
 
 	#filepath = bpy.props.StringProperty(subtype="FILE_PATH")
 	filepath = bpy.props.StringProperty()
@@ -112,7 +114,8 @@ class FG_OT_select_file_ac(bpy.types.Operator):
 class FG_OT_copy_name_bl2ac(bpy.types.Operator):
 	'''Copy object name to Mesh Name for selected objects'''
 	bl_idname = "view3d.copy_name_bl2ac"					# sera appelé par bpy.ops.view3d.exemple()
-	bl_label = "Copy object name in Mesh Name"
+	bl_label = ""
+	bl_description = lang['DOC003']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -137,7 +140,8 @@ class FG_OT_copy_name_bl2ac(bpy.types.Operator):
 class FG_OT_save_ac_file(bpy.types.Operator):
 	'''Save AC3D file (create it automatically if not exit)'''
 	bl_idname = "view3d.save_ac_file"					# sera appelé par bpy.ops.view3d.exemple()
-	bl_label = "Save ac file "
+	bl_label = lang['UI001']
+	bl_description = lang['DOC004']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	object_name = bpy.props.StringProperty()

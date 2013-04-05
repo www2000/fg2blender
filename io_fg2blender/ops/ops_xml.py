@@ -35,6 +35,8 @@ from . import *
 
 from mathutils import Euler
 from bpy.props import StringProperty
+
+from ..ui.ui_lang import lang
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info(aff):
@@ -47,7 +49,8 @@ def debug_info(aff):
 class FG_OT_copy_xml_file(bpy.types.Operator):
 	'''Assign XML filename from active object to selected objects'''
 	bl_idname = "view3d.copy_xml_file"
-	bl_label = "Copy XML filename"
+	bl_label = ""
+	bl_description = lang['DOC005']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -90,8 +93,10 @@ class FG_OT_copy_xml_file(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_select_file_xml(bpy.types.Operator):
+	'''Select XML file destination'''
 	bl_idname = "object.file_select_xml"
 	bl_label = ""
+	bl_description = lang['DOC006']
 
 	#filepath = bpy.props.StringProperty(subtype="FILE_PATH")
 	filepath = bpy.props.StringProperty()
@@ -117,8 +122,10 @@ class FG_OT_select_file_xml(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_select_file_jsb(bpy.types.Operator):
+	'''Select JSBSim (XML) file destination'''
 	bl_idname = "object.file_select_jsb"
 	bl_label = ""
+	bl_description = lang['DOC007']
 
 	#filepath = bpy.props.StringProperty(subtype="FILE_PATH")
 	filepath = bpy.props.StringProperty()
@@ -141,8 +148,10 @@ class FG_OT_select_file_jsb(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_write_xml(bpy.types.Operator):
+	'''Save XML file (create it automatically if doesn\'t exist)'''
 	bl_idname = "view3d.write_xml"
-	bl_label = "Write File"
+	bl_label = lang['UI002']
+	bl_description = lang['DOC008']
 	
 	obj_name = bpy.props.StringProperty()
 	
@@ -260,8 +269,10 @@ class FG_OT_write_xml(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_write_jsb(bpy.types.Operator):
+	'''Save XML file (create it automatically if doesn\'t exist)'''
 	bl_idname = "view3d.write_jsb"
-	bl_label = "Write File"
+	bl_label = lang['UI002']
+	bl_description = lang['DOC008']
 	
 	#filename = bpy.props.StringProperty()
 	obj_name = bpy.props.StringProperty()

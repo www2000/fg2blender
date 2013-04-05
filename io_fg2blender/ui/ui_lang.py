@@ -191,8 +191,37 @@ lang_en['MEN079'] = 'Along XYZ '
 lang_fr['MEN079'] = 'Axe XYZ'
 
 #----------------------------------------------------------------------------------------------------------------------------------
+
+lang_en['UI001'] = 'Save AC3D file'
+lang_fr['UI001'] = 'Sauvegarde le fichier AC3D'
+
+lang_en['UI002'] = 'Save XML file'
+lang_fr['UI002'] = 'Sauvegarde le fichier XML'
+
 lang_en['DOC001'] = 'Assign AC3D filename from active object to selected object(s)'
 lang_fr['DOC001'] = 'Assigne le nom du fichier AC3D de l\'objet actif a(ux) objet(s) séléctionné(s)'
+
+lang_en['DOC002'] = 'Select AC3D file destination'
+lang_fr['DOC002'] = 'Sélection du fichier AC3D de destination'
+
+lang_en['DOC003'] = 'Assign object name to Mesh Name for selected objects'
+lang_fr['DOC003'] = 'Assigne les noms d\'objets dans Nom d\'objet pour le(s) objet(s) séléctionné(s)'
+
+lang_en['DOC004'] = 'Save AC3D file (create it automatically if doesn\'t exist)'
+lang_fr['DOC004'] = 'Sauvegarde le fichier AC3D (créer automatiquement si inexistant)'
+
+lang_en['DOC005'] = 'Assign XML filename from active armature to selected armature(s)'
+lang_fr['DOC005'] = 'Assigne le nom du fichier XML de l\'armature active pour le(s) armature(s) séléctionné(s)'
+
+lang_en['DOC006'] = 'Select XML file destination'
+lang_fr['DOC006'] = 'Sélection du fichier XML de destination'
+
+lang_en['DOC007'] = 'Select JSBSim (XML) file destination'
+lang_fr['DOC007'] = 'Sélection du fichier JSBSim (XML) de destination'
+
+lang_en['DOC008'] = 'Save XML file (create it automatically if doesn\'t exist)'
+lang_fr['DOC008'] = 'Sauvegarde le fichier XML (créer automatiquement si inexistant)'
+
 
 
 
