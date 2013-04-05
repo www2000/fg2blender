@@ -605,6 +605,7 @@ class FG_OT_select_by_property(bpy.types.Operator):
 				if obj.type != 'ARMATURE':
 					continue
 				if xml_export.build_property_name(obj) == property_value:
+					debug_info( "%s : %s == %s" % (obj.name, xml_export.build_property_name(obj),property_value) )
 					obj.select = True
 					
 		return {'FINISHED'}

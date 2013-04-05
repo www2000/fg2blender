@@ -128,6 +128,8 @@ def layout_armature_properties(self, obj, context):
 	row.prop( obj.data.fg, "bWriteDisc" )
 	row = box.row(align=True)
 	row.prop( obj.data.fg, "xml_file" )
+	#layout.template_ID( obj.data.fg, "xml_file", "", "" )
+	row.operator( "object.file_select_xml", icon='TRIA_DOWN' )
 	row.operator( "object.file_select_xml", icon='FILESEL' )
 
 	row = box.row()
