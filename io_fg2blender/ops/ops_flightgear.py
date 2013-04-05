@@ -485,33 +485,6 @@ class FG_OT_select_property(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
-class FG_OT_select_armature_property(bpy.types.Operator):
-	'''????????????'''
-	bl_idname = "view3d.select_armature_property"
-	bl_label = "??????????"
-	bl_options = {'REGISTER', 'UNDO'}
-
-	@classmethod
-	def poll(cls, context):
-		if context.active_object == None:
-			return False
-		return context.active_object.type == 'ARMATURE'
-
-	def execute(self, context):
-		import bpy
-		import mathutils
-
-		property_name =  context.active_object.data.fg.property_value
-		debug_info( property_name )
-		
-		for obj in bpy.data.objects:
-			if obj.type != 'ARMATURE':
-				continue
-			if obj.data.fg.property_value == property_name:
-				obj.select = True
-				
-		return {'FINISHED'}
-#----------------------------------------------------------------------------------------------------------------------------------
 class FG_OT_show_animation(bpy.types.Operator):
 	'''Show all objects with the same property and hide other'''
 	bl_idname = "view3d.show_animation"
@@ -532,6 +505,7 @@ class FG_OT_show_animation(bpy.types.Operator):
 		bpy.ops.object.hide_view_set(unselected=False)
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
+
 class FG_OT_show_all(bpy.types.Operator):
 	'''Show all objects'''
 	bl_idname = "view3d.show_all"
@@ -611,9 +585,9 @@ class FG_OT_insertion_keyframe_translate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_select_by_property(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
+	'''Select all armatures with same flightgear property'''
 	bl_idname = "view3d.select_by_property"					
-	bl_label = "Select alla armatures with same flightgear property"
+	bl_label = "Select all armatures with same flightgear property"
 	bl_options = {'REGISTER', 'UNDO'}
 	'''
 	@classmethod
@@ -625,22 +599,19 @@ class FG_OT_select_by_property(bpy.types.Operator):
 		active_object = context.active_object
 		if active_object and active_object.type == 'ARMATURE':
 			property_value = xml_export.build_property_name( active_object )
-			#print( "Actif %s %s" % (active_object.name, property_value) )
 			
 			for obj in bpy.data.objects:
 				if obj.type != 'ARMATURE':
 					continue
-				#bpy.ops.object.posemode_toggle()
 				if xml_export.build_property_name(obj) == property_value:
 					obj.select = True
-				#print( "%s %s %s - %s %s" % (obj.name, obj.data.fg.family, obj.data.fg.family_value, xml_export.build_property_name(obj), obj.select) )
 					
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 class FG_OT_select_object_by_armature(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
+	'''????????????'''
 	bl_idname = "view3d.select_object_by_armature"					
-	bl_label = "Select alla armatures with same flightgear property"
+	bl_label = "???????????"
 	bl_options = {'REGISTER', 'UNDO'}
 	'''
 	@classmethod
@@ -658,7 +629,6 @@ class FG_OT_select_object_by_armature(bpy.types.Operator):
 		for obj in bpy.context.selected_objects:
 		    if obj.type != 'ARMATURE':
 		        continue
-		    print( obj.name )
 		    obj.select = False
 		    find_son( obj )
 		
@@ -676,7 +646,6 @@ def register():
 	bpy.utils.register_class( FG_OT_save_parent)
 	bpy.utils.register_class( FG_OT_restore_parent)
 	bpy.utils.register_class( FG_OT_select_property)
-	bpy.utils.register_class( FG_OT_select_armature_property)
 	bpy.utils.register_class( FG_OT_copy_property)
 	bpy.utils.register_class( FG_OT_show_animation )
 	bpy.utils.register_class( FG_OT_show_all )
@@ -693,7 +662,6 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_save_parent)
 	bpy.utils.unregister_class( FG_OT_restore_parent)
 	bpy.utils.unregister_class( FG_OT_select_property)
-	bpy.utils.unregister_class( FG_OT_select_armature_property)
 	bpy.utils.unregister_class( FG_OT_copy_property)
 	bpy.utils.unregister_class( FG_OT_show_animation )
 	bpy.utils.unregister_class( FG_OT_show_all )
