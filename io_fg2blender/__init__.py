@@ -30,7 +30,7 @@
 bl_info = {
     "name": "Flightgear",
     "description": "Import/Export flightgear xml (plane description)",
-    "author": "Rene Negre, PAF",
+    "author": "Rene Negre, Alexis Laillé, Clément de l'Hamaide",
     "version": (0,1),
     "blender": (2, 63, 0),
     "api": 31236,
@@ -105,7 +105,7 @@ def debug_info( aff):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class ImportFG(bpy.types.Operator, ImportHelper):
-	'''This appears in the tooltip of the operator and in the generated docs'''
+	'''FlightGear XML Import'''
 	bl_idname = "import.fg2blender"  # this is important since its how bpy.ops.export.some_data is constructed
 	bl_label = "Import FlightGear"
 	bl_options = {'PRESET'}	
@@ -187,7 +187,7 @@ class ImportFG(bpy.types.Operator, ImportHelper):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class ImportAC(bpy.types.Operator, ImportHelper):
-	'''This appears in the tooltip of the operator and in the generated docs'''
+	'''AC3D Import'''
 	bl_idname = "import.ac_file"  # this is important since its how bpy.ops.export.some_data is constructed
 	bl_label = "Import .ac"
 	bl_options = {'PRESET'}	
