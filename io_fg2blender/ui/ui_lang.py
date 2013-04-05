@@ -191,6 +191,8 @@ lang_en['MEN079'] = 'Along XYZ '
 lang_fr['MEN079'] = 'Axe XYZ'
 
 #----------------------------------------------------------------------------------------------------------------------------------
+lang_en['DOC001'] = 'Assign AC3D filename from active object to selected object(s)'
+lang_fr['DOC001'] = 'Assigne le nom du fichier AC3D de l\'objet actif a(ux) objet(s) séléctionné(s)'
 
 
 

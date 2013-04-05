@@ -33,6 +33,8 @@ import os
 from . import *
 from bpy.props import StringProperty
 
+from ..ui.ui_lang import lang
+
 #--------------------------------------------------------------------------------------------------------------------------------
 def debug_info(aff):
 	from .. import debug_ops_ac3d
@@ -45,6 +47,7 @@ class FG_OT_copy_ac_file(bpy.types.Operator):
 	'''Assign AC3D filename from active object to selected objects'''
 	bl_idname = "view3d.copy_ac_file"
 	bl_label = "Copy AC3D filename"
+	bl_description = lang['DOC001']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
