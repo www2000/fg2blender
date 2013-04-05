@@ -33,6 +33,8 @@ from . import *
 
 from bpy.props import StringProperty
 
+from ..ui.ui_lang import lang
+
 #--------------------------------------------------------------------------------------------------------------------------------
 
 STACK_SAVE_PARENT = []

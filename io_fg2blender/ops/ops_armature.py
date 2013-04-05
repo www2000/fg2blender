@@ -37,6 +37,8 @@ from mathutils import Euler
 from math import radians
 
 from bpy.props import StringProperty
+
+from ..ui.ui_lang import lang
 #--------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info(aff):
