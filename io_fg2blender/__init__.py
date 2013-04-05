@@ -77,16 +77,17 @@ debug_xml_jsbsim		= False
 debug_xml_anim			= False
 debug_ac3d_import		= False
 debug_ac3d_export		= False
-debug_fg2bl				= False
-debug_props_armature	= False
+debug_fg2bl			= False
+debug_props_armature		= False
 debug_props_camera		= False
 debug_props_empty		= False
 debug_props_meshes		= False
 debug_ops_unwrap		= False
-debug_ops_flightgear	= False
+debug_ops_flightgear		= False
 debug_ops_ac3d			= False
 debug_ops_xml			= False
 debug_ops_tools			= False
+debug_ops_armature		= False
 debug_unwrap			= False
 
 
@@ -260,6 +261,7 @@ def register():
 	from .ops import ops_xml
 	from .ops import ops_popup
 	from .ops import ops_unwrap
+	from .ops import ops_armature
 	from .props import props_armature
 	from .props import props_meshes
 	from .props import props_empty
@@ -282,6 +284,7 @@ def register():
 	ops_xml.register()
 	ops_popup.register()
 	ops_unwrap.register()
+	ops_armature.register()
 	props_armature.register()
 	props_meshes.register()
 	props_empty.register()
@@ -314,13 +317,14 @@ def register():
 		global	debug_ops_ac3d
 		global	debug_ops_tools
 		global	debug_ops_xml
+		global	debug_ops_armature
 		global  debug_props_armature
 		
 		debug_file_debug	= True
 		DEBUG			= True
 		debug_info( "File debug OK" )
 
-		debug_fg2bl				= False
+		debug_fg2bl			= False
 		debug_xml_manager		= False
 		debug_xml_import		= False
 		debug_xml_export		= False
@@ -329,12 +333,13 @@ def register():
 		debug_xml_anim			= False
 		debug_ac3d_import		= False
 		debug_ac3d_export		= False
-		debug_props_armature	= False
+		debug_props_armature		= False
 		debug_ops_unwrap		= True
-		debug_ops_flightgear	= False
+		debug_ops_flightgear		= False
 		debug_ops_ac3d			= False
 		debug_ops_tools			= False
 		debug_ops_xml			= False
+		debug_ops_armature		= False
 	
 def unregister():
 	from .ops import ops_flightgear
@@ -342,7 +347,8 @@ def unregister():
 	from .ops import ops_tools
 	from .ops import ops_xml
 	from .ops import ops_popup
-	from .osp import ops_unwrap
+	from .ops import ops_unwrap
+	from .ops import ops_armature
 	from .props import props_armature
 	from .props import props_meshes
 	from .props import props_empty
@@ -365,6 +371,7 @@ def unregister():
 	ops_xml.unregister()
 	ops_popup.unregister()
 	ops_unwrap.unregister()
+	ops_armature.unregister()
 	props_armature.unregister()
 	props_meshes.unregister()
 	props_empty.unregister()
