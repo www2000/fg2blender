@@ -589,11 +589,12 @@ class FG_OT_select_by_property(bpy.types.Operator):
 	bl_idname = "view3d.select_by_property"					
 	bl_label = "Select all armatures with same flightgear property"
 	bl_options = {'REGISTER', 'UNDO'}
-	'''
+
 	@classmethod
 	def poll(cls, context):
-		return True
-	'''
+		for obj in bpy.context.selected_objects:
+		    return obj.type == 'ARMATURE'
+
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
 		from ..xml import xml_export
 		active_object = context.active_object
@@ -613,11 +614,12 @@ class FG_OT_select_object_by_armature(bpy.types.Operator):
 	bl_idname = "view3d.select_object_by_armature"					
 	bl_label = "???????????"
 	bl_options = {'REGISTER', 'UNDO'}
-	'''
+
 	@classmethod
 	def poll(cls, context):
-		return True
-	'''
+		for obj in bpy.context.selected_objects:
+		    return obj.type == 'ARMATURE'
+
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
 		def find_son( parent_obj ):
 		    for obj in bpy.data.objects:

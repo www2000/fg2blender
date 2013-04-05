@@ -123,11 +123,11 @@ lang_fr['MEN045'] = 'Type spin'
 lang_en['MEN046'] = 'Select related armatures'
 lang_fr['MEN046'] = "Séléction relié à l'armature"
 
-lang_en['MEN047'] = 'Select by property'
-lang_fr['MEN047'] = 'Séléction par propriété'
+lang_en['MEN047'] = 'Select armature(s) by property'
+lang_fr['MEN047'] = 'Séléctionne l(es) armature(s) par propriété'
 
-lang_en['MEN048'] = 'Select objects by armature'
-lang_fr['MEN048'] = "Séléction d'objet liés a(ux) armature(s)"
+lang_en['MEN048'] = 'Select object(s) by armature(s)'
+lang_fr['MEN048'] = "Séléctionne le(s) objet(s) par armature(s)"
 
 lang_en['MEN049'] = 'Copy xml file (active->selects)'
 lang_fr['MEN049'] = 'Copie xml file (active->selects)'
