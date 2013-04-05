@@ -45,6 +45,8 @@ from bpy.props import BoolProperty
 from bpy.props import EnumProperty
 from bpy.props import CollectionProperty
 
+from ..ui.ui_lang import lang
+
 #----------------------------------------------------------------------------------------------------------------------------------
 def debug_info( aff ):
 	from .. import debug_ops_unwrap
@@ -55,9 +57,10 @@ def debug_info( aff ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_unwrap_4_faces(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
+	'''Unwrap selected object for 4 faces'''
 	bl_idname = "view3d.unwrap_4_faces"					# sera appelé par bpy.ops.view3d.exemple()
-	bl_label = "Exemple d'operateur"
+	bl_label = ""
+	bl_description = lang['DOC009']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	axis = bpy.props.StringProperty()

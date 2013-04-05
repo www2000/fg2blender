@@ -31,6 +31,8 @@ import bpy
 
 from . import *
 
+from ..ui.ui_lang import lang
+
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info(aff):
@@ -41,9 +43,10 @@ def debug_info(aff):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_edges_split(bpy.types.Operator):
-	'''Apply edge split to selected objects '''
+	'''Apply edge split to selected object(s)'''
 	bl_idname = "view3d.edge_split"
-	bl_label = "Apply edge split"
+	bl_label = ""
+	bl_description = lang['DOC010']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -110,8 +113,10 @@ class FG_OT_edges_split(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_only_render(bpy.types.Operator):
+	'''??????????????????'''
 	bl_idname = "fg.only_render"
 	bl_label = ""
+	bl_description = "???????????????????"
 
 	def execute(self, context):
 		debug_info( self.filepath)
@@ -126,8 +131,10 @@ class FG_OT_only_render(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_time_2x(bpy.types.Operator):
+	'''Increase speed animation x2'''
 	bl_idname = "view3d.time_2x"
 	bl_label = ""
+	bl_description = lang['DOC011']
 
 	def invoke(self, context, event):
 		end = context.scene.frame_end
@@ -146,8 +153,10 @@ class FG_OT_time_2x(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_time_0_5x(bpy.types.Operator):
+	'''Decrease speed animation x2'''
 	bl_idname = "view3d.time_0_5x"
 	bl_label = ""
+	bl_description = lang['DOC012']
 
 	def invoke(self, context, event):
 		end = context.scene.frame_end
@@ -166,9 +175,9 @@ class FG_OT_time_0_5x(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_relpath(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
+	'''Change all files path to relative path'''
 	bl_idname = "object.relpath"					
-	bl_label = "Exemple d'operateur"
+	bl_label = ""
 	bl_options = {'REGISTER', 'UNDO'}
 	'''
 	@classmethod
@@ -185,9 +194,9 @@ class FG_OT_relpath(bpy.types.Operator):
 
 #----------------------------------------------------------------------------------------------------------------------------------
 class FG_OT_abspath(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
+	'''Change all files path to absolute path'''
 	bl_idname = "object.abspath"					
-	bl_label = "Exemple d'operateur"
+	bl_label = ""
 	bl_options = {'REGISTER', 'UNDO'}
 	'''
 	@classmethod
@@ -206,7 +215,7 @@ class FG_OT_abspath(bpy.types.Operator):
 # Sample : simple operator
 #----------------------------------------------------------------------------------------------------------------------------------
 class FG_OT_exemple(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
+	'''C'est un exemple d'operateur blender'''
 	bl_idname = "view3d.exemple"					# sera appelé par bpy.ops.view3d.exemple()
 	bl_label = "Exemple d'operateur"
 	bl_options = {'REGISTER', 'UNDO'}

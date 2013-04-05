@@ -73,11 +73,11 @@ lang_fr['MEN004'] = 'Exécute edge-split'
 lang_en['MEN005'] = 'Select objects by property'
 lang_fr['MEN005'] = 'Séléctionne objets par propriété'
 
-lang_en['MEN006'] = 'Time x2'
-lang_fr['MEN006'] = 'Accélération par 2'
+lang_en['MEN006'] = 'Increase speed animation'
+lang_fr['MEN006'] = 'Augmente la vitesse d\'animation'
 
-lang_en['MEN007'] = 'Time x0.5'
-lang_fr['MEN007'] = 'Décéleration par 2'
+lang_en['MEN007'] = 'Decrease speed animation'
+lang_fr['MEN007'] = 'Diminue la vitesse d\'animation'
 
 lang_en['MEN008'] = 'Assign object name'
 lang_fr['MEN008'] = 'Initialise le nom ac3d'
@@ -221,6 +221,19 @@ lang_fr['DOC007'] = 'Sélection du fichier JSBSim (XML) de destination'
 
 lang_en['DOC008'] = 'Save XML file (create it automatically if doesn\'t exist)'
 lang_fr['DOC008'] = 'Sauvegarde le fichier XML (créer automatiquement si inexistant)'
+
+lang_en['DOC009'] = 'Unwrap selected object for 4 faces'
+lang_fr['DOC009'] = 'Dépliage de l\'objet séléctionné en 4 faces'
+
+lang_en['DOC010'] = 'Apply edge split to selected object(s)'
+lang_fr['DOC010'] = 'Applique un edge split a(ux) objet(s) séléctionné(s)'
+
+lang_en['DOC011'] = 'Increase speed animation x2'
+lang_fr['DOC011'] = 'Augmente la vitesse d\'animation x2'
+
+lang_en['DOC012'] = 'Decrease speed animation x2'
+lang_fr['DOC012'] = 'Diminue la vitesse d\'animation x2'
+
 
 
 
