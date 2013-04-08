@@ -49,9 +49,9 @@ def debug_info(aff):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_translate(bpy.types.Operator):
-	'''Add armature type translate '''
+	'''Create armature type translate'''
 	bl_idname = "view3d.create_translate"
-	bl_label = "Create Translate"
+	bl_label = ""
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -102,17 +102,17 @@ class FG_OT_create_translate(bpy.types.Operator):
 			obj.data.fg.type_anim		= 2
 			obj.data.fg.xml_file		= ""
 			obj.data.fg.xml_file_no		= 0
-			obj.data.fg.family			= "custom"
+			obj.data.fg.family		= "custom"
 			obj.data.fg.family_value	= "error"
 			obj.data.fg.property_value	= ""
 			obj.data.fg.property_idx	= -1
-			obj.data.fg.time			= 100.0/bpy.data.scenes[0].render.fps
+			obj.data.fg.time		= 100.0/bpy.data.scenes[0].render.fps
 			obj.data.fg.time_ini		= 100.0/bpy.data.scenes[0].render.fps
 			obj.data.fg.range_beg		= 0.0
 			obj.data.fg.range_beg_ini	= 0.0
 			obj.data.fg.range_end		= 1.0
 			obj.data.fg.range_end_ini	= 1.0
-			obj.data.fg.factor			= 1.0
+			obj.data.fg.factor		= 1.0
 			obj.data.fg.factor_ini		= 1.0
 			obj.data.fg.offset_deg		= 0.0
 
@@ -121,9 +121,10 @@ class FG_OT_create_translate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_translate_axis(bpy.types.Operator):
-	'''Add armature type translate axis '''
+	'''Create armature type translate on selected axis'''
 	bl_idname = "view3d.create_translate_axis"
-	bl_label = "Create Translate axis"
+	bl_label = ""
+	bl_description = lang['DOC013']
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	axis = StringProperty(default="")
@@ -184,17 +185,17 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 				obj.data.fg.type_anim		= 2
 				obj.data.fg.xml_file		= ""
 				obj.data.fg.xml_file_no		= 0
-				obj.data.fg.family			= "custom"
+				obj.data.fg.family		= "custom"
 				obj.data.fg.family_value	= "error"
 				obj.data.fg.property_value	= ""
 				obj.data.fg.property_idx	= -1
-				obj.data.fg.time			= 100.0/bpy.data.scenes[0].render.fps
+				obj.data.fg.time		= 100.0/bpy.data.scenes[0].render.fps
 				obj.data.fg.time_ini		= 100.0/bpy.data.scenes[0].render.fps
 				obj.data.fg.range_beg		= 0.0
 				obj.data.fg.range_beg_ini	= 0.0
 				obj.data.fg.range_end		= 1.0
 				obj.data.fg.range_end_ini	= 1.0
-				obj.data.fg.factor			= 1.0
+				obj.data.fg.factor		= 1.0
 				obj.data.fg.factor_ini		= 1.0
 				obj.data.fg.offset_deg		= 0.0
 
@@ -221,9 +222,9 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_rotate(bpy.types.Operator):
-	'''Add armature type rotate '''
+	'''Create armature type rotate'''
 	bl_idname = "view3d.create_rotate"
-	bl_label = "Create Rotate"
+	bl_label = ""
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -275,17 +276,17 @@ class FG_OT_create_rotate(bpy.types.Operator):
 			obj.data.fg.type_anim		= 1
 			obj.data.fg.xml_file		= ""
 			obj.data.fg.xml_file_no		= 0
-			obj.data.fg.family			= "custom"
+			obj.data.fg.family		= "custom"
 			obj.data.fg.family_value	= "error"
 			obj.data.fg.property_value	= ""
 			obj.data.fg.property_idx	= -1
-			obj.data.fg.time			= 100.0/bpy.data.scenes[0].render.fps
+			obj.data.fg.time		= 100.0/bpy.data.scenes[0].render.fps
 			obj.data.fg.time_ini		= 100.0/bpy.data.scenes[0].render.fps
 			obj.data.fg.range_beg		= 0.0
 			obj.data.fg.range_beg_ini	= 0.0
 			obj.data.fg.range_end		= 1.0
 			obj.data.fg.range_end_ini	= 1.0
-			obj.data.fg.factor			= 1.0
+			obj.data.fg.factor		= 1.0
 			obj.data.fg.factor_ini		= 1.0
 			obj.data.fg.offset_deg		= 0.0
 
@@ -294,9 +295,10 @@ class FG_OT_create_rotate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_rotate_axis(bpy.types.Operator):
-	'''Add armature type rotate axis '''
+	'''Create armature type rotate on selected axis'''
 	bl_idname = "view3d.create_rotate_axis"
-	bl_label = "Create Rotate axis"
+	bl_label = ""
+	bl_description = lang['DOC014']
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	axis = StringProperty(default="")
@@ -359,17 +361,17 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 				obj.data.fg.type_anim		= 1
 				obj.data.fg.xml_file		= ""
 				obj.data.fg.xml_file_no		= 0
-				obj.data.fg.family			= "custom"
+				obj.data.fg.family		= "custom"
 				obj.data.fg.family_value	= "error"
 				obj.data.fg.property_value	= ""
 				obj.data.fg.property_idx	= -1
-				obj.data.fg.time			= 100.0/bpy.data.scenes[0].render.fps
+				obj.data.fg.time		= 100.0/bpy.data.scenes[0].render.fps
 				obj.data.fg.time_ini		= 100.0/bpy.data.scenes[0].render.fps
 				obj.data.fg.range_beg		= 0.0
 				obj.data.fg.range_beg_ini	= 0.0
 				obj.data.fg.range_end		= 1.0
 				obj.data.fg.range_end_ini	= 1.0
-				obj.data.fg.factor			= 1.0
+				obj.data.fg.factor		= 1.0
 				obj.data.fg.factor_ini		= 1.0
 				obj.data.fg.offset_deg		= 0.0
 
@@ -396,9 +398,10 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_spin(bpy.types.Operator):
-	'''Add armature type spin '''
+	'''Create armature type spin on selected axis'''
 	bl_idname = "view3d.create_spin"
-	bl_label = "Create spin"
+	bl_label = ""
+	bl_description = lang['DOC015']
 	bl_options = {'REGISTER', 'UNDO'}
 	
 	axis = StringProperty(default="")
@@ -498,9 +501,10 @@ class FG_OT_create_spin(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_create_anim(bpy.types.Operator):
-	'''???????????'''
+	'''Compute XML animations loaded from the XML import'''
 	bl_idname = "view3d.create_anim"
-	bl_label = "Create Animation"
+	bl_label = ""
+	bl_description = lang['DOC016']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -521,7 +525,8 @@ class FG_OT_create_anim(bpy.types.Operator):
 class FG_OT_init_rotation(bpy.types.Operator):
 	'''???????????'''
 	bl_idname = "view3d.init_rotation"
-	bl_label = "?????????????"
+	bl_label = ""
+	bl_description = lang['DOC017']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -587,7 +592,8 @@ class FG_OT_init_rotation(bpy.types.Operator):
 class FG_OT_init_rotation_zero(bpy.types.Operator):
 	'''???????????????'''
 	bl_idname = "view3d.init_rotation_zero"
-	bl_label = "????????????"
+	bl_label = ""
+	bl_description = lang['DOC018']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -643,9 +649,10 @@ class FG_OT_init_rotation_zero(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_transforme_to_rotate(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
-	bl_idname = "view3d.transform_to_rotate"					# sera appelé par bpy.ops.view3d.exemple()
-	bl_label = "Exemple d'operateur"
+	'''Transform selected armature(s) as armature type rotate'''
+	bl_idname = "view3d.transform_to_rotate"
+	bl_label = ""
+	bl_description = lang['DOC019']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -654,7 +661,7 @@ class FG_OT_transforme_to_rotate(bpy.types.Operator):
 			return False
 		return context.active_object.type == 'ARMATURE'
 
-	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+	def execute(self, context):
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
 				continue
@@ -663,9 +670,10 @@ class FG_OT_transforme_to_rotate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_transforme_to_translate(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
-	bl_idname = "view3d.transform_to_translate"					# sera appelé par bpy.ops.view3d.exemple()
-	bl_label = "Exemple d'operateur"
+	'''Transform selected armature(s) as armature type translate'''
+	bl_idname = "view3d.transform_to_translate"
+	bl_label = ""
+	bl_description = lang['DOC020']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -674,7 +682,7 @@ class FG_OT_transforme_to_translate(bpy.types.Operator):
 			return False
 		return context.active_object.type == 'ARMATURE'
 
-	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+	def execute(self, context):
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
 				continue
@@ -683,9 +691,10 @@ class FG_OT_transforme_to_translate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_transforme_to_spin(bpy.types.Operator):
-	'''C'est un exemple d'operateur blender '''
-	bl_idname = "view3d.transform_to_spin"					# sera appelé par bpy.ops.view3d.exemple()
-	bl_label = "Exemple d'operateur"
+	'''Transform selected armature(s) as armature type spin'''
+	bl_idname = "view3d.transform_to_spin"
+	bl_label = ""
+	bl_description = lang['DOC021']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -694,7 +703,7 @@ class FG_OT_transforme_to_spin(bpy.types.Operator):
 			return False
 		return context.active_object.type == 'ARMATURE'
 
-	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
+	def execute(self, context):
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
 				continue

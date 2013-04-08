@@ -55,9 +55,10 @@ def debug_info(aff):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_freeze_armature(bpy.types.Operator):
-	'''Freeze selected armatures'''
+	'''Freeze selected armature(s)'''
 	bl_idname = "view3d.freeze_armature"
-	bl_label = "Freeze an armature"
+	bl_label = ""
+	bl_description = lang['DOC022']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -127,7 +128,8 @@ class FG_OT_freeze_armature(bpy.types.Operator):
 class FG_OT_unfreeze_armature(bpy.types.Operator):
 	'''Unfreeze selected armatures'''
 	bl_idname = "view3d.unfreeze_armature"
-	bl_label = "Unfreeze selected armatures"
+	bl_label = ""
+	bl_description = lang['DOC023']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	object_name = bpy.props.StringProperty()
@@ -196,9 +198,10 @@ class FG_OT_unfreeze_armature(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_select_by_file(bpy.types.Operator):
-	'''Select by file'''
+	'''Select objects and armatures by file'''
 	bl_idname = "view3d.select_by_file"
-	bl_label = "Unfreeze selected armatures"
+	bl_label = ""
+	bl_description = lang['DOC024']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	filename = bpy.props.StringProperty()
@@ -218,7 +221,8 @@ class FG_OT_select_by_file(bpy.types.Operator):
 class FG_OT_save_keyframe(bpy.types.Operator):
 	'''???????????'''
 	bl_idname = "view3d.save_keyframe"
-	bl_label = "Save animation keyframe"
+	bl_label = ""
+	bl_description = lang['DOC025']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -286,7 +290,8 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 class FG_OT_save_parent(bpy.types.Operator):
 	'''?????????'''
 	bl_idname = "view3d.save_parent"
-	bl_label = "Save parent"
+	bl_label = ""
+	bl_description = lang['DOC026']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -341,7 +346,8 @@ class FG_OT_save_parent(bpy.types.Operator):
 class FG_OT_restore_parent(bpy.types.Operator):
 	'''????????'''
 	bl_idname = "view3d.restore_parent"
-	bl_label = "Restore parent"
+	bl_label = ""
+	bl_description = lang['DOC027']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -381,9 +387,10 @@ class FG_OT_restore_parent(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_copy_property(bpy.types.Operator):
-	'''Assign FG property from active object to selected objects'''
+	'''Assign FG property from active armature to selected armature(s)'''
 	bl_idname = "view3d.copy_property"
-	bl_label = "Copy FG property"
+	bl_label = ""
+	bl_description = lang['DOC028']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -435,9 +442,10 @@ class FG_OT_copy_property(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_select_property(bpy.types.Operator):
-	'''Select all objects with same property than active object'''
+	'''Select all objects and armatures with same property than active object/armature'''
 	bl_idname = "view3d.select_property"
-	bl_label = "Select property"
+	bl_label = ""
+	bl_description = lang['DOC029']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -490,7 +498,8 @@ class FG_OT_select_property(bpy.types.Operator):
 class FG_OT_show_animation(bpy.types.Operator):
 	'''Show all objects with the same property and hide other'''
 	bl_idname = "view3d.show_animation"
-	bl_label = "Show animated objects"
+	bl_label = ""
+	bl_description = lang['DOC030']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -511,7 +520,8 @@ class FG_OT_show_animation(bpy.types.Operator):
 class FG_OT_show_all(bpy.types.Operator):
 	'''Show all objects'''
 	bl_idname = "view3d.show_all"
-	bl_label = "Show all objects"
+	bl_label = ""
+	bl_description = lang['DOC031']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -529,9 +539,10 @@ class FG_OT_show_all(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_insertion_keyframe_rotate(bpy.types.Operator):
-	'''Insert keyframe rotate with linear interpolation '''
+	'''Insert keyframe type "rotate" with linear interpolation'''
 	bl_idname = "view3d.insert_keyframe_rotate"
-	bl_label = "Insert keyframe rotate"
+	bl_label = ""
+	bl_description = lang['DOC032']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -558,9 +569,10 @@ class FG_OT_insertion_keyframe_rotate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_insertion_keyframe_translate(bpy.types.Operator):
-	'''Insert keyframe rotate with linear interpolation '''
+	'''Insert keyframe type "translate" with linear interpolation '''
 	bl_idname = "view3d.insert_keyframe_translate"
-	bl_label = "Insert keyframe rotate"
+	bl_label = ""
+	bl_description = lang['DOC033']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -587,9 +599,10 @@ class FG_OT_insertion_keyframe_translate(bpy.types.Operator):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class FG_OT_select_by_property(bpy.types.Operator):
-	'''Select all armatures with same flightgear property'''
+	'''Select all armatures with same FG property'''
 	bl_idname = "view3d.select_by_property"					
-	bl_label = "Select all armatures with same flightgear property"
+	bl_label = ""
+	bl_description = lang['DOC034']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod
@@ -613,9 +626,10 @@ class FG_OT_select_by_property(bpy.types.Operator):
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 class FG_OT_select_object_by_armature(bpy.types.Operator):
-	'''????????????'''
+	'''Select all objects related to selected armature(s)'''
 	bl_idname = "view3d.select_object_by_armature"					
-	bl_label = "???????????"
+	bl_label = ""
+	bl_description = lang['DOC035']
 	bl_options = {'REGISTER', 'UNDO'}
 
 	@classmethod

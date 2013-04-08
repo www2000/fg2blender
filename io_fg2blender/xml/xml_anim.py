@@ -49,31 +49,42 @@ def debug_info( aff):
 		print( aff )
 
 
-#----------------------------------------------------------------------------------------------------------------------------------------------
-# ANIM
-#----------------------------------------------------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------------------------------------
+#							CLASS ANIM
+#----------------------------------------------------------------------------------------------------------------------------------
+#	name				= "plane"				string	if transform name
+#	type				= 0					1:Rotate 2:translate 3: group objects 4:pick 5:light 6:shader 7: Spin
+#	xml_file			= ""					string : xml  file
+#	factor				= 0.0
+#	property			= ""					string : flightgear property of transform
+#	pos				= Vector( (0.0, 0.0, 0.0) )		bone location
+#	vec				= Vector( (0.0, 0.0, 0.0) )		bone vector
+#	objects				= []					objects list  ( name in xml file )
+#	group_objects			= []					list : group_objects[0] name of group
+#	layer				= 0					number of layer
+#----------------------------------------------------------------------------------------------------------------------------------
 
 class ANIM:
 
 	def __init__( self ):
 		from . import xml_import
 		
-		self.name				= ""
-		self.type				= ""	# rotate, translate, groups, pick, light, shader, spin
+		self.name			= ""
+		self.type			= ""	# rotate, translate, groups, pick, light, shader, spin
 		self.xml_file			= ""					
 		self.xml_file_no		= 0
-		self.factor				= 1.0
-		self.time				= 100.0/bpy.data.scenes[0].render.fps
+		self.factor			= 1.0
+		self.time			= 100.0/bpy.data.scenes[0].render.fps
 		self.interpolation		= []
 		self.property			= ""
-		self.pos				= Vector( (0.0, 0.0, 0.0) )
-		self.vec				= Vector( (0.0, 0.0, 0.0) )
+		self.pos			= Vector( (0.0, 0.0, 0.0) )
+		self.vec			= Vector( (0.0, 0.0, 0.0) )
 		self.objects			= []
 		self.group_objects		= []			# group_objects[0] = "group_name"
 		self.texture			= ""
 		self.ac_file			= ""
 		self.offset_deg			= 0.0
-		self.layer				= xml_import.previous_arma_layer(xml_import.arma_layer)
+		self.layer			= xml_import.previous_arma_layer(xml_import.arma_layer)
 		self.active_layer		= False
 		
 		self.init_common()

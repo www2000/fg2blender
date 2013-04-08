@@ -141,8 +141,8 @@ lang_fr['MEN051'] = 'Reset'
 lang_en['MEN052'] = 'Init Rotate'
 lang_fr['MEN052'] = 'Initialise'
 
-lang_en['MEN053'] = 'Freeze selected armatures'
-lang_fr['MEN053'] = 'Geler armatures'
+lang_en['MEN053'] = 'Freeze selected armature'
+lang_fr['MEN053'] = 'Geler armature'
 
 lang_en['MEN054'] = 'Save Keyframe and Reset'
 lang_fr['MEN054'] = 'Sauver keyframe et reset'
@@ -233,6 +233,85 @@ lang_fr['DOC011'] = 'Augmente la vitesse d\'animation x2'
 
 lang_en['DOC012'] = 'Decrease speed animation x2'
 lang_fr['DOC012'] = 'Diminue la vitesse d\'animation x2'
+
+lang_en['DOC013'] = 'Create armature type "translate" on selected axis'
+lang_fr['DOC013'] = 'Crée une armature de type "translate" pour l\'axe donné'
+
+lang_en['DOC014'] = 'Create armature type "rotate" on selected axis'
+lang_fr['DOC014'] = 'Crée une armature de type "rotate" pour l\'axe donné'
+
+lang_en['DOC015'] = 'Create armature type "spin" on selected axis'
+lang_fr['DOC015'] = 'Crée une armature de type "spin" pour l\'axe donné'
+
+lang_en['DOC016'] = 'Compute XML animations loaded from the XML import, press Alt+a to run animations'
+lang_fr['DOC016'] = 'Calcul les animations XML chargées depuis l\'import XML, pressez Alt+a pour démarrer les animations'
+
+lang_en['DOC017'] = '?????????'
+lang_fr['DOC017'] = '?????????'
+
+lang_en['DOC018'] = '?????????'
+lang_fr['DOC018'] = '?????????'
+
+lang_en['DOC019'] = 'Transform selected armature(s) as armature type "rotate"'
+lang_fr['DOC019'] = 'Transforme la(es) armature(s) séléctionné(s) en armature de type "rotate"'
+
+lang_en['DOC020'] = 'Transform selected armature(s) as armature type "translate"'
+lang_fr['DOC020'] = 'Transforme la(es) armature(s) séléctionné(s) en armature de type "translate"'
+
+lang_en['DOC021'] = 'Transform selected armature(s) as armature type "spin"'
+lang_fr['DOC021'] = 'Transforme la(es) armature(s) séléctionné(s) en armature de type "spin"'
+
+lang_en['DOC022'] = 'Freeze selected armature(s)'
+lang_fr['DOC022'] = 'Geler la(es) armature(s) sélectionné(s)'
+
+lang_en['DOC023'] = 'Unfreeze selected armature(s)'
+lang_fr['DOC023'] = 'Dégeler la(es) armature(s) séléctionné(s)'
+
+lang_en['DOC024'] = 'Select objects and armatures by file'
+lang_fr['DOC024'] = 'Séléctionne les objets et armatures d\'un fichier'
+
+lang_en['DOC025'] = '?????????'
+lang_fr['DOC025'] = '?????????'
+
+lang_en['DOC026'] = '?????????'
+lang_fr['DOC026'] = '?????????'
+
+lang_en['DOC027'] = '?????????'
+lang_fr['DOC027'] = '?????????'
+
+lang_en['DOC028'] = 'Assign FG property from active armature to selected armature(s)'
+lang_fr['DOC028'] = 'Assigne la propriété FG de l\'armature active a(ux) armature(s) séléctionné(s)'
+
+lang_en['DOC029'] = 'Select all objects and armatures with same property than active object/armature'
+lang_fr['DOC029'] = 'Séléctionne tous les objets et armatures utilisant la même propriété que l\'objet/armature actif'
+
+lang_en['DOC030'] = 'Show all objects with the same property than active object/armature and hide other'
+lang_fr['DOC030'] = 'Affiche tous les objets utilisant la même propriété que l\'objet/l\'armature active et cache les autres'
+
+lang_en['DOC031'] = 'Show all objects/armatures'
+lang_fr['DOC031'] = 'Affiche tous les objets/armatures'
+
+lang_en['DOC032'] = 'Insert keyframe type "rotate" with linear interpolation'
+lang_fr['DOC032'] = 'Insère une keyframe de type "rotate" avec une interpolation linéaire'
+
+lang_en['DOC033'] = 'Insert keyframe type "translate" with linear interpolation'
+lang_fr['DOC033'] = 'Insère une keyframe de type "translate" avec une interpolation linéaire'
+
+lang_en['DOC034'] = 'Select all armatures with same FG property'
+lang_fr['DOC034'] = 'Séléctionne toutes les armatures utilisant la propriété FG'
+
+lang_en['DOC035'] = 'Select all objects related to selected armature(s)'
+lang_fr['DOC035'] = 'Séléctionne tous les objets relié a(ux) armature(s) séléctionné(s)'
+
+
+
+
+
+
+
+
+
+
 
 
 
