@@ -30,17 +30,17 @@
 import bpy
 
 jsb_items = 	[
-			('None',		'None', ''),
-			('TAIL_GEAR',		'TAIL_GEAR', ''),
-			('RIGHT_GEAR',		'RIGHT_GEAR', ''),
-			('LEFT_GEAR',		'LEFT_GEAR', ''),
-			('CG',			'CG', ''),
-			('AERO_CENTER',		'AERO_CENTER', ''),
-			('ENGINE',		'ENGINE', ''),
-			('NOSE_CONTACT',	'NOSE_CONTACT', ''),
-			('RIGHT_CONTACT',	'RIGHT_CONTACT', ''),
-			('LEFT_CONTACT',	'LEFT_CONTACT', ''),
-			('TAIL_CONTACT',	'TAIL_CONTACT', '')
+		('None',		'None', ''),
+		('TAIL_GEAR',		'TAIL_GEAR', ''),
+		('RIGHT_GEAR',		'RIGHT_GEAR', ''),
+		('LEFT_GEAR',		'LEFT_GEAR', ''),
+		('CG',			'CG', ''),
+		('AERO_CENTER',		'AERO_CENTER', ''),
+		('ENGINE',		'ENGINE', ''),
+		('NOSE_CONTACT',	'NOSE_CONTACT', ''),
+		('RIGHT_CONTACT',	'RIGHT_CONTACT', ''),
+		('LEFT_CONTACT',	'LEFT_CONTACT', ''),
+		('TAIL_CONTACT',	'TAIL_CONTACT', '')
 		]
 			
 bLock_update = False

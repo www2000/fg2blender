@@ -36,134 +36,152 @@ def debug_info( aff ):
 bLock_update = False
  
 familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear', 'consumable','surface_position']
- 
- 
- 
+
+
 #Tuples ('Property',min,max,time)
 #               min max :       'x' : valeur variable
 #               time :          True/False : cinématique ou non
- 
- 
-APUs = [						('controls/APU/off-start-run',0,1,False),
-                                ('controls/APU/fire-switch',0,'x',False)						]
- 
-anti_ices = [					('controls/anti-ice/wing-heat',0,1,False),
-                                ('controls/anti-ice/pitot-heat',0,1,False),
-                                ('controls/anti-ice/wiper',0,'x',False),
-                                ('controls/anti-ice/window-heat',0,1,False),
-                                ('controls/anti-ice/engine[%d]/carb-heat',0,1,False),
-                                ('controls/anti-ice/engine[%d]/inlet-heat',0,1,False)			]
- 
-armaments = [					('controls/armament/master-arm',0,1,False),
-                                ('controls/armament/station-select',0,1,False),
-                                ('controls/armament/release-all',0,1,False),
-                                ('controls/armament/station[%d]/stick-size',0,1,False),
-                                ('controls/armament/station[%d]/release-stick',0,1,False),
-                                ('controls/armament/station[%d]/release-all',0,1,False),
-                                ('controls/armament/station[%d]/jettison-all',0,1,False)		]
- 
-autoflights = [					('controls/autoflight/autopilot[%d]/engage',0,1,False),
-                                ('controls/autoflight/autothrottle-arm',0,1,False),
-                                ('controls/autoflight/autothrottle-engage',0,1,False),
-                                ('controls/autoflight/heading-select',0,360,False),
-                                ('controls/autoflight/altitude-select',0,'x',False),
-                                ('controls/autoflight/bank-angle-select',0,'x',False),
-                                ('controls/autoflight/vertical-speed-select',0,'x',False),
-                                ('controls/autoflight/speed-select',0,'x',False),
-                                ('controls/autoflight/mach-select',0,'x',False),
-                                ('controls/autoflight/vertical-mode',0,'x',False),
-                                ('controls/autoflight/lateral-mode',0,1,False)					]
-                               
-electrics = [					('controls/electric/battery-switch',0,1,False),
-                                ('controls/electric/external-power',0,1,False),
-                                ('controls/electric/APU-generator',0,1,False),
-                                ('controls/electric/engine[%d]/generator',0,1,False),
-                                ('controls/electric/engine[%d]/bus-tie',0,1,False)				]
- 
-                               
+
+
+APUs = 		[
+		('controls/APU/off-start-run', 0, 1, False),
+		('controls/APU/fire-switch', 0, 'x', False)
+		]
+
+anti_ices = 	[
+		('controls/anti-ice/wing-heat', 0, 1, False),
+		('controls/anti-ice/pitot-heat', 0, 1, False),
+		('controls/anti-ice/wiper', 0, 'x', False),
+		('controls/anti-ice/window-heat', 0, 1, False),
+		('controls/anti-ice/engine[%d]/carb-heat', 0, 1, False),
+		('controls/anti-ice/engine[%d]/inlet-heat', 0, 1, False)
+		]
+
+armaments = 	[
+		('controls/armament/master-arm', 0, 1, False),
+		('controls/armament/station-select', 0, 1, False),
+		('controls/armament/release-all', 0, 1, False),
+		('controls/armament/station[%d]/stick-size', 0, 1, False),
+		('controls/armament/station[%d]/release-stick', 0, 1, False),
+		('controls/armament/station[%d]/release-all', 0, 1, False),
+		('controls/armament/station[%d]/jettison-all', 0, 1, False)
+		]
+
+autoflights = 	[
+		('controls/autoflight/autopilot[%d]/engage', 0, 1, False),
+		('controls/autoflight/autothrottle-arm', 0, 1, False),
+		('controls/autoflight/autothrottle-engage', 0, 1, False),
+		('controls/autoflight/heading-select', 0, 360, False),
+		('controls/autoflight/altitude-select', 0, 'x', False),
+		('controls/autoflight/bank-angle-select', 0, 'x', False),
+		('controls/autoflight/vertical-speed-select', 0, 'x', False),
+		('controls/autoflight/speed-select', 0, 'x', False),
+		('controls/autoflight/mach-select', 0, 'x', False),
+		('controls/autoflight/vertical-mode', 0, 'x', False),
+		('controls/autoflight/lateral-mode', 0, 1, False)
+		]
+
+electrics = 	[
+		('controls/electric/battery-switch', 0, 1, False),
+		('controls/electric/external-power', 0, 1, False),
+		('controls/electric/APU-generator', 0, 1, False),
+		('controls/electric/engine[%d]/generator', 0, 1, False),
+		('controls/electric/engine[%d]/bus-tie', 0, 1, False)
+		]
+
+       
 #engines comportement des variables à affiner
-engines = [						('controls/engines/throttle_idle',0,1,False),
-                                ('controls/engines/engine[%d]/throttle',0,1,False),
-                                ('controls/engines/engine[%d]/starter',0,1,False),
-                                ('controls/engines/engine[%d]/fuel-pump',0,1,False),
-                                ('controls/engines/engine[%d]/fire-switch',0,1,False),
-                                ('controls/engines/engine[%d]/fire-bottle-discharge',0,1,False),
-                                ('controls/engines/engine[%d]/cutoff',0,1,False),
-                                ('controls/engines/engine[%d]/mixture',0,1,False),
-                                ('controls/engines/engine[%d]/propeller-pitch',0,1,False),
-                                ('controls/engines/engine[%d]/magnetos',0,3,False),
-                                ('controls/engines/engine[%d]/boost',0,1,False),
-                                ('controls/engines/engine[%d]/WEP',0,1,False),
-                                ('controls/engines/engine[%d]/cowl-flaps-norm',0,1,False),
-                                ('controls/engines/engine[%d]/feather',0,1,False),
-                                ('controls/engines/engine[%d]/ignition',0,3,False),
-                                ('controls/engines/engine[%d]/augmentation',0,1,False),
-                                ('controls/engines/engine[%d]/afterburner',0,1,False),
-                                ('controls/engines/engine[%d]/reverser',0,1,False),
-                                ('controls/engines/engine[%d]/water-injection',0,1,False),
-                                ('controls/engines/engine[%d]/condition',0,1,False)				]
+engines = 	[
+		('controls/engines/throttle_idle',0,1,False),
+		('controls/engines/engine[%d]/throttle',0,1,False),
+		('controls/engines/engine[%d]/starter',0,1,False),
+		('controls/engines/engine[%d]/fuel-pump',0,1,False),
+		('controls/engines/engine[%d]/fire-switch',0,1,False),
+		('controls/engines/engine[%d]/fire-bottle-discharge',0,1,False),
+		('controls/engines/engine[%d]/cutoff',0,1,False),
+		('controls/engines/engine[%d]/mixture',0,1,False),
+		('controls/engines/engine[%d]/propeller-pitch',0,1,False),
+		('controls/engines/engine[%d]/magnetos',0,3,False),
+		('controls/engines/engine[%d]/boost',0,1,False),
+		('controls/engines/engine[%d]/WEP',0,1,False),
+		('controls/engines/engine[%d]/cowl-flaps-norm',0,1,False),
+		('controls/engines/engine[%d]/feather',0,1,False),
+		('controls/engines/engine[%d]/ignition',0,3,False),
+		('controls/engines/engine[%d]/augmentation',0,1,False),
+		('controls/engines/engine[%d]/afterburner',0,1,False),
+		('controls/engines/engine[%d]/reverser',0,1,False),
+		('controls/engines/engine[%d]/water-injection',0,1,False),
+		('controls/engines/engine[%d]/condition',0,1,False)
+		]
  
-flights = [						('controls/flight/aileron',-1,1,False),
-                                ('controls/flight/aileron-trim',-1,1,False),
-                                ('controls/flight/elevator',-1,1,False),
-                                ('controls/flight/elevator-trim',-1,1,False),
-                                ('controls/flight/rudder',-1,1,False),
-                                ('controls/flight/rudder-trim',-1,1,False),
-                                ('controls/flight/flaps',0,1,False),
-                                ('controls/flight/slats',0,1,False),
-                                ('controls/flight/BLC',0,1,False),
-                                ('controls/flight/spoilers',0,1,False),
-                                ('controls/flight/speedbrake',0,1,False),
-                                ('controls/flight/wing-sweep',0,1,False),
-                                ('controls/flight/wing-fold',0,1,False),
-                                ('controls/flight/drag-chute',0,1,False)						]
+flights = 	[
+		('controls/flight/aileron',-1,1,False),
+		('controls/flight/aileron-trim',-1,1,False),
+		('controls/flight/elevator',-1,1,False),
+		('controls/flight/elevator-trim',-1,1,False),
+		('controls/flight/rudder',-1,1,False),
+		('controls/flight/rudder-trim',-1,1,False),
+		('controls/flight/flaps',0,1,False),
+		('controls/flight/slats',0,1,False),
+		('controls/flight/BLC',0,1,False),
+		('controls/flight/spoilers',0,1,False),
+		('controls/flight/speedbrake',0,1,False),
+		('controls/flight/wing-sweep',0,1,False),
+		('controls/flight/wing-fold',0,1,False),
+		('controls/flight/drag-chute',0,1,False)
+		]
  
-fuels = [						('controls/fuel/dump-valve',0,1,False),
-                                ('controls/fuel/tank[%d]/fuel_selector',0,1,False),
-                                ('controls/fuel/tank[%d]/to_engine',0,'x',False),
-                                ('controls/fuel/tank[%d]/to_tank',0,'x',False),
-                                ('controls/fuel/tank[%d]/boost-pump[%d]',0,1,False)				]
+fuels = 	[
+		('controls/fuel/dump-valve',0,1,False),
+		('controls/fuel/tank[%d]/fuel_selector',0,1,False),
+		('controls/fuel/tank[%d]/to_engine',0,'x',False),
+		('controls/fuel/tank[%d]/to_tank',0,'x',False),
+		('controls/fuel/tank[%d]/boost-pump[%d]',0,1,False)
+		]
  
-consumables = [ 				('consumables/fuel/tank[%d]/level-lbs',0,'x',False),
-                                ('consumables/fuel/tank[%d]/level-gal_us',0,'x',False),
-                                ('consumables/fuel/tank[%d]/capacity-gal_us',0,'x',False),
-                                ('consumables/fuel/tank[%d]/density-ppg',0,'x',False),
-                                ('consumables/fuel/total-fuel-lbs',0,'x',False),
-                                ('consumables/fuel/total-gal_us',0,'x',False)                  ]
+consumables = 	[
+		('consumables/fuel/tank[%d]/level-lbs',0,'x',False),
+		('consumables/fuel/tank[%d]/level-gal_us',0,'x',False),
+		('consumables/fuel/tank[%d]/capacity-gal_us',0,'x',False),
+		('consumables/fuel/tank[%d]/density-ppg',0,'x',False),
+		('consumables/fuel/total-fuel-lbs',0,'x',False),
+		('consumables/fuel/total-gal_us',0,'x',False)
+		]
                                
-gears = [                		('controls/gear/brake-left',0,1,False),
-                                ('controls/gear/brake-right',0,1,False),
-                                ('controls/gear/brake-parking',0,1,False),
-                                ('controls/gear/steering',0,'x',False),
-                                ('controls/gear/gear-down',0,1,True),
-                                ('controls/gear/antiskid',0,1,False),
-                                ('controls/gear/tailhook',0,1,False),
-                                ('controls/gear/tailwheel-lock',0,1,False),
-                                ('controls/gear/wheel[%d]/alternate-extension',0,1,False),
-                                ('gear/gear[%d]/caster-angle-deg',0,1,False),
-                                ('gear/gear[%d]/compression-m',0,1,False),
-                                ('gear/gear[%d]/compression-norm',0,1,False),
-                                ('gear/gear[%d]/ground-friction-factor',0,1,False),
-                                ('gear/gear[%d]/ground-is-solid',0,1,False),
-                                ('gear/gear[%d]/has-brake',0,1,False),
-                                ('gear/gear[%d]/position-norm',0,1,True),
-                                ('gear/gear[%d]/rollspeed-ms',0,'x',False),
-                                ('gear/gear[%d]/rollspeed-ms',0,1,False)					]
+gears = 	[
+		('controls/gear/brake-left',0,1,False),
+		('controls/gear/brake-right',0,1,False),
+		('controls/gear/brake-parking',0,1,False),
+		('controls/gear/steering',0,'x',False),
+		('controls/gear/gear-down',0,1,True),
+		('controls/gear/antiskid',0,1,False),
+		('controls/gear/tailhook',0,1,False),
+		('controls/gear/tailwheel-lock',0,1,False),
+		('controls/gear/wheel[%d]/alternate-extension',0,1,False),
+		('gear/gear[%d]/caster-angle-deg',0,1,False),
+		('gear/gear[%d]/compression-m',0,1,False),
+		('gear/gear[%d]/compression-norm',0,1,False),
+		('gear/gear[%d]/ground-friction-factor',0,1,False),
+		('gear/gear[%d]/ground-is-solid',0,1,False),
+		('gear/gear[%d]/has-brake',0,1,False),
+		('gear/gear[%d]/position-norm',0,1,True),
+		('gear/gear[%d]/rollspeed-ms',0,'x',False),
+		('gear/gear[%d]/rollspeed-ms',0,1,False)	
+		]
  
-surface_positions = [			('surface-positions/rudder-pos-norm',-1,1,False),
-								('surface-positions/elevator-pos-norm',-1,1,False),
-								('surface-positions/left-aileron-pos-norm',-1,1,False),
-								('surface-positions/right-aileron-pos-norm',-1,1,False),
-								('surface-positions/flap-pos-norm',0,1,False),
-								('surface-positions/left-aileron-pos-norm',-1,1,False),
-                                ('surface-positions/left-aileron-pos-norm',-1,1,False)				]
-
-
+surface_positions = [
+		('surface-positions/rudder-pos-norm',-1,1,False),
+		('surface-positions/elevator-pos-norm',-1,1,False),
+		('surface-positions/left-aileron-pos-norm',-1,1,False),
+		('surface-positions/right-aileron-pos-norm',-1,1,False),
+		('surface-positions/flap-pos-norm',0,1,False),
+		('surface-positions/left-aileron-pos-norm',-1,1,False),
+		('surface-positions/left-aileron-pos-norm',-1,1,False)	
+		]
 
 
 import bpy
 from . import *
-
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -570,53 +588,57 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 		return None	
 	#----------------------------------------------------------------------------------------------------------------------------------
 
-	family			= bpy.props.EnumProperty(	attr='family', name='Family', description="family of properties", default='custom',
-						                        items = [ ('custom','custom','custom') ]
-						                        	+	[ (famille,famille,famille) for famille in familles ]
-						                        , update=update_property    )
+	family		= bpy.props.EnumProperty	(
+							attr='family', 
+							name='Family', 
+							description="family of properties", 
+							default='custom', 
+							items = [ ('custom','custom','custom') ] + [ (famille,famille,famille) for famille in familles ], 
+							update=update_property
+							)
 
-	family_value	= bpy.props.EnumProperty(	attr = 'family_value', name='Value', description="Value in family", items=dynamic_items, update=update_property )
-	property_value	= bpy.props.StringProperty(	attr = 'value', name = 'Property', update=update_property)
-	property_idx	= bpy.props.IntProperty(	attr = 'idx', name = 'number ', min=-1)
-	factor			= bpy.props.FloatProperty(	attr = 'factor', name = 'Factor', update=update_factor)
-	factor_ini		= bpy.props.FloatProperty(	attr = 'factor_ini', name = 'Factor ini')
-	xml_file		= bpy.props.StringProperty(	attr = 'xml_file', name = 'xml File', update=update_xml_file)
-	xml_file_no		= bpy.props.IntProperty(	attr = 'xml_file_no', name = 'No xml File')
-	xml_present		= bpy.props.EnumProperty(	attr = 'xml_present', name='xml Present', description="family animation", items = dynamic_items_xml_file )
-	type_anim		= bpy.props.IntProperty(	attr = 'type_anim', name = 'Type')
-	range_beg		= bpy.props.FloatProperty(	attr = 'range_beg', name = 'min', update=update_range_beg)
-	range_end		= bpy.props.FloatProperty(	attr = 'range_end', name = 'max', update=update_range_end)
-	range_beg_ini	= bpy.props.FloatProperty(	attr = 'range_beg_ini', name = 'min')
-	range_end_ini	= bpy.props.FloatProperty(	attr = 'range_end_ini', name = 'max')
-	time			= bpy.props.FloatProperty(	attr = 'time', name = 'time', update=update_time)
-	time_ini		= bpy.props.FloatProperty(	attr = 'time_ini', name = 'time')
-	offset_deg		= bpy.props.FloatProperty(	attr = 'offset_deg', name = 'time')
-	bIncDiskFile	= bpy.props.BoolProperty(	attr = 'bIncDiskFile', name = 'Include disk file', update=update_bIncDiskFile)
-	bWriteDisc		= bpy.props.BoolProperty(	attr = 'bWriteDisc', name = 'to Disc', update=update_bWriteDisc)
-	keyframes		= bpy.props.CollectionProperty( attr = 'keyframes', name = 'keyframes', type=FG_PROP_keyframe )
+	family_value	= bpy.props.EnumProperty	( attr = 'family_value', 	name='Value', description="Value in family", items=dynamic_items, update=update_property )
+	property_value	= bpy.props.StringProperty	( attr = 'value', 		name = 'Property', update=update_property)
+	property_idx	= bpy.props.IntProperty		( attr = 'idx', 		name = 'number ', min=-1)
+	factor		= bpy.props.FloatProperty	( attr = 'factor', 		name = 'Factor', update=update_factor)
+	factor_ini	= bpy.props.FloatProperty	( attr = 'factor_ini', 		name = 'Factor ini')
+	xml_file	= bpy.props.StringProperty	( attr = 'xml_file', 		name = 'xml File', update=update_xml_file)
+	xml_file_no	= bpy.props.IntProperty		( attr = 'xml_file_no', 	name = 'No xml File')
+	xml_present	= bpy.props.EnumProperty	( attr = 'xml_present', 	name='xml Present', description="family animation", items = dynamic_items_xml_file )
+	type_anim	= bpy.props.IntProperty		( attr = 'type_anim', 		name = 'Type')
+	range_beg	= bpy.props.FloatProperty	( attr = 'range_beg', 		name = 'min', update=update_range_beg)
+	range_end	= bpy.props.FloatProperty	( attr = 'range_end', 		name = 'max', update=update_range_end)
+	range_beg_ini	= bpy.props.FloatProperty	( attr = 'range_beg_ini', 	name = 'min')
+	range_end_ini	= bpy.props.FloatProperty	( attr = 'range_end_ini', 	name = 'max')
+	time		= bpy.props.FloatProperty	( attr = 'time', 		name = 'time', update=update_time)
+	time_ini	= bpy.props.FloatProperty	( attr = 'time_ini', 		name = 'time')
+	offset_deg	= bpy.props.FloatProperty	( attr = 'offset_deg', 		name = 'time')
+	bIncDiskFile	= bpy.props.BoolProperty	( attr = 'bIncDiskFile', 	name = 'Include disk file', update=update_bIncDiskFile)
+	bWriteDisc	= bpy.props.BoolProperty	( attr = 'bWriteDisc', 		name = 'to Disc', update=update_bWriteDisc)
+	keyframes	= bpy.props.CollectionProperty	( attr = 'keyframes', 		name = 'keyframes', type=FG_PROP_keyframe )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_armature():
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="family",			type=FG_PROP_armature, name="Family", description="Property family")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="family_value",	type=FG_PROP_armature, name="Family value", description="Family value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_value",	type=FG_PROP_armature, name="Property", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_idx",	type=FG_PROP_armature, name="Property", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="factor",			type=FG_PROP_armature, name="Factor", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="factor_ini",		type=FG_PROP_armature, name="Factor ini", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file",		type=FG_PROP_armature, name="xml file", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file_no",		type=FG_PROP_armature, name="xml file no", description="Property value")
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='xml_present',		type=FG_PROP_armature, name='xml file present', description="family" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='type_anim',		type=FG_PROP_armature, name='type_anim', description="family" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg',		type=FG_PROP_armature, name='range_beg', description="family" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end',		type=FG_PROP_armature, name='range_end', description="family" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg_ini',	type=FG_PROP_armature, name='range_beg_ini', description="family" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end_ini',	type=FG_PROP_armature, name='range_end_ini', description="family" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time',			type=FG_PROP_armature, name='time', description="family" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time_ini',		type=FG_PROP_armature, name='time_ini', description="family" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='offset_deg',		type=FG_PROP_armature, name='offset_deg', description="Initial deg" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='bIncDiskFile',	type=FG_PROP_armature, name='bIncDiskFile', description="Include file Disk" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='bWriteDisc',		type=FG_PROP_armature, name='bWriteDisc', description="Write file to disk" )
-	bpy.types.Armature.fg = bpy.props.PointerProperty(  attr='keyframes',		 type=FG_PROP_armature )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="family",			type=FG_PROP_armature, name="Family", 			description="Property family")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="family_value",		type=FG_PROP_armature, name="Family value", 		description="Family value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_value",		type=FG_PROP_armature, name="Property", 		description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="property_idx",		type=FG_PROP_armature, name="Property", 		description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="factor",			type=FG_PROP_armature, name="Factor", 			description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="factor_ini",		type=FG_PROP_armature, name="Factor ini", 		description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file",		type=FG_PROP_armature, name="xml file", 		description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr="xml_file_no",		type=FG_PROP_armature, name="xml file no", 		description="Property value")
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='xml_present',		type=FG_PROP_armature, name='xml file present', 	description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='type_anim',		type=FG_PROP_armature, name='type_anim', 		description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg',		type=FG_PROP_armature, name='range_beg', 		description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end',		type=FG_PROP_armature, name='range_end', 		description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_beg_ini',		type=FG_PROP_armature, name='range_beg_ini', 		description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='range_end_ini',		type=FG_PROP_armature, name='range_end_ini', 		description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time',			type=FG_PROP_armature, name='time', 			description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='time_ini',		type=FG_PROP_armature, name='time_ini', 		description="family" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='offset_deg',		type=FG_PROP_armature, name='offset_deg', 		description="Initial deg" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='bIncDiskFile',		type=FG_PROP_armature, name='bIncDiskFile', 		description="Include file Disk" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(	attr='bWriteDisc',		type=FG_PROP_armature, name='bWriteDisc', 		description="Write file to disk" )
+	bpy.types.Armature.fg = bpy.props.PointerProperty(  	attr='keyframes',		type=FG_PROP_armature )
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #

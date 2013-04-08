@@ -32,8 +32,8 @@ import bpy
 
 
 camera_items = 	[
-			('None',		'None', ''),
-			('COCKPIT_VIEW',	'COCKPIT_VIEW', '')
+		('None',		'None', ''),
+		('COCKPIT_VIEW',	'COCKPIT_VIEW', '')
 		]
 			
 
