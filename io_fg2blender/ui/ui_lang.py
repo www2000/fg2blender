@@ -198,6 +198,39 @@ lang_fr['UI001'] = 'Sauvegarde le fichier AC3D'
 lang_en['UI002'] = 'Save XML file'
 lang_fr['UI002'] = 'Sauvegarde le fichier XML'
 
+lang_en['UI003'] = 'Show objects related to selected object'
+lang_fr['UI003'] = 'Afficher les objets liés à l\'objet séléctionné'
+
+lang_en['UI004'] = 'Show all objects'
+lang_fr['UI004'] = 'Afficher tous les objets'
+
+lang_en['UI005'] = 'AC3D File'
+lang_fr['UI005'] = 'Fichier AC3D'
+
+lang_en['UI006'] = 'JSBSim File'
+lang_fr['UI006'] = 'Fichier JSBSim'
+
+lang_en['UI007'] = 'Camera File'
+lang_fr['UI007'] = 'Fichier caméra'
+
+lang_en['UI008'] = 'Property'
+lang_fr['UI008'] = 'Propriété'
+
+lang_en['UI009'] = 'Property:'
+lang_fr['UI009'] = 'Propriété:'
+
+lang_en['UI010'] = 'XML File'
+lang_fr['UI010'] = 'Fichier XML'
+
+lang_en['UI011'] = 'Show objects related to selected animation'
+lang_fr['UI011'] = 'Afficher tous les objets liés à l\'animation séléctionné'
+
+lang_en['UI012'] = 'Parent(s):'
+lang_fr['UI012'] = 'Parent(s):'
+
+lang_en['UI013'] = 'Child object(s):'
+lang_fr['UI013'] = 'Objet(s) enfant:'
+
 lang_en['DOC001'] = 'Assign AC3D filename from active object to selected object(s)'
 lang_fr['DOC001'] = 'Assigne le nom du fichier AC3D de l\'objet actif a(ux) objet(s) séléctionné(s)'
 

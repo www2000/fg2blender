@@ -30,6 +30,8 @@
 import bpy
 import os
 
+from ..ui.ui_lang import lang
+
 #--------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PT_object_tool(bpy.types.Panel):
@@ -85,12 +87,12 @@ def layout_object_tool(self, obj, context):
 
 	box = layout.box()
 	row = box.row()
-	row.operator("view3d.show_animation", text="Show objects related to selected object")
-	row.operator("view3d.show_all", text="Show all objects")
+	row.operator("view3d.show_animation", text=lang['UI003'] )
+	row.operator("view3d.show_all", text=lang['UI004'] )
 
 	if obj.parent:
 		boxTitre = layout.column()
-		boxTitre.label( text='Parent' )
+		boxTitre.label( text=lang['UI012'] )
 		box = layout.box()
 		row = box.row()
 		if obj.parent.type == 'MESH':
@@ -111,7 +113,7 @@ def layout_object_properties(self, obj, context):
 	xml_files = xml_manager.xml_files
 
 	row = layout.row()
-	row.label( text='AC3D file' )
+	row.label( text=lang['UI005'] )
 	box = layout.box()
 	boxTitre = box.column()
 

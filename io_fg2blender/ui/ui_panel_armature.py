@@ -30,14 +30,8 @@
 import bpy
 from bpy.props import BoolProperty
 
-DEBUG = False
+from ..ui.ui_lang import lang
 
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def debug_info( aff):
-	global DEBUG
-	if DEBUG:
-		print( aff )
 #--------------------------------------------------------------------------------------------------------------------------------
 
 class FG_PT_armature_tool(bpy.types.Panel):
@@ -48,7 +42,6 @@ class FG_PT_armature_tool(bpy.types.Panel):
 
 	@classmethod
 	def poll(self,context):
-		debug_info( context.mode )
 		obj = context.object
 
 		if obj:      
@@ -72,7 +65,6 @@ class FG_PT_armature_properties(bpy.types.Panel):
 
 	@classmethod
 	def poll(self,context):
-		debug_info( context.mode )
 		obj = context.object
 
 		if obj:      
@@ -94,7 +86,7 @@ def layout_armature_properties(self, obj, context):
 	xml_files = xml_manager.xml_files
 
 	col = layout.column()
-	col.label( text='Property' )
+	col.label( text=lang['UI008'] )
 	box = layout.box()
 
 	row = box.row()
@@ -108,7 +100,7 @@ def layout_armature_properties(self, obj, context):
 	row = box.row()
 	row.alignment = 'LEFT'
 	if obj.data.fg.family != 'custom':
-		row.label( text="Property:" )
+		row.label( text=lang['UI009'] )
 		from ..xml import xml_export
 		value = xml_export.build_property_name( obj )
 		row.label( text=value )
@@ -121,7 +113,7 @@ def layout_armature_properties(self, obj, context):
 		row.prop( obj.data.fg,  "property_idx" )
 	#----------------------------------------------------
 	boxTitre = layout.column()
-	boxTitre.label( text='XML File:' )
+	boxTitre.label( text=lang['UI010'] )
 	box = layout.box()
 	row = box.row()
 	row.prop( obj.data.fg, "bIncDiskFile" )
@@ -165,8 +157,8 @@ def layout_armature_tool(self, obj, context):
 
 	box = layout.box()
 	row = box.row()
-	row.operator("view3d.show_animation", text="Show objects related to selected animation")
-	row.operator("view3d.show_all", text="Show all objects")
+	row.operator("view3d.show_animation", text=lang['UI011'])
+	row.operator("view3d.show_all", text=lang['UI004'])
 
 	box_child_object( self, obj, context )
 	if obj.parent:
@@ -205,7 +197,7 @@ def box_child_object( self, obj, context ):
 		return
 	layout = self.layout
 	boxTitre = layout.column()
-	boxTitre.label( text='Child(s) object(s):' )
+	boxTitre.label( text=lang['UI013'] )
 	boxObjects = layout.box()
 	for objet in lst:
 		if objet.parent ==  obj:

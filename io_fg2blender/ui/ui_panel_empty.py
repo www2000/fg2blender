@@ -30,6 +30,7 @@
 import bpy
 import os
 
+from ..ui.ui_lang import lang
 
 #--------------------------------------------------------------------------------------------------------------------------------
 
@@ -63,7 +64,7 @@ def layout_empty(self, obj, context):
 	xml_files = xml_manager.xml_files
 
 	row = layout.row()
-	row.label( text='JSBSIM  file' )
+	row.label( text=lang['UI006'] )
 	box = layout.box()
 
 	row = box.row()

@@ -30,6 +30,7 @@
 import bpy
 import os
 
+from ..ui.ui_lang import lang
 
 #--------------------------------------------------------------------------------------------------------------------------------
 
@@ -62,7 +63,7 @@ def layout_camera(self, obj, context):
 	layout = self.layout
 
 	row = layout.row()
-	row.label( text='View' )
+	row.label( text=lang['UI007'] )
 	box = layout.box()
 
 	row = box.row()
