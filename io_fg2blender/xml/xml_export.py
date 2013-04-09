@@ -95,8 +95,8 @@ def compute_translation_current( armature ):
 #------------------------------------------------------------------------------------------------------------------------------------
 
 def build_property_name( armature ):
-	#prop_name = "" + str(armature.data.fg.family_value)
-	prop_name = "" + str(armature.data.fg.property_value)
+	prop_name = "" + str(armature.data.fg.family_value)
+	#prop_name = "" + str(armature.data.fg.property_value)
 	#print( "%s : %s" % (armature.name,prop_name) )
 	if prop_name.find('%d')!=-1:
 		if armature.data.fg.property_idx == -1:
