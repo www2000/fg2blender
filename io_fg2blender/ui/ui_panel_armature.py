@@ -100,7 +100,7 @@ def layout_armature_properties(self, obj, context):
 	row = box.row()
 	row.alignment = 'LEFT'
 	if obj.data.fg.family != 'custom':
-		row.label( text=lang['UI008'] )
+		row.label( text=lang['UI009'] )
 		from ..xml import xml_export
 		value = xml_export.build_property_name( obj )
 		row.label( text=value )

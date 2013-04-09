@@ -609,7 +609,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 	property_value	= bpy.props.StringProperty	( 
 							attr = 'value', 
-							name = lang['UI009'], 
+							name = lang['UI008'], 
 							description = lang['DOC045'], 
 							update=update_property
 							)
