@@ -216,8 +216,8 @@ lang_fr['UI007'] = 'Fichier caméra'
 lang_en['UI008'] = 'Property'
 lang_fr['UI008'] = 'Propriété'
 
-lang_en['UI009'] = 'Property:'
-lang_fr['UI009'] = 'Propriété:'
+lang_en['UI009'] = '' # Champs libre
+lang_fr['UI009'] = ''
 
 lang_en['UI010'] = 'XML File'
 lang_fr['UI010'] = 'Fichier XML'
