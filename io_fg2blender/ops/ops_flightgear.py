@@ -611,16 +611,18 @@ class FG_OT_select_by_property(bpy.types.Operator):
 		    return obj.type == 'ARMATURE'
 
 	def execute(self, context):						# executé lors de l'appel par bpy.ops.view3d.exemple()
-		from ..xml import xml_export
+		#from ..xml import xml_export
 		active_object = context.active_object
 		if active_object and active_object.type == 'ARMATURE':
-			property_value = xml_export.build_property_name( active_object )
+			#property_value = xml_export.build_property_name( active_object )
+			property_value = "" + active_object.data.fg.property_value
 			
 			for obj in bpy.data.objects:
 				if obj.type != 'ARMATURE':
 					continue
-				if xml_export.build_property_name(obj) == property_value:
-					debug_info( "%s : %s == %s" % (obj.name, xml_export.build_property_name(obj),property_value) )
+				#if xml_export.build_property_name(obj) == property_value:
+				if obj.data.fg.property_value == property_value:
+					debug_info( "%s : %s == %s" % (obj.name, obj.data.fg.property_value,property_value) )
 					obj.select = True
 					
 		return {'FINISHED'}
