@@ -111,14 +111,14 @@ lang_fr['MEN041'] = 'Créer translation'
 lang_en['MEN042'] = 'Create spin' 
 lang_fr['MEN042'] = 'Créer spin'
 
-lang_en['MEN043'] = 'Transform to rotate'
-lang_fr['MEN043'] = 'Type rotation'
+lang_en['MEN043'] = 'Convert to rotate'
+lang_fr['MEN043'] = 'Convertir en rotation'
 
-lang_en['MEN044'] = 'Transform to translate'
-lang_fr['MEN044'] = 'Type translation'
+lang_en['MEN044'] = 'Convert to translate'
+lang_fr['MEN044'] = 'Convertir en translation'
 
-lang_en['MEN045'] = 'Transform to spin'
-lang_fr['MEN045'] = 'Type spin'
+lang_en['MEN045'] = 'Convert to spin'
+lang_fr['MEN045'] = 'Convertir en spin'
 
 lang_en['MEN046'] = 'Select related armatures'
 lang_fr['MEN046'] = "Séléction relié à l'armature"
@@ -231,6 +231,59 @@ lang_fr['UI012'] = 'Parent(s):'
 lang_en['UI013'] = 'Child object(s):'
 lang_fr['UI013'] = 'Objet(s) enfant:'
 
+lang_en['UI014'] = 'Filename'
+lang_fr['UI014'] = 'Fichier'
+
+lang_en['UI015'] = 'Mesh Name'
+lang_fr['UI015'] = 'Nom d\'objet'
+
+lang_en['UI016'] = 'Attribute'
+lang_fr['UI016'] = 'Attribue'
+
+lang_en['UI017'] = 'Family'
+lang_fr['UI017'] = 'Famille'
+
+lang_en['UI018'] = 'Value'
+lang_fr['UI018'] = 'Valeur'
+
+lang_en['UI019'] = 'Index'
+lang_fr['UI019'] = 'Index'
+
+lang_en['UI020'] = 'Factor'
+lang_fr['UI020'] = 'Facteur'
+
+lang_en['UI021'] = 'Type'
+lang_fr['UI021'] = 'Type'
+
+lang_en['UI022'] = 'Min'
+lang_fr['UI022'] = 'Min'
+
+lang_en['UI023'] = 'Max'
+lang_fr['UI023'] = 'Max'
+
+lang_en['UI024'] = 'Duration'
+lang_fr['UI024'] = 'Durée'
+
+lang_en['UI025'] = 'Include disk file'
+lang_fr['UI025'] = 'Inclure le fichier du disque'
+
+lang_en['UI026'] = 'To disk'
+lang_fr['UI026'] = 'Vers le disque'
+
+lang_en['UI027'] = '??'
+lang_fr['UI027'] = '??'
+
+lang_en['UI028'] = '??'
+lang_fr['UI028'] = '??'
+
+lang_en['UI029'] = '??'
+lang_fr['UI029'] = '??'
+
+lang_en['UI030'] = '??'
+lang_fr['UI030'] = '??'
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
 lang_en['DOC001'] = 'Assign AC3D filename from active object to selected object(s)'
 lang_fr['DOC001'] = 'Assigne le nom du fichier AC3D de l\'objet actif a(ux) objet(s) séléctionné(s)'
 
@@ -285,14 +338,14 @@ lang_fr['DOC017'] = '?????????'
 lang_en['DOC018'] = '?????????'
 lang_fr['DOC018'] = '?????????'
 
-lang_en['DOC019'] = 'Transform selected armature(s) as armature type "rotate"'
-lang_fr['DOC019'] = 'Transforme la(es) armature(s) séléctionné(s) en armature de type "rotate"'
+lang_en['DOC019'] = 'Convert selected armature(s) as armature type "rotate"'
+lang_fr['DOC019'] = 'Converti la(es) armature(s) séléctionné(s) en armature de type "rotate"'
 
-lang_en['DOC020'] = 'Transform selected armature(s) as armature type "translate"'
-lang_fr['DOC020'] = 'Transforme la(es) armature(s) séléctionné(s) en armature de type "translate"'
+lang_en['DOC020'] = 'Convert selected armature(s) as armature type "translate"'
+lang_fr['DOC020'] = 'Converti la(es) armature(s) séléctionné(s) en armature de type "translate"'
 
-lang_en['DOC021'] = 'Transform selected armature(s) as armature type "spin"'
-lang_fr['DOC021'] = 'Transforme la(es) armature(s) séléctionné(s) en armature de type "spin"'
+lang_en['DOC021'] = 'Convert selected armature(s) as armature type "spin"'
+lang_fr['DOC021'] = 'Converti la(es) armature(s) séléctionné(s) en armature de type "spin"'
 
 lang_en['DOC022'] = 'Freeze selected armature(s)'
 lang_fr['DOC022'] = 'Geler la(es) armature(s) sélectionné(s)'
@@ -336,19 +389,70 @@ lang_fr['DOC034'] = 'Séléctionne toutes les armatures utilisant la propriété
 lang_en['DOC035'] = 'Select all objects related to selected armature(s)'
 lang_fr['DOC035'] = 'Séléctionne tous les objets relié a(ux) armature(s) séléctionné(s)'
 
+lang_en['DOC036'] = 'Path of the AC3D file (.ac)'
+lang_fr['DOC036'] = 'Chemin du fichier AC3D (.ac)'
 
+lang_en['DOC037'] = 'Mesh name in the AC3D file'
+lang_fr['DOC037'] = 'Nom de l\'objet dans le fichier AC3D'
 
+lang_en['DOC038'] = 'Path of the JSBSim file (.xml)'
+lang_fr['DOC038'] = 'Chemin du fichier JSBSim (.xml)'
 
+lang_en['DOC039'] = 'JSBSim attribute'
+lang_fr['DOC039'] = 'Attribue JSBSim'
 
+lang_en['DOC040'] = 'Path of the Camera file (.xml)'
+lang_fr['DOC040'] = 'Chemin du fichier Camera (.xml)'
 
+lang_en['DOC041'] = 'Name of view'
+lang_fr['DOC041'] = 'Nom de la vue'
 
+lang_en['DOC043'] = 'Property family'
+lang_fr['DOC043'] = 'Famille de propriété'
 
+lang_en['DOC044'] = 'Family value'
+lang_fr['DOC044'] = 'Valeur de la famille'
 
+lang_en['DOC045'] = 'Value used for XML file'
+lang_fr['DOC045'] = 'Valeur utiliser pour le fichier XML'
 
+lang_en['DOC046'] = 'Write file to disk'
+lang_fr['DOC046'] = 'Écrit le fichier sur le disque'
 
+lang_en['DOC047'] = 'Duration of animation'
+lang_fr['DOC047'] = 'Durée de l\'animation'
 
+lang_en['DOC048'] = 'Index X of the property "/engines/engine[\'X\']/throttle"'
+lang_fr['DOC048'] = 'Indice X de la propriété "/engines/engine[\'X\']/throttle"'
 
+lang_en['DOC049'] = 'Minimum value of the property'
+lang_fr['DOC049'] = 'Valeur minimum de la propriété'
 
+lang_en['DOC050'] = 'Maximum value of the property'
+lang_fr['DOC050'] = 'Valeur maximum de la propriété'
+
+lang_en['DOC051'] = 'Value of <factor> tags'
+lang_fr['DOC051'] = 'Valeur de la balise <factor>'
+
+lang_en['DOC052'] = '??'
+lang_fr['DOC052'] = '??'
+
+lang_en['DOC053'] = '??'
+lang_fr['DOC053'] = '??'
+
+lang_en['DOC054'] = '??'
+lang_fr['DOC054'] = '??'
+
+lang_en['DOC055'] = '??'
+lang_fr['DOC055'] = '??'
+
+lang_en['DOC056'] = '??'
+lang_fr['DOC056'] = '??'
+
+lang_en['DOC057'] = '??'
+lang_fr['DOC057'] = '??'
+
+#----------------------------------------------------------------------------------------------------------------------------------
 
 user_lang = bpy.context.user_preferences.system.language
 

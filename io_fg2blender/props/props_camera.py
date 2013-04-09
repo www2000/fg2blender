@@ -88,13 +88,13 @@ class FG_PROP_camera(bpy.types.PropertyGroup):
 		props_armature.bLock_update = False
 		return None	
 	#----------------------------------------------------------------------------------------------------------------------------------
-	xml_file	= bpy.props.StringProperty(	attr = 'xml_file', name = 'Filename', update=update_xml_file )
-	type_view	= bpy.props.EnumProperty(	attr = 'type_view', name = 'Attribute', items = camera_items, default = 'None', update = update_type_view )
+	xml_file	= bpy.props.StringProperty(	attr = 'xml_file', name = lang['UI014'], update=update_xml_file )
+	type_view	= bpy.props.EnumProperty(	attr = 'type_view', name = lang['UI016'], items = camera_items, default = 'None', update = update_type_view )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_camera():
-	bpy.types.Camera.fg = bpy.props.PointerProperty(	attr="xml_file", type=FG_PROP_camera, name="xml_file", description="File .xml")
-	bpy.types.Camera.fg = bpy.props.PointerProperty(	attr="type_view", type=FG_PROP_camera, name="type_view", description="Name of view")
+	bpy.types.Camera.fg = bpy.props.PointerProperty(	attr="xml_file", type=FG_PROP_camera, name="xml_file", description=lang['DOC040'] )
+	bpy.types.Camera.fg = bpy.props.PointerProperty(	attr="type_view", type=FG_PROP_camera, name="type_view", description=lang['DOC041'] )
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #

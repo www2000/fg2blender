@@ -591,33 +591,139 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	family		= bpy.props.EnumProperty	(
-							attr='family', 
-							name='Family', 
-							description="family of properties", 
-							default='custom', 
+							attr = 'family', 
+							name = lang['UI017'], 
+							description = lang['DOC043'], 
+							default = 'custom', 
 							items = [ ('custom','custom','custom') ] + [ (famille,famille,famille) for famille in familles ], 
 							update=update_property
 							)
 
-	family_value	= bpy.props.EnumProperty	( attr = 'family_value', 	name='Value', description="Value in family", items=dynamic_items, update=update_property )
-	property_value	= bpy.props.StringProperty	( attr = 'value', 		name = 'Property', update=update_property)
-	property_idx	= bpy.props.IntProperty		( attr = 'idx', 		name = 'number ', min=-1)
-	factor		= bpy.props.FloatProperty	( attr = 'factor', 		name = 'Factor', update=update_factor)
-	factor_ini	= bpy.props.FloatProperty	( attr = 'factor_ini', 		name = 'Factor ini')
-	xml_file	= bpy.props.StringProperty	( attr = 'xml_file', 		name = 'xml File', update=update_xml_file)
-	xml_file_no	= bpy.props.IntProperty		( attr = 'xml_file_no', 	name = 'No xml File')
-	xml_present	= bpy.props.EnumProperty	( attr = 'xml_present', 	name='xml Present', description="family animation", items = dynamic_items_xml_file )
-	type_anim	= bpy.props.IntProperty		( attr = 'type_anim', 		name = 'Type')
-	range_beg	= bpy.props.FloatProperty	( attr = 'range_beg', 		name = 'min', update=update_range_beg)
-	range_end	= bpy.props.FloatProperty	( attr = 'range_end', 		name = 'max', update=update_range_end)
-	range_beg_ini	= bpy.props.FloatProperty	( attr = 'range_beg_ini', 	name = 'min')
-	range_end_ini	= bpy.props.FloatProperty	( attr = 'range_end_ini', 	name = 'max')
-	time		= bpy.props.FloatProperty	( attr = 'time', 		name = 'time', update=update_time)
-	time_ini	= bpy.props.FloatProperty	( attr = 'time_ini', 		name = 'time')
-	offset_deg	= bpy.props.FloatProperty	( attr = 'offset_deg', 		name = 'time')
-	bIncDiskFile	= bpy.props.BoolProperty	( attr = 'bIncDiskFile', 	name = 'Include disk file', update=update_bIncDiskFile)
-	bWriteDisc	= bpy.props.BoolProperty	( attr = 'bWriteDisc', 		name = 'to Disc', update=update_bWriteDisc)
-	keyframes	= bpy.props.CollectionProperty	( attr = 'keyframes', 		name = 'keyframes', type=FG_PROP_keyframe )
+	family_value	= bpy.props.EnumProperty	( 
+							attr = 'family_value', 
+							name = lang['UI018'], 
+							description = lang['DOC044'], 
+							items=dynamic_items, 
+							update=update_property 
+							)
+
+	property_value	= bpy.props.StringProperty	( 
+							attr = 'value', 
+							name = lang['UI009'], 
+							description = lang['DOC045'], 
+							update=update_property
+							)
+
+	property_idx	= bpy.props.IntProperty		( 
+							attr = 'idx', 
+							name = lang['UI019'], 
+							description = lang['DOC048'], 
+							min=-1
+							)
+
+	factor		= bpy.props.FloatProperty	( 
+							attr = 'factor', 
+							name = lang['UI020'], 
+							description = lang['DOC051'], 
+							update=update_factor
+							)
+
+	factor_ini	= bpy.props.FloatProperty	( 
+							attr = 'factor_ini', 
+							name = lang['UI020'], 
+							description = lang['DOC051']
+							)
+
+	xml_file	= bpy.props.StringProperty	( 
+							attr = 'xml_file', 
+							name = lang['UI010'], 
+							description = '?????????', 
+							update=update_xml_file
+							)
+
+	xml_file_no	= bpy.props.IntProperty		( 
+							attr = 'xml_file_no', 
+							name = 'No xml File', #???????
+							description = '?????????'
+							)
+
+	xml_present	= bpy.props.EnumProperty	( 
+							attr = 'xml_present', 
+							name = 'xml Present', #????????
+							description = 'family animation', 
+							items = dynamic_items_xml_file 
+							)
+
+	type_anim	= bpy.props.IntProperty		( 
+							attr = 'type_anim', 
+							name = lang['UI021']
+							)
+
+	range_beg	= bpy.props.FloatProperty	( 
+							attr = 'range_beg', 
+							name = lang['UI022'], 
+							description = lang['DOC049'], 
+							update=update_range_beg
+							)
+
+	range_end	= bpy.props.FloatProperty	( 
+							attr = 'range_end', 
+							name = lang['UI023'], 
+							description = lang['DOC050'], 
+							update=update_range_end
+							)
+
+	range_beg_ini	= bpy.props.FloatProperty	( 
+							attr = 'range_beg_ini', 
+							name = lang['UI022'], 
+							description = lang['DOC049']
+							)
+
+	range_end_ini	= bpy.props.FloatProperty	( 
+							attr = 'range_end_ini', 
+							name = lang['UI023'], 
+							description = lang['DOC050']
+							)
+
+	time		= bpy.props.FloatProperty	( 
+							attr = 'time', 
+							name = lang['UI024'], 
+							description = lang['DOC047'], 
+							update=update_time
+							)
+
+	time_ini	= bpy.props.FloatProperty	( 
+							attr = 'time_ini', 
+							name = lang['UI024'], 
+							description = lang['DOC047']
+							)
+
+	offset_deg	= bpy.props.FloatProperty	( 
+							attr = 'offset_deg', 
+							name = 'time', #??????????
+							description = '?????????'
+							)
+
+	bIncDiskFile	= bpy.props.BoolProperty	( 
+							attr = 'bIncDiskFile', 
+							name = lang['UI025'], 
+							description = '?????????', 
+							update=update_bIncDiskFile
+							)
+
+	bWriteDisc	= bpy.props.BoolProperty	( 
+							attr = 'bWriteDisc', 
+							name = lang['UI026'], 
+							description = lang['DOC046'], 
+							update=update_bWriteDisc
+							)
+
+	keyframes	= bpy.props.CollectionProperty	( 
+							attr = 'keyframes', 
+							name = 'keyframes', #??????????
+							description = '?????????', 
+							type=FG_PROP_keyframe
+							)
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_armature():

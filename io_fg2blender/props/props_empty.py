@@ -95,13 +95,13 @@ class FG_PROP_empty(bpy.types.PropertyGroup):
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 
-	jsb_xml_file 	= bpy.props.StringProperty(	attr = 'jsb_xml_file', name = 'Filename', update = update_xml_file)
-	jsb_attr	= bpy.props.EnumProperty(	attr = 'jsb_attr', name = 'Attribute', items = jsb_items, default = 'None', update = update_jsb_attr )
+	jsb_xml_file 	= bpy.props.StringProperty(	attr = 'jsb_xml_file', name = lang['UI014'], update = update_xml_file)
+	jsb_attr	= bpy.props.EnumProperty(	attr = 'jsb_attr', name = lang['UI016'], items = jsb_items, default = 'None', update = update_jsb_attr )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_empty():
-	bpy.types.Object.fg = bpy.props.PointerProperty(	attr="jsb_xml_file", type=FG_PROP_empty, name="jsb_xml_file", description="File .xml")
-	bpy.types.Object.fg = bpy.props.PointerProperty(	attr="jsb_attr", type=FG_PROP_empty, name="Attribute", description="JsbSim attribute")
+	bpy.types.Object.fg = bpy.props.PointerProperty(	attr="jsb_xml_file", type=FG_PROP_empty, name="jsb_xml_file", description=lang['DOC038'])
+	bpy.types.Object.fg = bpy.props.PointerProperty(	attr="jsb_attr", type=FG_PROP_empty, name="Attribute", description=lang['DOC039'])
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #

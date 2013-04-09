@@ -48,7 +48,7 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 		#------------------------------------------------------------------------------------------------------------------------------
 		def isGroupExist( groupName ):
 			groupName = os.path.basename(groupName)
-			print( "Test si le group : %s existe ??" % groupName )
+			debug_info( "Test si le group : %s existe ??" % groupName )
 			for group in bpy.data.groups:
 				if group.name == groupName:
 					print( "Existe")
@@ -59,7 +59,7 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 		def createGroup( groupName ):
 			groupName = os.path.basename(groupName)
 			bpy.ops.group.create( name = groupName )
-			print( "Creation du group : %s" % groupName )
+			debug_info( "Creation du group : %s" % groupName )
 		#------------------------------------------------------------------------------------------------------------------------------
 		from .. import fg2bl
 		from . import props_armature
@@ -97,13 +97,13 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 		props_armature.bLock_update = False
 		return None	
 
-	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = 'Filename', update=update_ac_file)
-	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = 'Mesh Name')
+	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = lang['UI014'], update = update_ac_file)
+	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = lang['UI015'])
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_mesh():
-	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="ac_file", type=FG_PROP_mesh, name="ac_file", description="File .ac")
-	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="name_ac", type=FG_PROP_mesh, name="name_ac", description="name in ac file")
+	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="ac_file", type=FG_PROP_mesh, name="ac_file", description=lang['DOC036'])
+	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="name_ac", type=FG_PROP_mesh, name="name_ac", description=lang['DOC037'])
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #
