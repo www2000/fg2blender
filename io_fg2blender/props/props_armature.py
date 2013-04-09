@@ -240,7 +240,7 @@ def update_factor( self, context ):
 	obj = context.active_object
 	if obj:
 		#if obj.type == 'ARMATURE':
-		if obj.data.fg.type_anim in [ 1,2]:
+		if obj.data.fg.type_anim in [ 'rotate', 'translate']:
 			if obj.data.fg.factor_ini == 0.0:
 				obj.data.fg.factor_ini = obj.data.fg.factor
 			coef = obj.data.fg.factor  / obj.data.fg.factor_ini
@@ -273,7 +273,7 @@ def update_time( self, context ):
 	obj = context.active_object
 	if obj:
 		#if obj.type == 'ARMATURE':
-		if obj.data.fg.type_anim in [ 1,2]:
+		if obj.data.fg.type_anim in [ 'rotate', 'translate']:
 			if obj.data.fg.time_ini == 0.0:
 				obj.data.fg.time_ini = obj.data.fg.time
 			coef = 0.0 + obj.data.fg.time  / obj.data.fg.time_ini
@@ -654,9 +654,10 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 							items = dynamic_items_xml_file 
 							)
 
-	type_anim	= bpy.props.IntProperty		( 
+	type_anim	= bpy.props.EnumProperty	( 
 							attr = 'type_anim', 
-							name = lang['UI021']
+							name = lang['UI021'],
+							items = [ ('rotate', 'rotate', 'rotate') ] + [ ('translate', 'translate', 'translate') ] + [ ('spin', 'spin', 'spin') ]
 							)
 
 	range_beg	= bpy.props.FloatProperty	( 

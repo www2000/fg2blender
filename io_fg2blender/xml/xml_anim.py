@@ -563,7 +563,7 @@ class ANIM_ROTATE(ANIM):
 				continue
 			if obj.data.name == armature_name:
 				obj_arma = obj_armature = obj
-				obj_arma.data.fg.type_anim = 1
+				obj_arma.data.fg.type_anim = "rotate"
 				obj_arma.data.fg.family = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.property_idx = -1
@@ -685,7 +685,7 @@ class ANIM_TRANSLATE(ANIM):
 				continue
 			if obj.data.name == armature_name:
 				obj_arma = obj_armature = obj
-				obj_arma.data.fg.type_anim = 2
+				obj_arma.data.fg.type_anim = "translate"
 				obj_arma.data.fg.family = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.property_idx = -1
@@ -859,7 +859,7 @@ class ANIM_SPIN(ANIM):
 				continue
 			if obj.data.name == armature_name:
 				obj_arma = obj_armature = obj
-				obj_arma.data.fg.type_anim = 7
+				obj_arma.data.fg.type_anim = "spin"
 				obj_arma.data.fg.family = "custom"
 				obj_arma.data.fg.property_value = "" + self.property
 				obj_arma.data.fg.property_idx = -1

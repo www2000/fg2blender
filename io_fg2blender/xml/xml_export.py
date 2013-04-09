@@ -136,9 +136,9 @@ def write_animation( context, node, obj ):
 			return False
 		n = 0
 		
-		if armature.data.fg.type_anim == 1:
+		if armature.data.fg.type_anim == 'rotate':
 			search_string = 'euler'
-		if armature.data.fg.type_anim == 2:
+		if armature.data.fg.type_anim == 'translate':
 			search_string = 'location'
 		
 		for fcurve in armature.animation_data.action.fcurves:
@@ -230,9 +230,9 @@ def write_animation( context, node, obj ):
 			return
 		n = 0
 		
-		if armature.data.fg.type_anim == 1:
+		if armature.data.fg.type_anim == 'rotate':
 			search_string = 'euler'
-		if armature.data.fg.type_anim == 2:
+		if armature.data.fg.type_anim == 'translate':
 			search_string = 'location'
 		
 		for fcurve in armature.animation_data.action.fcurves:
@@ -380,11 +380,11 @@ def write_animation( context, node, obj ):
 		obj = armature
 		M = Matrix.Identity(4)
 		while ( obj.parent != None ):
-			if obj.parent.data.fg.type_anim == 1:
+			if obj.parent.data.fg.type_anim == 'rotate':
 				matrix = compute_rotation_matrix( obj.parent )
 				M0 = M * matrix
 				M = M0
-			elif obj.parent.data.fg.type_anim == 2:
+			elif obj.parent.data.fg.type_anim == 'translate':
 				matrix = compute_translation_matrix( obj.parent )
 				M0 = M * matrix
 				M = M0
@@ -475,15 +475,15 @@ def write_animation( context, node, obj ):
 	animation = create_node( 'animation' )
 	t = obj.data.fg.type_anim
 	#--- Type ------------
-	if t == 1:
+	if t == 'rotate':
 		type_anim = create_node_value( 'type', 'rotate' )
 		animation.appendChild( type_anim )
 		debug_info( '\tRotate'  )
-	elif t == 2:
+	elif t == 'translate':
 		type_anim = create_node_value( 'type', 'translate' )
 		animation.appendChild( type_anim )
 		debug_info( '\tTranslate'  )
-	elif t == 7:
+	elif t == 'spin':
 		type_anim = create_node_value( 'type', 'spin' )
 		animation.appendChild( type_anim )
 		debug_info( '\tSpin'  )
@@ -493,18 +493,18 @@ def write_animation( context, node, obj ):
 	append_property( animation, obj )
 	#--- Factor ------------
 	value = '%0.6f' % obj.data.fg.factor
-	if t == 7:
+	if t == 'spin':
 		value = '1.0'
 	factor = create_node_value( 'factor', value )
 	animation.appendChild( factor )
 	#--- Center ------------
-	if t in [1,7]:
+	if t in [ 'rotate', 'spin' ]:
 		append_center( animation, obj )
 	#--- Axis ------------
-	if t in [1,2,7]:
+	if t in [ 'rotate', 'translate', 'spin' ]:
 		append_axis( animation, obj )
 	#--- Interpolation ------------
-	if t in [1,2]:
+	if t in [ 'rotate', 'translate' ]:
 		append_interpolation( animation, obj, t  )
 	nodePropertyList[0].appendChild( animation  )
 #----------------------------------------------------------------------------------------------------------------------------------

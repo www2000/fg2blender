@@ -99,7 +99,7 @@ class FG_OT_create_translate(bpy.types.Operator):
 			bpy.ops.object.posemode_toggle()
 
 
-			obj.data.fg.type_anim		= 2
+			obj.data.fg.type_anim		= 'translate'
 			obj.data.fg.xml_file		= ""
 			obj.data.fg.xml_file_no		= 0
 			obj.data.fg.family		= "custom"
@@ -182,7 +182,7 @@ class FG_OT_create_translate_axis(bpy.types.Operator):
 				bpy.ops.object.posemode_toggle()
 			
 			
-				obj.data.fg.type_anim		= 2
+				obj.data.fg.type_anim		= 'translate'
 				obj.data.fg.xml_file		= ""
 				obj.data.fg.xml_file_no		= 0
 				obj.data.fg.family		= "custom"
@@ -273,7 +273,7 @@ class FG_OT_create_rotate(bpy.types.Operator):
 			
 			obj.lock_rotation = ( True, False, True )
 			
-			obj.data.fg.type_anim		= 1
+			obj.data.fg.type_anim		= 'rotate'
 			obj.data.fg.xml_file		= ""
 			obj.data.fg.xml_file_no		= 0
 			obj.data.fg.family		= "custom"
@@ -358,7 +358,7 @@ class FG_OT_create_rotate_axis(bpy.types.Operator):
 				#obj.pose.bones[-1].rotation_mode = lock_location = ( True, False, True )
 				#obj.lock_rotation = ( True, False, True )
 			
-				obj.data.fg.type_anim		= 1
+				obj.data.fg.type_anim		= 'rotate'
 				obj.data.fg.xml_file		= ""
 				obj.data.fg.xml_file_no		= 0
 				obj.data.fg.family		= "custom"
@@ -461,7 +461,7 @@ class FG_OT_create_spin(bpy.types.Operator):
 				#obj.pose.bones[-1].rotation_mode = lock_location = ( True, False, True )
 				#obj.lock_rotation = ( True, False, True )
 			
-				obj.data.fg.type_anim		= 7
+				obj.data.fg.type_anim		= 'spin'
 				obj.data.fg.xml_file		= ""
 				obj.data.fg.xml_file_no		= 0
 				obj.data.fg.family		= "custom"
@@ -665,7 +665,7 @@ class FG_OT_transforme_to_rotate(bpy.types.Operator):
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
 				continue
-			obj.data.fg.type_anim = 1
+			obj.data.fg.type_anim = 'rotate'
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -686,7 +686,7 @@ class FG_OT_transforme_to_translate(bpy.types.Operator):
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
 				continue
-			obj.data.fg.type_anim = 2
+			obj.data.fg.type_anim = 'translate'
 		return {'FINISHED'}
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -707,7 +707,7 @@ class FG_OT_transforme_to_spin(bpy.types.Operator):
 		for obj in context.selected_objects:
 			if obj.type != 'ARMATURE':
 				continue
-			obj.data.fg.type_anim = 7
+			obj.data.fg.type_anim = 'spin'
 		return {'FINISHED'}
 
 #----------------------------------------------------------------------------------------------------------------------------------

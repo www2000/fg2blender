@@ -133,11 +133,11 @@ def layout_armature_properties(self, obj, context):
 	boxTitre.label( text='Type' )
 	boxType = layout.box()
 	colType = boxType.column()	
-	if obj.data.fg.type_anim == 1:
+	if obj.data.fg.type_anim == 'rotate':
 		colType.label( text="Rotation" )
-	elif obj.data.fg.type_anim == 2:
+	elif obj.data.fg.type_anim == 'translate':
 		colType.label( text="Translation" )
-	elif obj.data.fg.type_anim == 7:
+	elif obj.data.fg.type_anim == 'spin':
 		colType.label( text="Spin" )
 	#----------------------------------------------------
 	row = layout.row()

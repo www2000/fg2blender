@@ -92,13 +92,13 @@ class FG_OT_freeze_armature(bpy.types.Operator):
 					yFcurve = None
 					n = 0
 					for fcurve in armature.animation_data.action.fcurves:
-						if armature.data.fg.type_anim in [1,7]:
+						if armature.data.fg.type_anim in [ 'rotate', 'spin' ]:
 							if fcurve.data_path.find( "euler" ) != -1:
 								n = n + 1
 							if n == 2:
 								yFcurve = fcurve
 								value = xml_export.compute_rotation_angle_current( armature )
-						elif armature.data.fg.type_anim in [2]:
+						elif armature.data.fg.type_anim in [ 'translate' ]:
 							if fcurve.data_path.find( "location" ) != -1:
 								n = n + 1
 							if n == 2:
@@ -150,12 +150,12 @@ class FG_OT_unfreeze_armature(bpy.types.Operator):
 			if armature.animation_data != None:
 				yFcurve = None			
 				for fcurve in armature.animation_data.action.fcurves:
-					if armature.data.fg.type_anim in [1,7]:
+					if armature.data.fg.type_anim in [ 'rotate', 'spin' ]:
 						if fcurve.data_path.find( "euler" ) != -1:
 							n = n + 1
 						if n == 2:
 							yFcurve = fcurve
-					elif armature.data.fg.type_anim in [2]:
+					elif armature.data.fg.type_anim in [ 'translate' ]:
 						if fcurve.data_path.find( "location" ) != -1:
 							n = n + 1
 						if n == 2:
@@ -256,12 +256,12 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 					yFcurve = None
 					n = 0
 					for fcurve in armature.animation_data.action.fcurves:
-						if armature.data.fg.type_anim in [1,7]:
+						if armature.data.fg.type_anim in [ 'rotate', 'spin' ]:
 							if fcurve.data_path.find( "euler" ) != -1:
 								n = n + 1
 							if n == 2:
 								yFcurve = fcurve
-						elif armature.data.fg.type_anim in [2]:
+						elif armature.data.fg.type_anim in [ 'translate' ]:
 							if fcurve.data_path.find( "location" ) != -1:
 								n = n + 1
 							if n == 2:
@@ -553,7 +553,7 @@ class FG_OT_insertion_keyframe_rotate(bpy.types.Operator):
 			return False
 		if context.active_object.type != 'ARMATURE':
 			return False
-		if context.active_object.data.fg.type_anim != 1:
+		if context.active_object.data.fg.type_anim != 'rotate':
 			return False
 		return True
 
@@ -583,7 +583,7 @@ class FG_OT_insertion_keyframe_translate(bpy.types.Operator):
 			return False
 		if context.active_object.type != 'ARMATURE':
 			return False
-		if context.active_object.data.fg.type_anim != 2:
+		if context.active_object.data.fg.type_anim != 'translate':
 			return False
 		return True
 
