@@ -97,13 +97,13 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 		props_armature.bLock_update = False
 		return None	
 
-	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = lang['UI014'], update = update_ac_file)
-	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = lang['UI015'])
+	ac_file = bpy.props.StringProperty(	attr = 'ac_file', name = lang['UI014'], update = update_ac_file, description=lang['DOC036'] )
+	name_ac = bpy.props.StringProperty(	attr = 'name_ac', name = lang['UI015'], description=lang['DOC037'] )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def RNA_mesh():
-	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="ac_file", type=FG_PROP_mesh, name="ac_file", description=lang['DOC036'])
-	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="name_ac", type=FG_PROP_mesh, name="name_ac", description=lang['DOC037'])
+	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="ac_file", type=FG_PROP_mesh, name="ac_file" )
+	bpy.types.Mesh.fg = bpy.props.PointerProperty(	attr="name_ac", type=FG_PROP_mesh, name="name_ac" )
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #

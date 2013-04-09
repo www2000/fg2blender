@@ -126,6 +126,7 @@ def layout_object_properties(self, obj, context):
 	if obj.type == 'MESH':
 		row = box.row(align=True)
 		row.prop( obj.data.fg, "ac_file" )
+		row.operator( "object.file_select_ac", icon='TRIA_DOWN' )
 		row.operator( "object.file_select_ac", icon='FILESEL' )
 	
 	row = box.row()

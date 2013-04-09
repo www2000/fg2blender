@@ -422,8 +422,8 @@ lang_fr['DOC046'] = 'Écrit le fichier sur le disque'
 lang_en['DOC047'] = 'Duration of animation'
 lang_fr['DOC047'] = 'Durée de l\'animation'
 
-lang_en['DOC048'] = 'Index X of the property "/engines/engine[\'X\']/throttle"'
-lang_fr['DOC048'] = 'Indice X de la propriété "/engines/engine[\'X\']/throttle"'
+lang_en['DOC048'] = 'Index X of the property "/engines/engine[X]/throttle"'
+lang_fr['DOC048'] = 'Indice X de la propriété "/engines/engine[X]/throttle"'
 
 lang_en['DOC049'] = 'Minimum value of the property'
 lang_fr['DOC049'] = 'Valeur minimum de la propriété'
@@ -434,8 +434,8 @@ lang_fr['DOC050'] = 'Valeur maximum de la propriété'
 lang_en['DOC051'] = 'Value of <factor> tags'
 lang_fr['DOC051'] = 'Valeur de la balise <factor>'
 
-lang_en['DOC052'] = '??'
-lang_fr['DOC052'] = '??'
+lang_en['DOC052'] = 'Path of the XML file (.xml)'
+lang_fr['DOC052'] = 'Chemin du fichier XML (.xml)'
 
 lang_en['DOC053'] = '??'
 lang_fr['DOC053'] = '??'

@@ -637,7 +637,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 	xml_file	= bpy.props.StringProperty	( 
 							attr = 'xml_file', 
 							name = lang['UI010'], 
-							description = '?????????', 
+							description = lang['DOC052'], 
 							update=update_xml_file
 							)
 
