@@ -29,6 +29,8 @@
 
 import bpy
 
+from ..ui.ui_lang import lang
+
 jsb_items = 	[
 		('None',		'None', ''),
 		('TAIL_GEAR',		'TAIL_GEAR', ''),
@@ -44,8 +46,8 @@ jsb_items = 	[
 		]
 			
 bLock_update = False
-
 #----------------------------------------------------------------------------------------------------------------------------------
+
 def debug_info( aff ):
 	from .. import debug_props_empty
 	

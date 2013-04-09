@@ -34,8 +34,8 @@ from . import *
 from bpy.props import StringProperty
 
 from ..ui.ui_lang import lang
-
 #--------------------------------------------------------------------------------------------------------------------------------
+
 def debug_info(aff):
 	from .. import debug_ops_ac3d
 

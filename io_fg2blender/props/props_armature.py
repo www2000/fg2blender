@@ -27,12 +27,19 @@
 #
 #----------------------------------------------------------------------------------------------------------------------------------
 
+import bpy
+from . import *
+
+from ..ui.ui_lang import lang
+#----------------------------------------------------------------------------------------------------------------------------------
+
 def debug_info( aff ):
 	from .. import debug_props_armature
 	
 	if debug_props_armature:
 		print( aff )
 #----------------------------------------------------------------------------------------------------------------------------------
+
 bLock_update = False
  
 familles = ['APU','anti_ice','armament','autoflight','electric' , 'engine','flight','fuel','gear', 'consumable','surface_position']
@@ -178,11 +185,6 @@ surface_positions = [
 		('surface-positions/left-aileron-pos-norm',-1,1,False),
 		('surface-positions/left-aileron-pos-norm',-1,1,False)	
 		]
-
-
-import bpy
-from . import *
-
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def update_keyframe( obj, coef ):
