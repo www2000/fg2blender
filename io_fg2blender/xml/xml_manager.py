@@ -108,6 +108,7 @@ class XML_FILE:
 		self.anims			= []
 		self.texts			= []
 		self.file_offset		= ""
+		self.alreadyCreated		= False
 
 		
 	def add_ac_file( self, ac_file = None ):
@@ -536,6 +537,8 @@ def create_anims():
 	#	bpy.ops.view3d.layers( nr=11, extend=True, toggle = True )
 	# Create group	
 	for xml_file, no in xml_files:
+		if xml_file.alreadyCreated:
+			continue
 		for ac_file in xml_file.ac_files:
 			debug_info( 'Creation de groups "%s"' % os.path.basename(ac_file.name) )
 			ac_file.create_group_ac()
@@ -549,6 +552,8 @@ def create_anims():
 	print( "  -Change anim time from jsbsim")
 	#********************************************
 	for xml_file, no in xml_files:
+		if xml_file.alreadyCreated:
+			continue
 		for anim in xml_file.anims:
 			if  anim.type == 'jsb':
 				set_current_xml( xml_file, no )
@@ -561,6 +566,8 @@ def create_anims():
 	print( "  -Create animations")
 	#********************************************
 	for xml_file, no in xml_files:
+		if xml_file.alreadyCreated:
+			continue
 		set_current_xml( xml_file, no )
 		debug_info( '------' )
 		debug_info( xml_file.name )
@@ -605,6 +612,8 @@ def create_anims():
 	print( "  -Insert keyframe")
 	#********************************************
 	for xml_file, no in xml_files:
+		if xml_file.alreadyCreated:
+			continue
 		set_current_xml( xml_file, no )
 		for anim in xml_file.anims:
 			if anim.name=="":
@@ -614,6 +623,9 @@ def create_anims():
 
 	#restore active layer
 	bpy.context.scene.layers = save_active_layers
+
+	for xml_file, no in xml_files:
+		xml_file.alreadyCreated = True
 
 	time_end = time.time()
 	debug_info( "Create animations in  %0.2f sec" % (time_end-time_deb) )
@@ -641,6 +653,8 @@ def assign_obj_to_anim():
 	global xml_files
 
 	for xml_file, no in xml_files:
+		if xml_file.alreadyCreated:
+			continue
 		set_current_xml( xml_file, no )
 		debug_info( '-----------------------------------' )
 		debug_info( 'assign_obj_to_anim()  in "%s"' % os.path.basename(xml_file.name) )
