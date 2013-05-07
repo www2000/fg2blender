@@ -400,11 +400,11 @@ def write_animation( context, node, obj ):
 		while ( obj.parent != None ):
 			if obj.parent.data.fg.type_anim == 'rotate':
 				matrix = compute_rotation_matrix( obj.parent )
-				M0 = matrix * M
+				M0 = M * matrix
 				M = M0
 			elif obj.parent.data.fg.type_anim == 'translate':
 				matrix = compute_translation_matrix( obj.parent )
-				M0 = matrix * M
+				M0 = M * matrix
 				M = M0
 			obj = obj.parent
 			
