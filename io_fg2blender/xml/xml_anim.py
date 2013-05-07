@@ -69,22 +69,22 @@ class ANIM:
 	def __init__( self ):
 		from . import xml_import
 		
-		self.name			= ""
-		self.type			= ""	# rotate, translate, groups, pick, light, shader, spin
+		self.name				= ""
+		self.type				= ""	# rotate, translate, groups, pick, light, shader, spin
 		self.xml_file			= ""					
 		self.xml_file_no		= 0
-		self.factor			= 1.0
-		self.time			= 100.0/bpy.data.scenes[0].render.fps
+		self.factor				= 1.0
+		self.time				= 100.0/bpy.data.scenes[0].render.fps
 		self.interpolation		= []
 		self.property			= ""
-		self.pos			= Vector( (0.0, 0.0, 0.0) )
-		self.vec			= Vector( (0.0, 0.0, 0.0) )
+		self.pos				= Vector( (0.0, 0.0, 0.0) )
+		self.vec				= Vector( (0.0, 0.0, 0.0) )
 		self.objects			= []
 		self.group_objects		= []			# group_objects[0] = "group_name"
 		self.texture			= ""
 		self.ac_file			= ""
 		self.offset_deg			= 0.0
-		self.layer			= xml_import.previous_arma_layer(xml_import.arma_layer)
+		self.layer				= xml_import.previous_arma_layer(xml_import.arma_layer)
 		self.active_layer		= False
 		
 		self.init_common()

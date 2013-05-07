@@ -310,6 +310,15 @@ class FG_OT_exec2(bpy.types.Operator):
 		f.write( "    fg.name_ac : %s\n" % obj.data.fg.name_ac )
 		f.write( "    fg.ac_file : %s\n" % obj.data.fg.ac_file )
 		
+	def print_anim( self, anim, f ):
+		f.write( "    anim.name : %s\n" % anim.name )
+		f.write( "    \tanim.type : %s\n" % anim.type )
+		f.write( "    \tanim.factor : %.2f\n" % anim.factor )
+		f.write( "    \tanim.time : %.2f\n" % anim.time )
+		f.write( "    \tanim.property : %s\n" % anim.property )
+		f.write( "    \tanim.pos : %.2f,%.2f,%.2f\n" % (anim.pos.x,anim.pos.y,anim.pos.z) )
+		f.write( "    \tanim.vec : %.2f,%.2f,%.2f\n" % (anim.vec.x,anim.vec.y,anim.vec.z) )
+
 	def print_armature( self, obj, f ):
 		f.write( "    fg.xml_file : %s\n" % obj.data.fg.xml_file )
 		f.write( "    fg.xml_file_no : %s\n" % obj.data.fg.xml_file_no )
@@ -357,6 +366,8 @@ class FG_OT_exec2(bpy.types.Operator):
 			f.write ( "xml_file.no      = %d\n" % xml_file.no )		
 			for ac_file in xml_file.ac_files:
 				self.print_ac_file( ac_file, f )
+			for anim in xml_file.anims:
+				self.print_anim(anim, f)
 				
 		f.write ( "---------------------------------\n")		
 		f.write ( "\n")		
