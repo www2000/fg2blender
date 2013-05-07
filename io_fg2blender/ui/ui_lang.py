@@ -48,7 +48,7 @@ lang_en['ERR005'] = 'Armatures are already freezed'
 lang_fr['ERR005'] = 'Les armatures sont déjà gelées'
 
 lang_en['ERR006'] = "Can't found keyframes"
-lang_fr['ERR006'] = 'Aucune keyframes trouvées'
+lang_fr['ERR006'] = 'Aucune keyframe trouvée'
 
 #----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MENTIT'] = 'Flightgear Tools Menu'
@@ -144,8 +144,8 @@ lang_fr['MEN052'] = 'Initialise'
 lang_en['MEN053'] = 'Freeze selected armature'
 lang_fr['MEN053'] = 'Geler armature'
 
-lang_en['MEN054'] = 'Save Keyframe and Reset'
-lang_fr['MEN054'] = 'Sauver keyframe et reset'
+lang_en['MEN054'] = 'Save Keyframes and Reset'
+lang_fr['MEN054'] = 'Sauver keyframes et reset'
 
 lang_en['MEN055'] = 'Unfreeze'
 lang_fr['MEN055'] = 'Dégeler'

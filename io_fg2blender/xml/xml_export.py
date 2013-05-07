@@ -71,19 +71,29 @@ def indentMoins():
 	if len(indent) >= 1:
 		indent = indent[:-1]
 		
-#----------------------------------------------------------------------------------------------------------------------------------
-
-def compute_rotation_angle_current( armature ):
-	yFcurve = None
+#---------------------------------------------------------------------------
+def find_yFcurve( armature ):
 	n = 0
-	# find curve for y component
+	
+	if armature.data.fg.type_anim in ['rotate','spin']:
+		search_string = 'euler'
+	if armature.data.fg.type_anim == 'translate':
+		search_string = 'location'
+		
+	yFcurve = None
 	for fcurve in armature.animation_data.action.fcurves:
-		if fcurve.data_path.find( "euler" ) != -1:
+		debug_info( fcurve.data_path )
+		if fcurve.data_path.find( search_string ) != -1:
 			n = n + 1
 		if n == 2:
 			yFcurve = fcurve
 			break
+	return yFcurve
 	
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def compute_rotation_angle_current( armature ):
+	yFcurve = find_yFcurve(armature)
 	if yFcurve == None:
 		return 0.0
 	
@@ -94,18 +104,11 @@ def compute_rotation_angle_current( armature ):
 #---------------------------------------------------------------------------
 
 def compute_translation_current( armature ):
-	yFcurve = None
-	n = 0
-	# find curve for y component
-	for fcurve in armature.animation_data.action.fcurves:
-		debug_info( fcurve.data_path )
-		if fcurve.data_path.find( "location" ) != -1:
-			n = n + 1
-		if n == 2:
-			yFcurve = fcurve
-			break
+	yFcurve = find_yFcurve(armature)
+	if yFcurve == None:
+		return 0.0
 	
-	value = yFcurve.evaluate( bpy.context.scene.frame_current )
+	value = yFcurve.evaluate( bpy.context.scene.frame_current ) * armature.scale.y
 	debug_info( "Fcurve ; %s" % yFcurve.data_path )
 	debug_info( "%s Angle %.2f pour la frame : %.2f" % (armature.name,value, bpy.context.scene.frame_current) ) 
 	return value
@@ -239,7 +242,6 @@ def write_animation( context, node, obj ):
 			
 		return False
 	#---------------------------------------------------------------------------
-
 	def append_interpolation( node_animation, armature, t ):
 		indentMoins()
 		debug_info( 'append_interpolation' )
@@ -252,22 +254,8 @@ def write_animation( context, node, obj ):
 			indentMoins()
 			return
 		indentMoins()
-		n = 0
 		
-		if armature.data.fg.type_anim == 'rotate':
-			search_string = 'euler'
-		if armature.data.fg.type_anim == 'translate':
-			search_string = 'location'
-			
-		yFcurve = None
-		for fcurve in armature.animation_data.action.fcurves:
-			debug_info( fcurve.data_path )
-			if fcurve.data_path.find( search_string ) != -1:
-				n = n + 1
-			if n == 2:
-				yFcurve = fcurve
-				break
-		#fcurve = armature.animation_data.action.fcurves[1]
+		yFcurve = find_yFcurve(armature)
 		if yFcurve == None:
 			return
 		interpolation = create_node('interpolation')
@@ -287,10 +275,12 @@ def write_animation( context, node, obj ):
 				coef = end - beg
 				x = ( x * coef ) + beg
 			
-			if t == 'rotate':	#rotation
+			if t in ['rotate','spin']:	#rotation
 				y = degrees(y) / armature.data.fg.factor
-			#if t == 'translate':	#translation
-			#	y = (y) / armature.data.fg.factor
+			elif t == 'translate':	#translation
+				y = (y) / armature.data.fg.factor * armature.scale.y
+			else:
+				return
 
 			debug_info( 'Factor "%0.2f"' % armature.data.fg.factor )
 			debug_info( '      x="%0.2f", y="%0.2f"' % (x,y) )
@@ -410,11 +400,11 @@ def write_animation( context, node, obj ):
 		while ( obj.parent != None ):
 			if obj.parent.data.fg.type_anim == 'rotate':
 				matrix = compute_rotation_matrix( obj.parent )
-				M0 = M * matrix
+				M0 = matrix * M
 				M = M0
 			elif obj.parent.data.fg.type_anim == 'translate':
 				matrix = compute_translation_matrix( obj.parent )
-				M0 = M * matrix
+				M0 = matrix * M
 				M = M0
 			obj = obj.parent
 			
@@ -530,8 +520,10 @@ def write_animation( context, node, obj ):
 	#--- Center ------------
 	if t in [ 'rotate', 'spin' ]:
 		append_center( animation, obj )
+		append_axis( animation, obj )
 	#--- Axis ------------
-	if t in [ 'rotate', 'translate', 'spin' ]:
+	if t in [ 'translate' ]:
+		append_center( animation, obj )
 		append_axis( animation, obj )
 	#--- Interpolation ------------
 	if t in [ 'rotate', 'translate' ]:
