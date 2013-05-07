@@ -318,7 +318,7 @@ class FG_OT_exec2(bpy.types.Operator):
 		f.write( "    fg.family_value : %s\n" % obj.data.fg.family_value )
 		f.write( "    fg.propety_value : %s\n" % obj.data.fg.property_value )
 		f.write( "    fg.propety_idx : %d\n" % obj.data.fg.property_idx )
-		f.write( "    fg.type_anim : %d\n" % obj.data.fg.type_anim )
+		f.write( "    fg.type_anim : %s\n" % obj.data.fg.type_anim )
 		f.write( "    fg.factor : %f\n" % obj.data.fg.factor )
 		f.write( "    fg.factor : %.2f\n" % obj.data.fg.factor )
 		f.write( "    fg.factor_ini : %.2f\n" % obj.data.fg.factor_ini )
@@ -370,6 +370,7 @@ class FG_OT_exec2(bpy.types.Operator):
 			if  obj.type == 'MESH':
 				self.print_mesh(obj, f)
 			elif  obj.type == 'ARMATURE':
+				print( "Name " + obj.name )
 				self.print_armature(obj, f)
 			elif  obj.type == 'CAMERA':
 				self.print_camera(obj, f)

@@ -31,6 +31,7 @@ import bpy
 from . import *
 
 from ..ui.ui_lang import lang
+from ..xml import xml_manager
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff ):
@@ -458,6 +459,7 @@ def dynamic_items( self, context ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def dynamic_items_xml_file( self, context ):
+	from ..xml import xml_manager
 	#items = [ (xf.name,xf.name.split('/')[-1],xf.name.split('/')[-1]) for xf,no in xml_manager.xml_files ]
 	items = [ ("","","") ] + [ (xf.name,xf.name,xf.name) for xf,no in xml_manager.xml_files ]
 	return items

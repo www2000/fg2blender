@@ -121,8 +121,8 @@ class XML_FILE:
 #							CLASS TEXT
 #----------------------------------------------------------------------------------------------------------------------------------
 #	name				= "plane"						string	if transform name
-#	type				= 0							1:Rotate 2:translate 3: group objects 4:pick 
-#												5:light 6:shader 7: Spin
+#	type				= 0								1:Rotate 2:translate 3: group objects 4:pick 
+#														5:light 6:shader 7: Spin
 #	xml_file			= ""							string : xml  file
 #	factor				= 0.0
 #	property			= ""							string : flightgear property of transform
@@ -130,24 +130,24 @@ class XML_FILE:
 #	vec					= Vector( (0.0, 0.0, 0.0) )				bone vector
 #	objects				= []							objects list  ( name in xml file )
 #	group_objects		= []							list : group_objects[0] name of group
-#	layer				= 0							number of layer
+#	layer				= 0								number of layer
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class TEXT:
 	def __init__(self):
-		self.name			= ""
-		self.type			= 0						# 1:literal 2:text-value 3:number-value
+		self.name				= ""
+		self.type				= 0						# 1:literal 2:text-value 3:number-value
 		self.xml_file			= ""
 		self.xml_file_no		= 0
-		self.factor			= 1.0
+		self.factor				= 1.0
 		self.property			= ""
 		self.pos	    		= Vector( (0.0, 0.0, 0.0) )
-		self.vec			= Vector( (0.0, 0.0, 0.0) )
+		self.vec				= Vector( (0.0, 0.0, 0.0) )
 		self.objects			= []
 		self.group_objects		= []
 		self.ac_file			= ""
 		self.offset_deg			= 0.0
-		self.layer			= 0						
+		self.layer				= 0						
 		self.active_layer		= False
 		self.offset				= Vector( (0.0, 0.0, 0.0) )
 		self.eulerXYZ			= Vector( (0.0, 0.0, 0.0) )

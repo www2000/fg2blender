@@ -77,13 +77,13 @@ debug_xml_jsbsim		= False
 debug_xml_anim			= False
 debug_ac3d_import		= False
 debug_ac3d_export		= False
-debug_fg2bl			= False
-debug_props_armature		= False
+debug_fg2bl		        = False
+debug_props_armature	= False
 debug_props_camera		= False
 debug_props_empty		= False
 debug_props_meshes		= False
 debug_ops_unwrap		= False
-debug_ops_flightgear		= False
+debug_ops_flightgear	= False
 debug_ops_ac3d			= False
 debug_ops_xml			= False
 debug_ops_tools			= False
@@ -324,10 +324,10 @@ def register():
 		DEBUG			= True
 		debug_info( "File debug OK" )
 
-		debug_fg2bl			= False
+		debug_fg2bl		     	= False
 		debug_xml_manager		= False
-		debug_xml_import		= False
-		debug_xml_export		= False
+		debug_xml_import		= True
+		debug_xml_export		= True
 		debug_xml_camera		= False
 		debug_xml_jsbsim		= False
 		debug_xml_anim			= False

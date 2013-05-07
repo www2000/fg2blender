@@ -596,7 +596,8 @@ class ANIM_ROTATE(ANIM):
 		offset = Vector( (0.0,0.0,0.0) ) + xml_current.offset
 		euler  = Vector( (0.0,0.0,0.0) ) + xml_current.eulerXYZ
 				
-		vec = self.vec /10.0
+		#vec = self.vec /10.0
+		vec = self.vec
 		#head = self.pos
 		#tail = self.pos + vec
 		head = Vector( (0.0,0.0,0.0) )
@@ -711,9 +712,9 @@ class ANIM_TRANSLATE(ANIM):
 		offset = Vector( (0.0,0.0,0.0) ) + xml_current.offset
 		euler  = Vector( (0.0,0.0,0.0) ) + xml_current.eulerXYZ
 				
-		vec = self.vec /10.0
-		#head = self.pos
-		#tail = self.pos + vec
+		#vec = self.vec /10.0
+		vec = self.vec
+
 		head = Vector( (0.0,0.0,0.0) )
 		tail = Vector( (0.0,0.0,0.0) ) + vec
 		obj_arma.location = self.pos

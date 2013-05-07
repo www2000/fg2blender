@@ -42,13 +42,13 @@ lang_en['ERR003'] = 'Armature information is missing'
 lang_fr['ERR003'] = "Informations manquantes pour l'armature"
 
 lang_en['ERR004'] = 'Keyframes are already saved'
-lang_fr['ERR004'] = 'Les keyframes sont déjà sauvegardés'
+lang_fr['ERR004'] = 'Les keyframes sont déjà sauvegardées'
 
 lang_en['ERR005'] = 'Armatures are already freezed'
-lang_fr['ERR005'] = 'Les armatures sont déjà gelés'
+lang_fr['ERR005'] = 'Les armatures sont déjà gelées'
 
 lang_en['ERR006'] = "Can't found keyframes"
-lang_fr['ERR006'] = 'Aucune keyframes trouvés'
+lang_fr['ERR006'] = 'Aucune keyframes trouvées'
 
 #----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MENTIT'] = 'Flightgear Tools Menu'

@@ -46,15 +46,31 @@ from mathutils import Matrix
 #---------------------------------------------------------------------------------------------------------------------
 
 CG = Vector( (0.0,0.0,0.0) )
+indent = ""
 
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff):
 	from .. import debug_xml_export
+	global indent
 
 	if debug_xml_export:
-		print( aff )
+		print( indent + aff )
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def indentPlus():
+	global indent
+	
+	indent = indent + "\t"
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def indentMoins():
+	global indent
+
+	if len(indent) >= 1:
+		indent = indent[:-1]
+		
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def compute_rotation_angle_current( armature ):
@@ -82,6 +98,7 @@ def compute_translation_current( armature ):
 	n = 0
 	# find curve for y component
 	for fcurve in armature.animation_data.action.fcurves:
+		debug_info( fcurve.data_path )
 		if fcurve.data_path.find( "location" ) != -1:
 			n = n + 1
 		if n == 2:
@@ -143,7 +160,7 @@ def write_animation( context, node, obj ):
 		
 		for fcurve in armature.animation_data.action.fcurves:
 			debug_info( fcurve.data_path )
-			if fcurve.data_path.find('euler') != -1:
+			if fcurve.data_path.find( search_string ) != -1:
 				n = n + 1
 			if n == 2:
 				break
@@ -164,15 +181,15 @@ def write_animation( context, node, obj ):
 
 		str_x = "%0.4f" % x
 		str_y = "%0.4f" % y
-		debug_info( '\tRange	deb="%s" fin="%s"' % ("%0.4f"%armature.data.fg.range_beg, "%0.4f"%armature.data.fg.range_end) )
-		debug_info( '\tTest interpolation ind="%s" dep="%s"' % (str_x, str_y) )
+		debug_info( 'Range	deb="%s" fin="%s"' % ("%0.4f"%armature.data.fg.range_beg, "%0.4f"%armature.data.fg.range_end) )
+		debug_info( 'Test interpolation ind="%s" dep="%s"' % (str_x, str_y) )
 
 		if str_x == "-0.0000":
 			str_x = "0.0000"
 		if str_y == "-0.0000":
 			str_y = "0.0000"
 
-		debug_info( '\tValue 	str_x="%s" str_y="%s"' % (str_x, str_y) )
+		debug_info( 'Value 	str_x="%s" str_y="%s"' % (str_x, str_y) )
 
 		bDeb = False
 		if str_x == "0.0000" and str_y==("%0.4f"%armature.data.fg.range_beg):
@@ -200,7 +217,7 @@ def write_animation( context, node, obj ):
 
 		str_x = "%0.4f" % x
 		str_y = "%0.4f" % y
-		debug_info( '\tTest interpolation ind="%s" dep="%s"' % (str_x, str_y) )
+		debug_info( 'Test interpolation ind="%s" dep="%s"' % (str_x, str_y) )
 
 		bFin = False
 		if str_x == "1.0000" and str_y==("%0.4f"%armature.data.fg.range_end):
@@ -224,28 +241,38 @@ def write_animation( context, node, obj ):
 	#---------------------------------------------------------------------------
 
 	def append_interpolation( node_animation, armature, t ):
+		indentMoins()
+		debug_info( 'append_interpolation' )
+		indentPlus()
 		if armature.animation_data == None:
 			return True
+		
+		indentPlus()
 		if test_need_interpolation(armature):
+			indentMoins()
 			return
+		indentMoins()
 		n = 0
 		
 		if armature.data.fg.type_anim == 'rotate':
 			search_string = 'euler'
 		if armature.data.fg.type_anim == 'translate':
 			search_string = 'location'
-		
+			
+		yFcurve = None
 		for fcurve in armature.animation_data.action.fcurves:
 			debug_info( fcurve.data_path )
 			if fcurve.data_path.find( search_string ) != -1:
 				n = n + 1
 			if n == 2:
+				yFcurve = fcurve
 				break
 		#fcurve = armature.animation_data.action.fcurves[1]
-
+		if yFcurve == None:
+			return
 		interpolation = create_node('interpolation')
-		debug_info( fcurve.data_path )
-		for keyframe in fcurve.keyframe_points:
+		debug_info( "Extraction des keyframes de : " + yFcurve.data_path )
+		for keyframe in yFcurve.keyframe_points:
 			entry = create_node( 'entry' )
 			x = keyframe.co.x
 			y = keyframe.co.y
@@ -259,14 +286,15 @@ def write_animation( context, node, obj ):
 			if end != -999.0 and beg != -999.0:
 				coef = end - beg
 				x = ( x * coef ) + beg
+			
+			if t == 'rotate':	#rotation
+				y = degrees(y) / armature.data.fg.factor
+			#if t == 'translate':	#translation
+			#	y = (y) / armature.data.fg.factor
 
 			debug_info( 'Factor "%0.2f"' % armature.data.fg.factor )
 			debug_info( '      x="%0.2f", y="%0.2f"' % (x,y) )
 			
-			if t == 1:	#rotation
-				y = degrees(y) / armature.data.fg.factor
-			if t == 2:	#translation
-				y = (y) / armature.data.fg.factor
 			ind = create_node_value( 'ind', '%0.4f' % x )
 			dep = create_node_value( 'dep', '%0.4f' % y )
 			entry.appendChild( ind )
@@ -277,24 +305,24 @@ def write_animation( context, node, obj ):
 	#---------------------------------------------------------------------------
 
 	def append_objects( node_animation, armature ):
-		debug_info( 'Append_object pour "%s"' % armature.name )
+		#debug_info( 'Append_object pour "%s"' % armature.name )
 		for obj in bpy.data.objects:
 			if 	obj.parent:
 				if obj.parent.name == armature.name:
-					debug_info( 'child object pour "%s"' % obj.name )
+					#debug_info( 'child object pour "%s"' % obj.name )
 					if obj.type == 'MESH':
 						name = obj.data.fg.name_ac
 						if name == "":
 							name = obj.name
 					elif obj.type in [ 'EMPTY', 'ARMATURE' ]:
-						debug_info( '-Append_object recursion sur "%s"' % obj.name )
+						#debug_info( '-Append_object recursion sur "%s"' % obj.name )
 						append_objects( node_animation, obj )
 						continue
 					else:
 						name = obj.name
 					# for obj file
 					#name = name + '_' + name + '.mesh'
-					debug_info( 'Append_object "%s" pour "%s"' % (name,armature.name) )
+					debug_info( 'Append_object-name "%s" pour "%s"' % (name,armature.name) )
 					o = create_node_value( 'object-name', name )
 					node_animation.appendChild( o )
 	#---------------------------------------------------------------------------
@@ -402,7 +430,7 @@ def write_animation( context, node, obj ):
 
 		M = m_parent_transform.inverted() * armature.matrix_world
 		v = (M * get_tail_local(armature)) - (M * get_head_local(armature))
-		v.normalize()
+		#v.normalize()
 
 		x_value = create_node_value( 'x', '%0.4f' % (v.x) )
 		y_value = create_node_value( 'y', '%0.4f' % (v.y) )
@@ -442,16 +470,18 @@ def write_animation( context, node, obj ):
 		bpy.context.scene.objects.active = armature
 
 		value = armature.data.fg.family
-		debug_info( 'objet "%s"' % obj.name )
-		debug_info( 'Family "%s"' % obj.data.fg.family )
-		debug_info( 'Family_value "%s"' % obj.data.fg.family_value )
-		debug_info( 'Property_value "%s"' % obj.data.fg.property_value )
 		if value == "custom":
 			value = armature.data.fg.property_value
 		else:
 			value = armature.data.fg.family_value
 
-		debug_info( 'Value "%s"' % value )
+		debug_info( '<property>"%s"</property>' % value )
+		indentPlus()
+		debug_info( 'obj.name                    : "%s"' % obj.name )
+		debug_info( 'obj.data.fg.family          : "%s"' % obj.data.fg.family )
+		debug_info( 'obj.data.fg.family_value    : "%s"' % obj.data.fg.family_value )
+		debug_info( 'obj.data.fg.property_value  : "%s"' % obj.data.fg.property_value )
+		indentMoins()
 	
 		if value != "error" and value != '':
 			if value.find('%d')!=-1:
@@ -468,7 +498,7 @@ def write_animation( context, node, obj ):
 	
 	debug_info( 'Write Armature "%s"' % obj.name )
 	nodePropertyList = node.getElementsByTagName( 'PropertyList' )
-	debug_info( obj.name )
+
 	txt = node.createComment( obj.name ) 
 	nodePropertyList[0].appendChild( txt )
 
@@ -478,15 +508,15 @@ def write_animation( context, node, obj ):
 	if t == 'rotate':
 		type_anim = create_node_value( 'type', 'rotate' )
 		animation.appendChild( type_anim )
-		debug_info( '\tRotate'  )
+		debug_info( 'Type = Rotate'  )
 	elif t == 'translate':
 		type_anim = create_node_value( 'type', 'translate' )
 		animation.appendChild( type_anim )
-		debug_info( '\tTranslate'  )
+		debug_info( 'Type = Translate'  )
 	elif t == 'spin':
 		type_anim = create_node_value( 'type', 'spin' )
 		animation.appendChild( type_anim )
-		debug_info( '\tSpin'  )
+		debug_info( 'Type = Spin'  )
 	#--- Object-name ------------
 	append_objects( animation, obj )
 	#--- Property ------------
@@ -505,7 +535,9 @@ def write_animation( context, node, obj ):
 		append_axis( animation, obj )
 	#--- Interpolation ------------
 	if t in [ 'rotate', 'translate' ]:
+		indentPlus()
 		append_interpolation( animation, obj, t  )
+		indentMoins()
 	nodePropertyList[0].appendChild( animation  )
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -519,7 +551,9 @@ def find_child( obj ):
 		
 def write_animation_recurs( context, node, obj ):
 	debug_info( 'Write animation "%s"' % obj.name )
+	indentPlus()
 	write_animation( context, node, obj )
+	indentMoins()
 	lst = find_child(obj)
 	for objet in lst:
 		if objet.type != 'ARMATURE':
@@ -545,7 +579,7 @@ def append_path( nodeDoc, node, filename, no ):
 				if bpy.path.abspath(obj_armature.data.fg.xml_file).find( filename ) != -1 and obj_armature.data.fg.xml_file_no == no:
 					from .. import fg2bl 
 					
-					print( "Armature : %s" % obj_armature.name )
+					debug_info( "Armature : %s" % obj_armature.name )
 					ac_file = "" + fg2bl.path.rel_from( obj.data.fg.ac_file, filename  )
 					#ac_file = fg2bl.path.compute_path( obj.data.fg.ac_file, filename  )
 					path = nodeDoc.createElement( 'path' )
