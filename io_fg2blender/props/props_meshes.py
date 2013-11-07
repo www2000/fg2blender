@@ -51,9 +51,9 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 			debug_info( "Test si le group : %s existe ??" % groupName )
 			for group in bpy.data.groups:
 				if group.name == groupName:
-					print( "Existe")
+					debug_info( "Existe")
 					return True
-			print( "N'Existe pas")
+			debug_info( "N'Existe pas")
 			return False
 		#------------------------------------------------------------------------------------------------------------------------------
 		def createGroup( groupName ):

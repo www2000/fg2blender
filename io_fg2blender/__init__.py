@@ -324,7 +324,7 @@ def register():
 		DEBUG			= True
 		debug_info( "File debug OK" )
 
-		debug_fg2bl		     	= False
+		debug_fg2bl		     	= True
 		debug_xml_manager		= False
 		debug_xml_import		= True
 		debug_xml_export		= True
