@@ -516,6 +516,7 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 		global bLock_update
 		from .. import fg2bl
 
+		debug_info( 'update_xml_file bLock_update = %s' % str(bLock_update)  )
 		if bLock_update == True:
 			return None
 		
@@ -523,8 +524,8 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 		if active_object == None:
 			return None
 
-		debug_info( 'update_xml_file "%s"  %s' % (active_object.name, str(bLock_update))  )
-		debug_info( ' value :  %s' % (active_object.data.fg.xml_file)  )
+		debug_info( 'Object name "%s"' % (active_object.name)  )
+		debug_info( ' xml_file value :  %s' % (active_object.data.fg.xml_file)  )
 			
 		bLock_update = True
 
@@ -534,23 +535,23 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 
 		debug_info( ' compute value :  %s' % (xml_file)  )
 
-		if active_object.data.fg.xml_file == xml_file:
-			debug_info("Don't change!!!")
-		else:
-			active_object.data.fg.xml_file = xml_file
+		#if active_object.data.fg.xml_file == xml_file:
+		#	debug_info("Don't change!!!")
+		#else:
+		#	active_object.data.fg.xml_file = xml_file
 		
-			self.creer_xml( xml_file, active_object )
-			no_xml_file = active_object.data.fg.xml_file_no
-			debug_info( 'no xml_file  = %d' % no_xml_file )
-		
-			for obj in context.selected_objects:
-				#if obj.name == active_object.name:
-				#	continue
-				if obj.type != 'ARMATURE':
-					continue
-				debug_info( "\t%s" % obj.name )
-				obj.data.fg.xml_file = "" + xml_file
-				obj.data.fg.xml_file_no = no_xml_file
+		self.creer_xml( xml_file, active_object )
+		no_xml_file = active_object.data.fg.xml_file_no
+		debug_info( 'no xml_file  = %d' % no_xml_file )
+	
+		for obj in context.selected_objects:
+			#if obj.name == active_object.name:
+			#	continue
+			if obj.type != 'ARMATURE':
+				continue
+			debug_info( "\t%s" % obj.name )
+			obj.data.fg.xml_file = "" + xml_file
+			obj.data.fg.xml_file_no = no_xml_file
 			
 		bLock_update = False
 		return None	
