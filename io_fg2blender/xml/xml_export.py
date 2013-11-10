@@ -81,13 +81,14 @@ def find_yFcurve( armature ):
 		search_string = 'location'
 		
 	yFcurve = None
-	for fcurve in armature.animation_data.action.fcurves:
-		debug_info( fcurve.data_path )
-		if fcurve.data_path.find( search_string ) != -1:
-			n = n + 1
-		if n == 2:
-			yFcurve = fcurve
-			break
+	if armature.animation_data:
+		for fcurve in armature.animation_data.action.fcurves:
+			debug_info( fcurve.data_path )
+			if fcurve.data_path.find( search_string ) != -1:
+				n = n + 1
+			if n == 2:
+				yFcurve = fcurve
+				break
 	return yFcurve
 	
 #----------------------------------------------------------------------------------------------------------------------------------
