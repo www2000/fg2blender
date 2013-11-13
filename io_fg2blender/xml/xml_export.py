@@ -81,7 +81,7 @@ def find_yFcurve( armature ):
 		search_string = 'location'
 		
 	yFcurve = None
-	if armature.animation_data:
+	if armature.animation_data and armature.animation_data.action:
 		for fcurve in armature.animation_data.action.fcurves:
 			debug_info( fcurve.data_path )
 			if fcurve.data_path.find( search_string ) != -1:
@@ -162,6 +162,9 @@ def write_animation( context, node, obj ):
 		if armature.data.fg.type_anim == 'translate':
 			search_string = 'location'
 		
+		if not armature.animation_data.action:
+			return False
+			
 		for fcurve in armature.animation_data.action.fcurves:
 			debug_info( fcurve.data_path )
 			if fcurve.data_path.find( search_string ) != -1:

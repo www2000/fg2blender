@@ -1,0 +1,6 @@
+Correction:
+-----------
+	-Gestion des groupes de fichier ac
+	 Il y a création de group lors de l'affectation d'un nom au fichier ac
+	 Verifier lors de copy du fichier
+	 

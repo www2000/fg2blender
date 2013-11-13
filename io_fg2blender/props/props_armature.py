@@ -252,6 +252,7 @@ def update_factor( self, context ):
 			bLock_update = True
 			obj_factor = obj.data.fg.factor
 			property_value = xml_export.build_property_name( obj )
+			'''
 			for o in bpy.data.objects:
 				if o.type != 'ARMATURE' or o == obj:
 					continue
@@ -260,6 +261,7 @@ def update_factor( self, context ):
 					o.data.fg.factor = obj_factor
 					o.data.fg.factor_ini = obj_factor
 					update_keyframe( o, coef )
+			'''
 			bLock_update = False
 #----------------------------------------------------------------------------------------------------------------------------------
 
