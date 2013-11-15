@@ -159,6 +159,9 @@ lang_fr['MEN057'] = 'Restaurer parenté'
 lang_en['MEN058'] = 'Select by file'
 lang_fr['MEN058'] = 'Séléction par fichier'
 
+lang_en['MEN059'] = 'Reset all armatures'
+lang_fr['MEN059'] = 'Raz toutes les armatures'
+
 #----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MEN070'] = 'Along X'
 lang_fr['MEN070'] = 'Axe X'
@@ -451,6 +454,9 @@ lang_fr['DOC056'] = '??'
 
 lang_en['DOC057'] = '??'
 lang_fr['DOC057'] = '??'
+
+lang_en['DOC059'] = 'Set transform to 0 (no destructive operation)'
+lang_fr['DOC059'] = 'Remet à zero toutes les armatures (operation non destructive)'
 
 #----------------------------------------------------------------------------------------------------------------------------------
 

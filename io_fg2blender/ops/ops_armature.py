@@ -711,6 +711,30 @@ class FG_OT_transforme_to_spin(bpy.types.Operator):
 		return {'FINISHED'}
 
 #----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_reset_all_armatures(bpy.types.Operator):
+	'''Transform selected armature(s) as armature type spin'''
+	bl_idname = "view3d.reset_all_armatures"
+	bl_label = ""
+	bl_description = lang['DOC059']
+	bl_options = {'REGISTER', 'UNDO'}
+
+	@classmethod
+	def poll(cls, context):
+		return True
+		#if not context.active_object:
+		#	return False
+		#return context.active_object.type == 'ARMATURE'
+
+	def execute(self, context):
+		for anim in bpy.data.objects:
+			if anim.type != 'ARMATURE':
+				continue
+			anim.pose.bones["Bone" ].rotation_euler.y = 0.0
+			anim.pose.bones["Bone" ].location.y = 0.0
+		return {'FINISHED'}
+
+#----------------------------------------------------------------------------------------------------------------------------------
 #
 #				REGISTER
 #
@@ -728,6 +752,7 @@ def register():
 	bpy.utils.register_class( FG_OT_transforme_to_rotate )
 	bpy.utils.register_class( FG_OT_transforme_to_translate )
 	bpy.utils.register_class( FG_OT_transforme_to_spin )
+	bpy.utils.register_class( FG_OT_reset_all_armatures )
 
 def unregister():
 	bpy.utils.unregister_class( FG_OT_init_rotation_zero)
@@ -741,4 +766,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_transforme_to_rotate )
 	bpy.utils.unregister_class( FG_OT_transforme_to_translate )
 	bpy.utils.unregister_class( FG_OT_transforme_to_spin )
+	bpy.utils.unregister_class( FG_OT_reset_all_armatures )
 

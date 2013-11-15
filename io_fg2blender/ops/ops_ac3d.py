@@ -182,6 +182,10 @@ class FG_OT_save_ac_file(bpy.types.Operator):
 		#-----------------------------------------------------------------------------------------------------
 
 		active_object = bpy.data.objects[self.object_name]
+		#
+		# Reset all armatures for timeline independance
+		# (not destructive)
+		bpy.ops.view3d.reset_all_armatures()
 		
 		group_name = ''		
 		for group in bpy.data.objects[self.object_name].users_group:

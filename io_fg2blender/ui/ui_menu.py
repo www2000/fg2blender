@@ -136,6 +136,8 @@ class VIEW3D_FG_sub_menu_armature(bpy.types.Menu):
 		layout.separator()
 		layout.operator("view3d.save_parent",				text=lang['MEN056']  )	#'Save Parent and Reset' )
 		layout.operator("view3d.restore_parent",			text=lang['MEN057']  )	#'Restore Parent ' )
+		layout.separator()
+		layout.operator("view3d.reset_all_armatures",		text=lang['MEN059']  )	#'Restore Parent ' )
 #----------------------------------------------------------------------------------------------------------------------------------
 
 class VIEW3D_FG_sub_menu_create_rotation(bpy.types.Menu):
