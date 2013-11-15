@@ -252,7 +252,7 @@ class FG_OT_save_keyframe(bpy.types.Operator):
 		
 				value = 0.0
 
-				if armature.animation_data != None:
+				if armature.animation_data and armature.animation_data.action:
 					yFcurve = None
 					n = 0
 					for fcurve in armature.animation_data.action.fcurves:
