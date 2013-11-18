@@ -50,7 +50,7 @@ CG = mathutils.Vector( (0.0,0.0,0.0,0.0) )
 
 path_name = ""
 #DEBUG = False
-DEBUG_VERTICE = False
+DEBUG_VERTICE = True
 
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ def significatif( st ):
 	if new_str == '-':
 		new_str = '0'
 		
-	debug_info( "nombre %s %s   resultat %s" % (entier,mantisse,new_str) )
+	#debug_info( "nombre %s %s   resultat %s" % (entier,mantisse,new_str) )
 	return new_str
 #----------------------------------------------------------------------------------------------------------------------------------
 
@@ -178,10 +178,71 @@ def write_edges( f, mesh ):
 	#writeln_file( f, "kids 0" )
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def write_faces( filename, mesh ):
-	f = open(filename, 'a+')
+def find_index( obj, mesh, idx):
+	n_idx = 0 + idx
+	_max = len(obj.data.vertices)
+	debug_info( "Compare .. %d %d" % (n_idx, _max) )
+	while( n_idx >= _max ):
+		debug_info( "Conversion.." )
+		n_idx = 0 + mesh.loops[n_idx].vertex_index
+	debug_info( "Retour %d" % n_idx )
+	return n_idx
+
+
+
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def compute_material_number( obj ):
+	mesh = obj.data
+	no = 1
+	try:
+		material = mesh.materials[0]
+	except:
+		no = 0
 	
+	# found material use by face
+	if no==1:
+		matName = material.name
+		try:
+			no = list_material.index(matName)
+		except:
+			no = 0
+	return no
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def write_faces2( filename, obj ):
+	f = open(filename, 'a+')
+	me = obj.data
+	uv_layer = me.uv_layers.active.data
+
+	writeln_file( f, "numsurf " + str(len(me.polygons)) )
+
+	for poly in me.polygons:
+		debug_info("Polygon index: %d, length: %d" % (poly.index, poly.loop_total))
+
+		writeln_file( f, "SURF 0x10" )
+		writeln_file( f, "mat %d" % compute_material_number(obj) )
+		writeln_file( f, "refs "+str(poly.loop_total) )
+		# range is used here to show how the polygons reference loops,
+		# for convenience 'poly.loop_indices' can be used instead.
+		for loop_index in range(poly.loop_start, poly.loop_start + poly.loop_total):
+			debug_info("    Vertex: %d" % me.loops[loop_index].vertex_index)
+			debug_info("    UV: %r" % uv_layer[loop_index].uv)
+		    
+			vIdx = me.loops[loop_index].vertex_index
+			uv = (uv_layer[loop_index].uv[0], uv_layer[loop_index].uv[1] )
+			writeln_file( f, "%d %s %s" % ( vIdx, significatif("%0.12f"%uv[0]), significatif("%0.12f"%uv[1]) ) )
+	f.close()
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def write_faces( filename, obj, mesh ):
+	f = open(filename, 'a+')
+	print_mesh( obj )
+	#mesh.calc_tessface()
 	nbFaces = len(mesh.tessfaces)
+	debug_info( 'Mesh name : ' + mesh.name )
 	debug_info( 'Nombre de face "%d"' % nbFaces )
 	# if O face    mesh = edge
 	if nbFaces == 0 :
@@ -207,22 +268,54 @@ def write_faces( filename, mesh ):
 			no = 0
 	
 	j = 0
+
+	debug_info( "Nb MeshLoop %d" % (len(mesh.loops)) )
+	debug_info( "Nb polygons %d" % (len(mesh.polygons)) )
+	debug_info( 'Nb UV "%d"' % len(mesh.uv_layers.active.data) )
+
+	for idxLoop in range(len(mesh.loops)):
+		loop = mesh.loops[idxLoop]
+		IDX = loop.vertex_index
+		str_debug =  ( '\tVertice %d idx %d' % (idxLoop, IDX) )
+		debug_info( str_debug )
+
+
 	# for each face
 	for i in range(nbFaces):
-		face = mesh.tessfaces[i]
+		if len(mesh.materials) != 0:
+			no = mesh.tessfaces[i].material_index
+			matName = mesh.materials[no].name
+			no = list_material.index(matName)
+			debug_info( "Face no %d material %s no %d" % (i,matName,no) )
+			debug_info( 'Indice face "%d"' % i )
+	
 
+		str_debug =  ( '\tLen polygon.loop_start %d ' % (mesh.polygons[i].loop_start) )
+		str_debug =  str_debug + ( '\tloop_total %d ' % (mesh.polygons[i].loop_total) )
+		debug_info( str_debug )
+
+		for idxPolygon in range(mesh.polygons[i].loop_total):
+			NO = mesh.polygons[i].vertices[idxPolygon]
+			IDX = mesh.polygons[i].loop_indices
+			str_debug =  ( '\t\tVertice index %d %s' % (NO, str(IDX)) )
+			debug_info( str_debug )
+
+		face = mesh.tessfaces[i]
 		uv = []
-		
+		DEBUG_VERTICE = False
 		meshUvLoop = mesh.uv_layers.active
 		if meshUvLoop != None:
 			if DEBUG_VERTICE:
-				debug_info( '\tNb points  "%d"' %  len(mesh.tessfaces[i].vertices) )
-				debug_info( '\tIndice  "%d"' % i )
-				debug_info( '\tNb UV "%d"' % len(meshUvLoop.data) )
+				debug_info( '\tNb vertices      "%d"' %  len(mesh.tessfaces[i].vertices) )
+				debug_info( '\tNb vertices_raw  "%d"' %  len(mesh.tessfaces[i].vertices_raw) )
+			k = 0
 			for idx in mesh.tessfaces[i].vertices:
 				if DEBUG_VERTICE:
-					debug_info( '\t\t UV "%s"' % str(meshUvLoop.data[idx].uv) )
-					debug_info( '\tIndice  "%d"' % j )
+					str_debug =  ( '\tPt idx vertices %d vertices_raw %d \tUV Idx  "%d"' % (face.vertices[k],face.vertices_raw[k],j) ) + ( '\t\t "%s"' % str(meshUvLoop.data[idx].uv) )
+					debug_info( str_debug )
+					k += 1;
+					#debug_info( '\tIndice  "%d"' % j )
+					#debug_info( '\t\t UV "%s"' % str(meshUvLoop.data[idx].uv) )
 				uv.append( meshUvLoop.data[j].uv[0] )
 				uv.append( meshUvLoop.data[j].uv[1] )
 				j = j + 1
@@ -232,13 +325,6 @@ def write_faces( filename, mesh ):
 				uv += [0.0]
 				
 
-		if len(mesh.materials) != 0:
-			no = mesh.tessfaces[i].material_index
-			matName = mesh.materials[no].name
-			no = list_material.index(matName)
-			debug_info( "Face no %d material %s no %d" % (i,matName,no) )
-	
-
 
 
 		nbVertices = len(face.vertices)
@@ -247,14 +333,19 @@ def write_faces( filename, mesh ):
 		writeln_file( f, "mat %d" % no)
 		writeln_file( f, "refs "+str(nbVertices) )
 		# write two first vertex
-		writeln_file( f, "%d %s %s" % ( face.vertices[0], significatif("%0.12f"%uv[0]), significatif("%0.12f"%uv[1]) ) )
-		writeln_file( f, "%d %s %s" % ( face.vertices[1], significatif("%0.12f"%uv[2]), significatif("%0.12f"%uv[3]) ) )
+		vIdx = find_index( obj, mesh, face.vertices_raw[0] )
+		writeln_file( f, "%d %s %s" % ( vIdx, significatif("%0.12f"%uv[0]), significatif("%0.12f"%uv[1]) ) )
+		
+		vIdx = find_index( obj, mesh, face.vertices_raw[1] )
+		writeln_file( f, "%d %s %s" % ( vIdx, significatif("%0.12f"%uv[2]), significatif("%0.12f"%uv[3]) ) )
 		# if triangle
 		if nbVertices >= 3:
-			writeln_file( f, "%d %s %s" % ( face.vertices[2], significatif("%0.12f"%uv[4]), significatif("%0.12f"%uv[5]) ) )
+			vIdx = find_index( obj, mesh, face.vertices_raw[2] )
+			writeln_file( f, "%d %s %s" % ( vIdx, significatif("%0.12f"%uv[4]), significatif("%0.12f"%uv[5]) ) )
 		# if quad
 		if nbVertices == 4:
-			writeln_file( f, "%d %s %s" % ( face.vertices[3], significatif("%0.12f"%uv[6]), significatif("%0.12f"%uv[7]) ) )
+			vIdx = find_index( obj, mesh, face.vertices_raw[3] )
+			writeln_file( f, "%d %s %s" % ( vIdx, significatif("%0.12f"%uv[6]), significatif("%0.12f"%uv[7]) ) )
 	
 	#writeln_file( f, "kids 0" )
 	f.close()
@@ -275,12 +366,18 @@ def extrait_translation_matrix( matrix ):
 	return ret
 #----------------------------------------------------------------------------------------------------------------------------------
 
-def write_vertice( filename, obj, mesh ):
+def write_vertice( filename, obj, _mesh ):
 	global parent, CG
 	
 	f = open(filename, 'a+')
 
 	location = obj.location
+	debug_info( '---------------' )
+	debug_info( 'write_vertice' )
+	debug_info( '---------------' )
+	debug_info( obj.name )
+	mesh = obj.data
+	debug_info( mesh.name )
 	
 	nbVertices = len( mesh.vertices )
 	writeln_file( f, "numvert " + str(nbVertices) )
@@ -291,10 +388,13 @@ def write_vertice( filename, obj, mesh ):
 	# and subtract delta_location
 	e = obj.delta_rotation_euler
 	mat_euler = e.to_matrix()
-	debug_info( 'Determinant %02f' % mat_euler.determinant() )
+	debug_info( 'Determinant matrice rotation euler %02f' % mat_euler.determinant() )
 	i_delta = mat_euler.inverted()
 	m_delta = i_delta.to_4x4()
 	l_delta =  obj.delta_location
+	
+	debug_info( '\n%d points' % (len(mesh.vertices)) )
+	i = 0;
 	# for each vertex
 	for v in mesh.vertices:
 		vec3_vert = mathutils.Vector(v.co)
@@ -311,6 +411,8 @@ def write_vertice( filename, obj, mesh ):
 		str_z = significatif("%0.6f" % -vec3_resu.y)
 		# write vertex into ac file
 		writeln_file( f, str_x +' '+ str_y +' '+ str_z )		
+		debug_info( '\t pt  %d  (%0.2f,%0.2f,%0.2f)' % (i, vec3_resu.x, vec3_resu.y, vec3_resu.z) )
+		i += 1
 		
 	f.close()
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -336,8 +438,10 @@ def write_header_mesh( filename, obj, mesh ):
 	f = open(filename, 'a+')
 
 	try:
-		n = mesh.tessfaces[0].material_index
-		tex_name = mesh.materials[n].texture_slots[0].texture.image.filepath
+		#n = mesh.tessfaces[0].material_index
+		n = obj.data.polygons[0].material_index
+		#tex_name = mesh.materials[n].texture_slots[0].texture.image.filepath
+		tex_name = obj.data.materials[n].texture_slots[0].texture.image.filepath
 		if tex_name.find('glass_shader') != -1:
 			tex_name = ""
 	except:
@@ -476,10 +580,15 @@ def recurs_son( filename, context, list_objects, obj ):
 	debug_info( "Ecriture de %s" % obj.name )
 
 	if obj.type == 'MESH':
-		mesh = obj.to_mesh( context.scene, APPLY_MODIFIERS, 'PREVIEW' )
-		write_header_mesh( filename, obj, mesh )
-		write_vertice( filename, obj, mesh )
-		write_faces( filename, mesh )
+		mesh_local = obj.to_mesh( context.scene, APPLY_MODIFIERS, 'PREVIEW' )
+		#write_header_mesh( filename, obj, mesh )
+		#write_faces( filename, mesh )
+		#write_vertice( filename, obj, mesh )
+		
+		write_header_mesh( filename, obj, obj.data )
+		write_vertice( filename, obj, obj.data )
+		#write_faces( filename, obj, mesh_local )
+		write_faces2( filename, obj )
 	elif obj.type == 'EMPTY':
 		writeln_some_data( filename, "OBJECT group" )
 		writeln_some_data( filename, 'name "' + obj.name + '"' )
