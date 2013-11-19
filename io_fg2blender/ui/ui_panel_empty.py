@@ -77,7 +77,10 @@ def layout_empty(self, obj, context):
 		row.operator( "object.file_select_jsb", icon='FILESEL' )
 	
 	row = box.row()
-	row.operator( "view3d.write_jsb" ).obj_name=obj.name
+	if obj.name in ['GUN0','GUN1','GUN2','GUN3','GUN4','GUN5','GUN6','GUN7','GUN8','GUN9']:
+		row.operator( "view3d.write_armement" ).obj_name=obj.name
+	else:
+		row.operator( "view3d.write_jsb" ).obj_name=obj.name
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #

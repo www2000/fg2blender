@@ -257,13 +257,14 @@ def append_propulsion( node_doc, obj ):
 					z = node.getElementsByTagName( 'z' )[0].childNodes[0]
 					z.nodeValue = '%0.4f' % (obj.location.z-CG.z)
 					#debug_info( node.toxml() )
+		
 #----------------------------------------------------------------------------------------------------------------------------------
 		
 def write_jsbsim( context, filename  ):
 	from . import xml_manager
 	from . import xml_import
 	global CG
-	
+
 	CG = Vector( (0.0,0.0,0.0) )
 	#search CG point
 	for obj in bpy.data.objects:
@@ -272,15 +273,19 @@ def write_jsbsim( context, filename  ):
 		if obj.fg.jsb_attr != 'CG':
 			continue
 		CG = obj.location
- 	
- 	
+
+
+	debug_info( "Save : " + filename )
 	template = xml_manager.addon_path + os.sep + 'io_fg2blender' + os.sep + 'templates' + os.sep + 'jsbsim_template.xml'
 	debug_info( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % template )
-
-	doc = xml_import.charge_xml( template )
+	if os.path.isfile(filename):
+		debug_info( "File exist : " + filename )
+		doc = xml_import.charge_xml( filename )
+	else:
+		doc = xml_import.charge_xml( template )
 
 	for obj in bpy.data.objects:
-		if obj.type == 'EMPTY':
+		if obj.type == 'EMPTY' and filename.find(bpy.path.abspath(obj.fg.jsb_xml_file )) != -1 and obj.fg.jsb_xml_file != "" :
 			if obj.fg.jsb_attr == 'CG':
 				debug_info( '--- Tranformation cg' )
 				append_cg( doc, obj )
@@ -331,4 +336,16 @@ def write_jsbsim( context, filename  ):
 	bpy.data.texts[basename].filepath = filename
 	bpy.data.texts[basename].write( doc.toxml() )
 
-	
+	#
+	# write to disk
+	#
+
+	f = open(filename, 'w')
+	for line in bpy.data.texts[basename].lines:
+		debug_info( line.body )
+		f.write( line.body )
+		f.write( '\n' )
+	f.close()
+
+
+

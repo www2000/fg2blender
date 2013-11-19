@@ -296,6 +296,35 @@ class FG_OT_write_jsb(bpy.types.Operator):
 		return {'FINISHED'}
 
 #----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_write_armement(bpy.types.Operator):
+	'''Save XML file (create it automatically if doesn\'t exist)'''
+	bl_idname = "view3d.write_armement"
+	bl_label = lang['UI002']
+	bl_description = lang['DOC008']
+	
+	#filename = bpy.props.StringProperty()
+	obj_name = bpy.props.StringProperty()
+	#objet = None
+	
+	#---------------------------------------------------------------------------
+	def execute( self, context ):
+		if self.filename != "":
+			debug_info( self.filename )
+			self.charge_xml( self.filename )
+		return {'FINISHED'}
+
+	#---------------------------------------------------------------------------
+
+	def invoke(self, context, event):
+		filename = bpy.data.objects[self.obj_name].fg.jsb_xml_file 
+		filename = bpy.path.abspath( filename )
+		debug_info( 'Save JSBsim "%s"' % filename )
+		from ..xml import xml_armement
+		xml_armement.write_armement( context, filename )
+		return {'FINISHED'}
+
+#----------------------------------------------------------------------------------------------------------------------------------
 #
 #				REGISTER
 #
@@ -307,6 +336,7 @@ def register():
 	bpy.utils.register_class( FG_OT_select_file_jsb )
 	bpy.utils.register_class( FG_OT_write_xml )
 	bpy.utils.register_class( FG_OT_write_jsb )
+	bpy.utils.register_class( FG_OT_write_armement )
 	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_copy_xml_file)
@@ -314,4 +344,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_select_file_jsb )
 	bpy.utils.unregister_class( FG_OT_write_xml )
 	bpy.utils.unregister_class( FG_OT_write_jsb )
+	bpy.utils.unregister_class( FG_OT_write_armement )
 

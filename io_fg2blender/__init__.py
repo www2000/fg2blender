@@ -74,6 +74,7 @@ debug_xml_import		= False
 debug_xml_export		= False
 debug_xml_camera		= False
 debug_xml_jsbsim		= False
+debug_xml_armement		= False
 debug_xml_anim			= False
 debug_ac3d_import		= False
 debug_ac3d_export		= False
@@ -306,6 +307,7 @@ def register():
 		global	debug_xml_export
 		global	debug_xml_camera
 		global	debug_xml_jsbsim
+		global	debug_xml_armement
 		global	debug_xml_anim
 		global	debug_ac3d_import
 		global	debug_ac3d_export
@@ -326,19 +328,20 @@ def register():
 
 		debug_fg2bl		     	= True
 		debug_xml_manager		= False
-		debug_xml_import		= True
-		debug_xml_export		= True
+		debug_xml_import		= False
+		debug_xml_export		= False
 		debug_xml_camera		= False
 		debug_xml_jsbsim		= False
+		debug_xml_armement		= True
 		debug_xml_anim			= False
 		debug_ac3d_import		= False
 		debug_ac3d_export		= False
-		debug_props_armature	= True
+		debug_props_armature	= False
 		debug_ops_unwrap		= False
-		debug_ops_flightgear	= True
+		debug_ops_flightgear	= False
 		debug_ops_ac3d			= False
 		debug_ops_tools			= False
-		debug_ops_xml			= False
+		debug_ops_xml			= True
 		debug_ops_armature		= False
 	
 def unregister():

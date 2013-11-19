@@ -42,7 +42,17 @@ jsb_items = 	[
 		('NOSE_CONTACT',	'NOSE_CONTACT', ''),
 		('RIGHT_CONTACT',	'RIGHT_CONTACT', ''),
 		('LEFT_CONTACT',	'LEFT_CONTACT', ''),
-		('TAIL_CONTACT',	'TAIL_CONTACT', '')
+		('TAIL_CONTACT',	'TAIL_CONTACT', ''),
+		('GUN0',	'GUN0', ''),
+		('GUN1',	'GUN1', ''),
+		('GUN2',	'GUN2', ''),
+		('GUN3',	'GUN3', ''),
+		('GUN4',	'GUN4', ''),
+		('GUN5',	'GUN5', ''),
+		('GUN6',	'GUN6', ''),
+		('GUN7',	'GUN7', ''),
+		('GUN8',	'GUN8', ''),
+		('GUN9',	'GUN9', '')
 		]
 			
 bLock_update = False
