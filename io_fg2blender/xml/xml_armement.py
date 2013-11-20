@@ -134,6 +134,7 @@ def write_armement( context, filename  ):
 	debug_info( "Save : " + filename )
 	template = xml_manager.addon_path + os.sep + 'io_fg2blender' + os.sep + 'templates' + os.sep + 'armement_template.xml'
 	debug_info( 'xml_export.write_JSBSIM() Recherche xml_file "%s"' % template )
+
 	if os.path.isfile(filename):
 		debug_info( "File exist : " + filename )
 		doc = xml_import.charge_xml( filename )
@@ -167,20 +168,13 @@ def write_armement( context, filename  ):
 		bpy.data.texts.new( basename )
 
 
+	#
+	# write in script window of blender
+	#
 	bpy.data.texts[basename].use_tabs_as_spaces = True
 	bpy.data.texts[basename].filepath = filename
 	bpy.data.texts[basename].write( doc.toprettyxml() )
 	#node.toprettyxml()
 
-	#
-	# write to disk
-	#
-
-	f = open(filename, 'w')
-	for line in bpy.data.texts[basename].lines:
-		debug_info( line.body )
-		f.write( line.body )
-		f.write( '\n' )
-	f.close()
 
 	

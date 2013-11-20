@@ -51,15 +51,50 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 			debug_info( "Test si le group : %s existe ??" % groupName )
 			for group in bpy.data.groups:
 				if group.name == groupName:
-					debug_info( "Existe")
+					debug_info( "\texiste")
 					return True
-			debug_info( "N'Existe pas")
+			debug_info( "\tn'existe pas")
 			return False
 		#------------------------------------------------------------------------------------------------------------------------------
+		def findGroup( obj ):
+			debug_info( "Recherche de  group de %s" % (obj.name) )
+			for group in bpy.data.groups:
+				debug_info( "\tRecherche dans le  group de %s" % (group.name) )
+				for obj_link in group.objects:
+					if obj.name.find(obj_link.name) != -1:
+						debug_info( "\tgroup de %s" % (group.name) )
+						return group
+			debug_info( "\tpas de group %s" % ("None") )
+			return None
+			
+		#------------------------------------------------------------------------------------------------------------------------------
 		def createGroup( groupName ):
-			groupName = os.path.basename(groupName)
-			bpy.ops.group.create( name = groupName )
-			debug_info( "Creation du group : %s" % groupName )
+			if groupName != "":
+				groupName = os.path.basename(groupName)
+				bpy.ops.group.create( name = groupName )
+				debug_info( "Creation du group : %s" % groupName )
+			
+		#------------------------------------------------------------------------------------------------------------------------------
+		def unlinkGroup( obj ):
+			for group in bpy.data.groups:
+				debug_info( "\tRecherche dans le  group de %s" % (group.name) )
+				for obj_link in group.objects:
+					if obj.name == obj_link.name:
+						debug_info( "Unlink group de %s : group=%s" % (obj.name,group.name) )
+						group.objects.unlink(obj)
+
+		#------------------------------------------------------------------------------------------------------------------------------
+		def linkGroup( obj, groupName ):
+			debug_info( 'Link group de "%s" : group="%s"' % (obj.name,groupName) )
+			if groupName != "":
+				group = bpy.data.groups[groupName]
+				if group:
+					debug_info( "exec group=%s" % (group.name) )
+					try:
+						group.objects.link(obj)
+					except:
+						pass
+			
 		#------------------------------------------------------------------------------------------------------------------------------
 		from .. import fg2bl
 		from . import props_armature
@@ -79,11 +114,14 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 
 		ac_file = "" + active_object.data.fg.ac_file
 		ac_file = bpy.path.abspath( ac_file )
+		groupName = bpy.path.basename( ac_file )
 		ac_file = fg2bl.path.compute_path( ac_file )
 		
+		unlinkGroup( active_object )
 		if not isGroupExist(ac_file):
 			createGroup(ac_file)
-		
+		linkGroup( active_object, groupName )
+
 		active_object.data.fg.ac_file = ac_file
 		
 		for obj in context.selected_objects:
@@ -93,6 +131,8 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 				continue
 			debug_info( "\t%s" % obj.name )
 			obj.data.fg.ac_file = "" + ac_file
+			unlinkGroup( obj )
+			linkGroup( obj, groupName )
 			
 		props_armature.bLock_update = False
 		return None	

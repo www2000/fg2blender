@@ -435,6 +435,7 @@ def extrait_crease( obj, mesh ):
 def write_header_mesh( filename, obj, mesh ):
 	global path_name
 	global CG
+	
 	f = open(filename, 'a+')
 
 	try:
@@ -445,7 +446,7 @@ def write_header_mesh( filename, obj, mesh ):
 		if tex_name.find('glass_shader') != -1:
 			tex_name = ""
 	except:
-		debug_info( '****** Error: Unload Texture name ********' )
+		print( 'Error: Unload texture name for "%s"' % obj.name )
 		tex_name = ''
 		pass
 
@@ -647,17 +648,15 @@ def write_ac_file( context, filename, object_list, select_only, tex_path, apply_
 	CG = mathutils.Vector( (0.0,0.0,0.0) )
 	#search CG point
 	for obj in bpy.data.objects:
-		if obj.type != 'EMPTY':
-			continue
-		if obj.fg.jsb_attr != 'CG':
-			continue
-		CG = obj.location
+		if obj.type == 'EMPTY' and obj.fg.jsb_attr == 'CG':
+			CG = obj.location
+
+	debug_info( 'Gravity center "%s"' % str(CG) )
 	
 	for obj in list_objects_sort:
 		debug_info( "Object : %s" % obj.name )
 		if test_son(list_objects, obj, 'world' ):
 			recurs_son( filename, context, list_objects, obj )
 	
-	debug_info( 'Gravity center "%s"' % str(CG) )
 	return
 

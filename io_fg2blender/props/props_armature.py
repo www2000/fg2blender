@@ -494,8 +494,8 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 		from ..xml import xml_manager
 		new_filename = ""
 		new_no = 0
-		for xml_file, no in xml_manager.xml_files:
-			if xml_file.name == filename:
+		for xml_filename, no in xml_manager.xml_files:
+			if xml_filename == filename:
 				new_filename = filename
 				new_no		 = no
 				break;

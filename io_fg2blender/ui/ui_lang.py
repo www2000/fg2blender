@@ -50,6 +50,9 @@ lang_fr['ERR005'] = 'Les armatures sont déjà gelées'
 lang_en['ERR006'] = "Can't found keyframes"
 lang_fr['ERR006'] = 'Aucune keyframe trouvée'
 
+lang_en['ERR007'] = 'Mesh without ac file assignement'
+lang_fr['ERR007'] = 'Mesh sans assignation de fichier AC3D'
+
 #----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MENTIT'] = 'Flightgear Tools Menu'
 lang_fr['MENTIT'] = 'Flightgear boîte à outils'

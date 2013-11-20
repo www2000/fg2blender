@@ -319,9 +319,70 @@ class FG_OT_write_armement(bpy.types.Operator):
 	def invoke(self, context, event):
 		filename = bpy.data.objects[self.obj_name].fg.jsb_xml_file 
 		filename = bpy.path.abspath( filename )
+		script_name = os.path.basename( filename )
+
 		debug_info( 'Save JSBsim "%s"' % filename )
+		#
+		# write to blender window script
+		#
 		from ..xml import xml_armement
 		xml_armement.write_armement( context, filename )
+		#
+		# write to disc
+		#
+		from ..props import props_armature
+
+		f = open(filename, 'w')
+		for line in bpy.data.texts[script_name].lines:
+			debug_info( line.body )
+			f.write( line.body )
+			f.write( props_armature.endline() + '\n' )
+		f.close()
+		return {'FINISHED'}
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class FG_OT_write_camera(bpy.types.Operator):
+	'''Save XML file (create it automatically if doesn\'t exist)'''
+	bl_idname = "view3d.write_camera"
+	bl_label = lang['UI002']
+	bl_description = lang['DOC008']
+	
+	#filename = bpy.props.StringProperty()
+	obj_name = bpy.props.StringProperty()
+	#objet = None
+	
+	#---------------------------------------------------------------------------
+	def execute( self, context ):
+		if self.filename != "":
+			debug_info( self.filename )
+			self.charge_xml( self.filename )
+		return {'FINISHED'}
+
+	#---------------------------------------------------------------------------
+
+	def invoke(self, context, event):
+		filename = bpy.data.objects[self.obj_name].data.fg.xml_file 
+		filename = bpy.path.abspath( filename )
+		script_name = os.path.basename( filename )
+
+		debug_info( 'Write Camera "%s"' % filename )
+		#
+		# write to blender window script
+		#
+		from ..xml import xml_camera
+		xml_camera.write_camera( context, filename )
+		#
+		# write to disc
+		#
+		from ..props import props_armature
+
+		f = open(filename, 'w')
+		for line in bpy.data.texts[script_name].lines:
+			debug_info( line.body )
+			f.write( line.body )
+			f.write( props_armature.endline() + '\n' )
+		f.close()
+
 		return {'FINISHED'}
 
 #----------------------------------------------------------------------------------------------------------------------------------
@@ -337,6 +398,7 @@ def register():
 	bpy.utils.register_class( FG_OT_write_xml )
 	bpy.utils.register_class( FG_OT_write_jsb )
 	bpy.utils.register_class( FG_OT_write_armement )
+	bpy.utils.register_class( FG_OT_write_camera )
 	
 def unregister():
 	bpy.utils.unregister_class( FG_OT_copy_xml_file)
@@ -344,5 +406,5 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_select_file_jsb )
 	bpy.utils.unregister_class( FG_OT_write_xml )
 	bpy.utils.unregister_class( FG_OT_write_jsb )
-	bpy.utils.unregister_class( FG_OT_write_armement )
+	bpy.utils.unregister_class( FG_OT_write_camera )
 

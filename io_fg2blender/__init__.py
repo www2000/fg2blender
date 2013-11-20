@@ -72,7 +72,7 @@ debug_file_debug		= False
 debug_xml_manager		= False
 debug_xml_import		= False
 debug_xml_export		= False
-debug_xml_camera		= False
+debug_xml_camera		= True
 debug_xml_jsbsim		= False
 debug_xml_armement		= False
 debug_xml_anim			= False
@@ -321,6 +321,7 @@ def register():
 		global	debug_ops_xml
 		global	debug_ops_armature
 		global  debug_props_armature
+		global  debug_props_meshes
 		
 		debug_file_debug	= True
 		DEBUG			= True
@@ -330,13 +331,14 @@ def register():
 		debug_xml_manager		= False
 		debug_xml_import		= False
 		debug_xml_export		= False
-		debug_xml_camera		= False
+		debug_xml_camera		= True
 		debug_xml_jsbsim		= False
 		debug_xml_armement		= True
 		debug_xml_anim			= False
 		debug_ac3d_import		= False
 		debug_ac3d_export		= False
 		debug_props_armature	= False
+		debug_props_meshes		= True
 		debug_ops_unwrap		= False
 		debug_ops_flightgear	= False
 		debug_ops_ac3d			= False

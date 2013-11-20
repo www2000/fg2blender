@@ -76,7 +76,7 @@ def layout_camera(self, obj, context):
 		row.operator( "object.file_select_xml", icon='FILESEL' )
 	
 	row = box.row()
-	row.operator( "view3d.write_xml" ).obj_name=obj.name
+	row.operator( "view3d.write_camera" ).obj_name=obj.name
 
 #----------------------------------------------------------------------------------------------------------------------------------
 #

@@ -40,6 +40,7 @@ from mathutils import Vector
 from mathutils import Euler
 from mathutils import Matrix
 
+from ..ui.ui_lang import lang
 #from . import *
 #from .__init__ import debug_xml_export as DEBUG
 
@@ -576,6 +577,9 @@ def append_path( nodeDoc, node, filename, no ):
 					from .. import fg2bl 
 					
 					debug_info( "Armature : %s" % obj_armature.name )
+					if obj.data.fg.ac_file == "":
+						bpy.ops.view3d.popup('INVOKE_DEFAULT', message="ERR007")
+						return
 					ac_file = "" + fg2bl.path.rel_from( obj.data.fg.ac_file, filename  )
 					#ac_file = fg2bl.path.compute_path( obj.data.fg.ac_file, filename  )
 					path = nodeDoc.createElement( 'path' )
