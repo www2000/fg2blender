@@ -158,17 +158,18 @@ def read_face( fi, local_mesh):
 		#if nb != 2:
 		#	if nb<5:
 		#		local_mesh.uv.append( [ float(idx[1]), float(idx[2]) ]  )
-		u = float(idx[1])
-		v = float(idx[2])
+		if len(idx) >1:
+			u = float(idx[1])
+			v = float(idx[2])
 		
-		debug_info( "Avant u,v   %0.4f,%0.4f" % (u,v) )
-		u = u * local_mesh.texrep[0] + (local_mesh.texoff[0])
-		v = v * local_mesh.texrep[1] + (local_mesh.texoff[1])
-		if local_mesh.bDDS:
-			uv.append( [ u, -(v-0.5) +0.5]  )
-		else:
-			uv.append( [ u, v ]  )
-		debug_info( "Apres u,v   %0.4f,%0.4f" % (u,v) )
+			debug_info( "Avant u,v   %0.4f,%0.4f" % (u,v) )
+			u = u * local_mesh.texrep[0] + (local_mesh.texoff[0])
+			v = v * local_mesh.texrep[1] + (local_mesh.texoff[1])
+			if local_mesh.bDDS:
+				uv.append( [ u, -(v-0.5) +0.5]  )
+			else:
+				uv.append( [ u, v ]  )
+			debug_info( "Apres u,v   %0.4f,%0.4f" % (u,v) )
 
 	# for quads	
 	if nb == 4:
@@ -176,14 +177,16 @@ def read_face( fi, local_mesh):
 		new_edge = [ (f[0],f[1]) , (f[1],f[2]) , (f[2],f[3]) , (f[3],f[0])  ]
 		local_mesh.add_faces( new_face )
 		local_mesh.add_edges( new_edge )
-		local_mesh.uv.append( (uv[0],uv[1],uv[2],uv[3]) )
+		if len(idx) >1:
+			local_mesh.uv.append( (uv[0],uv[1],uv[2],uv[3]) )
 	# for triangles
 	if nb == 3:
 		new_face = [ (f[0], f[1], f[2]) ]
 		new_edge = [ (f[0],f[1]) , (f[1],f[2]) , (f[2],f[0]) ]
 		local_mesh.add_faces( new_face )
 		local_mesh.add_edges( new_edge )
-		local_mesh.uv.append( (uv[0],uv[1],uv[2]) )
+		if len(idx) >1:
+			local_mesh.uv.append( (uv[0],uv[1],uv[2]) )
 	#for edge only    ignore
 	'''
 	if nb == 2:
@@ -203,7 +206,9 @@ def read_face( fi, local_mesh):
 			local_mesh.add_edges( new_edge )
 		
 		for i in range(nb-2):
-			local_mesh.uv.append( (uv[0],uv[i+1],uv[i+2]) )
+			if len(idx) >1:
+				local_mesh.uv.append( (uv[0],uv[i+1],uv[i+2]) )
+
 	debug_info( "Longeur uv %d " % len(local_mesh.uv) )
 	debug_info( "Nb face  %d " % len(local_mesh.faces) )
 	debug_info( "Nb uv    %d " % len(local_mesh.uv) )

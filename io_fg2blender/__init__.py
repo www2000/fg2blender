@@ -336,7 +336,7 @@ def register():
 		debug_xml_armement		= False
 		debug_xml_anim			= False
 		debug_ac3d_import		= False
-		debug_ac3d_export		= False
+		debug_ac3d_export		= True
 		debug_props_armature	= False
 		debug_props_meshes		= False
 		debug_ops_unwrap		= False

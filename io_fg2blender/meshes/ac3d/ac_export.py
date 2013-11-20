@@ -145,6 +145,8 @@ def significatif( st ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def write_edges( f, mesh ):
+	global 	list_material
+	
 	nbEdges = len(mesh.edges)
 	writeln_file( f, "numsurf " + str(nbEdges) )
 
@@ -194,10 +196,32 @@ def find_index( obj, mesh, idx):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def compute_material_number( obj ):
+	global 	list_material
+
 	mesh = obj.data
 	no = 1
 	try:
 		material = mesh.materials[0]
+	except:
+		no = 0
+	
+	# found material use by face
+	if no==1:
+		matName = material.name
+		try:
+			no = list_material.index(matName)
+		except:
+			no = 0
+	return no
+
+#----------------------------------------------------------------------------------------------------------------------------------
+
+def compute_material_number_by_name( name ):
+	global 	list_material
+
+	no = 1
+	try:
+		material = bpy.data.materials[name]
 	except:
 		no = 0
 	
@@ -223,9 +247,11 @@ def write_faces2( filename, obj ):
 
 	for poly in me.polygons:
 		debug_info("Polygon index: %d, length: %d" % (poly.index, poly.loop_total))
+		debug_info(" material index: %d" % (poly.material_index) )
 
+		matName = me.materials[poly.material_index].name
 		writeln_file( f, "SURF 0x10" )
-		writeln_file( f, "mat %d" % compute_material_number(obj) )
+		writeln_file( f, "mat %d" % compute_material_number_by_name(matName) )
 		writeln_file( f, "refs "+str(poly.loop_total) )
 		# range is used here to show how the polygons reference loops,
 		# for convenience 'poly.loop_indices' can be used instead.
@@ -243,6 +269,8 @@ def write_faces2( filename, obj ):
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def write_faces( filename, obj, mesh ):
+	global 	list_material
+
 	f = open(filename, 'a+')
 	print_mesh( obj )
 	#mesh.calc_tessface()
@@ -498,6 +526,7 @@ def write_material( filename, sel_obj ):
 	f = open(filename, 'a+')
 	
 	
+	debug_info( 'Write material' )
 	for obj in sel_obj:
 		if obj.type != 'MESH':
 			continue
@@ -546,6 +575,10 @@ def write_material( filename, sel_obj ):
 				write_file( f, " trans %s" % significatif("%0.6f" % (1.0-value)) )
 	
 				writeln_file( f, "" )
+
+	for mat in list_material:
+		debug_info( 'Write material "%s"' % mat )
+
 	f.close()
 #----------------------------------------------------------------------------------------------------------------------------------
 
