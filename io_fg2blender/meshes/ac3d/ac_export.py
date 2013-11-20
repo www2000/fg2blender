@@ -215,7 +215,9 @@ def compute_material_number( obj ):
 def write_faces2( filename, obj ):
 	f = open(filename, 'a+')
 	me = obj.data
-	uv_layer = me.uv_layers.active.data
+	uv_layer = None
+	if me.uv_layers:
+		uv_layer = me.uv_layers.active.data
 
 	writeln_file( f, "numsurf " + str(len(me.polygons)) )
 
@@ -229,11 +231,14 @@ def write_faces2( filename, obj ):
 		# for convenience 'poly.loop_indices' can be used instead.
 		for loop_index in range(poly.loop_start, poly.loop_start + poly.loop_total):
 			debug_info("    Vertex: %d" % me.loops[loop_index].vertex_index)
-			debug_info("    UV: %r" % uv_layer[loop_index].uv)
-		    
 			vIdx = me.loops[loop_index].vertex_index
-			uv = (uv_layer[loop_index].uv[0], uv_layer[loop_index].uv[1] )
-			writeln_file( f, "%d %s %s" % ( vIdx, significatif("%0.12f"%uv[0]), significatif("%0.12f"%uv[1]) ) )
+			if uv_layer:
+				debug_info("    UV: %r" % uv_layer[loop_index].uv)
+				
+				uv = (uv_layer[loop_index].uv[0], uv_layer[loop_index].uv[1] )
+				writeln_file( f, "%d %s %s" % ( vIdx, significatif("%0.12f"%uv[0]), significatif("%0.12f"%uv[1]) ) )
+			else:
+				writeln_file( f, "%d" % ( vIdx ) )
 	f.close()
 #----------------------------------------------------------------------------------------------------------------------------------
 

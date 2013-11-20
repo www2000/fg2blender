@@ -55,18 +55,7 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 					return True
 			debug_info( "\tn'existe pas")
 			return False
-		#------------------------------------------------------------------------------------------------------------------------------
-		def findGroup( obj ):
-			debug_info( "Recherche de  group de %s" % (obj.name) )
-			for group in bpy.data.groups:
-				debug_info( "\tRecherche dans le  group de %s" % (group.name) )
-				for obj_link in group.objects:
-					if obj.name.find(obj_link.name) != -1:
-						debug_info( "\tgroup de %s" % (group.name) )
-						return group
-			debug_info( "\tpas de group %s" % ("None") )
-			return None
-			
+
 		#------------------------------------------------------------------------------------------------------------------------------
 		def createGroup( groupName ):
 			if groupName != "":
