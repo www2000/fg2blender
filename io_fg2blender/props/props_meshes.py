@@ -91,6 +91,8 @@ class FG_PROP_mesh(bpy.types.PropertyGroup):
 		if props_armature.bLock_update == True:
 			return None
 
+		# because when you save the .blend file 
+		# path of xml_file can change whithout selection
 		active_object = context.active_object
 		if active_object  == None:
 			return None

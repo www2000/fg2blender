@@ -36,6 +36,9 @@ camera_items = 	[
 		('EXTRA_VIEW',		'EXTRA_VIEW', ''),
 		('COCKPIT_VIEW',	'COCKPIT_VIEW', '')
 		]	
+		
+bLock_update = False
+
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def debug_info( aff ):
@@ -68,6 +71,11 @@ class FG_PROP_camera(bpy.types.PropertyGroup):
 			return None
 
 		obj = context.active_object
+		# because when you save the .blend file 
+		# path of xml_file can change whithout selection
+		if obj == None or obj.type != 'CAMERA':
+			return None
+
 		debug_info( 'update_xml_file "%s"  %s' % (obj.name, str(props_armature.bLock_update))  )
 		if bLock_update == True:
 			return None

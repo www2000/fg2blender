@@ -252,7 +252,7 @@ class PATH:
 					obj.data.fg.xml_file = pathfile
 		#----------------------------------------------------------------------------------------------------------------------------
 		def change_empty( obj ):
-			print( obj.fg.jsb_xml_file )
+			print( "change_empty " + obj.name + " " + obj.fg.jsb_xml_file )
 			#return
 			if obj:
 				pathfile = change_to_abs( obj.fg.jsb_xml_file )

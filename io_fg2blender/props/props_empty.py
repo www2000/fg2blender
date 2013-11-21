@@ -78,19 +78,27 @@ class FG_PROP_empty(bpy.types.PropertyGroup):
 	#----------------------------------------------------------------------------------------------------------------------------------
 
 	def update_xml_file( self, context ):
+		global bLock_update
 		from . import props_armature
 
-		if props_armature.bLock_update == True:
+		if bLock_update == True:
 			return None
 
 		obj = context.active_object
-		debug_info( 'update_xml_file "%s"  %s' % (obj.name, str(props_armature.bLock_update))  )
+		# because when you save the .blend file 
+		# path of xml_file can change whithout selection
+		if obj == None:
+			return None
+
+		debug_info( 'update_xml_file "%s"  %s' % (obj.name, str(bLock_update))  )
 			
-		props_armature.bLock_update = True
+		bLock_update = True
 
 		active_object = context.active_object
+		#print( 'bpy.data.object["%s"].fg.jsb_xml_file = "%s"' %(active_object.name, active_object.fg.jsb_xml_file) )
 		xml_file = "" + active_object.fg.jsb_xml_file
-		xml_file = bpy.path.relpath( xml_file )
+		if xml_file != "":
+			xml_file = bpy.path.relpath( xml_file )
 		active_object.fg.jsb_xml_file = xml_file
 		for obj in context.selected_objects:
 			if obj.name == active_object.name:
@@ -100,7 +108,7 @@ class FG_PROP_empty(bpy.types.PropertyGroup):
 			debug_info( "\t%s" % obj.name )
 			obj.fg.jsb_xml_file = "" + xml_file
 			
-		props_armature.bLock_update = False
+		bLock_update = False
 		return None	
 	#----------------------------------------------------------------------------------------------------------------------------------
 

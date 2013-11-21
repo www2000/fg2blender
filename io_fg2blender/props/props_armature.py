@@ -245,7 +245,7 @@ def update_factor( self, context ):
 			if obj.data.fg.factor_ini == 0.0:
 				obj.data.fg.factor_ini = obj.data.fg.factor
 			coef = obj.data.fg.factor  / obj.data.fg.factor_ini
-			update_keyframe( obj, coef )
+			#update_keyframe( obj, coef )
 			obj.data.fg.factor_ini = obj.data.fg.factor
 
 			
@@ -523,7 +523,9 @@ class FG_PROP_armature(bpy.types.PropertyGroup):
 			return None
 		
 		active_object = context.active_object
-		if active_object == None:
+		# because when you save the .blend file 
+		# path of xml_file can change whithout selection
+		if active_object == None or active_object.type != 'ARMATURE':
 			return None
 
 		debug_info( 'Object name "%s"' % (active_object.name)  )

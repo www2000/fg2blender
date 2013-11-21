@@ -518,8 +518,8 @@ def write_animation( context, node, obj ):
 	append_property( animation, obj )
 	#--- Factor ------------
 	value = '%0.6f' % obj.data.fg.factor
-	if t == 'spin':
-		value = '1.0'
+	#if t == 'spin':
+	#	value = '1.0'
 	factor = create_node_value( 'factor', value )
 	animation.appendChild( factor )
 	#--- Center ------------

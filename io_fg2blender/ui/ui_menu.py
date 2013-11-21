@@ -68,8 +68,10 @@ class VIEW3D_FG_root_menu(bpy.types.Menu):
 		layout.operator_context = 'INVOKE_REGION_WIN'
 
 		layout.separator()
-		layout.operator("view3d.insert_keyframe_rotate",	text=lang['MEN000'] )
-		layout.operator("view3d.insert_keyframe_translate",	text=lang['MEN001'] )
+		layout.operator("view3d.insert_keyframe_rotate",		text=lang['MEN000'] )
+		layout.operator("view3d.insert_keyframe_rotate_at",		text=lang['MEN060'] )
+		layout.operator("view3d.insert_keyframe_translate",		text=lang['MEN001'] )
+		layout.operator("view3d.insert_keyframe_translate_at",	text=lang['MEN061'] )
 		layout.separator()
 		layout.operator("import.fg2blender",			text=lang['MEN002'] )
 		layout.separator()

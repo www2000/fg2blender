@@ -53,6 +53,9 @@ lang_fr['ERR006'] = 'Aucune keyframe trouvée'
 lang_en['ERR007'] = 'Mesh without ac file assignement'
 lang_fr['ERR007'] = 'Mesh sans assignation de fichier AC3D'
 
+lang_en['ERR008'] = 'Invalide keyframe'
+lang_fr['ERR008'] = 'Keyframe invalide'
+
 #----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MENTIT'] = 'Flightgear Tools Menu'
 lang_fr['MENTIT'] = 'Flightgear boîte à outils'
@@ -164,6 +167,12 @@ lang_fr['MEN058'] = 'Séléction par fichier'
 
 lang_en['MEN059'] = 'Reset all armatures'
 lang_fr['MEN059'] = 'Raz toutes les armatures'
+
+lang_en['MEN060'] = 'Insert Keyframe Rotate AT'
+lang_fr['MEN060'] = 'Insérer une keyframe de rotation à'
+
+lang_en['MEN061'] = 'Insert Keyframe Translate AT'
+lang_fr['MEN061'] = 'Insérer une keyframe de translation à'
 
 #----------------------------------------------------------------------------------------------------------------------------------
 lang_en['MEN070'] = 'Along X'
@@ -287,6 +296,12 @@ lang_fr['UI029'] = '??'
 
 lang_en['UI030'] = '??'
 lang_fr['UI030'] = '??'
+
+lang_en['UI031'] = 'Insert keyframe between [%0.2f,%0.2f]'
+lang_fr['UI031'] = 'Insérer keyframe entre [%0.2f,%0.2f]'
+
+lang_en['UI032'] = 'Insert keyframe between [%0.2f,%0.2f]'
+lang_fr['UI032'] = 'Insérer keyframe entre [%0.2f,%0.2f]'
 
 #----------------------------------------------------------------------------------------------------------------------------------
 
