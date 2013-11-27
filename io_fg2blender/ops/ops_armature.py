@@ -533,6 +533,8 @@ class FG_OT_init_rotation(bpy.types.Operator):
 	def poll(cls, context):
 		if context.active_object == None:
 			return False
+		if context.mode != 'POSE' and context.mode != 'OBJECT':
+			return False
 		return context.scene.objects.active.type == 'ARMATURE'
 		#return True
 
@@ -542,7 +544,8 @@ class FG_OT_init_rotation(bpy.types.Operator):
 		#-------------------------------------------------------------------------------------------
 		def insert_keyframe_rotation( obj_armature, frame, value ):
 			bpy.context.scene.objects.active = obj_armature
-			bpy.ops.object.posemode_toggle()
+			if context.mode != 'POSE':
+				bpy.ops.object.posemode_toggle()
 	
 			bpy.context.scene.frame_current = frame
 			bpy.ops.pose.select_all( action='SELECT' )
@@ -567,16 +570,20 @@ class FG_OT_init_rotation(bpy.types.Operator):
 
 			debug_info( "Insert keyframe sur %s" % obj.name )
 			
+			frame = bpy.context.scene.frame_start
 			if obj.data.fg.range_beg != -999.0:
-				insert_keyframe_rotation( obj, 1, obj.data.fg.range_beg * obj.data.fg.factor )
+				#insert_keyframe_rotation( obj, frame, obj.data.fg.range_beg * obj.data.fg.factor )
+				insert_keyframe_rotation( obj, frame, obj.data.fg.range_beg )
 			else:
-				insert_keyframe_rotation( obj, 1, 0.0 )
+				insert_keyframe_rotation( obj, frame, 0.0 )
 
+			frame = bpy.context.scene.frame_end
 			if obj.data.fg.range_end != -999.0:
-				frame = obj.data.fg.time / bpy.data.scenes[0].render.fps
-				insert_keyframe_rotation( obj, frame, obj.data.fg.range_end * obj.data.fg.factor )
+				#frame = obj.data.fg.time / bpy.data.scenes[0].render.fps
+				#insert_keyframe_rotation( obj, frame, obj.data.fg.range_end * obj.data.fg.factor )
+				insert_keyframe_rotation( obj, frame, obj.data.fg.range_end )
 			else:
-				insert_keyframe_rotation( obj, 1, 0.0 )
+				insert_keyframe_rotation( obj, frame, 0.0 )
 
 
 			for fcurve in obj.animation_data.action.fcurves:
@@ -730,8 +737,10 @@ class FG_OT_reset_all_armatures(bpy.types.Operator):
 		for anim in bpy.data.objects:
 			if anim.type != 'ARMATURE':
 				continue
+
 			anim.pose.bones["Bone" ].rotation_euler.y = 0.0
 			anim.pose.bones["Bone" ].location.y = 0.0
+
 		return {'FINISHED'}
 
 #----------------------------------------------------------------------------------------------------------------------------------

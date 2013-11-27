@@ -279,8 +279,8 @@ lang_fr['UI023'] = 'Max'
 lang_en['UI024'] = 'Duration'
 lang_fr['UI024'] = 'Durée'
 
-lang_en['UI025'] = 'Include disk file'
-lang_fr['UI025'] = 'Inclure le fichier du disque'
+lang_en['UI025'] = 'Include manual write'
+lang_fr['UI025'] = 'Inclure les modifivations manuelles'
 
 lang_en['UI026'] = 'To disk'
 lang_fr['UI026'] = 'Vers le disque'
@@ -353,8 +353,8 @@ lang_fr['DOC015'] = 'Crée une armature de type "spin" pour l\'axe donné'
 lang_en['DOC016'] = 'Compute XML animations loaded from the XML import, press Alt+a to run animations'
 lang_fr['DOC016'] = 'Calcul les animations XML chargées depuis l\'import XML, pressez Alt+a pour démarrer les animations'
 
-lang_en['DOC017'] = '?????????'
-lang_fr['DOC017'] = '?????????'
+lang_en['DOC017'] = 'Insert first and last keyframe'
+lang_fr['DOC017'] = 'Insere la première et dernière keyframe'
 
 lang_en['DOC018'] = '?????????'
 lang_fr['DOC018'] = '?????????'
