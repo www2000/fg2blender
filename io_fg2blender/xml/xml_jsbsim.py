@@ -313,7 +313,7 @@ def write_jsbsim( context, filename  ):
 			elif obj.fg.jsb_attr == 'AERO_CENTER':
 				debug_info( '--- Tranformation aerorp' )
 				append_aerorp( doc, obj )
-			elif obj.fg.jsb_attr == 'ENGINE':
+			elif obj.fg.jsb_attr == 'PROP_LOC':
 				debug_info( '--- Tranformation propulsion' )
 				append_propulsion( doc, obj )
 

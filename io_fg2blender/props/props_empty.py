@@ -32,17 +32,18 @@ import bpy
 from ..ui.ui_lang import lang
 
 jsb_items = 	[
-		('None',		'None', ''),
+		('None',			'None', ''),
 		('TAIL_GEAR',		'TAIL_GEAR', ''),
 		('RIGHT_GEAR',		'RIGHT_GEAR', ''),
 		('LEFT_GEAR',		'LEFT_GEAR', ''),
-		('CG',			'CG', ''),
+		('CG',				'CG', ''),
 		('AERO_CENTER',		'AERO_CENTER', ''),
-		('ENGINE',		'ENGINE', ''),
+		('ENGINE',			'ENGINE', ''),
 		('NOSE_CONTACT',	'NOSE_CONTACT', ''),
 		('RIGHT_CONTACT',	'RIGHT_CONTACT', ''),
 		('LEFT_CONTACT',	'LEFT_CONTACT', ''),
 		('TAIL_CONTACT',	'TAIL_CONTACT', ''),
+		('PROP_LOC',		'PROP_LOC', ''),
 		('GUN0',	'GUN0', ''),
 		('GUN1',	'GUN1', ''),
 		('GUN2',	'GUN2', ''),
