@@ -51,19 +51,20 @@ def register_shortcut():
 #----------------------------------------------------------------------------------------------------------------------------------
 
 def unregister_shortcut():
-    kc = bpy.context.window_manager.keyconfigs.addon
-    km = kc.keymaps["3D View"]
-    for kmi in km.keymap_items:
-        if kmi.idname == 'fg.exec':
-            km.keymap_items.remove(kmi)
-        if kmi.idname == 'fg.exec2':
-            km.keymap_items.remove(kmi)
-        if kmi.idname == 'wm.call_menu':
-            km.keymap_items.remove(kmi)
-        if kmi.idname == 'fg.only_render':
-            km.keymap_items.remove(kmi)
-        #if kmi.idname == 'wm.mouse_position':
-        #    km.keymap_items.remove(kmi)
+	kc = bpy.context.window_manager.keyconfigs.addon
+	km = kc.keymaps["3D View"]
+	for kmi in km.keymap_items:
+		print( "Suppression de kmi : " + kmi.idname )
+		if kmi.idname == "fg.exec":
+			km.keymap_items.remove(kmi)
+		elif kmi.idname == "fg.exec2":
+			km.keymap_items.remove(kmi)
+		elif kmi.idname == 'wm.call_menu':
+			km.keymap_items.remove(kmi)
+		elif kmi.idname == 'fg.only_render':
+			km.keymap_items.remove(kmi)
+		#if kmi.idname == 'wm.mouse_position':
+		#    km.keymap_items.remove(kmi)
 #----------------------------------------------------------------------------------------------------------------------------------
 #
 #

@@ -465,6 +465,14 @@ def extrait_crease( obj, mesh ):
 	return 30.0
 #----------------------------------------------------------------------------------------------------------------------------------
 
+def get_name( obj ):
+	if obj.type != 'MESH':
+		return obj.name
+	if obj.data.fg.name_ac and obj.data.fg.name_ac != "":
+		return obj.data.fg.name_ac
+	return obj.name
+#----------------------------------------------------------------------------------------------------------------------------------
+
 def write_header_mesh( filename, obj, mesh ):
 	global path_name
 	global CG
@@ -486,15 +494,15 @@ def write_header_mesh( filename, obj, mesh ):
 	vec3_locat	= mathutils.Vector(obj.location) + parent - CG
 		
 	writeln_file( f, "OBJECT poly" )
-	writeln_file( f, 'name "' + obj.name + '"' )
+	writeln_file( f, 'name "' + get_name(obj) + '"' )
 	
 	str_x = significatif("%0.6f" % vec3_locat.x)
 	str_y = significatif("%0.6f" % vec3_locat.z)
 	str_z = significatif("%0.6f" % -vec3_locat.y)
 	
 	writeln_file( f, "loc %s %s %s" % (str_x, str_y, str_z) )
-	writeln_file( f, 'data %d'%len(obj.name) )
-	writeln_file( f, obj.name )
+	writeln_file( f, 'data %d'%len(get_name(obj)) )
+	writeln_file( f, get_name(obj) )
 	
 	if tex_name != "":
 		path = os.path.dirname( bpy.path.abspath(tex_name) )
@@ -569,6 +577,11 @@ def write_material( filename, sel_obj ):
 				if len(material.texture_slots)>=1:
 					if material.texture_slots[0] != None:
 						if material.texture_slots[0].use_map_alpha and obj.show_transparent == False:
+							value = 1.0
+						#
+						# If image texture use alpha channel, and color channel => trans = 0.0 = 1.0-1.0
+						#
+						if material.texture_slots[0].use_map_alpha and material.texture_slots[0].use_map_color_diffuse:
 							value = 1.0
 							#write_file( f, " trans %s" % significatif("%0.6f" % (0.0) ) )
 

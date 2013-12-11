@@ -242,6 +242,63 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 		
 		return {'FINISHED'}
 
+#----------------------------------------------------------------------------------------------------------------------------------
+#
+#							ImportAC CLASS
+#
+#----------------------------------------------------------------------------------------------------------------------------------
+
+class ExportAC(bpy.types.Operator, ExportHelper):
+	'''AC3D Export'''
+	bl_idname = "export.ac_file"  # this is important since its how bpy.ops.export.some_data is constructed
+	bl_label = "Export .ac"
+	bl_options = {'PRESET'}	
+
+	# ExportHelper mixin class uses this
+	filename_ext = ".ac"
+	filter_glob = StringProperty(default="*.ac", options={'HIDDEN'})
+
+
+	files = CollectionProperty(	name="File Path",
+								description="File path used for importing " "xml file",
+								type=bpy.types.OperatorFileListElement)
+	#directory = StringProperty()
+
+	#mesh_active_layer	= BoolProperty(name="Active layer", description="Read file include", default=True)
+	#mesh_rotate_layer_0	= IntProperty(name="Begin", description="Read file include", min=1, max=20, default=0)
+	#mesh_rotate_layer_1	= IntProperty(name="End", description="Read file include", min=1, max=20, default=20)
+
+	'''
+	def draw(self, context):
+		scn = context.scene
+		layout = self.layout
+		row = layout.row()
+		row.label( text = "Option AC3D" )
+
+		box_option_ac = layout.box()
+		row = box_option_ac.column()
+
+		row.prop( self, "mesh_active_layer" )
+		if not self.mesh_active_layer:
+			row.prop( self, "mesh_rotate_layer_0" )
+			row.prop( self, "mesh_rotate_layer_1" )
+	'''
+	def execute(self, context):
+		from .meshes.ac3d.ac_export import write_ac_file
+
+		list_objects = []
+		for obj in bpy.data.objects:
+			if obj.select:
+				list_objects.append( obj )
+
+		print( self.filepath )		
+		print( list_objects )
+		
+		write_ac_file( context, self.filepath, list_objects, True, False, True )
+			
+		
+		return {'FINISHED'}
+
 #====================================================================================================================
 #
 #
@@ -252,8 +309,11 @@ class ImportAC(bpy.types.Operator, ImportHelper):
 #====================================================================================================================
 # Only needed if you want to add into a dynamic menu
 def menu_func_import(self, context):
-    self.layout.operator(ImportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
-    self.layout.operator(ImportAC.bl_idname, text="Flightgear (.ac)")		# text=Title in the menu
+	self.layout.operator(ImportFG.bl_idname, text="Flightgear (.xml)")		# text=Title in the menu
+	self.layout.operator(ImportAC.bl_idname, text="Flightgear (.ac)")		# text=Title in the menu
+
+def menu_func_export(self, context):
+	self.layout.operator(ExportAC.bl_idname, text="Flightgear (.ac)")		# text=Title in the menu
 
 def register():
 	from .ops import ops_flightgear
@@ -277,7 +337,9 @@ def register():
 
 	bpy.utils.register_class(ImportFG)
 	bpy.utils.register_class(ImportAC)
+	bpy.utils.register_class(ExportAC)
 	bpy.types.INFO_MT_file_import.append(menu_func_import)
+	bpy.types.INFO_MT_file_export.append(menu_func_export)
 
 	ops_flightgear.register()
 	ops_ac3d.register()
@@ -295,8 +357,8 @@ def register():
 	ui_panel_object.register()
 	ui_panel_empty.register()
 	ui_panel_camera.register()
-	ui_shortcut.register()
 	ui_button.register()
+	ui_shortcut.register()
 
 	if not os.path.isfile('/tmp/script-fg2bl'):
 		print( "Run script without debug info" )
@@ -368,8 +430,11 @@ def unregister():
 
 	bpy.utils.unregister_class(ImportFG)
 	bpy.utils.unregister_class(ImportAC)
+	bpy.utils.unregister_class(ExportAC)
 	bpy.types.INFO_MT_file_import.remove(menu_func_import)
+	bpy.types.INFO_MT_file_export.remove(menu_func_export)
 
+	ui_shortcut.unregister()
 	ops_flightgear.unregister()
 	ops_ac3d.unregister()
 	ops_tools.unregister()
@@ -386,7 +451,6 @@ def unregister():
 	ui_panel_object.unregister()
 	ui_panel_empty.unregister()
 	ui_panel_camera.unregister()
-	ui_shortcut.unregister()
 	ui_button.unregister()
 
 	

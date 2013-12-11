@@ -406,5 +406,6 @@ def unregister():
 	bpy.utils.unregister_class( FG_OT_select_file_jsb )
 	bpy.utils.unregister_class( FG_OT_write_xml )
 	bpy.utils.unregister_class( FG_OT_write_jsb )
+	bpy.utils.unregister_class( FG_OT_write_armement )
 	bpy.utils.unregister_class( FG_OT_write_camera )
 
